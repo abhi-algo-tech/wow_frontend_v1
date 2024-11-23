@@ -19,7 +19,7 @@ jobs:
 
   deploy:
     needs: build
-    run-on: aws-ec2
+    runs-on: aws-ec2
     steps:
        - name: Pull image from docker hub
          run: docker pull abhi27s/wow-frontend-v1:latest
