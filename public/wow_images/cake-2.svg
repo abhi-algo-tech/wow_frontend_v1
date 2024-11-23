@@ -1,0 +1,13 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_326_5577" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+<rect width="24" height="24" fill="#D9D9D9"/>
+</mask>
+<g mask="url(#mask0_326_5577)">
+<path d="M14.4097 10.4359C14.4097 10.4359 14.4097 15.2476 14.4097 18.8478C14.4097 20.5896 12.9977 22 11.2559 22V22C9.51408 22 8.10205 20.588 8.10205 18.8462V10.4359" stroke="#FEA800" stroke-linejoin="round"/>
+<path d="M14.4098 8.33334H15.461C16.0417 8.33334 16.5123 8.80401 16.5123 9.38462V9.38462C16.5123 9.96523 16.0417 10.4359 15.461 10.4359H7.05079C6.47019 10.4359 5.99951 9.96523 5.99951 9.38462V9.38462C5.99951 8.80401 6.47019 8.33334 7.05079 8.33334H10.2046" stroke="#FEA800" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12.3072 18.8462V15.6923H10.2046V18.8462C10.2046 19.4268 10.6753 19.8974 11.2559 19.8974C11.8365 19.8974 12.3072 19.4268 12.3072 18.8462Z" fill="#FEA800" stroke="#FEA800" stroke-linejoin="round"/>
+<circle cx="14.9353" cy="3.60256" r="1.60256" fill="#FEA800" stroke="#FEA800" stroke-linejoin="round"/>
+<circle cx="12.3071" cy="8.33333" r="0.5" fill="#FEA800" stroke="#FEA800" stroke-width="0.051282" stroke-linejoin="round"/>
+<circle cx="8.10207" cy="5.17949" r="1.07692" fill="#FEA800" stroke="#FEA800" stroke-linejoin="round"/>
+</g>
+</svg>

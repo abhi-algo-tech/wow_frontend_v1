@@ -1,0 +1,437 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap");
+
+:root {
+  --background-color: #fff;
+  /* --active-nav: linear-gradient(180deg, #657af9, #4f46e5); */
+  --active-nav: #465cb3;
+  --light-purple: #e6e5ffb0;
+  /* --active-nav: #fff3e9; */
+  --header-background-color: #eaeaeb;
+  --input-bg-color: #fff6ed;
+  --primary-color: #fda758;
+  --clear-color: #ebdbf4;
+  --blue-magenta: #f8f7fd;
+  --border-radius: 12px;
+  --button-bg: #ffcc00;
+  --color-white: #ffffff;
+  --color-primary: #5978f7;
+  --text-color: #573353;
+  --color-secondary: #573353;
+  --variable-collection-color-secondary: #573353;
+  --variable-collection-color-black-2: #41414e;
+  --font-family: "Manrope" !important;
+  --font-weight-300: 300;
+  --font-weight-light: 500;
+  --font-weight-medium: 600;
+  --font-weight-bold: 700;
+
+  --color-dark-blue: #2c63e2;
+  --light-blue: #5978f7;
+  --color-green: #00ac5e;
+  --color-green-light: #42b862;
+}
+
+body {
+  margin: 0;
+  background-color: var(--background-color);
+  color: var(--text-color) !important;
+  font-family: var(--font-family) !important;
+  transition: var(--background-color) 0.3s ease, color 0.3s ease;
+}
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+div,
+span,
+input,
+button {
+  font-family: var(--font-family) !important;
+}
+
+/* a {
+  text-decoration: none !important;
+  color: var(--text-color) !important;
+} */
+h4 {
+  font-weight: var(--font-weight-medium) !important;
+  font-size: 22px !important;
+  color: var(--color-secondary) !important;
+}
+
+.--btn-primary {
+  background-color: var(--button-bg) !important;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.mr-10 {
+  margin-right: 10px;
+}
+.gradient-text {
+  background: linear-gradient(
+    to right,
+    #5978f7,
+    #9c84ff
+  ); /* Example gradient */
+  -webkit-background-clip: text; /* Ensures compatibility with WebKit-based browsers */
+  background-clip: text;
+  color: transparent; /* Makes the text transparent to reveal the background */
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+}
+
+/* input,
+select {
+  height: 40px !important;
+} */
+/* pagination override start*/
+.ant-pagination .ant-pagination-item-active {
+  font-weight: var(--font-weight-medium);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 3px 16px;
+  border-radius: 17px;
+  color: var(--color-white);
+  margin: 0 15px !important;
+  background-image: linear-gradient(to right, #6f8cff 0%, #9c84ff 100%);
+  border: none;
+}
+/* pagination override end*/
+.underline-user-profile {
+  width: 274px;
+  height: 1px;
+  margin: 15.5px 23.5px 15.5px 0;
+  transform: rotate(-360deg);
+  opacity: 0.1;
+  background-color: var(--color-secondary);
+}
+
+.ant-space-gap-row-large {
+  row-gap: 0px;
+}
+
+.Frame-1000005063 {
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  align-items: center;
+  padding: 12px 32px;
+  background-color: #fea800;
+}
+.icon-wrapper {
+  /* width: 19px; */
+  height: 18.5px;
+  flex-grow: 0;
+}
+
+.icon-wrapper svg {
+  width: 100%;
+  height: 100%;
+}
+
+.avatar-active {
+  border: 2px solid green;
+}
+
+.avatar-inactive {
+  border: 2px solid red;
+}
+
+/* App.css */
+
+/* Sidebar Logo */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+/* Adjust Drawer z-index if necessary */
+.ant-drawer {
+  z-index: 1500;
+}
+
+/* Tab start */
+.tab-content {
+  background-color: var(--color-white);
+}
+/* Tab end */
+/* Responsive adjustments for Header */
+@media (max-width: 768px) {
+  .ant-layout-header {
+    padding: 0 8px;
+  }
+}
+
+/* Side Menu Start */
+/* Sidebar Logo Section */
+.sidebar-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.sidebar-title {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+/* Sidebar Background */
+.ant-layout-sider {
+  background: linear-gradient(180deg, #5978f7 0%, #9c84ff 100%) !important;
+  width: 91px !important;
+  max-width: 91px !important;
+  min-width: 91px !important;
+  min-height: 100vh !important;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollable Menu Container */
+.menu-scroll-container {
+  overflow-y: auto; /* Enables vertical scrolling only for the menu */
+  flex-grow: 1; /* Takes up remaining space in the sidebar */
+}
+
+/* Hide scrollbar for Webkit-based browsers (Chrome, Safari) */
+.menu-scroll-container::-webkit-scrollbar {
+  width: 0; /* Remove scrollbar width */
+  background: transparent;
+}
+
+.menu-scroll-container {
+  max-height: calc(
+    100vh - 110px
+  ); /* Adjust this based on your header or padding */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Menu Item Styling */
+.custom-menu .ant-menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
+  height: 65px;
+  padding: 8px 0;
+  color: white !important;
+  background-color: transparent;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.custom-menu .ant-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.custom-menu .ant-menu-item .anticon {
+  font-size: 24px;
+}
+
+.custom-menu .ant-menu-item .anticon + span {
+  opacity: 1 !important;
+}
+
+:where(.css-qnu6hi).ant-menu-inline-collapsed .ant-menu-title-content a {
+  opacity: 1; /* Set to 1 to make it fully visible */
+  transition: opacity 0.3s ease; /* Optional: smooth transition */
+}
+:where(.css-dev-only-do-not-override-qnu6hi).ant-menu-vertical
+  > .ant-menu-item {
+  line-height: 25px !important;
+}
+.custom-menu .ant-menu-item span {
+  font-size: 11px;
+  /* margin-top: 4px; */
+  color: white !important; /* Ensures label color stays white */
+}
+
+.custom-menu .ant-menu-item-selected {
+  background: var(--active-nav) !important;
+}
+.ant-menu-title-content {
+  color: #ffffff !important;
+  opacity: 1 !important; /* Ensure the text label is visible */
+}
+.ant-menu-item-icon + span {
+  margin-inline-start: 0px !important;
+}
+
+/* Custom Menu Background */
+.custom-menu {
+  background: transparent;
+}
+
+.custom-menu a {
+  text-decoration: none !important;
+  color: var(--color-white) !important;
+}
+
+/* Submenu Styling */
+.custom-menu .ant-menu-sub {
+  background: transparent !important;
+}
+
+.custom-menu .ant-menu-sub .ant-menu-item {
+  height: 40px !important;
+  flex-direction: row !important;
+  padding-left: 24px !important;
+}
+
+.custom-menu .ant-menu-sub .ant-menu-item-icon {
+  min-width: 22px;
+  margin-right: 8px;
+}
+
+.custom-menu .ant-menu-submenu-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 11px;
+  height: 65px !important;
+  padding: 8px 0 !important;
+  color: white !important;
+}
+
+.custom-menu .ant-menu-submenu-arrow {
+  display: none;
+}
+
+.ant-menu-light.ant-menu-submenu-popup > .ant-menu {
+  background-color: #717cfa !important;
+}
+/* Ensure submenu items are properly aligned */
+.custom-menu .ant-menu-sub .ant-menu-item span {
+  font-size: 11px;
+  margin-top: 0;
+}
+
+/* Submenu hover and selected states */
+.custom-menu .ant-menu-sub .ant-menu-item:hover,
+.custom-menu .ant-menu-sub .ant-menu-item-selected {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+.ant-menu-light > .ant-menu .ant-menu-item {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+a {
+  text-decoration: none !important;
+}
+.ant-menu-submenu-arrow {
+  color: #ffffff !important;
+}
+
+.custom-submenu-icons {
+  width: 22px;
+  height: 22px;
+  margin-right: 15px;
+}
+.ant-menu .ant-menu-submenu-title .ant-menu-item-icon,
+.ant-menu .ant-menu-item .ant-menu-item-icon {
+  vertical-align: middle !important;
+}
+/*********************** Side Menu End *************/
+
+/*********************** Header Start **************/
+/* General Styles */
+.school-selection-drpd {
+  max-width: 136.3px;
+}
+
+.search-bar {
+  flex: 1;
+  max-width: 403px;
+  height: 30px;
+  margin: 0 48px;
+  display: flex;
+  justify-content: center;
+}
+.globle-search {
+  background-color: var(--light-purple);
+  border-radius: 12px;
+}
+
+.custom-badge .ant-badge-count {
+  width: 16px !important;
+  height: 13px !important;
+  font-size: 11px;
+  line-height: 1;
+  padding: 1px;
+  color: var(--color-white);
+  box-sizing: border-box;
+  font-weight: var(--font-weight-bold);
+}
+
+.custom-badge img {
+  width: 20.2px;
+  height: 22px;
+  cursor: pointer;
+}
+.profile-name {
+  height: 0px;
+  flex-grow: 0;
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-secondary);
+}
+.active-role {
+  flex-grow: 0;
+  font-size: 10px;
+  font-weight: 300;
+  margin-top: 4px;
+  color: var(--color-secondary);
+}
+
+/* Responsive Styles */
+
+/* Small screens */
+@media (max-width: 576px) {
+  .search-bar {
+    display: none; /* Hide search bar on small screens */
+  }
+  .profile-info {
+    display: none; /* Hide profile details on small screens */
+  }
+  .toggle-header-button {
+    display: block;
+  }
+}
+
+/* Medium screens */
+@media (min-width: 577px) and (max-width: 992px) {
+  .search-bar {
+    margin: 0 16px;
+    max-width: 300px;
+  }
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Large screens */
+@media (min-width: 993px) {
+  .search-bar {
+    display: flex;
+    max-width: 403px;
+  }
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+  }
+}
+/************************ Header End **************************/

@@ -1,0 +1,17 @@
+@for $i from 1 through 50 {
+  .ml#{$i} {
+    margin-left: #{$i}px !important;
+  }
+  .mt#{$i} {
+    margin-top: #{$i}px !important;
+  }
+  .mb#{$i} {
+    margin-bottom: #{$i}px !important;
+  }
+  .mr#{$i} {
+    margin-right: #{$i}px !important;
+  }
+  .padding#{$i} {
+    padding: #{$i}px !important;
+  }
+}
