@@ -10,6 +10,7 @@ import {
   MedicineBoxOutlined,
   StopOutlined,
 } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 const { Text } = Typography;
 
@@ -74,7 +75,9 @@ const StudentProfileCardv1 = () => {
         }}
       >
         <Tooltip title="Attendance">
-          <CalendarOutlined style={{ color: "white", fontSize: "24px" }} />
+          <Link to={`/staff-attendance/${1}`}>
+            <CalendarOutlined style={{ color: "white", fontSize: "24px" }} />
+          </Link>
         </Tooltip>
         <Tooltip title="Activities">
           <AppstoreAddOutlined style={{ color: "white", fontSize: "24px" }} />

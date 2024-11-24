@@ -64,7 +64,7 @@
   font-size: 20px;
   font-weight: var(--font-weight-bold);
   text-align: right;
-  color: #5978f7;
+  color: #465cb3;
 }
 .classroom-overview-card-progress-text {
   font-size: 10px;
@@ -80,6 +80,9 @@
   height: 72px;
   align-items: center;
   align-content: center;
+  border-radius: 8px;
+  border: 1px solid rgba(22, 40, 49, 0.1);
+  background: var(--White-colour, #fff);
 }
 
 .classroom-enrooled-student-status .ant-progress-bg {
@@ -123,7 +126,7 @@
   background: linear-gradient(-260deg, #f5e8ed, #caf4f9de) !important;
 }
 .parent-create-toggle-btn .ant-switch-checked {
-  background: linear-gradient(-260deg, #5978F7, #9C84FF) !important;
+  background: linear-gradient(-260deg, #5978f7, #9c84ff) !important;
 }
 .classroom-create-toggle-btn .ant-switch {
   background: linear-gradient(-260deg, #657af9, #4f46e5) !important;
@@ -165,13 +168,11 @@
 }
 
 .classroom-profile-card .ant-card-body {
-  padding: 12px;
-  /* max-width: 294px;
-  width: 294px; */
   height: 118px;
   max-height: 118px;
   padding: 16px 12px;
   box-shadow: 0px 2px 20px 0px #5733531f;
+  border-radius: 8px;
 }
 .classroom-profile-card .ant-card {
   box-shadow: 0px 2px 20px 0px #5733531f;
@@ -189,6 +190,7 @@
   font-size: 20px;
   text-align: left;
   color: var(--variable-collection-color-black-2);
+  font-weight: var(--font-weight-bold);
 }
 
 .classroom-student-profile-card .ant-card-body {
@@ -559,9 +561,9 @@
     border-bottom: 1px solid #2c63e233;
   }
 
-  .ant-table-wrapper {
+  /* .ant-table-wrapper {
     padding: 16px;
-  }
+  } */
 
   .ant-table-wrapper .ant-table-tbody > tr > td {
     transition: background 0.2s, border-color 0.2s;
@@ -597,7 +599,7 @@
   }
 
   .select-classroom {
-    width: 185px;
+    width: 185px !important;
     height: 40px;
     border-radius: 8px;
     margin-bottom: 5px;
@@ -786,7 +788,7 @@
 }
 
 .ant-select .ant-select-arrow {
-  inset-inline-end: 22px !important;
+  inset-inline-end: 14px !important;
 }
 
 .student-custom-tabs .ant-tabs-content-holder {
@@ -951,10 +953,58 @@
 
 .custom-text {
   color: var(--font-colour, #573353);
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
 }
 
+.attendance-profile-card-attendance-day {
+  border-radius: 12px;
+  background: rgba(52, 199, 89, 0.1);
+  padding: 33px 22px 20px 22px;
+}
+.attendance-profile-card-attendance-day-lable {
+  color: #2c63e2;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.custom-circle-container {
+  width: 100px;
+  height: 100px;
+  position: relative;
+}
+
+.custom-circle {
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--circle-color, #ff7b7b);
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+}
+
+.circle-number {
+  color: var(--circle-color, #ff7b7b);
+  font-size: 2.5rem;
+  font-weight: 500;
+  position: relative;
+  top: -5px;
+}
+
+.circle-smile {
+  position: absolute;
+  bottom: 25%;
+  left: 25%;
+  width: 50%;
+  height: 20px;
+  border-bottom: 2px solid var(--circle-color, #ff7b7b);
+  border-radius: 0 0 100px 100px;
+}

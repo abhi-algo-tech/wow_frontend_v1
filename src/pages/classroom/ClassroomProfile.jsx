@@ -101,16 +101,6 @@ function ClassroomProfile() {
                         </a>
                       </Dropdown>
                     </div>
-                    {/* <Select
-                      defaultValue="1-blue-d"
-                      options={options}
-                      suffixIcon={
-                        <IoChevronDownOutline className="w-4 h-4 text-gray-600" />
-                      }
-                      className="min-w-[120px]"
-                      popupClassName="rounded-md border border-gray-200"
-                      style={{ fontSize: "16px" }}
-                    /> */}
                   </div>
                   <div onClick={() => setEditClassroomModalOpen(true)}>
                     <img
@@ -122,17 +112,14 @@ function ClassroomProfile() {
                 <div className="">
                   <Text className="font-12-details">2 to 11 Months</Text>
                 </div>
-                <div className="d-flex justify-content-between align-items-center ">
+                <div className="d-flex justify-content-between align-items-center">
                   <Text className="font-12-details">Capacity: 13</Text>
                   <Text className="font-12-details">
-                    Required : 4:1{" "}
+                    Required: 4:1{" "}
                     <Avatar
                       src="/classroom_icons/png/thumb_up.png"
                       className="classroom-table-thumb"
                     />
-                    {/* <MdOutlineThumbUp
-                      style={{ width: "17.5px", height: "16.6px" }}
-                    /> */}
                   </Text>
                 </div>
               </div>
@@ -195,6 +182,8 @@ function ClassroomProfile() {
                     upcomingStudents={3}
                     totalStudents={12}
                     strokeLinecap="round"
+                    activeColor={"#97F294C7"}
+                    inActiveColor={"#F06F6FC9"}
                   />
                 </div>
               </div>
@@ -227,6 +216,8 @@ function ClassroomProfile() {
                     upcomingStudents={1}
                     totalStudents={12}
                     strokeLinecap="round"
+                    activeColor={"#97F294C7"}
+                    inActiveColor={"#F06F6FC9"}
                   />
                   {/* <Progress
                     percent={83.33}
@@ -240,7 +231,7 @@ function ClassroomProfile() {
           </Card>
         </Col>
       </Row>
-      <Row gutter={[18, 18]} className="mt-4">
+      <Row gutter={[16, 16]} className="mt13">
         <Col span={17}>
           <ClassroomOverviewTab />
         </Col>

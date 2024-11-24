@@ -418,7 +418,7 @@ img.logo {
 .event-card {
   font-family: var(--font-family);
   border-radius: var(--border-radius);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 20px 0px #5733531f;
   max-width: 400px;
   overflow: hidden;
   background-color: var(--background-color);

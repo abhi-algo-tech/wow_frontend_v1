@@ -41,7 +41,7 @@ export default function Classroom() {
                   <div className="col-12 col-sm-6 col-md-4 align-items-center">
                     <Card
                       bordered={false}
-                      className="shadow-sm classroom-overview-detail-custom-card"
+                      className=" classroom-overview-detail-custom-card"
                     >
                       <div className="row">
                         <div className="col-6">
@@ -58,7 +58,7 @@ export default function Classroom() {
                   <div className="col-12 col-sm-6 col-md-4 align-items-center">
                     <Card
                       bordered={false}
-                      className="shadow-sm classroom-overview-detail-custom-card"
+                      className=" classroom-overview-detail-custom-card"
                     >
                       <div className="row">
                         <div className="col-6">
@@ -75,7 +75,7 @@ export default function Classroom() {
                   <div className="col-12 col-sm-6 col-md-4 align-items-center">
                     <Card
                       bordered={false}
-                      className="shadow-sm classroom-overview-detail-custom-card"
+                      className=" classroom-overview-detail-custom-card"
                     >
                       <div className="row">
                         <div className="col-5">
@@ -105,7 +105,7 @@ export default function Classroom() {
               <div className="col-12 col-sm-5 col-md-4 align-items-center">
                 <Card
                   bordered={true}
-                  className="shadow-sm classroom-overview-detail-custom-card"
+                  className=" classroom-overview-detail-custom-card"
                 >
                   <Row className="align-items-center">
                     <Col span={10} className="align-items-center">

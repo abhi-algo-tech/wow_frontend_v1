@@ -10,7 +10,7 @@ const TableComponent = ({
   rowKey = "key",
   paginationSize = 10,
   tableSize = "middle",
-  sizeChanger = true,
+  sizeChanger = false,
 }) => {
   const [pagination, setPagination] = useState({
     current: 1,
@@ -30,7 +30,7 @@ const TableComponent = ({
       : paginationSize;
 
   return (
-    <div className={`bg-white border-radius rounded-lg shadow-sm ${className}`}>
+    <div className={`bg-white border-radius rounded-lg  ${className}`}>
       <Table
         columns={columns}
         dataSource={dataSource}

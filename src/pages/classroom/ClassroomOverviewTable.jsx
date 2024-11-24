@@ -272,34 +272,6 @@ function ClassroomOverviewTable() {
       console.error("Error fetching classrooms:", error);
     }
   }, [classroomData, isError, error]);
-  // Fetch classroom data from the API
-  // useEffect(() => {
-  //   const fetchClassrooms = async () => {
-  //     setLoading(true);
-  //     try {
-  //       // const classroomData = await ClassroomService.getAllClassrooms();
-  //       // console.log("classroomData:", classroomData);?
-  //       const formattedClassroomData = generateClassroomData(
-  //         classroomData.data
-  //       ); // Format data using generateClassroomData
-  //       // console.log("formattedClassroomData:", generateClassroomDemoData(10));
-
-  //       // API Data
-  //       setData(formattedClassroomData || generateClassroomDemoData(15));
-  //       setFilteredData(formattedClassroomData); // Initially show all classrooms
-
-  //       // Demo Data for Testing
-  //       // setData(generateClassroomDemoData(15));
-  //       // setFilteredData(generateClassroomDemoData(15)); // Initially show all classrooms
-  //     } catch (error) {
-  //       message.error("Failed to load classrooms. Please try again later.");
-  //       console.error("Error fetching classrooms:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchClassrooms();
-  // }, []);
 
   // Handle classroom selection
   const onClassroomSelect = (value) => {
@@ -354,15 +326,7 @@ function ClassroomOverviewTable() {
 
   const columns = [
     {
-      title: (
-        <Select
-          value={selectedClassroom}
-          onChange={onClassroomSelect}
-          className="select-classroom !text-start"
-          placeholder="Select Classroom"
-          options={uniqueClassrooms} // Use uniqueClassrooms for dropdown options
-        />
-      ),
+      title: <></>,
       dataIndex: "name",
       key: "name",
       width: 200,
@@ -520,25 +484,7 @@ function ClassroomOverviewTable() {
                   {
                     key: "delete",
                     onClick: () => handleDeleteModal(record.key, record.name),
-                    label:
-                      // <Popconfirm
-                      //   title="Delete the classroom"
-                      //   description={
-                      //     <>
-                      //       Are you sure you want to delete classroom{" "}
-                      //       <strong>{record.name}</strong>?
-                      //     </>
-                      //   }
-                      //   icon={
-                      //     <QuestionCircleOutlined style={{ color: "red" }} />
-                      //   }
-                      //   onConfirm={() => onActionClick("delete", record)}
-                      //   okText="Yes"
-                      //   cancelText="No"
-                      // >
-                      //   Delete Classroom
-                      // </Popconfirm>
-                      "Delete Classroom",
+                    label: "Delete Classroom",
                   },
                   { key: "assign", label: "Assign Students" },
                   { key: "manage", label: "Manage Staff" },
@@ -561,25 +507,32 @@ function ClassroomOverviewTable() {
   return (
     <>
       <div className="card">
-        <div className="d-flex justify-content-end align-items-center mr50  mt5">
-          <Form.Item
-            name="active"
-            valuePropName="checked"
-            className="mb-0 me-2 classroom-show-inactive-toggle-btn"
-          >
-            <Switch />
-          </Form.Item>
-          <span className="classroom-inactive-label">Show Inactive</span>
+        <div className="d-flex justify-content-between align-items-center mr50  mt12 px-2">
+          <div className="ml">
+            <Select
+              borderRadius={false}
+              value={selectedClassroom}
+              onChange={onClassroomSelect}
+              className="select-classroom"
+              style={{ width: 185, height: 40 }}
+              placeholder="Select Classroom"
+              options={uniqueClassrooms} // Use uniqueClassrooms for dropdown options
+            />
+          </div>
+          <div className="align-items-center">
+            <Form.Item
+              name="active"
+              valuePropName="checked"
+              className="mb-0 me-2 classroom-show-inactive-toggle-btn"
+            >
+              <Switch />
+              <span className="classroom-inactive-label ml20">
+                Show Inactive
+              </span>
+            </Form.Item>
+          </div>
         </div>
         <div className=" px-2 py-2 classroom-table">
-          {/* <Select
-          value={selectedClassroom}
-          onChange={onClassroomSelect}
-          className="mb-4"
-          style={{ maxWidth: 185 }}
-          placeholder="Select Classroom"
-          options={uniqueClassrooms} // Use uniqueClassrooms for dropdown options
-        /> */}
           <TableComponent
             columns={columns}
             dataSource={filteredData}

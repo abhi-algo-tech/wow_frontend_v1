@@ -1,6 +1,5 @@
 import React from "react";
 import { DatePicker, Form } from "antd";
-import { DatePickerProps } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
@@ -10,21 +9,10 @@ dayjs.extend(customParseFormat);
 const dateFormat = "MMM DD, YYYY"; // Format "Oct 29, 2024"
 
 // Custom DatePicker format
-const customFormat: DatePickerProps["format"] = (value) =>
+const customFormat = (value) =>
   value ? value.format(dateFormat) : "Not a valid date";
 
-// Custom DatePicker component
-interface CustomDatePickerProps {
-  name: string;
-  required?: boolean;
-  rules?: any[];
-}
-
-const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
-  name,
-  required = false,
-  rules = [],
-}) => {
+const CustomDatePicker = ({ name, required = false, rules = [] }) => {
   return (
     <Form.Item
       name={name}
