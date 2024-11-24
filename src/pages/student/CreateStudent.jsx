@@ -55,7 +55,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
     } else {
       createStudentMutation.mutate(formData, {
         onSuccess: () => {
-          message.success("Student created successfully!");
+          // message.success("Student created successfully!");
           closeModal();
         },
         onError: (error) => {
