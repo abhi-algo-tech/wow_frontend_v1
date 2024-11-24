@@ -149,7 +149,7 @@ const Student = () => {
           isClosable={true}
         >
           <CreateStudent
-            CardTitle={"Add Student"}
+            CardTitle={"Add Students123"}
             classroomId={null}
             closeModal={() => setCreateStudentModalOpen(false)}
           />
