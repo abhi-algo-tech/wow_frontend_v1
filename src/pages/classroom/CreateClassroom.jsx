@@ -59,6 +59,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
   // };
   const handleFileChange = (newFileList) => {
     // Extract the file object from the newFileList
+    setFileList(newFileList);
     if (newFileList && newFileList.length > 0) {
       setProfilePicture(newFileList[0].originFileObj); // Save the actual file for submission
     } else {
@@ -88,7 +89,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
         setFileList([
           {
             uid: "-1",
-            name: "Profile Picture",
+            name: "profilePicture",
             status: "done",
             url: classroomData.data.profileUrl,
           },
