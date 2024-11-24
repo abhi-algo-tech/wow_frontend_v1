@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
 import { Card, Col, Dropdown, Row, Tag, Typography } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
+import CommonModalComponent from "../../components/CommonModalComponent";
+import PhysicalExaminationForm from "./PhysicalExaminationForm";
 const { Text } = Typography;
 function PhysicianExamination() {
+  const [isCreatePhysicianExaminationModalOpen, setCreatePhysicianExaminationModalOpen] = useState(false);
   const handleMenuClick = ({ key }) => {
     if (key === "edit") {
       console.log("Edit action triggered");
@@ -36,9 +39,10 @@ function PhysicianExamination() {
     onClick: handleMenuClick,
   };
   return (
+    <>
     <div className="padding16">
       <div className=" text-end mb-4 ">
-        <ButtonComponent text="Add Details" buttonActionType="create" />
+        <ButtonComponent text="Add Details" buttonActionType="create" onClick={() => setCreatePhysicianExaminationModalOpen(true)}/>
       </div>
 
       <Row gutter={[20, 0]}>
@@ -100,6 +104,23 @@ function PhysicianExamination() {
         </Col>
       </Row>
     </div>
+    {isCreatePhysicianExaminationModalOpen && (
+        <CommonModalComponent
+          open={isCreatePhysicianExaminationModalOpen}
+          setOpen={setCreatePhysicianExaminationModalOpen}
+          modalWidthSize={418}
+          modalHeightSize={547}
+          isClosable={true}
+        >
+          <PhysicalExaminationForm
+            CardTitle={"Add Physical Examination Details"}
+            classroomId={null}
+            closeModal={() => setCreatePhysicianExaminationModalOpen(false)}
+          />
+        
+        </CommonModalComponent>
+      )}
+    </>
   );
 }
 

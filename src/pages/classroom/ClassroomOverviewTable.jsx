@@ -1,206 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { Select, Tag, Dropdown, Space } from "antd";
-// import { IoIosMore } from "react-icons/io";
-// import TableComponent from "../../components/TableComponent";
-// import { generateClassroomData, getInitialsTitle } from "../../services/common";
-// import { FiThumbsDown, FiThumbsUp } from "react-icons/fi";
-// import { Link } from "react-router-dom";
-
-// function ClassroomOverviewTable() {
-//   const [selectedClassroom, setSelectedClassroom] = useState("all");
-//   const [data, setData] = useState([]);
-//   const [filteredData, setFilteredData] = useState([]);
-
-//   // Pagination state
-//   const [pagination, setPagination] = useState({
-//     current: 1,
-//     pageSize: 10,
-//     total: 6,
-//   });
-
-//   // Generate classroom data
-//  useEffect(() => {
-//     const classroomData = generateClassroomData(20);
-//     setData(classroomData);
-//     setFilteredData(classroomData); // Initially show all classrooms
-//   }, []);
-
-//   // Handle classroom selection
-//   const onClassroomSelect = (value) => {
-//     setSelectedClassroom(value);
-
-//     if (value === "all") {
-//       setFilteredData(data); // Show all data
-//     } else {
-//       // Filter the data by the selected classroom
-//       const filtered = data.filter((item) => item.name === value);
-//       setFilteredData(filtered);
-//     }
-//   };
-
-//   // Handle action click (Edit, Assign, Manage)
-//   const onActionClick = (action, record) => {
-//     console.log(action, record);
-//   };
-
-//   // Remove duplicate classrooms based on the `name`
-//   const uniqueClassrooms = [
-//     { value: "all", label: "All Classrooms" },
-//     ...Array.from(
-//       new Set(data.map((item) => item.name)) // Ensure uniqueness based on name
-//     )
-//       .map((name) => {
-//         return data.find((item) => item.name === name); // Find unique items based on the name
-//       })
-//       .map((item) => ({
-//         value: item.name,
-//         label: item.name,
-//       })),
-//   ];
-
-//   const columns = [
-//     {
-//       title: "Name",
-//       dataIndex: "name",
-//       key: "name",
-//       fixed: "left",
-//       align: "left",
-//       render: (text, record) => (
-//         <Space>
-//           <div
-//             className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs"
-//             style={{
-//               backgroundColor: record.color,
-//               width: 20,
-//               height: 20,
-//               borderRadius: "50%",
-//               display: "flex",
-//               justifyContent: "center",
-//               alignItems: "center",
-//               color: "#ffffff",
-//               fontSize: "10px",
-//               fontWeight: "bold",
-//             }}
-//           >
-//             {getInitialsTitle(record.name)}
-//           </div>
-//           <Link to={"/classroom-profile"}>
-//             <span>{text}</span>
-//           </Link>
-//         </Space>
-//       ),
-//     },
-//     {
-//       title: "Capacity",
-//       dataIndex: "capacity",
-//       key: "capacity",
-//       align: "center",
-//     },
-//     {
-//       title: "FTE",
-//       dataIndex: "fte",
-//       key: "fte",
-//       align: "center",
-//     },
-//     {
-//       title: "Students",
-//       children: [
-//         {
-//           align: "center",
-//           title: "Active",
-//           dataIndex: "active",
-//           key: "active",
-//         },
-//         {
-//           align: "center",
-//           title: "Upcoming",
-//           dataIndex: "upcoming",
-//           key: "upcoming",
-//         },
-//         {
-//           align: "center",
-//           title: "Present",
-//           dataIndex: "present",
-//           key: "present",
-//         },
-//       ],
-//     },
-//     {
-//       title: "Staff",
-//       children: [
-//         {
-//           align: "center",
-//           title: "Assigned",
-//           dataIndex: "assignedStaff",
-//           key: "assignedStaff",
-//         },
-//         {
-//           align: "center",
-//           title: "Present",
-//           dataIndex: "presentStaff",
-//           key: "presentStaff",
-//         },
-//       ],
-//     },
-//     {
-//       title: "Ratio",
-//       children: [
-//         {
-//           title: "Current",
-//           dataIndex: "status",
-//           key: "status",
-//           align: "center",
-//           render: (status) => (
-//             <Tag
-//               icon={status === "warning" ? <FiThumbsDown /> : <FiThumbsUp />}
-//               color={status === "warning" ? "error" : "success"}
-//             />
-//           ),
-//         },
-//         {
-//           title: "Action",
-//           key: "action",
-//           align: "center",
-//           render: (_, record) => (
-//             <Dropdown
-//               menu={{
-//                 items: [
-//                   { key: "edit", label: "Edit Classroom" },
-//                   { key: "assign", label: "Assign Students" },
-//                   { key: "manage", label: "Manage Staff" },
-//                 ],
-//                 onClick: ({ key }) => onActionClick(key, record),
-//               }}
-//               trigger={["click"]}
-//             >
-//               <IoIosMore className="pointer" />
-//             </Dropdown>
-//           ),
-//         },
-//       ],
-//     },
-//   ];
-
-//   return (
-//     <div className="card px-2 py-2">
-//       <Select
-//         value={selectedClassroom}
-//         onChange={onClassroomSelect}
-//         className="mb-4"
-//         style={{ maxWidth: 185 }}
-//         placeholder="Select Classroom"
-//         options={uniqueClassrooms} // Use uniqueClassrooms for dropdown options
-//       />
-//       <TableComponent
-//         columns={columns}
-//         dataSource={filteredData}
-//         pagination={pagination}
-//       />
-//     </div>
-//   );
-// }
-
-// export default ClassroomOverviewTable;
 
 import React, { useEffect, useState } from "react";
 import {
@@ -301,13 +98,30 @@ function ClassroomOverviewTable() {
     }
   };
 
-  const handleDelete = (classroomId) => {
+  const handleDelete = async (id) => {
     const formData = new FormData();
     formData.append("isDeleted", true);
-    updateClassroom({ classroomId, classroomData: formData });
-    console.log("Deleted classroom with ID:", classroomId);
-    setDeleteModalOpen(false); // Close the modal after deletion
+  
+    try {
+      // await updateClassroom.mutateAsync({ 
+      //   classroomId: id, 
+      //   classroomData: formData 
+      // });
+      // message.success("Classroom deleted successfully!");
+      await new Promise((resolve, reject) => {
+        updateClassroom(
+          { classroomId: id, classroomData: formData },
+          { onSuccess: resolve, onError: reject }
+        );
+        message.success("Classroom deleted successfully!");
+      });
+    } catch (error) {
+      message.error(`Failed to delete classroom: ${error.message}`);
+    } finally {
+      setDeleteModalOpen(false); // Close the modal after operation (success or failure)
+    }
   };
+  
 
   // Remove duplicate classrooms based on the `name`
   const uniqueClassrooms = [

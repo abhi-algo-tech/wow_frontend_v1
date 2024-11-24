@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Table, Switch, Button, Tag, Space, Typography } from "antd";
 import { PlusOutlined, FileTextOutlined } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent";
+import CommonModalComponent from "../../components/CommonModalComponent";
+import ImmunizationStatusForm from "./ImmunizationStatusForm";
+import ReminderForm from "./ReminderForm";
 const { Text } = Typography;
 const columns = [
   {
@@ -89,7 +92,9 @@ const data = [
 ];
 
 const ImmunizationRecord = () => {
+  const [isCreateImmunizationRecordModalOpen, setCreateImmunizationRecordModalOpen] = useState(false);
   return (
+    <>
     <div style={{ padding: "16px" }}>
       <div
         className="d-flex justify-content-between align-items-center mb-3"
@@ -100,7 +105,7 @@ const ImmunizationRecord = () => {
           <Text>Exempt student from all immunizations</Text>
         </div>
         <div>
-          <ButtonComponent text="Send Reminder" gradient={true} />
+          <ButtonComponent text="Send Reminder" gradient={true} onClick={() => setCreateImmunizationRecordModalOpen(true)}/>
         </div>
       </div>
       <Table
@@ -111,6 +116,23 @@ const ImmunizationRecord = () => {
         scroll={{ x: 1200 }} // Ensure responsiveness
       />
     </div>
+    {isCreateImmunizationRecordModalOpen && (
+        <CommonModalComponent
+          open={isCreateImmunizationRecordModalOpen}
+          setOpen={setCreateImmunizationRecordModalOpen}
+          modalWidthSize={418}
+          modalHeightSize={547}
+          isClosable={true}
+        >
+          <ReminderForm
+            CardTitle={"Send Reminder"}
+            classroomId={null}
+            closeModal={() => setCreateImmunizationRecordModalOpen(false)}
+          />
+        
+        </CommonModalComponent>
+      )}
+    </>
   );
 };
 

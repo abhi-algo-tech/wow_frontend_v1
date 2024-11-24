@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { Form, Input, InputNumber, Switch, Button, Upload } from "antd";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Form, Input, InputNumber, Switch, Button, Upload, message } from "antd";
+import { debounce } from "lodash";
 import { UploadOutlined } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent";
 import {
@@ -18,11 +19,34 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
   const { mutate: updateClassroom } = useUpdateClassroom();
   const { data: classroomData } = useClassroomById(classroomId);
   const [classroomName, setClassroomName] = useState("");
-  const { error, message, validate } = useValidateClassroom({
+  const { error, validationMessage, validate: validateClassroomName } = useValidateClassroom({
     name: classroomName,
     id: classroomId,
   });
   const isEdit = Boolean(classroomId); // Check if editing
+
+  const lastValidatedName = useRef(null); // To store the last validated name
+  const lastValidatedId = useRef(null);   // To store the last validated ID
+
+  // Debounced validate function
+  const debouncedValidate = useCallback(
+    debounce((name, id) => {
+      // Only hit the API if the name or ID is different
+      if (lastValidatedName.current !== name || lastValidatedId.current !== id) {
+        validateClassroomName(name.trim(), id);
+        lastValidatedName.current = name; // Update the last validated name
+        lastValidatedId.current = id;     // Update the last validated ID
+      }
+    }, 2000),
+    [validateClassroomName]
+  );
+
+  useEffect(() => {
+    if (classroomName.trim() !== "") {
+      debouncedValidate(classroomName, classroomId);
+    }
+    return () => debouncedValidate.cancel(); // Cleanup debounce
+  }, [classroomName, classroomId, debouncedValidate]);
 
   // const handleFileChange = ({ fileList: newFileList }) => {
   //   console.log("newFileList:", newFileList[0]);
@@ -98,11 +122,15 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
             { classroomId, classroomData: formData },
             { onSuccess: resolve, onError: reject }
           );
+          message.success("Classroom updated successfully!");
+          closeModal();
         });
       } else {
         await new Promise((resolve, reject) => {
           createClassroom(formData, { onSuccess: resolve, onError: reject });
         });
+        message.success("Classroom created successfully!");
+        closeModal();
       }
       closeModal(); // Close modal on success
     } catch (error) {
@@ -135,20 +163,24 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                     <span className="text-danger"> *</span>
                   </span>
                 }
-                validateStatus={error ? "error" : message ? "success" : ""}
-                help={error || message}
-                // rules={[
-                //   { required: true, message: "Please input classroom name!" },
-                // ]}
+                validateStatus={error ? "error" : validationMessage ? "success" : ""}
+                help={error || validationMessage}
+                rules={[
+                  { required: true, message: "Please input classroom name!" },
+                ]}
               >
-                <Input
+                {/* <Input
                   placeholder="Blue-D"
                   onChange={(e) => {
                     setClassroomName(e.target.value);
-                    if (e.target.value.trim() !== "") {
-                      validate(e.target.value.trim(), classroomId);
-                    }
+                    // if (e.target.value.trim() !== "") {
+                    //   validate(e.target.value.trim(), classroomId);
+                    // }
                   }}
+                /> */}
+                 <Input
+                  placeholder="Blue-D"
+                  onChange={(e) => setClassroomName(e.target.value)}
                 />
               </Form.Item>
             </div>
