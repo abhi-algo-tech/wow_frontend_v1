@@ -27,7 +27,7 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: self-hosted  # Use this for your AWS EC2 runner
+    runs-on: aws-ec2
     steps:
       - name: Pull Image from Docker Hub
         run: docker pull abhi27s/wow-frontend-v1:latest
