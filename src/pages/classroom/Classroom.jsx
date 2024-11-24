@@ -103,10 +103,7 @@ export default function Classroom() {
 
               {/* Second Column with Progress Bar Card */}
               <div className="col-12 col-sm-5 col-md-4 align-items-center">
-                <Card
-                  bordered={true}
-                  className=" classroom-overview-detail-custom-card"
-                >
+                <Card className=" classroom-overview-detail-custom-card">
                   <Row className="align-items-center">
                     <Col span={10} className="align-items-center">
                       <Row>

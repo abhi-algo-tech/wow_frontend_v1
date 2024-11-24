@@ -83,6 +83,7 @@
   border-radius: 8px;
   border: 1px solid rgba(22, 40, 49, 0.1);
   background: var(--White-colour, #fff);
+  box-shadow: 0px 2px 20px 0px #5733531f;
 }
 
 .classroom-enrooled-student-status .ant-progress-bg {
@@ -608,6 +609,10 @@
   }
 }
 
+.select-classroom > .ant-select-selector {
+  border: none !important;
+}
+
 .border-radius {
   border-radius: 0 0 8px 8px;
 }
@@ -623,6 +628,15 @@
   }
   .ant-upload-list-item {
     padding: 0px !important;
+  }
+  .ant-upload-list-item-actions {
+    inset-inline-start: 50px !important;
+  }
+  .ant-upload-list-item-undefined::before {
+    display: none !important;
+  }
+  .ant-image > .css-dev-only-do-not-override-qnu6hi {
+    display: none !important;
   }
 }
 
@@ -1007,4 +1021,12 @@
   height: 20px;
   border-bottom: 2px solid var(--circle-color, #ff7b7b);
   border-radius: 0 0 100px 100px;
+}
+
+.ant-card-bordered {
+  border: none;
+}
+
+.ant-tabs-top > .ant-tabs-nav::before {
+  border-bottom: none !important;
 }

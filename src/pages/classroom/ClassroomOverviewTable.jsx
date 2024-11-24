@@ -510,11 +510,11 @@ function ClassroomOverviewTable() {
         <div className="d-flex justify-content-between align-items-center mr50  mt12 px-2">
           <div className="ml">
             <Select
-              borderRadius={false}
+              border={false}
               value={selectedClassroom}
               onChange={onClassroomSelect}
               className="select-classroom"
-              style={{ width: 185, height: 40 }}
+              style={{ width: 276, height: 40, border: "none" }}
               placeholder="Select Classroom"
               options={uniqueClassrooms} // Use uniqueClassrooms for dropdown options
             />
