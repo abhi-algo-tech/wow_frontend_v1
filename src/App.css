@@ -34,12 +34,12 @@
   background-size: cover !important;
 } */
 .ant-layout-content {
-  background: rgba(37, 71, 106, 0.8) url("/wow_icons/png/dashboardbg.png") fixed !important;
+  background: rgba(37, 71, 106, 0.8) url("/wow_images/dashboard.png") fixed !important;
   background-size: cover !important;
 }
 
 .ant-modal-content {
-  background: rgba(37, 71, 106, 0.8) url("/wow_icons/png/dashboardbg.png");
+  background: rgba(37, 71, 106, 0.8) url("/wow_images/png/dashboard.png");
   background-size: cover;
   padding: 0px !important;
 }

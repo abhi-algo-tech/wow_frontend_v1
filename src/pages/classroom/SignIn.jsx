@@ -43,6 +43,7 @@ function SignIn({ setCancel }) {
           padding={"16px 62.6px"}
           margin="0 16px 0 0"
           onClick={handleCancelClick}
+          gradient={false}
         />
 
         <ButtonComponent

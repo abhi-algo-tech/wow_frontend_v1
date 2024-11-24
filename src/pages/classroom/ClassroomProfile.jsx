@@ -167,7 +167,7 @@ function ClassroomProfile() {
                   </span>
                   <br />
                   <span className="classroom-profile-card-label-number">
-                    12
+                    09
                   </span>
                 </div>
               </div>
@@ -178,9 +178,9 @@ function ClassroomProfile() {
                   <ProgressBarClassroomOverview
                     title1="Present"
                     title2="Absent"
-                    activeStudents={9}
-                    upcomingStudents={3}
-                    totalStudents={12}
+                    activeStudents={8}
+                    upcomingStudents={1}
+                    totalStudents={9}
                     strokeLinecap="round"
                     activeColor={"#97F294C7"}
                     inActiveColor={"#F06F6FC9"}
@@ -201,7 +201,7 @@ function ClassroomProfile() {
                   </span>
                   <br />
                   <span className="classroom-profile-card-label-number">
-                    12
+                    03
                   </span>
                 </div>
               </div>
@@ -212,9 +212,9 @@ function ClassroomProfile() {
                   <ProgressBarClassroomOverview
                     title1="Present"
                     title2="Absent"
-                    activeStudents={3}
+                    activeStudents={2}
                     upcomingStudents={1}
-                    totalStudents={12}
+                    totalStudents={3}
                     strokeLinecap="round"
                     activeColor={"#97F294C7"}
                     inActiveColor={"#F06F6FC9"}
@@ -231,12 +231,12 @@ function ClassroomProfile() {
           </Card>
         </Col>
       </Row>
-      <Row gutter={[16, 16]} className="mt13">
+      <Row gutter={[16, 0]} className="mt21">
         <Col span={17}>
           <ClassroomOverviewTab />
         </Col>
         <Col span={7}>
-          <div className="my-2">
+          <div className="mb13">
             <Events />
           </div>
           <div className="my-2">

@@ -168,10 +168,9 @@
 
 // // export default ProfileImageComponent;
 
-
-import React, { useState, useEffect } from "react";
-import { PlusOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
 import { Image, Upload } from "antd";
+import { EyeOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -181,17 +180,13 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-const ProfileImageComponent = ({ fileList: initialFileList = [], onChange }) => {
-  const [fileList, setFileList] = useState(initialFileList); // fileList is initialized as an array
+const ProfileImageComponent = ({
+  fileList: initialFileList = [],
+  onChange,
+}) => {
+  const [fileList, setFileList] = useState(initialFileList);
   const [previewImage, setPreviewImage] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
-
-  useEffect(() => {
-    // Set the preview image from the initial fileList if available
-    if (initialFileList.length > 0 && initialFileList[0]?.url) {
-      setPreviewImage(initialFileList[0].url);
-    }
-  }, [initialFileList]);
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
@@ -202,22 +197,47 @@ const ProfileImageComponent = ({ fileList: initialFileList = [], onChange }) => 
   };
 
   const handleChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList); // Always update state with an array
-    if (onChange) {
-      onChange(newFileList); // Pass the updated array to the parent
-    }
+    setFileList(newFileList);
+    if (onChange) onChange(newFileList);
   };
 
   return (
     <>
       <Upload
         listType="picture-circle"
-        fileList={fileList} // Ensure fileList is always an array
+        fileList={fileList}
         onPreview={handlePreview}
         onChange={handleChange}
-        beforeUpload={() => false} // Prevent file upload
+        beforeUpload={() => false} // Disable automatic upload
+        showUploadList={{
+          showPreviewIcon: true,
+          showRemoveIcon: true,
+          previewIcon: (
+            <EyeOutlined
+              style={{
+                color: "blue",
+                fontSize: "16px",
+                cursor: "pointer",
+              }}
+            />
+          ),
+          removeIcon: (
+            <DeleteOutlined
+              style={{
+                color: "red",
+                fontSize: "16px",
+                cursor: "pointer",
+              }}
+            />
+          ),
+        }}
       >
-        {fileList.length < 1 && <PlusOutlined />}
+        {fileList.length < 1 && (
+          <div>
+            <PlusOutlined style={{ fontSize: "24px" }} />
+            {/* <div style={{ marginTop: 8 }}>Upload</div> */}
+          </div>
+        )}
       </Upload>
       {previewImage && (
         <Image
@@ -225,7 +245,7 @@ const ProfileImageComponent = ({ fileList: initialFileList = [], onChange }) => 
             visible: previewOpen,
             onVisibleChange: setPreviewOpen,
           }}
-          src={previewImage} // Preview the selected or initial image
+          src={previewImage}
         />
       )}
     </>

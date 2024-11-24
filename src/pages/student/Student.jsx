@@ -7,14 +7,6 @@ import ButtonComponent from "../../components/ButtonComponent";
 import StudentOverviewTable from "./StudentOverviewTable";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import CreateStudent from "./CreateStudent";
-import ParentForm from "./ParentForm";
-import AddPickup from "./AddPickup";
-import HealthDetails from "./HealthDetails";
-import HealthDetailsForm from "./HealthDetailsForm";
-import PhysicianForm from "./PhysicianForm";
-import ImmunizationStatusForm from "./ImmunizationStatusForm";
-import ReminderForm from "./ReminderForm";
-import ImportantDateForm from "./ImportantDateForm";
 
 const { Text } = Typography;
 const Student = () => {
@@ -26,7 +18,7 @@ const Student = () => {
           <Row justify="space-start" gutter={20}>
             <Col>
               <Card
-                style={{ width: 248, height: 77 }}
+                style={{ width: 248 }}
                 className="shadow-sm classroom-overview-detail-custom-card"
               >
                 <Row justify="space-between" align="middle">
@@ -59,7 +51,7 @@ const Student = () => {
 
             <Col>
               <Card
-                style={{ height: 77 }}
+                style={{}}
                 bordered={true}
                 className="shadow-sm classroom-overview-detail-custom-card"
               >
@@ -100,7 +92,7 @@ const Student = () => {
               <Card
                 bordered={false}
                 className="shadow-sm classroom-overview-detail-custom-card"
-                style={{ width: 248, height: 77 }}
+                style={{ width: 248 }}
               >
                 <div className="row">
                   <div className="col-5">
@@ -153,7 +145,6 @@ const Student = () => {
             classroomId={null}
             closeModal={() => setCreateStudentModalOpen(false)}
           />
-        
         </CommonModalComponent>
       )}
     </>
