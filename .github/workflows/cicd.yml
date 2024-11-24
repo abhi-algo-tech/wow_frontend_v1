@@ -20,20 +20,20 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         
       - name: Build Docker Image
-        run: docker build -t abhi27s/wow-react-v1 .
+        run: docker build -t abhi27s/wow-frontend-v1 .
         
       - name: Publish Image to Docker Hub
-        run: docker push abhi27s/wow-react-v1:latest
+        run: docker push abhi27s/wow-frontend-v1:latest
 
   deploy:
     needs: build
-    runs-on: react-aws-ec2 
+    runs-on: aws-ec2
     steps:
       - name: Pull Image from Docker Hub
-        run: docker pull abhi27s/wow-react-v1:latest
+        run: docker pull abhi27s/wow-frontend-v1:latest
         
       - name: Delete Old Container
         run: docker rm -f reactContainer || true  # Allow continuation if the container doesn't exist
         
       - name: Run Docker Container
-        run: docker run -d -p 3000:80 --name reactContainer abhi27s/wow-react-v1
+        run: docker run -d -p 3000:80 --name reactContainer abhi27s/wow-frontend-v1
