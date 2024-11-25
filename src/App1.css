@@ -197,6 +197,9 @@
 .classroom-student-profile-card .ant-card-body {
   /* height: 132px !important; */
   padding: 16px !important;
+  border-radius: 8px;
+  border: 1px solid rgba(87, 51, 83, 0.1);
+  background: var(--White-colour, #fff);
 }
 
 .active-green {
@@ -806,6 +809,9 @@
   font-style: normal;
   line-height: 16px; /* 100% */
 }
+.border-none {
+  border: none !important;
+}
 
 .ant-select .ant-select-arrow {
   inset-inline-end: 14px !important;
@@ -1046,4 +1052,8 @@
 
 .ant-tag {
   margin-inline-end: 5px;
+}
+
+.ant-upload-list-item::before {
+  display: none !important;
 }

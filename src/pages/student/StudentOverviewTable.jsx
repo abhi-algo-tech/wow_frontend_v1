@@ -216,7 +216,7 @@ const StudentOverviewTable = () => {
       dataIndex: "tags",
       key: "tags",
       className: "student-table-body-label",
-      width: 195,
+      width: 190,
       render: (tags, record) => (
         <div
           style={{

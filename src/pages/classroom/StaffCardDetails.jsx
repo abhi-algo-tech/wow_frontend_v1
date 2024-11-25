@@ -88,23 +88,28 @@ export default function StaffCardDetails() {
             defaultValue="select-designation"
           >
             <Option value="select-designation">Select Designation</Option>
+            <Option value="admin">Admin</Option>
+            <Option value="staff">Staff</Option>
+            <Option value="lead-teacher">Lead Teacher</Option>
           </Select>
         </div>
-
-        <div>
-          <Button
-            variant="link"
-            style={{ backgroundColor: "#b1afe919", border: "none" }}
-            className="rounded custom-clear-button d-flex align-items-center gap-1"
-          >
-            <span className="clear-text">Clear</span>
-            <img
-              src="/classroom_icons/png/close.png"
-              alt="Close icon"
-              style={{ width: "8.3px", height: "8.3px" }}
-            />
-          </Button>
-        </div>
+        {selectedStaffs.length >= 1 && (
+          <div>
+            <Button
+              variant="link"
+              style={{ backgroundColor: "#b1afe919", border: "none" }}
+              className="rounded custom-clear-button d-flex align-items-center gap-1"
+              onClick={handleSelectAll}
+            >
+              <span className="clear-text">Clear</span>
+              <img
+                src="/classroom_icons/png/close.png"
+                alt="Close icon"
+                style={{ width: "8.3px", height: "8.3px" }}
+              />
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="row mt16">

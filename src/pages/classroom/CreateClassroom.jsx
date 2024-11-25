@@ -1,5 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Form, Input, InputNumber, Switch, Button, Upload, message } from "antd";
+import {
+  Form,
+  Input,
+  InputNumber,
+  Switch,
+  Button,
+  Upload,
+  message,
+} from "antd";
 import { debounce } from "lodash";
 import { UploadOutlined } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent";
@@ -10,6 +18,7 @@ import {
   useValidateClassroom,
 } from "../../hooks/useClassroom";
 import ProfileImageComponent from "../../components/ProfileImageComponent";
+import { validateMinMaxAge } from "../../utils/customValidation";
 import { CustomMessage } from "../../utils/CustomMessage";
 
 function CreateClassroom({ CardTitle, classroomId, closeModal }) {
@@ -21,23 +30,30 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
   const { mutate: updateClassroom } = useUpdateClassroom();
   const { data: classroomData } = useClassroomById(classroomId);
   const [classroomName, setClassroomName] = useState("");
-  const { error, validationMessage, validate: validateClassroomName } = useValidateClassroom({
+  const {
+    error,
+    validationMessage,
+    validate: validateClassroomName,
+  } = useValidateClassroom({
     name: classroomName,
     id: classroomId,
   });
   const isEdit = Boolean(classroomId); // Check if editing
 
   const lastValidatedName = useRef(null); // To store the last validated name
-  const lastValidatedId = useRef(null);   // To store the last validated ID
+  const lastValidatedId = useRef(null); // To store the last validated ID
 
   // Debounced validate function
   const debouncedValidate = useCallback(
     debounce((name, id) => {
       // Only hit the API if the name or ID is different
-      if (lastValidatedName.current !== name || lastValidatedId.current !== id) {
+      if (
+        lastValidatedName.current !== name ||
+        lastValidatedId.current !== id
+      ) {
         validateClassroomName(name.trim(), id);
         lastValidatedName.current = name; // Update the last validated name
-        lastValidatedId.current = id;     // Update the last validated ID
+        lastValidatedId.current = id; // Update the last validated ID
       }
     }, 2000),
     [validateClassroomName]
@@ -167,22 +183,12 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                     <span className="text-danger"> *</span>
                   </span>
                 }
-                validateStatus={error ? "error" : validationMessage ? "success" : ""}
+                validateStatus={
+                  error ? "error" : validationMessage ? "success" : ""
+                }
                 help={error || validationMessage}
-                rules={[
-                  { required: true, message: "Please input classroom name!" },
-                ]}
               >
-                {/* <Input
-                  placeholder="Blue-D"
-                  onChange={(e) => {
-                    setClassroomName(e.target.value);
-                    // if (e.target.value.trim() !== "") {
-                    //   validate(e.target.value.trim(), classroomId);
-                    // }
-                  }}
-                /> */}
-                 <Input
+                <Input
                   placeholder="Blue-D"
                   onChange={(e) => setClassroomName(e.target.value)}
                 />
@@ -194,13 +200,6 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                 className="classroom-label"
                 label="Profile Picture"
               >
-                {/* <Upload
-                  listType="picture"
-                  maxCount={1}
-                  onChange={handleFileChange}
-                  fileList={fileList}
-                  beforeUpload={() => false}
-                > */}
                 <div className="profile-image">
                   <ProfileImageComponent
                     fileList={fileList}
@@ -208,9 +207,6 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                     setIsProfile={setIsProfile}
                   />
                 </div>
-                {/* <Upload listType="picture" maxCount={1}>
-                    <Button icon={<UploadOutlined />}>Upload</Button>
-                  </Upload> */}
               </Form.Item>
             </div>
           </div>
@@ -228,7 +224,12 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                 }
                 // rules={[{ required: true, message: "Please input capacity!" }]}
               >
-                <InputNumber min={1} placeholder="13" className="w-100" />
+                <InputNumber
+                  min={1}
+                  max={30}
+                  placeholder="13"
+                  className="w-100"
+                />
               </Form.Item>
             </div>
             <div className="col-6">
@@ -237,30 +238,29 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                 className="classroom-label"
                 label="Student : Teacher Ratio"
               >
-                <InputNumber min={1} placeholder="4" className="w-100" />
+                <InputNumber
+                  min={1}
+                  max={5}
+                  placeholder="4"
+                  className="w-100"
+                />
               </Form.Item>
             </div>
           </div>
 
           <div className="row">
-            {/* <div className="col-6">
-              <Form.Item label="Min Age">
-                <div className="d-flex gap-2">
-                  <Form.Item name="minAgeYear" noStyle>
-                    <InputNumber min={0} placeholder="Year" />
-                  </Form.Item>
-                  <Form.Item name="minAgeMonth" noStyle>
-                    <InputNumber min={0} max={11} placeholder="Month" />
-                  </Form.Item>
-                </div>
-              </Form.Item>
-            </div> */}
+            {/* Min Age Fields */}
             <div className="col-12 col-sm-6">
               <span className="d-block mb-2 classroom-label">Min Age</span>
               <div className="row">
                 <div className="col-6">
                   <Form.Item name="minAgeYear" className="mb-0 classroom-label">
-                    <InputNumber min={0} placeholder="Year" className="w-100" />
+                    <InputNumber
+                      min={3}
+                      max={10}
+                      placeholder="Year"
+                      className="w-100"
+                    />
                   </Form.Item>
                   <div className="text-center">
                     <span className="classroom-label-light">Year</span>
@@ -270,7 +270,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                   <Form.Item name="minAgeMonth" className="mb-0">
                     <InputNumber
                       min={0}
-                      max={11}
+                      max={12}
                       placeholder="Month"
                       className="w-100"
                     />
@@ -282,35 +282,46 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
               </div>
             </div>
 
-            {/* <div className="col-6">
-              <Form.Item label="Max Age">
-                <div className="d-flex gap-2">
-                  <Form.Item name="maxAgeYear" noStyle>
-                    <InputNumber min={0} placeholder="Year" />
-                  </Form.Item>
-
-                  <Form.Item name="maxAgeMonth" noStyle>
-                    <InputNumber min={0} max={11} placeholder="Month" />
-                  </Form.Item>
-                </div>
-              </Form.Item>
-            </div> */}
+            {/* Max Age Fields */}
             <div className="col-12 col-sm-6">
               <label className="d-block mb-2 classroom-label">Max Age</label>
               <div className="row">
                 <div className="col-6">
-                  <Form.Item name="maxAgeYear" className="mb-0">
-                    <InputNumber min={0} placeholder="Year" className="w-100" />
+                  <Form.Item
+                    name="maxAgeYear"
+                    className="mb-0"
+                    rules={[
+                      {
+                        validator: (_, value) =>
+                          validateMinMaxAge(_, value, form),
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      min={3}
+                      max={10}
+                      placeholder="Year"
+                      className="w-100"
+                    />
                   </Form.Item>
                   <div className="text-center">
                     <span className="classroom-label-light">Year</span>
                   </div>
                 </div>
                 <div className="col-6">
-                  <Form.Item name="maxAgeMonth" className="mb-0">
+                  <Form.Item
+                    name="maxAgeMonth"
+                    className="mb-0"
+                    rules={[
+                      {
+                        validator: (_, value) =>
+                          validateMinMaxAge(_, value, form),
+                      },
+                    ]}
+                  >
                     <InputNumber
                       min={0}
-                      max={11}
+                      max={12}
                       placeholder="Month"
                       className="w-100"
                     />
@@ -340,7 +351,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
           </div>
 
           <div className="mt-4 text-center">
-            <ButtonComponent text={isEdit ? "Save" : "Add"} gradient />
+            <ButtonComponent text={isEdit ? "Save" : "Add"} />
           </div>
         </Form>
       </div>
