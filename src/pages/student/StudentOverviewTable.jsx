@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Input,
-  Button,
   Switch,
   Checkbox,
   Tag,
@@ -12,8 +11,10 @@ import {
   Dropdown,
   Space,
   message,
+  Typography,
+  Popover,
 } from "antd";
-import { SearchOutlined, MoreOutlined, EditOutlined } from "@ant-design/icons";
+import { SearchOutlined, EditOutlined } from "@ant-design/icons";
 import TableComponent from "../../components/TableComponent";
 import { getInitialsTitle } from "../../services/common";
 import { IoIosMore } from "react-icons/io";
@@ -24,8 +25,7 @@ import { Link } from "react-router-dom";
 import { useGetAllStudents, useUpdateStudent } from "../../hooks/useStudent";
 import { generateStudentData } from "./StudentCommon";
 import CreateStudent from "./CreateStudent";
-
-
+const { Text } = Typography;
 const StudentOverviewTable = () => {
   const [hoveredRow, setHoveredRow] = useState(null);
   const [isStudentTableFilterModalOpen, setStudentTableFilterModalOpen] =
@@ -53,7 +53,6 @@ const StudentOverviewTable = () => {
       console.error("Error fetching student details:", error);
     }
   }, [students, isError, error]);
-
 
   // Handle filter application
   const handleApplyFilters = (filters) => {
@@ -91,20 +90,18 @@ const StudentOverviewTable = () => {
     setDeleteModalOpen(true); // Open the delete modal
   };
   const handleEditModal = (id) => {
-    setSelectedStudentId( id ); // Store the clicked item's id and name
+    setSelectedStudentId(id); // Store the clicked item's id and name
     setEditModalOpen(true); // Open the delete modal
   };
-
-
 
   const handleDelete = async (id) => {
     const formData = new FormData();
     formData.append("isDeleted", true);
-  
+
     try {
-      await updateStudentMutation.mutateAsync({ 
-        studentId: id, 
-        studentData: formData 
+      await updateStudentMutation.mutateAsync({
+        studentId: id,
+        studentData: formData,
       });
       message.success("Student deleted successfully!");
       setDeleteModalOpen(false); // Close the modal after deletion
@@ -113,7 +110,7 @@ const StudentOverviewTable = () => {
       setDeleteModalOpen(false);
     }
   };
-  
+
   const columns = [
     {
       title: (
@@ -169,7 +166,8 @@ const StudentOverviewTable = () => {
                 {getInitialsTitle(classroom.name)}
               </Avatar>
             </div>
-            <Tag
+            <Text className="classroom-inactive-label">{classroom.name}</Text>
+            {/* <Tag
               style={{
                 backgroundColor: `${getColor(classroom.color, "light")}`,
                 color: `${getColor(classroom.color, "dark")}`,
@@ -177,7 +175,7 @@ const StudentOverviewTable = () => {
               }}
             >
               {classroom.name}
-            </Tag>
+            </Tag> */}
           </div>
         </>
       ),
@@ -188,6 +186,7 @@ const StudentOverviewTable = () => {
       dataIndex: "tags",
       key: "tags",
       className: "student-table-body-label",
+      width: 209,
       render: (tags, record) => (
         <div
           style={{
@@ -201,8 +200,8 @@ const StudentOverviewTable = () => {
         >
           <Tag
             style={{
-              backgroundColor: "#E6F6FF",
-              color: "#0086C9",
+              backgroundColor: "#B1AFE9",
+              color: "#1B237E",
               border: "none",
             }}
           >
@@ -210,29 +209,71 @@ const StudentOverviewTable = () => {
           </Tag>
           <Tag
             style={{
-              backgroundColor: "#E6FFFA",
-              color: "#047481",
+              backgroundColor: "#CBF6FF66",
+              color: "#1B237E",
               border: "none",
             }}
           >
             {tags.type}
           </Tag>
           {tags.additional && (
-            <Tag
-              style={{
-                backgroundColor: "#FAF5FF",
-                color: "#6B46C1",
-                border: "none",
+            <Popover
+              content={
+                <div
+                  style={{
+                    backgroundColor: "#f6ffed",
+                    border: "1px solid #b7eb8f",
+                    borderRadius: "6px",
+                    padding: "8px 0",
+                  }}
+                >
+                  {tags.additionalItems?.map((item, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        padding: "8px 16px",
+                        color: "#666",
+                        fontSize: "14px",
+                        cursor: "pointer",
+                        transition: "background-color 0.3s",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "#d9f7be";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }}
+                    >
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              }
+              trigger="click"
+              placement="top"
+              overlayInnerStyle={{
+                padding: 0,
+                backgroundColor: "transparent",
               }}
             >
-              {tags.additional}
-            </Tag>
+              <Tag
+                style={{
+                  backgroundColor: "#D9FFCB66",
+                  color: "#1B237E",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                +{tags.additional}
+              </Tag>
+            </Popover>
           )}
           {hoveredRow === record.key && (
-            <Tooltip title="Edit Tags">
-              <EditOutlined
+            <Tooltip title="Edit Tags" style={{ backgroundColor: "#41414ECC" }}>
+              <Avatar
+                size={20}
+                src={"/classroom_icons/png/edit-tag.png"}
                 style={{
-                  color: "#1890ff",
                   cursor: "pointer",
                 }}
               />
@@ -326,7 +367,7 @@ const StudentOverviewTable = () => {
       pink: { light: "#FFF5F7", dark: "#B83280" },
       purple: { light: "#FAF5FF", dark: "#6B46C1" },
     };
-    
+
     // Return color if exists, otherwise fallback to light gray
     if (colors[color]) {
       return colors[color][shade] || colors[color].light;
@@ -349,7 +390,7 @@ const StudentOverviewTable = () => {
               <Input
                 placeholder="Search by Students/Parent"
                 prefix={<SearchOutlined style={{ color: "#a0aec0" }} />}
-                style={{ minWidth: "240px" }}
+                style={{ minWidth: "240px", height: 40 }}
               />
               <Space>
                 <Avatar
@@ -412,7 +453,7 @@ const StudentOverviewTable = () => {
             dataSource={filteredData}
             tableSize={"small"}
             loading={isLoading}
-          rowKey="key"
+            rowKey="key"
             sizeChanger={false}
           />
         </Card>
@@ -467,7 +508,5 @@ const StudentOverviewTable = () => {
     </>
   );
 };
-
-
 
 export default StudentOverviewTable;

@@ -1030,3 +1030,10 @@
 .ant-tabs-top > .ant-tabs-nav::before {
   border-bottom: none !important;
 }
+.ant-tooltip .ant-tooltip-inner {
+  background-color: #41414ecc !important;
+}
+
+.ant-tooltip {
+  --antd-arrow-background-color: #41414ecc !important;
+}
