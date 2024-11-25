@@ -123,9 +123,10 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
             { classroomId, classroomData: formData },
             { onSuccess: resolve, onError: reject }
           );
-          message.success("Classroom updated successfully!");
-          closeModal();
+          
         });
+        message.success("Classroom updated successfully!");
+          closeModal();
       } else {
         await new Promise((resolve, reject) => {
           createClassroom(formData, { onSuccess: resolve, onError: reject });
