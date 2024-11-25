@@ -113,8 +113,9 @@ function ClassroomOverviewTable() {
           { classroomId: id, classroomData: formData },
           { onSuccess: resolve, onError: reject }
         );
-        message.success("Classroom deleted successfully!");
       });
+      message.success("Classroom deleted successfully!");
+      
     } catch (error) {
       message.error(`Failed to delete classroom: ${error.message}`);
     } finally {
