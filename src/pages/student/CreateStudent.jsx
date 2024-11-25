@@ -1,7 +1,11 @@
 import { Form, Input, message, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
-import { useCreateStudent, useStudentById, useUpdateStudent } from "../../hooks/useStudent";
+import {
+  useCreateStudent,
+  useStudentById,
+  useUpdateStudent,
+} from "../../hooks/useStudent";
 import { useGetAllClassrooms } from "../../hooks/useClassroom";
 
 const { Option } = Select;
@@ -45,10 +49,10 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
 
     if (isEdit) {
       updateStudentMutation.mutate(
-        { 
-          studentId, 
-          studentData: formData 
-        }, 
+        {
+          studentId,
+          studentData: formData,
+        },
         {
           onSuccess: () => {
             message.success("Student updated successfully!");
@@ -70,8 +74,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
         },
       });
     }
-  }
-    
+  };
 
   return (
     <div className="card">
@@ -86,11 +89,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
         {CardTitle}
       </span>
       <div className="student-create">
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-        >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <div className="row">
             <div className="col-6">
               <div className="flex items-center gap-1 student-label">
@@ -99,7 +98,14 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
               </div>
               <Form.Item
                 name="firstName"
-                rules={[{ required: true, message: "Please input the first name!" }]}
+                rules={[
+                  { required: true, message: "Please input the first name!" },
+                  {
+                    pattern: /^[A-Za-z\s]+$/,
+                    message:
+                      "First name should not contain numbers or special characters!",
+                  },
+                ]}
               >
                 <Input
                   placeholder="E.g. John"
@@ -114,7 +120,14 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
               </div>
               <Form.Item
                 name="lastName"
-                rules={[{ required: true, message: "Please input the last name!" }]}
+                rules={[
+                  { required: true, message: "Please input the last name!" },
+                  {
+                    pattern: /^[A-Za-z\s]+$/,
+                    message:
+                      "Last name should not contain numbers or special characters!",
+                  },
+                ]}
               >
                 <Input
                   placeholder="E.g. Smith"
@@ -128,22 +141,29 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
               <span className="text-danger"> *</span>
             </div>
             <Form.Item
-  name="classroom"
-  rules={[{ required: true, message: "Please select a classroom!" }]}
->
-  <Select
-    className="select-student-add-from"
-    placeholder="Select Classroom"
-    loading={isLoading}
-    notFoundContent={isError ? `Error: ${error?.message}` : "No classrooms available"}
-  >
-    {!isLoading && classroomData?.data?.map((classroom) => (
-      <Option key={classroom.id} value={classroom.id}>
-        {classroom.name}
-      </Option>
-    ))}
-  </Select>
-</Form.Item>
+              name="classroom"
+              rules={[
+                { required: true, message: "Please select a classroom!" },
+              ]}
+            >
+              <Select
+                className="select-student-add-from"
+                placeholder="Select Classroom"
+                loading={isLoading}
+                notFoundContent={
+                  isError
+                    ? `Error: ${error?.message}`
+                    : "No classrooms available"
+                }
+              >
+                {!isLoading &&
+                  classroomData?.data?.map((classroom) => (
+                    <Option key={classroom.id} value={classroom.id}>
+                      {classroom.name}
+                    </Option>
+                  ))}
+              </Select>
+            </Form.Item>
 
             <div className="text-center mt6">
               <Form.Item>
