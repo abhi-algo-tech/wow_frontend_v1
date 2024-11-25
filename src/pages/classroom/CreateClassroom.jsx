@@ -10,6 +10,7 @@ import {
   useValidateClassroom,
 } from "../../hooks/useClassroom";
 import ProfileImageComponent from "../../components/ProfileImageComponent";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 function CreateClassroom({ CardTitle, classroomId, closeModal }) {
   const [form] = Form.useForm();
@@ -118,29 +119,27 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
       formData.append("profilePic", profilePicture, profilePicture.name);
     }
 
-    try {
-      // Ensure both mutate calls return promises
-      if (isEdit) {
-        await new Promise((resolve, reject) => {
-          updateClassroom(
-            { classroomId, classroomData: formData },
-            { onSuccess: resolve, onError: reject }
-          );
-          
-        });
-        message.success("Classroom updated successfully!");
-          closeModal();
-      } else {
-        await new Promise((resolve, reject) => {
-          createClassroom(formData, { onSuccess: resolve, onError: reject });
-        });
-        message.success("Classroom created successfully!");
-        closeModal();
-      }
-      closeModal(); // Close modal on success
-    } catch (error) {
-      console.error("Error while submitting classroom data:", error);
-    }
+   try {
+  if (isEdit) {
+    await new Promise((resolve, reject) => {
+      updateClassroom(
+        { classroomId, classroomData: formData },
+        { onSuccess: resolve, onError: reject }
+      );
+    });
+    CustomMessage.success("Classroom updated successfully!");
+    closeModal();
+  } else {
+    await new Promise((resolve, reject) => {
+      createClassroom(formData, { onSuccess: resolve, onError: reject });
+    });
+    CustomMessage.success("Classroom created successfully!");
+    closeModal();
+  }
+} catch (error) {
+  console.error("Error while submitting classroom data:", error);
+  // CustomMessage.error("Something went wrong. Please try again.");
+}
   };
 
   return (

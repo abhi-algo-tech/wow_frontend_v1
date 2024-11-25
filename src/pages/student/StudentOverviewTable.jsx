@@ -25,6 +25,7 @@ import { Link } from "react-router-dom";
 import { useGetAllStudents, useUpdateStudent } from "../../hooks/useStudent";
 import { generateStudentData } from "./StudentCommon";
 import CreateStudent from "./CreateStudent";
+import { CustomMessage } from "../../utils/CustomMessage";
 const { Text } = Typography;
 const StudentOverviewTable = () => {
   const [hoveredRow, setHoveredRow] = useState(null);
@@ -51,7 +52,7 @@ const StudentOverviewTable = () => {
     }
 
     if (isError) {
-      message.error("Failed to load student details. Please try again later.");
+      CustomMessage.error("Failed to load student details. Please try again later.");
       console.error("Error fetching student details:", error);
     }
   }, [students, isError, error]);
@@ -105,10 +106,10 @@ const StudentOverviewTable = () => {
         studentId: id,
         studentData: formData,
       });
-      message.success("Student deleted successfully!");
+      CustomMessage.success("Student deleted successfully!");
       setDeleteModalOpen(false); // Close the modal after deletion
     } catch (error) {
-      message.error(`Failed to delete student: ${error.message}`);
+      CustomMessage.error(`Failed to delete student: ${error.message}`);
       setDeleteModalOpen(false);
     }
   };
