@@ -2,6 +2,7 @@ import { Form, Input, message, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
 import { useCreateStudent, useStudentById, useUpdateStudent } from "../../hooks/useStudent";
+import { useGetAllClassrooms } from "../../hooks/useClassroom";
 
 const { Option } = Select;
 
@@ -10,6 +11,12 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
 
   const { data: studentData } = useStudentById(studentId);
   const createStudentMutation = useCreateStudent();
+  const {
+    data: classroomData,
+    isLoading,
+    isError,
+    error,
+  } = useGetAllClassrooms();
   const updateStudentMutation = useUpdateStudent();
   const isEdit = Boolean(studentId);
 
@@ -18,7 +25,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
       form.setFieldsValue({
         firstName: studentData.data.firstName,
         lastName: studentData.data.lastName,
-        classroom: "1-Blue-D",
+        classroom: studentData.data.classroomId,
       });
     }
   }, [studentData, form]);
@@ -34,7 +41,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
     const formData = new FormData();
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
-    formData.append("classroomId", 1);
+    formData.append("classroomId", classroom);
 
     if (isEdit) {
       updateStudentMutation.mutate(
@@ -121,18 +128,23 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
               <span className="text-danger"> *</span>
             </div>
             <Form.Item
-              name="classroom"
-              rules={[{ required: true, message: "Please select a classroom!" }]}
-            >
-              <Select
-                className="select-student-add-from"
-                placeholder="Select Classroom"
-              >
-                <Option value="select">Select</Option>
-                <Option value="1">1-Blue-D</Option>
-                <Option value="2">6-Yellow-R</Option>
-              </Select>
-            </Form.Item>
+  name="classroom"
+  rules={[{ required: true, message: "Please select a classroom!" }]}
+>
+  <Select
+    className="select-student-add-from"
+    placeholder="Select Classroom"
+    loading={isLoading}
+    notFoundContent={isError ? `Error: ${error?.message}` : "No classrooms available"}
+  >
+    {!isLoading && classroomData?.data?.map((classroom) => (
+      <Option key={classroom.id} value={classroom.id}>
+        {classroom.name}
+      </Option>
+    ))}
+  </Select>
+</Form.Item>
+
             <div className="text-center mt6">
               <Form.Item>
                 <ButtonComponent

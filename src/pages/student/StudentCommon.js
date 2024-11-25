@@ -13,6 +13,17 @@ const generateRandomHexColor = () => {
     .padStart(6, "0")}`;
 };
 
+const generateColorForStudentClassroom = (name) => {
+  // const name = `${firstName} ${lastName}`;
+  // Extract the color keyword
+  const lowerCaseName = name.toLowerCase();
+  const foundColor = Object.keys(colorMap).find((color) =>
+    lowerCaseName.includes(color)
+  );
+
+  // Return the corresponding color or a random hex color if not found
+  return foundColor ? colorMap[foundColor] : generateRandomHexColor();
+};
 const generateColorForStudent = (firstName, lastName) => {
   const name = `${firstName} ${lastName}`;
   // Extract the color keyword
@@ -97,8 +108,10 @@ export const generateStudentData = (apiData) => {
     //   ? item.profileUrl
     //   : generateColorForStudent(item.firstName, item.lastName), // Use the student's name to generate a color if no avatar URL is available
     classroom: {
-      name: name,
-      color: generateColorForStudent(item.firstName, item.lastName),
+      name: item.classroomName,
+      color: item.classroomProfileUrl
+        ? item.classroomProfileUrl
+        : generateColorForStudentClassroom(item.classroomName),
     },
     tags: generateRandomTag(), // { days: 3, type: "Full Day", additional: "+3" },
     schedule: {

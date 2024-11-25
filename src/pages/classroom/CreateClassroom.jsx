@@ -14,6 +14,7 @@ import ProfileImageComponent from "../../components/ProfileImageComponent";
 function CreateClassroom({ CardTitle, classroomId, closeModal }) {
   const [form] = Form.useForm();
   const [profilePicture, setProfilePicture] = useState(null);
+  const [isProfile, setIsProfile] = useState(false);
   const [fileList, setFileList] = useState([]);
   const { mutate: createClassroom } = useCreateClassroom();
   const { mutate: updateClassroom } = useUpdateClassroom();
@@ -62,6 +63,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
     setFileList(newFileList);
     if (newFileList && newFileList.length > 0) {
       setProfilePicture(newFileList[0].originFileObj); // Save the actual file for submission
+      setIsProfile(true);
     } else {
       setProfilePicture(null); // Handle case when file is removed
     }
@@ -111,6 +113,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
     formData.append("roomNumber", "A101");
     formData.append("schoolId", "1");
     formData.append("userType", "Teacher");
+    formData.append("isProfile", isProfile);
     if (profilePicture) {
       formData.append("profilePic", profilePicture, profilePicture.name);
     }
@@ -203,6 +206,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                   <ProfileImageComponent
                     fileList={fileList}
                     onChange={handleFileChange}
+                    setIsProfile={setIsProfile}
                   />
                 </div>
                 {/* <Upload listType="picture" maxCount={1}>
