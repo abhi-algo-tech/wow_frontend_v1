@@ -41,6 +41,8 @@ const StudentOverviewTable = () => {
   const { data: students, isLoading, isError, error } = useGetAllStudents();
   const updateStudentMutation = useUpdateStudent();
 
+  // console.log("filteredData", filteredData);
+
   useEffect(() => {
     if (students) {
       const formattedStudentData = generateStudentData(students.data);
@@ -121,14 +123,41 @@ const StudentOverviewTable = () => {
       ),
       dataIndex: "name",
       key: "name",
+      width: 240,
       className: "student-table-body-label", // Custom class
       render: (_, record) => (
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <Checkbox />
-          <Avatar src={record.avatar} size={24} />
-          <Link to={`/student-profile/${record.key}`}>
+          <div className="position-relative d-inline-block ">
+            <Avatar src={record.avatar} size={24} />
+            <div
+              className={`position-absolute top-0 end-0 translate-middle rounded-circle ${
+                record.status === "present" ? "active-green" : ""
+              }`}
+              style={
+                record.status === "present"
+                  ? {
+                      width: "5px",
+                      height: "3px",
+                      margin: "5px -8px",
+                      padding: "3px",
+                      border: "solid 3px #fff",
+                    }
+                  : {}
+              }
+            />
+          </div>
+          <Link
+            to={`/student-profile/${record.key}`}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center", // Ensures content inside link is centered vertically
+              width: "100%",
+              textDecoration: "none", // Optional to remove underline
+            }}
+          >
             <span>{record.name}</span>
-
             {record.upcoming && (
               <Tag
                 style={{
@@ -186,13 +215,13 @@ const StudentOverviewTable = () => {
       dataIndex: "tags",
       key: "tags",
       className: "student-table-body-label",
-      width: 209,
+      width: 195,
       render: (tags, record) => (
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "8px",
+            gap: "0px",
             position: "relative",
           }}
           onMouseEnter={() => setHoveredRow(record.key)}
@@ -200,7 +229,7 @@ const StudentOverviewTable = () => {
         >
           <Tag
             style={{
-              backgroundColor: "#B1AFE9",
+              backgroundColor: "#B1AFE94D",
               color: "#1B237E",
               border: "none",
             }}
@@ -288,7 +317,7 @@ const StudentOverviewTable = () => {
       key: "schedule",
       className: "student-table-body-label", // Custom class
       render: (schedule) => (
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0px" }}>
           {schedule.days.map((day) => (
             <Tag
               key={day}
@@ -296,9 +325,9 @@ const StudentOverviewTable = () => {
                 minWidth: "36px",
                 textAlign: "center",
                 backgroundColor: schedule.active.includes(day)
-                  ? "#E6F6FF"
+                  ? "#B1AFE94D"
                   : "#F7FAFC",
-                color: schedule.active.includes(day) ? "#0086C9" : "#A0AEC0",
+                color: schedule.active.includes(day) ? "#1B237E" : "#57335380",
                 border: "none",
               }}
             >
@@ -378,7 +407,7 @@ const StudentOverviewTable = () => {
   return (
     <>
       <div className="mt20">
-        <Card>
+        <Card styles={{ body: { padding: 16 } }}>
           <div
             style={{
               display: "flex",
@@ -413,22 +442,6 @@ const StudentOverviewTable = () => {
                   <Tag color="blue" onClick={handleClearAllFilters}>
                     Clear All
                   </Tag>
-                  // <Button
-                  //   variant="link"
-                  //   style={{ backgroundColor: "#b1afe919", border: "none" }}
-                  //   className="rounded custom-clear-button d-flex align-items-center gap-1"
-                  //   onClick={handleClearAllFilters}
-                  // >
-                  //   <span className="clear-text">Clear</span>
-                  //   <img
-                  //     src="/classroom_icons/png/close.png"
-                  //     alt="Close icon"
-                  //     style={{ width: "8.3px", height: "8.3px" }}
-                  //   />
-                  // </Button>
-                  // <Button type="link" onClick={handleClearAllFilters}>
-                  //   Clear All
-                  // </Button>
                 )}
               </Space>
             </div>

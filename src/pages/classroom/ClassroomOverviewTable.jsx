@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   Select,
@@ -101,11 +100,11 @@ function ClassroomOverviewTable() {
   const handleDelete = async (id) => {
     const formData = new FormData();
     formData.append("isDeleted", true);
-  
+
     try {
-      // await updateClassroom.mutateAsync({ 
-      //   classroomId: id, 
-      //   classroomData: formData 
+      // await updateClassroom.mutateAsync({
+      //   classroomId: id,
+      //   classroomData: formData
       // });
       // message.success("Classroom deleted successfully!");
       await new Promise((resolve, reject) => {
@@ -115,14 +114,12 @@ function ClassroomOverviewTable() {
         );
       });
       message.success("Classroom deleted successfully!");
-      
     } catch (error) {
       message.error(`Failed to delete classroom: ${error.message}`);
     } finally {
       setDeleteModalOpen(false); // Close the modal after operation (success or failure)
     }
   };
-  
 
   // Remove duplicate classrooms based on the `name`
   const uniqueClassrooms = [
@@ -352,6 +349,7 @@ function ClassroomOverviewTable() {
             columns={columns}
             dataSource={filteredData}
             loading={isLoading}
+            showTotalProp={true}
           />
         </div>
       </div>

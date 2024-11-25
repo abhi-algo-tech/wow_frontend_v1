@@ -109,9 +109,12 @@ function MainHeader({
       </div>
 
       {/* Right Section - Icons and Profile */}
-      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "23px" }}>
         <Badge offset={[0, 0]} className="custom-badge">
-          <img src="/wow_icons/png/shedule_calender.png" />
+          <img
+            src="/wow_icons/png/shedule_calender.png"
+            style={{ width: 22, height: 18 }}
+          />
         </Badge>
         <Badge count={5} offset={[0, 0]} className="custom-badge">
           <img src="/wow_icons/png/chat.png" />

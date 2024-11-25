@@ -9,8 +9,13 @@ import {
   Avatar,
   Button,
   Badge,
+  Space,
 } from "antd";
-import { CheckCircleOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  CheckCircleOutlined,
+  EditOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
 import { MdOutlineModeEdit, MdOutlineModeEditOutline } from "react-icons/md";
 
 const { Text } = Typography;
@@ -23,8 +28,11 @@ const LabelCol = ({ children }) => (
 );
 
 const ContentCol = ({ children }) => <Col span={19}>{children}</Col>;
-
+const status = "present";
 const StudentAbout = () => {
+  const date = { month: "Jan", day: 14 };
+  const fromClassroom = "1-Blue-D";
+  const toClassroom = "2-Green-D";
   return (
     <div className="padding30">
       {/* Floating Edit Button */}
@@ -113,11 +121,30 @@ const StudentAbout = () => {
 
         <LabelCol>Sibling</LabelCol>
         <ContentCol>
-          <Avatar
+          <div className="position-relative d-inline-block mr8">
+            <Avatar src={"/classroom_icons/png/Lisa.png"} size={24} />
+            <div
+              className={`position-absolute top-0 end-0 translate-middle rounded-circle ${
+                status === "present" ? "active-green" : ""
+              }`}
+              style={
+                status === "present"
+                  ? {
+                      width: "5px",
+                      height: "3px",
+                      margin: "5px -8px",
+                      padding: "3px",
+                      border: "solid 3px #fff",
+                    }
+                  : {}
+              }
+            />
+          </div>
+          {/* <Avatar
             src="/placeholder.svg?height=24&width=24"
             size={24}
             style={{ marginRight: 8 }}
-          />
+          /> */}
           <Text className="student-about-tab-label-value">
             Alsia Fenwick (Sister)
           </Text>
@@ -154,6 +181,46 @@ const StudentAbout = () => {
               }}
             />
           </Row>
+        </ContentCol>
+
+        <LabelCol>Upcoming Move</LabelCol>
+        <ContentCol>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            {/* Date section */}
+            <Space direction="vertical" size={0} style={{ lineHeight: "1.2" }}>
+              <Text
+                type="secondary"
+                className="student-about-tab-label-value"
+                style={{ fontSize: "11px" }}
+              >
+                {date.month}
+              </Text>
+              <Text style={{ fontSize: "16px", fontWeight: 500 }}>
+                {date.day}
+              </Text>
+            </Space>
+
+            {/* Vertical line accent */}
+            <div
+              style={{
+                width: "2px",
+                height: "24px",
+                backgroundColor: "#52c41a",
+                borderRadius: "1px",
+              }}
+            />
+
+            {/* Transfer information */}
+            <Space align="center" size={4}>
+              <Text className="student-about-tab-label-value">
+                {fromClassroom}
+              </Text>
+              <RightOutlined style={{ fontSize: "12px", color: "#8c8c8c" }} />
+              <Text className="student-about-tab-label-value">
+                {toClassroom}
+              </Text>
+            </Space>
+          </div>
         </ContentCol>
       </Row>
     </div>

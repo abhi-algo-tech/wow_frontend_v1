@@ -11,6 +11,7 @@ const TableComponent = ({
   paginationSize = 10,
   tableSize = "middle",
   sizeChanger = false,
+  showTotalProp = false,
 }) => {
   const [pagination, setPagination] = useState({
     current: 1,
@@ -42,19 +43,21 @@ const TableComponent = ({
         pagination={{
           showSizeChanger: sizeChanger,
           //   showQuickJumper: true,
-          showTotal: (total) => {
-            return (
-              <span
-                style={{
-                  fontWeight: 500,
-                  color: "#573353",
-                  fontSize: "14px", // Adjust font size for better readability
-                }}
-              >
-                {`Showing ${startRecord}-${endRecord} of ${total} Classrooms`}
-              </span>
-            );
-          },
+          showTotal: showTotalProp
+            ? (total) => {
+                return (
+                  <span
+                    style={{
+                      fontWeight: 500,
+                      color: "#573353",
+                      fontSize: "14px", // Adjust font size for better readability
+                    }}
+                  >
+                    {`Showing ${startRecord}-${endRecord} of ${total} Classrooms`}
+                  </span>
+                );
+              }
+            : false,
 
           position: ["bottomCenter"],
           itemRender: (current, type, originalElement) => {

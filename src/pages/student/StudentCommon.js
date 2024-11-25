@@ -99,6 +99,34 @@ function formatDate(date) {
   const options = { year: "numeric", month: "short", day: "numeric" };
   return date.toLocaleDateString("en-US", options);
 }
+
+// Function to randomly select elements from an array
+function getRandomSubset(array, min, max) {
+  const shuffled = array.sort(() => 0.5 - Math.random()); // Shuffle array
+  const count = Math.floor(Math.random() * (max - min + 1)) + min; // Random number between min and max
+  return shuffled.slice(0, count); // Select the first 'count' elements
+}
+
+// Function to generate schedule
+function generateSchedule() {
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+  const active = getRandomSubset(days, 3, 5); // Select between 3 and 5 active days
+  return {
+    days: days,
+    active: active,
+  };
+}
+function generateRandomStatus() {
+  const randomValue = Math.random();
+  // console.log(randomValue, randomValue < 0.5 ? "present" : "absent"); // Log the random number to debug
+  return randomValue < 0.5 ? "present" : "absent";
+}
+function generateRandomUpcoming() {
+  const randomValue = Math.random();
+  // console.log(randomValue, randomValue < 0.5 ? "present" : "absent"); // Log the random number to debug
+  return randomValue < 0.5 ? true : false;
+}
+
 export const generateStudentData = (apiData) => {
   return apiData.map((item, index) => ({
     key: item.id,
@@ -114,12 +142,14 @@ export const generateStudentData = (apiData) => {
         : generateColorForStudentClassroom(item.classroomName),
     },
     tags: generateRandomTag(), // { days: 3, type: "Full Day", additional: "+3" },
-    schedule: {
-      days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
-      active: ["Mon", "Wed", "Fri"],
-    },
+    schedule: generateSchedule(),
+    // schedule: {
+    //   days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+    //   active: ["Mon", "Wed", "Fri"],
+    // },
     birthdate: item.birthdate || formatDate(getRandomDate(2010, 2024)),
     movementDate: item.movementDate || formatDate(getMovementDate()),
-    upcoming: item.upcoming || false, // Default to false if no upcoming property is provided
+    upcoming: generateRandomUpcoming(), // Default to false if no upcoming property is provided
+    status: generateRandomStatus(),
   }));
 };

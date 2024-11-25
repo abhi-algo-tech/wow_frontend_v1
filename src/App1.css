@@ -751,6 +751,12 @@
   line-height: normal;
 }
 
+.student-table-body-label a {
+  color: var(--font-colour, #573353) !important;
+  font-size: 14px;
+  font-weight: var(--font-weight-light);
+}
+
 .student-table-action-label .ant-dropdown-menu-title-content {
   color: var(#573353);
   font-size: 12px;
@@ -1036,4 +1042,8 @@
 
 .ant-tooltip {
   --antd-arrow-background-color: #41414ecc !important;
+}
+
+.ant-tag {
+  margin-inline-end: 5px;
 }

@@ -48,7 +48,7 @@ function MainLayout() {
           closable
           onClose={closeDrawer}
           open={drawerVisible}
-          bodyStyle={{ padding: 0 }}
+          styles={{ body: { padding: 0 } }}
         >
           <SideNavbarMobile
             collapsed={false}

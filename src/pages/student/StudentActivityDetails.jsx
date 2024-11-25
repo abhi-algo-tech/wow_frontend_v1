@@ -1,11 +1,4 @@
 import { Space } from "antd";
-import {
-  FaCamera,
-  FaFileAlt,
-  FaPills,
-  FaExclamationTriangle,
-  FaUtensils,
-} from "react-icons/fa";
 
 export default function Component() {
   const indicators = [
@@ -23,7 +16,7 @@ export default function Component() {
       icon: (
         <img
           src="/classroom_icons/png/Notes.png"
-          alt="No Photo"
+          alt="Notes"
           className="student-activity-type-icons"
         />
       ),
@@ -33,7 +26,7 @@ export default function Component() {
       icon: (
         <img
           src="/classroom_icons/png/Medication.png"
-          alt="No Photo"
+          alt="Medication"
           className="student-activity-type-icons"
         />
       ),
@@ -43,7 +36,7 @@ export default function Component() {
       icon: (
         <img
           src="/classroom_icons/png/Allergies.png"
-          alt="No Photo"
+          alt="Allergies"
           className="student-activity-type-icons"
         />
       ),
