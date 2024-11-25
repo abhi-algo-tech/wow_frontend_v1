@@ -685,10 +685,10 @@ img.logo {
   background: var(--color-primary);
 }
 
-/* .add-btn- {
+.add-btn- {
   border: solid 1px var(--color-primary);
   background-color: var(--color-white);
-} */
+}
 
 /* .ant-btn,
 .add-btn-:hover {

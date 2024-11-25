@@ -36,13 +36,7 @@ const ButtonComponent = ({
     : { backgroundColor: color };
   const paddingStyle = { padding: padding };
   const marginStyle = { margin: margin };
-  const border = { border: "none !important" };
-  const combinedStyle = {
-    ...buttonStyle,
-    ...paddingStyle,
-    ...marginStyle,
-    // ...border,
-  };
+  const combinedStyle = { ...buttonStyle, ...paddingStyle, ...marginStyle };
 
   return (
     <Button
@@ -50,8 +44,15 @@ const ButtonComponent = ({
       htmlType="submit"
       icon={getIcon()}
       size={size}
-      className="rounded-xl shadow-sm"
-      style={combinedStyle}
+      className={`rounded-xl shadow-sm `}
+      style={{
+        ...combinedStyle,
+        ...(text.toLowerCase() === "cancel" && {
+          border: "solid 1px var(--color-primary)",
+          backgroundColor: "var(--color-white)",
+          color: "var(--color-primary)",
+        }),
+      }}
       onClick={onClick}
     >
       <span
