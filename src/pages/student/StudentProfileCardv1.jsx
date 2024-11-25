@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 const { Text } = Typography;
 
 const StudentProfileCardv1 = () => {
+  const flags = ["Notes", "no-photo", "Dietary-Restrictions", "Allergies"];
   return (
     <Card
       bordered={false}
@@ -23,15 +24,13 @@ const StudentProfileCardv1 = () => {
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
         textAlign: "center",
       }}
-      bodyStyle={{
-        padding: "24px 0px 0px 0",
+      styles={{
+        body: {
+          padding: "24px 0px 0px 0",
+        },
       }}
     >
-      <Avatar
-        size={100}
-        src="https://via.placeholder.com/100"
-        style={{ marginBottom: "8px" }}
-      />
+      <Avatar size={100} src="/wow_images/image@2x-1.png" className="mb8" />
       <div
         style={{
           position: "absolute",
@@ -50,7 +49,20 @@ const StudentProfileCardv1 = () => {
       <Text strong className="student-profile-class">
         1-Blue-D
       </Text>
-      <Space size="middle" style={{ marginBottom: "18px" }}>
+      <Space size="middle" className="d-flex justify-content-center mb18">
+        {flags.map((flag, index) => (
+          <Tooltip title={flag}>
+            <img
+              key={index}
+              className="student-activity-type-icons"
+              src={`/classroom_icons/png/${flag}.png`}
+              alt={flag}
+              style={{ width: 20, height: 20 }}
+            />
+          </Tooltip>
+        ))}
+      </Space>
+      {/* <Space size="middle" style={{ marginBottom: "18px" }}>
         <Tooltip title="Walnuts, pollen">
           <AlertOutlined style={{ color: "#faad14", fontSize: "20px" }} />
         </Tooltip>
@@ -63,7 +75,7 @@ const StudentProfileCardv1 = () => {
         <Tooltip title="No Photo Permission">
           <StopOutlined style={{ color: "#ff4d4f", fontSize: "20px" }} />
         </Tooltip>
-      </Space>
+      </Space> */}
       <div
         style={{
           background: "linear-gradient(90deg, #5978F7 0%, #9C84FF 100%)", // Use a string for linear-gradient
@@ -72,9 +84,34 @@ const StudentProfileCardv1 = () => {
           padding: "12px 32px",
           display: "flex",
           justifyContent: "space-around",
+          alignItems: "center",
         }}
       >
         <Tooltip title="Attendance">
+          <Link to={`/staff-attendance/${1}`}>
+            <Avatar src="/wow_icons/png/Attendance.png" />
+          </Link>
+        </Tooltip>
+        <Tooltip title="Activities">
+          <img
+            src="/wow_icons/png/Activities.png"
+            style={{ width: 24, height: 24 }}
+          />
+        </Tooltip>
+        <Tooltip title="Communication">
+          <img
+            src="/wow_icons/png/message.png"
+            style={{ width: 24, height: 24 }}
+          />
+          {/* <MessageOutlined style={{ color: "white", fontSize: "24px" }} /> */}
+        </Tooltip>
+        <Tooltip title="Billing">
+          <img
+            src="/wow_icons/png/Billing.png"
+            style={{ width: 24, height: 24 }}
+          />
+        </Tooltip>
+        {/* <Tooltip title="Attendance">
           <Link to={`/staff-attendance/${1}`}>
             <CalendarOutlined style={{ color: "white", fontSize: "24px" }} />
           </Link>
@@ -87,7 +124,7 @@ const StudentProfileCardv1 = () => {
         </Tooltip>
         <Tooltip title="Billing">
           <DollarOutlined style={{ color: "white", fontSize: "24px" }} />
-        </Tooltip>
+        </Tooltip> */}
       </div>
     </Card>
   );

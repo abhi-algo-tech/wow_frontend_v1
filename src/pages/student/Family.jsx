@@ -52,10 +52,12 @@ function Family() {
       <div className="padding16">
         <div className=" text-end mb-4 ">
           <MailOutlined className="mx-4" />
-          <ButtonComponent text="Add Parent" 
+          <ButtonComponent
+            text="Add Parent"
             gradient={true}
             buttonActionType="create"
-            onClick={() => setCreateParentModalOpen(true)} />
+            onClick={() => setCreateParentModalOpen(true)}
+          />
         </div>
         <Row gutter={16}>
           <Col xs={24} md={12}>
@@ -68,7 +70,7 @@ function Family() {
             >
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <Space>
-                  <Avatar src="https://via.placeholder.com/64" size={52} />
+                  <Avatar src="/wow_images/Andrew-Fenwick.png" size={52} />
                   <Text className="student-about-tab-label-value">
                     Sanjal Fenwick
                   </Text>
@@ -137,7 +139,7 @@ function Family() {
             >
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <Space>
-                  <Avatar src="https://via.placeholder.com/64" size={52} />
+                  <Avatar src="/wow_images/Emma-Fenwick.png" size={52} />
                   <Text className="student-about-tab-label-value">
                     Shane Fenwick
                   </Text>
@@ -209,7 +211,6 @@ function Family() {
             classroomId={null}
             closeModal={() => setCreateParentModalOpen(false)}
           />
-        
         </CommonModalComponent>
       )}
     </>

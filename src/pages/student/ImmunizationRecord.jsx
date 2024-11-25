@@ -12,6 +12,7 @@ const columns = [
     dataIndex: "vaccine",
     key: "vaccine",
     align: "start",
+    fixed: "left",
     render: (vaccine) => <strong>{vaccine}</strong>, // Highlight vaccine name
   },
   ...Array.from({ length: 6 }, (_, i) => ({
@@ -35,6 +36,7 @@ const columns = [
     title: "Notes",
     key: "notes",
     align: "start",
+    fixed: "right",
     render: () => (
       <Space>
         <Button type="text" icon={<PlusOutlined />} />
@@ -92,31 +94,38 @@ const data = [
 ];
 
 const ImmunizationRecord = () => {
-  const [isCreateImmunizationRecordModalOpen, setCreateImmunizationRecordModalOpen] = useState(false);
+  const [
+    isCreateImmunizationRecordModalOpen,
+    setCreateImmunizationRecordModalOpen,
+  ] = useState(false);
   return (
     <>
-    <div style={{ padding: "16px" }}>
-      <div
-        className="d-flex justify-content-between align-items-center mb-3"
-        style={{ gap: "12px" }}
-      >
-        <div className="align-content-center">
-          <Switch className="mr10" />
-          <Text>Exempt student from all immunizations</Text>
+      <div style={{ padding: "16px" }}>
+        <div
+          className="d-flex justify-content-between align-items-center mb-3"
+          style={{ gap: "12px" }}
+        >
+          <div className="align-content-center">
+            <Switch className="mr10" />
+            <Text>Exempt student from all immunizations</Text>
+          </div>
+          <div>
+            <ButtonComponent
+              text="Send Reminder"
+              gradient={true}
+              onClick={() => setCreateImmunizationRecordModalOpen(true)}
+            />
+          </div>
         </div>
-        <div>
-          <ButtonComponent text="Send Reminder" gradient={true} onClick={() => setCreateImmunizationRecordModalOpen(true)}/>
-        </div>
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={false}
+          size="small"
+          scroll={{ x: 1200 }} // Ensure responsiveness
+        />
       </div>
-      <Table
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-        size="small"
-        scroll={{ x: 1200 }} // Ensure responsiveness
-      />
-    </div>
-    {isCreateImmunizationRecordModalOpen && (
+      {isCreateImmunizationRecordModalOpen && (
         <CommonModalComponent
           open={isCreateImmunizationRecordModalOpen}
           setOpen={setCreateImmunizationRecordModalOpen}
@@ -129,7 +138,6 @@ const ImmunizationRecord = () => {
             classroomId={null}
             closeModal={() => setCreateImmunizationRecordModalOpen(false)}
           />
-        
         </CommonModalComponent>
       )}
     </>

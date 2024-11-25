@@ -51,10 +51,12 @@ function Pickup() {
     <>
       <div className="padding16">
         <div className=" text-end mb-4 ">
-          <ButtonComponent text="Add Pickup" 
-          gradient={true}
-          buttonActionType="create"
-          onClick={() => setCreatePickupModalOpen(true)} />
+          <ButtonComponent
+            text="Add Pickup"
+            gradient={true}
+            buttonActionType="create"
+            onClick={() => setCreatePickupModalOpen(true)}
+          />
         </div>
         <Row gutter={16}>
           <Col xs={24} md={12}>
@@ -67,7 +69,7 @@ function Pickup() {
             >
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <Space>
-                  <Avatar src="https://via.placeholder.com/64" size={52} />
+                  <Avatar src="/wow_images/Andrew-Fenwick.png" size={52} />
                   <Text className="student-about-tab-label-value">
                     Sanjal Fenwick
                   </Text>
@@ -114,7 +116,7 @@ function Pickup() {
             >
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <Space>
-                  <Avatar src="https://via.placeholder.com/64" size={52} />
+                  <Avatar src="/wow_images/Emma-Fenwick.png" size={52} />
                   <Text className="student-about-tab-label-value">
                     Shane Fenwick
                   </Text>
@@ -164,7 +166,6 @@ function Pickup() {
             classroomId={null}
             closeModal={() => setCreatePickupModalOpen(false)}
           />
-        
         </CommonModalComponent>
       )}
     </>
