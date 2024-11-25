@@ -39,10 +39,10 @@ export const useCreateClassroom = () => {
       ClassroomService.createClassroom(classroomData),
     onSuccess: () => {
       queryClient.invalidateQueries(classRoomKeys.classrooms); // Refetch all classrooms
-      message.success("Classroom created successfully!"); // Success message
+      // message.success("Classroom created successfully!"); // Success message
     },
     onError: (error) => {
-      message.error("Error creating classroom!"); // Error message
+      // message.error("Error creating classroom!"); // Error message
       console.error("Error creating classroom:", error);
     },
   });
@@ -62,12 +62,12 @@ export const useUpdateClassroom = () => {
       queryClient.invalidateQueries({
         queryKey: [classRoomKeys.classrooms, classroomId],
       });
-      message.success("Classroom updated successfully!"); // Success message
+      // message.success("Classroom updated successfully!"); // Success message
       queryClient.invalidateQueries({ queryKey: classRoomKeys.classrooms }); // Refresh list after creation
     },
 
     onError: (error) => {
-      message.error("Error update classroom!"); // Error message
+      // message.error("Error update classroom!"); // Error message
       console.error("Error update classroom:", error);
     },
   });
@@ -90,19 +90,19 @@ export const useDeleteClassroom = () => {
 export const useValidateClassroom = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [message, setMessage] = useState(null);
+  const [validationMessage, setValidationMessage] = useState(null);
 
   const validate = async (name, id) => {
     setIsLoading(true);
     setError(null);
-    setMessage(null);
+    setValidationMessage(null);
 
     try {
       const result = await ClassroomService.validateName({
         name: name,
         id: id,
       });
-      setMessage(result.message); // Success message from backend
+      setValidationMessage(result.message); // Success message from backend
     } catch (err) {
       setError(err.message); // Error message from backend
     } finally {
@@ -113,7 +113,7 @@ export const useValidateClassroom = () => {
   return {
     isLoading,
     error,
-    message,
+    validationMessage, // Updated variable name
     validate,
   };
 };

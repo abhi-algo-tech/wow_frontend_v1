@@ -1,5 +1,8 @@
 import { Avatar, Badge, Col, Row, Typography } from "antd";
+import { useState } from "react";
 import { MdOutlineModeEditOutline } from "react-icons/md";
+import ImportantDateForm from "./ImportantDateForm";
+import CommonModalComponent from "../../components/CommonModalComponent";
 
 const { Text } = Typography;
 
@@ -12,6 +15,7 @@ const LabelCol = ({ children }) => (
 const ContentCol = ({ children }) => <Col span={15}>{children}</Col>;
 
 function ImportantDates() {
+  const [isCreateImportantDatesModalOpen, setCreateImportantDatesModalOpen] = useState(false);
   return (
     <>
       <div className="padding30 important-dates-page">
@@ -26,7 +30,7 @@ function ImportantDates() {
           }}
         >
           <Badge className="pointer about-floating-edit-div">
-            <Avatar shape="square" icon={<MdOutlineModeEditOutline />} />
+            <Avatar shape="square" icon={<MdOutlineModeEditOutline />} onClick={() => setCreateImportantDatesModalOpen(true)}/>
           </Badge>
         </div>
         <Row gutter={[0, 10]}>
@@ -55,6 +59,22 @@ function ImportantDates() {
           </ContentCol>
         </Row>
       </div>
+      {isCreateImportantDatesModalOpen && (
+        <CommonModalComponent
+          open={isCreateImportantDatesModalOpen}
+          setOpen={setCreateImportantDatesModalOpen}
+          modalWidthSize={418}
+          modalHeightSize={547}
+          isClosable={true}
+        >
+          <ImportantDateForm
+            CardTitle={"Edit Important Dates"}
+            classroomId={null}
+            closeModal={() => setCreateImportantDatesModalOpen(false)}
+          />
+        
+        </CommonModalComponent>
+      )}
     </>
   );
 }

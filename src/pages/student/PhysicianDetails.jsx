@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import TableComponent from "../../components/TableComponent";
 import { Button, Dropdown } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent";
+import CommonModalComponent from "../../components/CommonModalComponent";
+import PhysicianForm from "./PhysicianForm";
 
 const columns = [
   {
@@ -87,13 +89,32 @@ const data = [
 ];
 
 function PhysicianDetails() {
+  const [isCreatePhysicianDetailsModalOpen, setCreatePhysicianDetailsModalOpen] = useState(false);
   return (
+    <>
     <div className="padding16">
       <div className=" text-end mb-4 ">
-        <ButtonComponent text="Add Physician" buttonActionType="create" />
+        <ButtonComponent text="Add Physician" buttonActionType="create" onClick={() => setCreatePhysicianDetailsModalOpen(true)}/>
       </div>
       <TableComponent columns={columns} dataSource={data} />
     </div>
+    {isCreatePhysicianDetailsModalOpen && (
+        <CommonModalComponent
+          open={isCreatePhysicianDetailsModalOpen}
+          setOpen={setCreatePhysicianDetailsModalOpen}
+          modalWidthSize={418}
+          modalHeightSize={547}
+          isClosable={true}
+        >
+          <PhysicianForm
+            CardTitle={"Add Physician"}
+            classroomId={null}
+            closeModal={() => setCreatePhysicianDetailsModalOpen(false)}
+          />
+        
+        </CommonModalComponent>
+      )}
+    </>
   );
 }
 
