@@ -4,7 +4,7 @@ const routesConfig = {
   "/classroom": "Classroom",
   "/student": "Students",
   "/staffs": "Staffs",
-  "/classroom-profile": "Classroom Profile",
+  "/classroom-profile": "Classroom > Overview > 1-Blue-D",
   "/student-profile": "Students > Lex Fenwick",
   "/students": "Students",
   "/students/create": "Create Student",
