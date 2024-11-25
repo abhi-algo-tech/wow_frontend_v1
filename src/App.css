@@ -685,17 +685,17 @@ img.logo {
   background: var(--color-primary);
 }
 
-.add-btn- {
+/* .add-btn- {
   border: solid 1px var(--color-primary);
   background-color: var(--color-white);
-}
+} */
 
-.ant-btn,
+/* .ant-btn,
 .add-btn-:hover {
   border: solid 1px var(--color-primary) !important;
   background-color: var(--color-white) !important;
   color: var(--color-primary) !important;
-}
+} */
 
 /* User profile  end*/
 

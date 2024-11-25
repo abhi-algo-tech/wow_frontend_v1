@@ -36,7 +36,13 @@ const ButtonComponent = ({
     : { backgroundColor: color };
   const paddingStyle = { padding: padding };
   const marginStyle = { margin: margin };
-  const combinedStyle = { ...buttonStyle, ...paddingStyle, ...marginStyle };
+  const border = { border: "none !important" };
+  const combinedStyle = {
+    ...buttonStyle,
+    ...paddingStyle,
+    ...marginStyle,
+    // ...border,
+  };
 
   return (
     <Button

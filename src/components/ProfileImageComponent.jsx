@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Image, Upload } from "antd";
-import { EyeOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -10,7 +10,10 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-const ProfileImageComponent = ({ fileList: initialFileList = [], onChange }) => {
+const ProfileImageComponent = ({
+  fileList: initialFileList = [],
+  onChange,
+}) => {
   const [fileList, setFileList] = useState([]);
   const [previewImage, setPreviewImage] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -34,7 +37,7 @@ const ProfileImageComponent = ({ fileList: initialFileList = [], onChange }) => 
       file.preview = await getBase64(file.originFileObj);
     }
     setPreviewImage(file.url || file.preview);
-    setPreviewOpen(true);
+    setPreviewOpen(false);
   };
 
   const handleChange = ({ fileList: newFileList }) => {
@@ -51,17 +54,8 @@ const ProfileImageComponent = ({ fileList: initialFileList = [], onChange }) => 
         onChange={handleChange}
         beforeUpload={() => false} // Disable automatic upload
         showUploadList={{
-          showPreviewIcon: true,
+          showPreviewIcon: false, // Disable the preview icon
           showRemoveIcon: true,
-          previewIcon: (
-            <EyeOutlined
-              style={{
-                color: "blue",
-                fontSize: "16px",
-                cursor: "pointer",
-              }}
-            />
-          ),
           removeIcon: (
             <DeleteOutlined
               style={{
