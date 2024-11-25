@@ -10,10 +10,14 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
+<<<<<<< HEAD
 const ProfileImageComponent = ({
   fileList: initialFileList = [],
   onChange,
 }) => {
+=======
+const ProfileImageComponent = ({ fileList: initialFileList = [], onChange, setIsProfile }) => {
+>>>>>>> 0a43047328a2f6e09a1f45181f1a830933a05d7f
   const [fileList, setFileList] = useState([]);
   const [previewImage, setPreviewImage] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -45,6 +49,10 @@ const ProfileImageComponent = ({
     if (onChange) onChange(newFileList);
   };
 
+  const handleRemove = (file) => {
+    setIsProfile(true);
+  };
+
   return (
     <>
       <Upload
@@ -52,6 +60,7 @@ const ProfileImageComponent = ({
         fileList={fileList}
         onPreview={handlePreview}
         onChange={handleChange}
+        onRemove={handleRemove}
         beforeUpload={() => false} // Disable automatic upload
         showUploadList={{
           showPreviewIcon: false, // Disable the preview icon
