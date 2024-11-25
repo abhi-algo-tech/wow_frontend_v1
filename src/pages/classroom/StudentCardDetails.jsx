@@ -162,20 +162,23 @@ export default function StudentCardDetails() {
             <Option value="select-student">Select Status</Option>
           </Select>
         </div>
-        <div>
-          <Button
-            variant="link"
-            style={{ backgroundColor: "#b1afe919", border: "none" }}
-            className="rounded custom-clear-button d-flex align-items-center gap-1"
-          >
-            <span className="clear-text">Clear</span>
-            <img
-              src="/classroom_icons/png/close.png"
-              alt="Close icon"
-              style={{ width: "8.3px", height: "8.3px" }}
-            />
-          </Button>
-        </div>
+        {selectedStudents.length >= 1 && (
+          <div>
+            <Button
+              variant="link"
+              onClick={handleSelectAll}
+              style={{ backgroundColor: "#b1afe919", border: "none" }}
+              className="rounded custom-clear-button d-flex align-items-center gap-1"
+            >
+              <span className="clear-text">Clear</span>
+              <img
+                src="/classroom_icons/png/close.png"
+                alt="Close icon"
+                style={{ width: "8.3px", height: "8.3px" }}
+              />
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="row mt16">
