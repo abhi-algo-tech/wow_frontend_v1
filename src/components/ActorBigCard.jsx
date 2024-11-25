@@ -9,7 +9,7 @@ function ActorBigCard({
 }) {
   return (
     <Card
-      className={`text-center position-relative classroom-student-profile-card ${
+      className={`text-center position-relative classroom-student-profile-card  mb15 ${
         actor.status === "absent" ? "opacity-50" : ""
       }`}
     >
