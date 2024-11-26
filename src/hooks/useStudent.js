@@ -4,6 +4,7 @@ import StudentService from "../services/studentService";
 import { studentKeys } from "../utils/queryKeys";
 import { message } from "antd";
 import { useState } from "react";
+import { CustomMessage } from "../utils/CustomMessage";
 
 // Fetch all students
 export const useGetAllStudents = () => {
@@ -38,10 +39,10 @@ export const useCreateStudent = () => {
     mutationFn: (studentData) => StudentService.createStudent(studentData),
     onSuccess: () => {
       queryClient.invalidateQueries(studentKeys.students); // Refetch all students
-      message.success("Student created successfully!"); // Success message
+      CustomMessage.success("Student created successfully!"); // Success message
     },
     onError: (error) => {
-      message.error("Error creating student!"); // Error message
+      CustomMessage.error("Error creating student!"); // Error message
       console.error("Error creating student:", error);
     },
   });
@@ -79,10 +80,10 @@ export const useDeleteStudent = () => {
     mutationFn: StudentService.deleteStudent,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentKeys.students });
-      message.success("Student deleted successfully!"); // Success message
+      CustomMessage.success("Student deleted successfully!"); // Success message
     },
     onError: (error) => {
-      message.error("Error deleting student!"); // Error message
+      CustomMessage.error("Error deleting student!"); // Error message
       console.error("Error deleting student:", error);
     },
   });

@@ -27,6 +27,7 @@ import {
 import CommonModalComponent from "../../components/CommonModalComponent";
 import CreateClassroom from "./CreateClassroom";
 import DeletePopUp from "../../components/DeletePopUp";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 function ClassroomOverviewTable() {
   const [selectedClassroom, setSelectedClassroom] = useState("all");
@@ -64,7 +65,7 @@ function ClassroomOverviewTable() {
     }
 
     if (isError) {
-      message.error("Failed to load classrooms. Please try again later.");
+      CustomMessage.error("Failed to load classrooms. Please try again later.");
       console.error("Error fetching classrooms:", error);
     }
   }, [classroomData, isError, error]);
@@ -113,9 +114,9 @@ function ClassroomOverviewTable() {
           { onSuccess: resolve, onError: reject }
         );
       });
-      message.success("Classroom deleted successfully!");
+      CustomMessage.success("Classroom deleted successfully!");
     } catch (error) {
-      message.error(`Failed to delete classroom: ${error.message}`);
+      CustomMessage.error(`Failed to delete classroom: ${error.message}`);
     } finally {
       setDeleteModalOpen(false); // Close the modal after operation (success or failure)
     }

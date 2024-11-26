@@ -7,6 +7,7 @@ import {
   useUpdateStudent,
 } from "../../hooks/useStudent";
 import { useGetAllClassrooms } from "../../hooks/useClassroom";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Option } = Select;
 
@@ -38,7 +39,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
     const { firstName, lastName, classroom } = values;
 
     if (!firstName || !lastName || classroom === "select") {
-      message.error("All fields are required!");
+      CustomMessage.error("All fields are required!");
       return;
     }
 
@@ -55,11 +56,11 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
         },
         {
           onSuccess: () => {
-            message.success("Student updated successfully!");
+            CustomMessage.success("Student updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            message.error(`Failed to update student: ${error.message}`);
+            CustomMessage.error(`Failed to update student: ${error.message}`);
           },
         }
       );
@@ -70,7 +71,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
           closeModal();
         },
         onError: (error) => {
-          message.error(`Failed to create student: ${error.message}`);
+          CustomMessage.error(`Failed to create student: ${error.message}`);
         },
       });
     }
