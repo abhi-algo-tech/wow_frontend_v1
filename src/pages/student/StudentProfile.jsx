@@ -19,8 +19,8 @@ export default function StudentProfile() {
     1: <StudentProfileTab />,
     2: <StudentHealthTab />,
     3: <ImportantDates />,
-    4: <Schedule />,
-    5: <Document />,
+    // 4: <Schedule />,
+    4: <Document />,
   };
 
   // Tab items configuration
@@ -28,8 +28,8 @@ export default function StudentProfile() {
     { key: "1", label: "Overview" },
     { key: "2", label: "Health" },
     { key: "3", label: "Important Dates" },
-    { key: "4", label: "Schedule" },
-    { key: "5", label: "Document" },
+    // { key: "4", label: "Schedule" },
+    { key: "4", label: "Document" },
   ].map(({ key, label }) => ({
     key,
     label: <span className="text-left classroom-headertab-text">{label}</span>,

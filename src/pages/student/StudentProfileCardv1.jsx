@@ -107,8 +107,8 @@ const StudentProfileCardv1 = () => {
         </Tooltip>
         <Tooltip title="Billing">
           <img
-            src="/wow_icons/png/Billing.png"
-            style={{ width: 24, height: 24 }}
+            src="/wow_icons/png/Billing-profile.png"
+            style={{ width: 20, height: 24 }}
           />
         </Tooltip>
         {/* <Tooltip title="Attendance">

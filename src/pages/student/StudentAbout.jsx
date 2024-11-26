@@ -58,7 +58,7 @@ const StudentAbout = () => {
           onClick={() => console.log("Edit button clicked")} // Replace with your handler
         /> */}
       </div>
-      <Row gutter={[0, 10]}>
+      <Row gutter={[0, 14]}>
         <LabelCol>Name</LabelCol>
         <ContentCol>
           <Text className="student-about-tab-label-value">Lex Fenwick</Text>

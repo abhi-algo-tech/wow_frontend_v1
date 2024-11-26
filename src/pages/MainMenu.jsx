@@ -23,7 +23,7 @@ function MainMenu() {
     {
       key: "students",
       icon: <img src="/wow_icons/png/Students.png" width={22} height={22} />,
-      label: <Link to="/student">Student</Link>,
+      label: <Link to="/student">Students</Link>,
     },
     {
       key: "staff",
@@ -128,7 +128,7 @@ function MainMenu() {
     },
     {
       key: "scheduling",
-      icon: <img src="/wow_icons/png/Dashboard.png" width={22} height={22} />,
+      icon: <img src="/wow_icons/png/Scheduling.png" width={22} height={22} />,
       label: "Scheduling",
       children: [
         {

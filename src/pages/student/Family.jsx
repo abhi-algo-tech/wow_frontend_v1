@@ -51,7 +51,7 @@ function Family() {
     <>
       <div className="padding16">
         <div className=" text-end mb-4 ">
-          <MailOutlined className="mx-4" />
+          {/* <MailOutlined className="mx-4" /> */}
           <ButtonComponent
             text="Add Parent"
             gradient={true}
