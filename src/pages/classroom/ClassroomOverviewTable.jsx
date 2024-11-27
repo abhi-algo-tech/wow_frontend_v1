@@ -382,6 +382,7 @@ function ClassroomOverviewTable() {
             deleteData={selectedRecord}
             CardTitle="Delete Classroom"
             handleDelete={handleDelete} // Pass the updated handleDelete function
+            module="Classroom"
           />
         </CommonModalComponent>
       )}

@@ -17,7 +17,7 @@ const Staff = () => {
       <Row align="middle">
         <Col>
           <Card
-            style={{ height: 77, width: 419 }}
+            style={{ width: 419 }}
             bordered={true}
             className="shadow-sm classroom-overview-detail-custom-card"
           >

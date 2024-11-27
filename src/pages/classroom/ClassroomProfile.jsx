@@ -182,7 +182,7 @@ function ClassroomProfile() {
                     upcomingStudents={1}
                     totalStudents={9}
                     strokeLinecap="round"
-                    activeColor={"#97F294C7"}
+                    activeColor={"#abdb91"}
                     inActiveColor={"#F06F6FC9"}
                   />
                 </div>
@@ -216,7 +216,7 @@ function ClassroomProfile() {
                     upcomingStudents={1}
                     totalStudents={3}
                     strokeLinecap="round"
-                    activeColor={"#97F294C7"}
+                    activeColor={"#abdb91"}
                     inActiveColor={"#F06F6FC9"}
                   />
                   {/* <Progress

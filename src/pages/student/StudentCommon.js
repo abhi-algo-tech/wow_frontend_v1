@@ -108,7 +108,7 @@ function getRandomSubset(array, min, max) {
 }
 
 // Function to generate schedule
-function generateSchedule() {
+export function generateSchedule() {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
   const active = getRandomSubset(days, 3, 5); // Select between 3 and 5 active days
   return {

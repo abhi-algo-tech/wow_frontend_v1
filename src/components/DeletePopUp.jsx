@@ -1,6 +1,12 @@
 import ButtonComponent from "./ButtonComponent";
 
-function DeletePopUp({ setCancel, deleteData, CardTitle, handleDelete }) {
+function DeletePopUp({
+  setCancel,
+  deleteData,
+  CardTitle,
+  handleDelete,
+  module = "",
+}) {
   const handleCancelClick = () => {
     setCancel(false);
   };
@@ -31,7 +37,7 @@ function DeletePopUp({ setCancel, deleteData, CardTitle, handleDelete }) {
           />
           <div>
             <h5 className="delete-modal-title">
-              Do you want to delete this classroom- “{deleteData?.name}”?
+              Do you want to delete this {module}- “{deleteData?.name}”?
             </h5>
             {/* <p className="delete-modal-description">
             Please remove the assigned students and staff in this classroom

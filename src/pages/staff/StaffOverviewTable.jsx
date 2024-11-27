@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import {
   Input,
-  Button,
   Checkbox,
   Tag,
   Avatar,
   Dropdown,
   Card,
-  Space,
+  Typography,
+  Popover,
+  Tooltip,
 } from "antd";
 import {
   SearchOutlined,
@@ -22,89 +23,40 @@ import ButtonComponent from "../../components/ButtonComponent";
 import CreateStaff from "./CreateStaff";
 import { IoIosMore } from "react-icons/io";
 import { Link } from "react-router-dom";
+import { getInitialsTitle } from "../../services/common";
+
+const { Text } = Typography;
 
 const staffData = [
   {
     key: "1",
     name: "Aparna Biwalkar",
     avatar: "/placeholder.svg?height=40&width=40",
-    classroom: "Office",
-    plusCount: 3,
+    primaryClass: "1-Blue-D",
+    subClassroomCount: 3,
+    subClass: [
+      { id: 1, class: "1-Pink-E" },
+      { id: 2, class: "2-Pink-G" },
+      { id: 3, class: "1-Red-D" },
+    ],
     designation: "Admin",
+    schedule: {
+      Mon: {
+        workHours: "7:30 AM -5:30 PM",
+        breakTime: "12:30 PM -1:00 PM",
+      },
+      Tue: null,
+      Wed: {
+        workHours: "7:30 AM -5:30 PM",
+        breakTime: "12:30 PM -1:00 PM",
+      },
+      Thu: null,
+      Fri: {
+        workHours: "7:30 AM -5:30 PM",
+        breakTime: "12:30 PM -1:00 PM",
+      },
+    },
     email: "aparna12345@wiseowl.academy",
-    phone: "(986) 027-1627",
-    isOnline: true,
-  },
-  {
-    key: "2",
-    name: "Chaitanya Bhave",
-    avatar: "/placeholder.svg?height=40&width=40",
-    classroom: "Office",
-    plusCount: 1,
-    designation: "Admin",
-    email: "chaitanyabhave124@wiseowl.academy",
-    phone: "(986) 027-1627",
-    isOnline: true,
-  },
-  {
-    key: "3",
-    name: "Riken Mehta",
-    avatar: "/placeholder.svg?height=40&width=40",
-    classroom: "Office",
-    designation: "Admin",
-    email: "riken12@wiseowl.academy",
-    phone: "(986) 027-1627",
-    isOnline: true,
-  },
-  {
-    key: "4",
-    name: "Satya Vani Kanumuri",
-    avatar: "/placeholder.svg?height=40&width=40",
-    classroom: "Office",
-    designation: "Admin",
-    email: "satya17@wiseowl.academy",
-    phone: "(986) 027-1627",
-    isOnline: true,
-  },
-  {
-    key: "5",
-    name: "Spandana Marri",
-    avatar: "/placeholder.svg?height=40&width=40",
-    classroom: "Office",
-    plusCount: 1,
-    designation: "Admin",
-    email: "spandana16@wiseowl.academy",
-    phone: "(986) 027-1627",
-    isOnline: true,
-  },
-  {
-    key: "6",
-    name: "Suhas Biwalkar Admin",
-    avatar: "/placeholder.svg?height=40&width=40",
-    classroom: "Office",
-    plusCount: 2,
-    designation: "Admin",
-    email: "suhas13@wiseowl.academy",
-    phone: "(986) 027-1627",
-    isOnline: true,
-  },
-  {
-    key: "7",
-    name: "Swara Joshi",
-    avatar: "/placeholder.svg?height=40&width=40",
-    classroom: "Office",
-    designation: "Admin",
-    email: "swara43@wiseowl.academy",
-    phone: "(986) 027-1627",
-    isOnline: true,
-  },
-  {
-    key: "8",
-    name: "Shubham Naik",
-    avatar: "/placeholder.svg?height=40&width=40",
-    classroom: "Office",
-    designation: "Admin",
-    email: "shubham86@wiseowl.academy",
     phone: "(986) 027-1627",
     isOnline: true,
   },
@@ -117,28 +69,18 @@ const StaffOverviewTable = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState({});
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [hoveredRow, setHoveredRow] = useState(null);
 
   const handleSelectAll = (checked) => {
-    if (checked) {
-      // Select all row keys
-      const allRowKeys = staffData.map((item) => item.key);
-      setSelectedRowKeys(allRowKeys);
-    } else {
-      // Deselect all row keys
-      setSelectedRowKeys([]);
-    }
+    setSelectedRowKeys(checked ? staffData.map((item) => item.key) : []);
   };
 
   const handleRowSelection = (key, checked) => {
-    if (checked) {
-      // Add the key to the selected keys
-      setSelectedRowKeys([...selectedRowKeys, key]);
-    } else {
-      // Remove the key from the selected keys
-      setSelectedRowKeys(
-        selectedRowKeys.filter((selectedKey) => selectedKey !== key)
-      );
-    }
+    setSelectedRowKeys((prev) =>
+      checked
+        ? [...prev, key]
+        : prev.filter((selectedKey) => selectedKey !== key)
+    );
   };
 
   const handleDeleteModal = (id, name) => {
@@ -151,19 +93,45 @@ const StaffOverviewTable = () => {
     setDeleteModalOpen(false);
   };
 
+  const getTooltipContent = (day, times) => {
+    if (!times) return null;
+    const dayName =
+      day === "Mon"
+        ? "Monday"
+        : day === "Tue"
+        ? "Tuesday"
+        : day === "Wed"
+        ? "Wednesday"
+        : day === "Thu"
+        ? "Thursday"
+        : "Friday";
+    return (
+      <div
+        style={{
+          color: "#ffffff",
+          padding: "12px",
+          fontSize: "14px",
+          lineHeight: "1.6",
+        }}
+      >
+        <div className="schedule-tool-label">{dayName}</div>
+        <div className="schedule-tool-sub-label">W- {times.workHours}</div>
+        <div className="schedule-tool-sub-label">B- {times.breakTime}</div>
+      </div>
+    );
+  };
+
   const columns = [
     {
       title: (
-        <div className="d-flex align-items-center">
+        <div style={{ display: "flex", alignItems: "center" }}>
           <Checkbox
             indeterminate={
               selectedRowKeys.length > 0 &&
               selectedRowKeys.length < staffData.length
             }
             checked={selectedRowKeys.length === staffData.length}
-            onChange={(e) => {
-              handleSelectAll(e.target.checked);
-            }}
+            onChange={(e) => handleSelectAll(e.target.checked)}
           />
           <span style={{ marginLeft: 8 }}>Staff Name</span>
         </div>
@@ -171,23 +139,21 @@ const StaffOverviewTable = () => {
       dataIndex: "name",
       key: "name",
       render: (text, record) => (
-        <div className="d-flex align-items-center">
+        <div style={{ display: "flex", alignItems: "center" }}>
           <Checkbox
             checked={selectedRowKeys.includes(record.key)}
-            onChange={(e) => {
-              handleRowSelection(record.key, e.target.checked);
-            }}
+            onChange={(e) => handleRowSelection(record.key, e.target.checked)}
           />
           <div style={{ position: "relative", marginLeft: 8 }}>
-            <Avatar src={record.avatar} />
+            <Avatar size={24}>{getInitialsTitle(text)}</Avatar>
             {record.isOnline && (
               <div
                 style={{
                   position: "absolute",
-                  top: 0,
-                  right: 0,
-                  width: 8,
-                  height: 8,
+                  top: -3,
+                  right: -1,
+                  width: 10,
+                  height: 10,
                   backgroundColor: "#52c41a",
                   borderRadius: "50%",
                   border: "2px solid white",
@@ -195,23 +161,35 @@ const StaffOverviewTable = () => {
               />
             )}
           </div>
-          <Link to={`/staff-profile/${record.key}`}>
-            <span style={{ marginLeft: 8 }}>{text}</span>
+          <Link to={`/staff-profile/${record.key}`} style={{ marginLeft: 8 }}>
+            {text}
           </Link>
         </div>
       ),
     },
-
     {
       title: "Classroom",
-      dataIndex: "classroom",
-      key: "classroom",
+      dataIndex: "primaryClass",
+      key: "primaryClass",
       align: "start",
       render: (text, record) => (
-        <>
-          <Tag color="purple">{text}</Tag>
-          {record.plusCount && <Tag color="success">+{record.plusCount}</Tag>}
-        </>
+        <div>
+          <Avatar size={24}>{getInitialsTitle(text)}</Avatar>
+
+          <span className="ml9 staff-table--body-label">{text}</span>
+          {record.subClass && (
+            <Popover
+              color="#d9ffcb66"
+              content={record.subClass.map((item) => (
+                <div className="plus-number-count-label" key={item.id}>
+                  {item.class}
+                </div>
+              ))}
+            >
+              <Tag className="no-border-tag plus-number-count">{`+${record.subClassroomCount}`}</Tag>
+            </Popover>
+          )}
+        </div>
       ),
     },
     {
@@ -219,12 +197,32 @@ const StaffOverviewTable = () => {
       dataIndex: "designation",
       key: "designation",
       align: "start",
+      render: (text, _) => (
+        <span className="staff-table--body-label">{text}</span>
+      ),
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
+      title: "Schedule",
+      dataIndex: "schedule",
+      key: "schedule",
       align: "start",
+      render: (schedule) =>
+        ["Mon", "Tue", "Wed", "Thu", "Fri"].map((day) => (
+          <Tooltip
+            color="#F3F2FF"
+            key={day}
+            title={getTooltipContent(day, schedule[day])}
+            placement="bottom"
+            className="no-border-tag"
+          >
+            <Tag
+              color={schedule[day] ? "#B1AFE94D" : "default"}
+              style={{ color: "#1B237E" }}
+            >
+              {day}
+            </Tag>
+          </Tooltip>
+        )),
     },
     {
       title: "Phone Number",
@@ -252,9 +250,8 @@ const StaffOverviewTable = () => {
               },
             ],
           }}
-          trigger={["click"]}
         >
-          <IoIosMore className="pointer" />
+          <IoIosMore />
         </Dropdown>
       ),
     },

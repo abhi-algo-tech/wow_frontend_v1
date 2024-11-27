@@ -52,7 +52,9 @@ const StudentOverviewTable = () => {
     }
 
     if (isError) {
-      CustomMessage.error("Failed to load student details. Please try again later.");
+      CustomMessage.error(
+        "Failed to load student details. Please try again later."
+      );
       console.error("Error fetching student details:", error);
     }
   }, [students, isError, error]);
@@ -501,6 +503,7 @@ const StudentOverviewTable = () => {
             deleteData={selectedRecord}
             CardTitle="Delete Student"
             handleDelete={handleDelete} // Pass the updated handleDelete function
+            module="Student"
           />
         </CommonModalComponent>
       )}

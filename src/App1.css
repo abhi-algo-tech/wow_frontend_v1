@@ -1043,11 +1043,11 @@
   border-bottom: none !important;
 }
 .ant-tooltip .ant-tooltip-inner {
-  background-color: #41414ecc !important;
+  background-color: #41414ecc;
 }
 
 .ant-tooltip {
-  --antd-arrow-background-color: #41414ecc !important;
+  --antd-arrow-background-color: #41414ecc;
 }
 
 .ant-tag {
@@ -1056,4 +1056,52 @@
 
 .ant-upload-list-item::before {
   display: none !important;
+}
+
+.staff-schedule .ant-tooltip-content {
+  border-radius: 8px;
+  background-color: #e8e7f8 !important;
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.15);
+}
+
+.schedule-tool-label {
+  color: #573353;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin-bottom: 12px;
+}
+
+.schedule-tool-sub-label {
+  color: #573353;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.no-border-tag {
+  border: none !important;
+}
+.plus-number-count {
+  background-color: #d9ffcb66;
+  color: #1b237e;
+  margin-left: 12px;
+  opacity: 1;
+}
+
+.plus-number-count-label {
+  margin-bottom: 12px; /* Add space between items */
+}
+
+.plus-number-count-label:last-child {
+  margin-bottom: 0; /* Remove margin for the last item */
+}
+
+.staff-table--body-label {
+  color: var(--font-colour, #573353);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
 }
