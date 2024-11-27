@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Table, Button, Input, Switch, Typography, Dropdown, Menu } from "antd";
 import {
   FileImageOutlined,
@@ -6,6 +6,8 @@ import {
   EllipsisOutlined,
 } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent";
+import CommonModalComponent from "../../components/CommonModalComponent";
+import DocumentForm from "./DocumentForm";
 const { Text } = Typography;
 const columns = [
   {
@@ -93,7 +95,9 @@ const data = [
 ];
 
 const Document = () => {
+  const [isCreateDocumentModalOpen, setCreateDocumentModalOpen] = useState(false);
   return (
+    <>
     <div className="documents-body">
       <div
         className="d-flex justify-content-between align-items-center mb-3"
@@ -108,6 +112,7 @@ const Document = () => {
             text="Add Document"
             buttonActionType="create"
             gradient={true}
+            onClick={() => setCreateDocumentModalOpen(true)}
           />
         </div>
       </div>
@@ -117,7 +122,24 @@ const Document = () => {
         pagination={false}
         size="small"
       />
-    </div>
+      </div>
+      {isCreateDocumentModalOpen && (
+        <CommonModalComponent
+          open={isCreateDocumentModalOpen}
+          setOpen={setCreateDocumentModalOpen}
+          modalWidthSize={418}
+          modalHeightSize={547}
+          isClosable={true}
+        >
+          <DocumentForm
+            CardTitle={"Add Document"}
+            classroomId={null}
+            closeModal={() => setCreateDocumentModalOpen(false)}
+          />
+        
+        </CommonModalComponent>
+      )}
+      </>
   );
 };
 

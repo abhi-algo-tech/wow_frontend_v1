@@ -1,0 +1,31 @@
+.custom-upload-button {
+    height: 40px;
+    width: 100%;
+    color: var(--font-colour, #573353);
+    font-family: Manrope;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    opacity: 0.5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    /* Add gap between text and icon */
+}
+
+.ant-upload.ant-upload-select {
+    width: 100%;
+}
+
+.file-name {
+    font-size: 14px;
+    color: #555;
+    flex-grow: 1;
+}
+
+.delete-button {
+    color: red;
+    cursor: pointer;
+}

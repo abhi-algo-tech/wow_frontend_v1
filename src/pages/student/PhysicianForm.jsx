@@ -2,6 +2,7 @@ import { Form, Input, message, Select, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
 import { useCreateStudent, useStudentById, useUpdateStudent } from "../../hooks/useStudent";
+import TextArea from "antd/es/input/TextArea";
 
 const { Option } = Select;
 
@@ -159,7 +160,7 @@ function PhysicianForm({ CardTitle, studentId, closeModal }) {
               <Form.Item
                 name="address"
               >
-                <Input placeholder="Enter Address" className="w-100 student-form-input" />
+                <TextArea placeholder="Enter Address" className="w-100 student-form-input" />
 
               </Form.Item>
            

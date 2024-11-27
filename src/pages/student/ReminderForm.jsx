@@ -1,4 +1,4 @@
-import { Form, Input, message, Select, Switch } from "antd";
+import { Checkbox, Form, Input, message, Select, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
 import { useCreateStudent, useStudentById, useUpdateStudent } from "../../hooks/useStudent";
@@ -89,9 +89,12 @@ function ReminderForm({ CardTitle, studentId, closeModal }) {
           <div className="custom-text">
       Send parents a reminder email that includes all statuses of 
       vaccines on the child’s immunization card.
-    </div>
+            </div>
+            <div className="mt16">
+                <Checkbox><span className=" items-center gap-1 student-label ">Send reminders to staff</span></Checkbox>
+            </div>
               
-            <div className=" items-center gap-1 student-label ">
+            <div className=" items-center gap-1 student-label mt16">
             Select Staff
               {/* <span className="text-danger"> *</span> */}
             </div>
