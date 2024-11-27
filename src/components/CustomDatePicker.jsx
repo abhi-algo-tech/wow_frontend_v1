@@ -17,10 +17,6 @@ const CustomDatePicker = ({ name, required = false, rules = [] }) => {
     <Form.Item
       name={name}
       rules={[
-        {
-          required,
-          message: "Date is required", // Default message without label
-        },
         ...rules, // Allow additional custom validation rules
       ]}
     >

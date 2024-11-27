@@ -158,11 +158,13 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
                 }
               >
                 {!isLoading &&
-                  classroomData?.data?.map((classroom) => (
-                    <Option key={classroom.id} value={classroom.id}>
-                      {classroom.name}
-                    </Option>
-                  ))}
+  classroomData?.data
+    ?.sort((a, b) => a.name.localeCompare(b.name)) // Sort classrooms by name in ascending order
+    .map((classroom) => (
+      <Option key={classroom.id} value={classroom.id}>
+        {classroom.name}
+      </Option>
+    ))}
               </Select>
             </Form.Item>
 
