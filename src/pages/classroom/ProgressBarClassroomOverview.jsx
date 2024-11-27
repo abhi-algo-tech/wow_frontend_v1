@@ -32,6 +32,7 @@ const ProgressBarClassroomOverview = ({
         gradient
           ? `linear-gradient(90deg, ${activeColor}, #9be8ff)`
           : `${activeColor}`} !important;
+      border-radius: 0px;
     }
     .ant-progress-outer {
       border-radius: ${({ rounded }) => (rounded ? "50px" : "0px")} !important;
@@ -45,7 +46,7 @@ const ProgressBarClassroomOverview = ({
         success={{
           percent: activePercent,
         }}
-        trailColor="#e5e7eb"
+        // trailColor="#e5e7eb"
         showInfo={false}
         strokeWidth={strokeWidth}
         strokeLinecap={strokeLinecap}
