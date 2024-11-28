@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Tabs, Row, Col } from "antd";
 
-import StudentProfileCardv1 from "../student/StudentProfileCardv1";
+import ProfileCardv1 from "../student/ProfileCardv1";
 import StaffAbout from "./StaffAbout";
 import StaffDocument from "./StaffDocument";
 import StaffImportantDates from "./StaffImportantDates";
@@ -31,7 +31,7 @@ export default function StaffProfile() {
       <Row className="mt20" gutter={[20, 10]}>
         <Col span={17}>{tabContentComponents[key]}</Col>
         <Col span={7}>
-          <StudentProfileCardv1 />
+          <ProfileCardv1 role="staff" />
           <div className="mt18">{/* <Events /> */}</div>
         </Col>
       </Row>

@@ -6,7 +6,7 @@ import ImportantDates from "./ImportantDates";
 import Schedule from "./Schedule";
 import Document from "./Document";
 import Events from "../classroom/Events";
-import StudentProfileCardv1 from "./StudentProfileCardv1";
+import ProfileCardv1 from "./ProfileCardv1";
 
 export default function StudentProfile() {
   const [activeTab, setActiveTab] = useState("1");
@@ -37,7 +37,7 @@ export default function StudentProfile() {
       <Row className="mt20" gutter={[20, 10]}>
         <Col span={17}>{tabContentComponents[key]}</Col>
         <Col span={7}>
-          <StudentProfileCardv1 />
+          <ProfileCardv1 />
           <div className="mt18">
             <Events />
           </div>

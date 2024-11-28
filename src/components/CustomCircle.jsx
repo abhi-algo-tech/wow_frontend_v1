@@ -1,14 +1,13 @@
 import React from "react";
 
-export default function CustomCircle({ number = 1, color = "#FF7B7B" }) {
+export default function CustomCircle({ number = 1, color = "#FF7B7B", hours }) {
   return (
-    <div
-      className="custom-circle-container"
-      style={{ "--circle-color": color }}
-    >
+    <div style={{ "--circle-color": color }}>
       <div className="custom-circle">
-        <span className="circle-number">{number}</span>
-        <div className="circle-smile"></div>
+        <span className="circle-number" style={{ "--text-color": color }}>
+          {number}
+          {hours && <span style={{ fontSize: 12 }}>h</span>}
+        </span>
       </div>
     </div>
   );

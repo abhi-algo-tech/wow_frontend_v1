@@ -928,35 +928,6 @@ img.logo {
   color: var(--color-secondary) !important;
 }
 
-.custom-scrollbar {
-  overflow: auto !important; /* Allow both vertical and horizontal scrolling */
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px !important; /* Width of the scrollbar */
-  height: 6px !important; /* Height of the scrollbar for horizontal scroll */
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #fea800 !important; /* Color of the scrollbar handle */
-  border-radius: 10px !important; /* Rounded corners for the handle */
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #ffb900 !important; /* Darker color when hovering */
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background-color: #f1f1f1 !important; /* Background of the scrollbar track */
-  border-radius: 10px !important;
-}
-
-/* For Firefox */
-.custom-scrollbar {
-  scrollbar-width: thin !important; /* Makes the scrollbar thin in Firefox */
-  scrollbar-color: #fea800 #f1f1f1 !important; /* Handle color and track color */
-}
-
 .card-title {
   font-size: 14px !important;
   font-weight: var(--font-weight-light) !important;
