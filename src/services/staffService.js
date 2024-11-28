@@ -1,39 +1,67 @@
-import apiClient from "./apiClient";
+// src/services/staffService.js
+import axiosInstance from "../api/axiosInstance";
+import { API_ENDPOINTS } from "../api/endpoints";
 
-// Fetch staff data
-export const fetchStaff = async () => {
-  const { data } = await apiClient.get("/staff");
-  return data;
+const StaffService = {
+  getAllStaff: async () => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.STAFF.BASE);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching staff members:", error);
+      throw error;
+    }
+  },
+
+  getStaff: async (staffId) => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.STAFF.BASE}/${staffId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching staff member with ID ${staffId}:`, error);
+      throw error;
+    }
+  },
+
+  createStaff: async (staffData) => {
+    try {
+      const response = await axiosInstance.post(
+        API_ENDPOINTS.STAFF.BASE,
+        staffData
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error creating staff member:", error);
+      throw error;
+    }
+  },
+
+  updateStaff: async (staffId, staffData) => {
+    try {
+      const response = await axiosInstance.put(
+        `${API_ENDPOINTS.STAFF.BASE}/${staffId}`,
+        staffData
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating staff member with ID ${staffId}:`, error);
+      throw error;
+    }
+  },
+
+  deleteStaff: async (staffId) => {
+    try {
+      const response = await axiosInstance.delete(
+        `${API_ENDPOINTS.STAFF.BASE}/${staffId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error deleting staff member with ID ${staffId}:`, error);
+      throw error;
+    }
+  },
 };
 
-// Create new staff
-export const createStaff = async (staffData) => {
-  const { data } = await apiClient.post("/staff", staffData);
-  return data;
-};
-
-// update staff
-export const updateStaff = async (staffData) => {
-  const { id, ...dataToUpdate } = staffData;
-  const { data } = await apiClient.put(`/staff/${id}`, dataToUpdate);
-  return data;
-};
-
-// delete staff
-export const deleteStaff = async (staffData) => {
-  const { id } = staffData;
-  const { data } = await apiClient.delete(`/staff/${id}`);
-  return data;
-};
-
-// Fetch room list
-export const fetchRooms = async () => {
-  const { data } = await apiClient.get("/rooms");
-  return data;
-};
-
-// Fetch designation list
-export const fetchDesignations = async () => {
-  const { data } = await apiClient.get("/designations");
-  return data;
-};
+export default StaffService;
