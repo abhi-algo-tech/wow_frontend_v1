@@ -1,8 +1,3 @@
-export const staffKeys = {
-  list: () => ["staff"],
-  rooms: () => ["rooms"],
-  designations: () => ["designations"],
-};
 
 export const classRoomKeys = {
   classrooms: "classrooms"
@@ -10,4 +5,8 @@ export const classRoomKeys = {
 
 export const studentKeys = {
   students: "students",
+};
+
+export const staffKeys = {
+  staff: "staff",
 };

@@ -11,6 +11,37 @@ export const getInitialsTitle = (name) => {
     .join(""); // Join the initials together
 };
 
+export const getInitialsTitleWithColor = (name) => {
+  // Check if name is defined and is a string
+  if (!name || typeof name !== "string") {
+    return { initials: "", backgroundColor: "" }; // Return an empty object for safety
+  }
+
+  // Function to generate a random background color
+  const getRandomColor = () => {
+    const colors = [
+      "#0000FF",
+      "#008000",
+      "#800080",
+      "#FDCD16",
+      "#FFC0CB",
+      "#FF0000",
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  const initials = name
+    .replace(/^\d+-?/, "") // Remove leading numbers followed by an optional hyphen
+    .split(/[\s-]+/) // Split by spaces or hyphens
+    .map((word) => word.charAt(0).toUpperCase()) // Get the first letter and capitalize it
+    .join(""); // Join the initials together
+
+  return {
+    initials,
+    backgroundColor: getRandomColor(),
+  };
+};
+
 export const generateRandomHexColor = () => {
   const letters = "0123456789ABCDEF";
   let color = "#";

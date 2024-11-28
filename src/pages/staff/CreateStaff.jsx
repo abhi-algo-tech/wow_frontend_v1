@@ -1,54 +1,121 @@
-import { Form, Input, InputNumber, message, Select } from "antd";
-import React, { useState } from "react";
+import { Form, Input, Select, Switch } from "antd";
+import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
+import MultiSelectWithTags from "../../components/select/MultiSelectWithTags";
+import { useGetAllClassrooms } from "../../hooks/useClassroom";
+import {
+  useCreateStaff,
+  useStaffById,
+  useUpdateStaff,
+} from "../../hooks/useStaff";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Option } = Select;
 
-function CreateStaff({ CardTitle, closeModal }) {
-  const [formValues, setFormValues] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phoneNumber: "",
-    classroom: "",
-    primaryClassroom: "",
-    designation: "",
-  });
+function CreateStaff({ CardTitle, staffId, closeModal }) {
+  const [form] = Form.useForm();
+  const [selectedAllowedClassrooms, setSelectedAllowedClassrooms] = useState(
+    []
+  );
 
-  const handleChange = (name, value) => {
-    setFormValues((prev) => ({ ...prev, [name]: value }));
-  };
+  const {
+    data: classroomData,
+    isLoading,
+    isError,
+    error,
+  } = useGetAllClassrooms();
+  const { data: staffData } = useStaffById(staffId);
+  const createStudentMutation = useCreateStaff();
+  const updateStudentMutation = useUpdateStaff();
+  const isEdit = Boolean(staffId);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    console.log("staffData:", staffData);
+    if (staffData) {
+      const primaryClassroom = staffData.data.classrooms.find(
+        (classroom) => classroom.id === staffData.data.primaryRoomId
+      );
 
+      form.setFieldsValue({
+        firstName: staffData.data.firstName,
+        lastName: staffData.data.lastName,
+        email: staffData.data.email,
+        phoneNumber: staffData.data.phoneNumber,
+        designation: staffData.data.designation,
+        allowedClassrooms: staffData.data.classrooms.map(
+          (classroom) => classroom.id
+        ),
+        primaryClassroom: primaryClassroom ? primaryClassroom.id : undefined,
+        status: staffData.data.status,
+      });
+      setSelectedAllowedClassrooms(
+        staffData.data.classrooms.map((classroom) => classroom.id)
+      );
+    }
+  }, [staffData, form]);
+
+  const handleSubmit = (values) => {
     const {
       firstName,
       lastName,
       email,
       phoneNumber,
-      classroom,
-      primaryClassroom,
       designation,
-    } = formValues;
+      primaryClassroom,
+      status,
+      allowedClassrooms,
+    } = values;
 
-    // Basic Validation
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !phoneNumber ||
-      classroom === "select" ||
-      primaryClassroom === "select" ||
-      designation === "select"
-    ) {
-      message.error("All fields are required!");
+    if (!firstName || !lastName || designation === "select") {
+      CustomMessage.error("All fields are required!");
       return;
     }
 
-    // Submit Data
-    message.success("Staff added successfully!");
-    closeModal();
+    const formData = new FormData();
+    formData.append("firstName", firstName);
+    formData.append("lastName", lastName);
+    formData.append("email", email);
+    formData.append("phoneNumber", phoneNumber);
+    formData.append("designation", designation);
+    formData.append("primaryRoomId", primaryClassroom);
+    formData.append("status", status);
+
+    // Add allowedClassrooms as classroomIds[]
+    allowedClassrooms.forEach((classroomId, index) => {
+      formData.append(`classroomIds[]`, classroomId);
+    });
+
+    if (isEdit) {
+      updateStudentMutation.mutate(
+        {
+          staffId, // Use staffId instead of studentId
+          staffData: formData,
+        },
+        {
+          onSuccess: () => {
+            CustomMessage.success("Staff updated successfully!");
+            closeModal();
+          },
+          onError: (error) => {
+            CustomMessage.error(`Failed to update staff: ${error.message}`);
+          },
+        }
+      );
+    } else {
+      createStudentMutation.mutate(formData, {
+        onSuccess: () => {
+          CustomMessage.success("Staff created successfully!");
+          closeModal();
+        },
+        onError: (error) => {
+          CustomMessage.error(`Failed to create staff: ${error.message}`);
+        },
+      });
+    }
+  };
+
+  const handleTagChange = (value) => {
+    setSelectedAllowedClassrooms(value);
   };
 
   return (
@@ -64,102 +131,213 @@ function CreateStaff({ CardTitle, closeModal }) {
         {CardTitle}
       </span>
       <div className="student-create">
-        <form onSubmit={handleSubmit}>
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <div className="row">
             <div className="col-6">
-              <label className="staff-label">
-                First Name <span className="text-danger">*</span>
-              </label>
-              <Input
-                className="staff-form-input"
-                placeholder="E.g. John"
-                value={formValues.firstName}
-                onChange={(e) => handleChange("firstName", e.target.value)}
-              />
-            </div>
-            <div className="col-6">
-              <label className="staff-label">
-                Last Name <span className="text-danger">*</span>
-              </label>
-              <Input
-                className="staff-form-input"
-                placeholder="E.g. Smith"
-                value={formValues.lastName}
-                onChange={(e) => handleChange("lastName", e.target.value)}
-              />
-            </div>
-            <div className="col-12">
-              <label className="staff-label">
-                Email <span className="text-danger">*</span>
-              </label>
-              <Input
-                className="staff-form-input"
-                placeholder="E.g. john.smith@example.com"
-                value={formValues.email}
-                onChange={(e) => handleChange("email", e.target.value)}
-              />
-            </div>
-            <div className="col-6">
-              <label className="staff-label">
-                Phone Number <span className="text-danger">*</span>
-              </label>
-              <InputNumber
-                className="w-100 staff-form-input"
-                placeholder="E.g. 1234567890"
-                value={formValues.phoneNumber}
-                onChange={(value) => handleChange("phoneNumber", value)}
-              />
-            </div>
-            <div className="col-6">
-              <label className="staff-label">
-                Classrooms <span className="text-danger">*</span>
-              </label>
-              <Select
-                className="w-100 staff-form-input"
-                placeholder="Select"
-                value={formValues.classroom}
-                onChange={(value) => handleChange("classroom", value)}
+              <div className="flex items-center gap-1 student-label">
+                First Name
+                <span className="text-danger"> *</span>
+              </div>
+              <Form.Item
+                name="firstName"
+                rules={[
+                  { required: true, message: "Please input the first name!" },
+                ]}
               >
-                <Option value="select">Select</Option>
-                <Option value="1-Blue-D">1-Blue-D</Option>
-                <Option value="6-Yellow-R">6-Yellow-R</Option>
-              </Select>
+                <Input
+                  placeholder="E.g. John"
+                  className="w-100 student-form-input"
+                />
+              </Form.Item>
             </div>
             <div className="col-6">
-              <label className="staff-label">
-                Primary Classroom <span className="text-danger">*</span>
-              </label>
-              <Select
-                className="w-100 h40"
-                placeholder="Select"
-                value={formValues.primaryClassroom}
-                onChange={(value) => handleChange("primaryClassroom", value)}
+              <div className="flex items-center gap-1 student-label">
+                Last Name
+                <span className="text-danger"> *</span>
+              </div>
+              <Form.Item
+                name="lastName"
+                rules={[
+                  { required: true, message: "Please input the last name!" },
+                ]}
               >
-                <Option value="select">Select</Option>
-                <Option value="1-Blue-D">1-Blue-D</Option>
-                <Option value="6-Yellow-R">6-Yellow-R</Option>
-              </Select>
+                <Input
+                  placeholder="E.g. Smith"
+                  className="w-100 student-form-input"
+                />
+              </Form.Item>
+            </div>
+
+            <div className=" items-center gap-1 student-label ">
+              Email
+              <span className="text-danger"> *</span>
+            </div>
+            <Form.Item
+              name="email"
+              rules={[
+                { required: true, message: "Please input the email address!" },
+                {
+                  type: "email",
+                  message: "Please enter a valid email address!",
+                },
+              ]}
+            >
+              <Input
+                placeholder="E.g. jane.doe@example.com"
+                className="w-100 student-form-input"
+              />
+            </Form.Item>
+            <div className="col-6">
+              <div className="flex items-center gap-1 student-label">
+                Phone Number
+                <span className="text-danger"> *</span>
+              </div>
+              <Form.Item
+                name="phoneNumber"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the contact number!",
+                  },
+                  {
+                    pattern: /^[0-9]+$/,
+                    message: "Contact number must be numeric!",
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="E.g. (000) 000-0000"
+                  className="w-100 student-form-input"
+                />
+              </Form.Item>
+            </div>
+
+            <div className="col-6">
+              <div className=" items-center gap-1 student-label ">
+                Designation
+                <span className="text-danger"> *</span>
+              </div>
+              <Form.Item name="designation">
+                <Select
+                  className="select-student-add-from"
+                  placeholder="Select"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select the designation address!",
+                    },
+                  ]}
+                >
+                  <Option value="select">Select</Option>
+                  <Option value="Admin">Admin</Option>
+                  <Option value="Staff">Staff</Option>
+                </Select>
+              </Form.Item>
+            </div>
+            <div className=" items-center gap-1 student-label ">
+              Allowed Classrooms
+              <span className="text-danger"> *</span>
+            </div>
+
+            <Form.Item
+              name="allowedClassrooms"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select at least one classroom!",
+                },
+              ]}
+            >
+              <MultiSelectWithTags
+                value={selectedAllowedClassrooms}
+                onChange={handleTagChange}
+                name="allowedClassrooms"
+                options={
+                  !isLoading &&
+                  classroomData?.data
+                    ?.sort((a, b) => a.name.localeCompare(b.name)) // Sort classrooms by name in ascending order
+                    .map((classroom) => ({
+                      label: classroom.name,
+                      value: classroom.id,
+                    }))
+                }
+                loading={isLoading}
+                placeholder="Select"
+              />
+            </Form.Item>
+
+            <div className="col-6">
+              <div className=" items-center gap-1 student-label ">
+                Primary Classroom
+                <span className="text-danger"> *</span>
+              </div>
+              <Form.Item name="primaryClassroom">
+                <Select
+                  className="select-student-add-from"
+                  placeholder="Select"
+                  disabled={selectedAllowedClassrooms.length === 0} // Disable until at least one Allowed Classroom is selected
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select the Primary Classroom!",
+                    },
+                  ]}
+                >
+                  {selectedAllowedClassrooms
+                    .sort((a, b) =>
+                      classroomData?.data
+                        ?.find((c) => c.id === a)
+                        ?.name.localeCompare(
+                          classroomData?.data?.find((c) => c.id === b)?.name
+                        )
+                    ) // Sort based on classroom names
+                    .map((id) => {
+                      const classroom = classroomData?.data?.find(
+                        (c) => c.id === id
+                      );
+                      return (
+                        <Option key={id} value={id}>
+                          {classroom?.name}
+                        </Option>
+                      );
+                    })}
+                </Select>
+              </Form.Item>
             </div>
             <div className="col-6">
-              <label className="staff-label">
-                Designation <span className="text-danger">*</span>
-              </label>
-              <Select
-                className="w-100 h40"
-                placeholder="Select"
-                value={formValues.designation}
-                onChange={(value) => handleChange("designation", value)}
-              >
-                <Option value="select">Select</Option>
-                <Option value="Staff">Staff</Option>
-                <Option value="Admin">Admin</Option>
-              </Select>
+              <div className=" items-center gap-1 student-label ">
+                Status
+                <span className="text-danger"> *</span>
+              </div>
+              <Form.Item name="status">
+                <Select
+                  className="select-student-add-from"
+                  placeholder="Select"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select the status!",
+                    },
+                  ]}
+                >
+                  <Option value="select">Select</Option>
+                  <Option value="Active">Active</Option>
+                  <Option value="Deactive">Deactive</Option>
+                </Select>
+              </Form.Item>
             </div>
-            <div className="text-center mt-4">
-              <ButtonComponent text="Add" padding="10px 50px" type="submit" />
+
+            <div className="text-center ">
+              <Form.Item>
+                <ButtonComponent
+                  text={isEdit ? "Save" : "Add"}
+                  padding="19.1px 115px"
+                  type="submit"
+                />
+              </Form.Item>
             </div>
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   );

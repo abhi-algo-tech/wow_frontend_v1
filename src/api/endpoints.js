@@ -5,5 +5,8 @@ export const API_ENDPOINTS = {
   },
   STUDENT: {
     BASE: '/v1/students',
+  },
+  STAFF: {
+    BASE: '/v1/staff',
   }
 };

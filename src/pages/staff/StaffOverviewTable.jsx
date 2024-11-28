@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Input,
   Checkbox,
@@ -23,47 +23,19 @@ import ButtonComponent from "../../components/ButtonComponent";
 import CreateStaff from "./CreateStaff";
 import { IoIosMore } from "react-icons/io";
 import { Link } from "react-router-dom";
-import { getInitialsTitle } from "../../services/common";
+import {
+  getInitialsTitle,
+  getInitialsTitleWithColor,
+} from "../../services/common";
+import { useGetAllStaff, useUpdateStaff } from "../../hooks/useStaff";
+import { generateStaffData } from "./CommonStaff";
+import CreateStudent from "../student/CreateStudent";
+import { CustomMessage } from "../../utils/CustomMessage";
 import StaffFilter from "./StaffFilter";
 import SignOut from "../../components/attendance/SignOut";
 import CreateMessage from "../../components/message/CreateMessage";
 
 const { Text } = Typography;
-
-const staffData = [
-  {
-    key: "1",
-    name: "Aparna Biwalkar",
-    avatar: "/placeholder.svg?height=40&width=40",
-    primaryClass: "1-Blue-D",
-    subClassroomCount: 3,
-    subClass: [
-      { id: 1, class: "1-Pink-E" },
-      { id: 2, class: "2-Pink-G" },
-      { id: 3, class: "1-Red-D" },
-    ],
-    designation: "Admin",
-    schedule: {
-      Mon: {
-        workHours: "7:30 AM -5:30 PM",
-        breakTime: "12:30 PM -1:00 PM",
-      },
-      Tue: null,
-      Wed: {
-        workHours: "7:30 AM -5:30 PM",
-        breakTime: "12:30 PM -1:00 PM",
-      },
-      Thu: null,
-      Fri: {
-        workHours: "7:30 AM -5:30 PM",
-        breakTime: "12:30 PM -1:00 PM",
-      },
-    },
-    email: "aparna12345@wiseowl.academy",
-    phone: "(986) 027-1627",
-    isOnline: true,
-  },
-];
 
 const StaffOverviewTable = () => {
   const [isCreateStaffModalOpen, setCreateStaffModalOpen] = useState(false);
@@ -75,10 +47,31 @@ const StaffOverviewTable = () => {
   const [showAttendanceCard, setShowAttendanceCard] = useState(false);
   const [isSignOutModalOpen, setSignOutModalOpen] = useState(false);
   const [isCreateMessageModalOpen, setCreateMessageModalOpen] = useState(false);
-  const [hoveredRow, setHoveredRow] = useState(null);
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [selectedStaffId, setSelectedStaffId] = useState(null);
+
+  const { data: staff, isLoading, isError, error } = useGetAllStaff();
+  const updateStaffMutation = useUpdateStaff();
+
+  useEffect(() => {
+    if (staff) {
+      const formattedStudentData = generateStaffData(staff.data);
+      setData(formattedStudentData);
+      setFilteredData(formattedStudentData);
+    }
+
+    if (isError) {
+      CustomMessage.error(
+        "Failed to load student details. Please try again later."
+      );
+      console.error("Error fetching student details:", error);
+    }
+  }, [staff, isError, error]);
 
   const handleSelectAll = (checked) => {
-    setSelectedRowKeys(checked ? staffData.map((item) => item.key) : []);
+    setSelectedRowKeys(checked ? filteredData.map((item) => item.key) : []);
   };
 
   const handleRowSelection = (key, checked) => {
@@ -94,9 +87,26 @@ const StaffOverviewTable = () => {
     setDeleteModalOpen(true);
   };
 
-  const handleDelete = () => {
-    console.log("Deleted record:", selectedRecord);
-    setDeleteModalOpen(false);
+  const handleDelete = async (id) => {
+    const formData = new FormData();
+    formData.append("isDeleted", true);
+
+    try {
+      await updateStaffMutation.mutateAsync({
+        staffId: id,
+        staffData: formData,
+      });
+      CustomMessage.success("Student deleted successfully!");
+      setDeleteModalOpen(false); // Close the modal after deletion
+    } catch (error) {
+      CustomMessage.error(`Failed to delete student: ${error.message}`);
+      setDeleteModalOpen(false);
+    }
+  };
+
+  const handleEditModal = (data) => {
+    setSelectedStaffId(data.key); // Store the clicked item's id and name
+    setEditModalOpen(true); // Open the delete modal
   };
 
   const getTooltipContent = (day, times) => {
@@ -134,9 +144,9 @@ const StaffOverviewTable = () => {
           <Checkbox
             indeterminate={
               selectedRowKeys.length > 0 &&
-              selectedRowKeys.length < staffData.length
+              selectedRowKeys.length < filteredData.length
             }
-            checked={selectedRowKeys.length === staffData.length}
+            checked={selectedRowKeys.length === filteredData.length}
             onChange={(e) => handleSelectAll(e.target.checked)}
           />
           <span style={{ marginLeft: 8 }}>Staff Name</span>
@@ -151,7 +161,17 @@ const StaffOverviewTable = () => {
             onChange={(e) => handleRowSelection(record.key, e.target.checked)}
           />
           <div style={{ position: "relative", marginLeft: 8 }}>
-            <Avatar size={24}>{getInitialsTitle(text)}</Avatar>
+            <Avatar
+              size={24}
+              style={{
+                backgroundColor:
+                  getInitialsTitleWithColor(text).backgroundColor,
+                color: "#fff",
+                fontWeight: "bold",
+              }}
+            >
+              {getInitialsTitleWithColor(text).initials}
+            </Avatar>
             {record.isOnline && (
               <div
                 style={{
@@ -180,15 +200,24 @@ const StaffOverviewTable = () => {
       align: "start",
       render: (text, record) => (
         <div>
-          <Avatar size={24}>{getInitialsTitle(text)}</Avatar>
+          <Avatar
+            size={24}
+            style={{
+              backgroundColor: getInitialsTitleWithColor(text).backgroundColor,
+              color: "#fff",
+              fontWeight: "bold",
+            }}
+          >
+            {getInitialsTitleWithColor(text).initials}
+          </Avatar>
 
           <span className="ml9 staff-table--body-label">{text}</span>
           {record.subClass && (
             <Popover
               color="#d9ffcb66"
               content={record.subClass.map((item) => (
-                <div className="plus-number-count-label" key={item.id}>
-                  {item.class}
+                <div className="plus-number-count-label" key={item.name}>
+                  {item.name}
                 </div>
               ))}
             >
@@ -247,6 +276,7 @@ const StaffOverviewTable = () => {
                 key: "edit",
                 label: "Edit",
                 icon: <EditOutlined />,
+                onClick: () => handleEditModal(record),
               },
               {
                 key: "delete",
@@ -391,7 +421,8 @@ const StaffOverviewTable = () => {
             </div>
             <TableComponent
               columns={columns}
-              dataSource={staffData}
+              dataSource={filteredData}
+              loading={isLoading}
               rowSelection={{
                 selectedRowKeys,
                 onChange: setSelectedRowKeys,
@@ -430,10 +461,31 @@ const StaffOverviewTable = () => {
           <CommonModalComponent
             open={isDeleteModalOpen}
             setOpen={setDeleteModalOpen}
+            modalWidthSize={493}
+            modalHeightSize={232}
+            isClosable={true}
           >
             <DeletePopUp
+              setCancel={setDeleteModalOpen}
               deleteData={selectedRecord}
-              handleDelete={handleDelete}
+              CardTitle="Delete Staff"
+              handleDelete={handleDelete} // Pass the updated handleDelete function
+              module="Staff"
+            />
+          </CommonModalComponent>
+        )}
+        {isEditModalOpen && (
+          <CommonModalComponent
+            open={isEditModalOpen}
+            setOpen={setEditModalOpen}
+            modalWidthSize={493}
+            modalHeightSize={232}
+            isClosable={true}
+          >
+            <CreateStaff
+              CardTitle={"Edit Student"}
+              staffId={selectedStaffId}
+              closeModal={() => setEditModalOpen(false)}
               module="Staff"
               setCancel={setDeleteModalOpen}
             />
