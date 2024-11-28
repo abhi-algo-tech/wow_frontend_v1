@@ -18,16 +18,18 @@ function DeletePopUp({
   };
   return (
     <div className="card">
-      <span
-        style={{
-          backgroundColor: "#eef1fe",
-          fontWeight: "bold",
-          padding: 15,
-          borderRadius: "8px 8px 0 0",
-        }}
-      >
-        {CardTitle}
-      </span>
+      {CardTitle && (
+        <span
+          style={{
+            backgroundColor: "#eef1fe",
+            fontWeight: "bold",
+            padding: 15,
+            borderRadius: "8px 8px 0 0",
+          }}
+        >
+          {CardTitle}
+        </span>
+      )}
       <div className="delete-modal d-flex flex-column justify-content-between">
         {/* Header */}
         <div className="d-flex flex-column align-items-center ">

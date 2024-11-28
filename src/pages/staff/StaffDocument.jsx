@@ -1,49 +1,53 @@
-import React from "react";
-import { Table, Button, Input, Switch, Typography, Dropdown, Menu } from "antd";
-import {
-  FileImageOutlined,
-  FileTextOutlined,
-  EllipsisOutlined,
-} from "@ant-design/icons";
+import React, { useState } from "react";
+import { Table, Typography, Dropdown, Avatar } from "antd";
+import { EllipsisOutlined } from "@ant-design/icons";
+import StaffDocumentForm from "./StaffDocumentForm";
+import CommonModalComponent from "../../components/CommonModalComponent";
 import ButtonComponent from "../../components/ButtonComponent";
 const { Text } = Typography;
+
 const columns = [
   {
     title: "Document Name",
     dataIndex: "name",
     key: "name",
     align: "start",
-    render: (text) => (
-      <Input
-        value={text}
-        bordered={false}
-        readOnly
-        style={{ border: "1px solid #d9d9d9", borderRadius: "4px" }}
-      />
-    ),
+    className: "label-14-600",
+    render: (text) => <div className="label-14-500">{text}</div>,
+  },
+  {
+    title: "Document Type",
+    dataIndex: "documentType",
+    key: "documentType",
+    align: "start",
+    className: "label-14-600",
+    render: (text) => <div className="label-14-500">{text}</div>,
   },
   {
     title: "Expiry Date",
     dataIndex: "expiry",
     key: "expiry",
-    align: "center",
+    align: "start",
+    className: "label-14-600",
+    render: (text) => <div className="label-14-500">{text}</div>,
   },
   {
     title: "Document",
     key: "document",
     align: "center",
+    className: "label-14-600",
     render: (record) => (
       <>
         {record.type === "image" ? (
-          <FileImageOutlined style={{ fontSize: "20px", color: "#1890ff" }} />
+          <Avatar src="/wow_icons/png/image.png" size={24} />
         ) : (
-          <FileTextOutlined style={{ fontSize: "20px", color: "#1890ff" }} />
+          <Avatar src="/wow_icons/png/pdf.png" size={24} />
         )}
       </>
     ),
   },
   {
-    title: "",
+    title: "Action",
     key: "action",
     render: (record) => (
       <Dropdown
@@ -74,25 +78,29 @@ const columns = [
 const data = [
   {
     key: "1",
-    name: "Project_Proposal_ABC_Corp_2024",
+    name: "Jessica Rhodes - Offer Letter",
     expiry: "Nov 09, 2024",
     type: "image",
+    documentType: "Registration Froms",
   },
   {
     key: "2",
-    name: "Annual_Report_2024_Financial_Performance",
+    name: "Jessica Rhodes - CPR Certificate",
     expiry: "Nov 09, 2024",
-    type: "text",
+    type: "pdf",
+    documentType: "Birth Cirtificate",
   },
   {
     key: "3",
-    name: "Machine_Learning_Paper_Results_2024",
+    name: "Jessica Rhodes - Resume",
     expiry: "Nov 09, 2024",
     type: "image",
+    documentType: "Registration Froms",
   },
 ];
 
 const StaffDocument = () => {
+  const [isCreateDocumentModalOpen, setCreateDocumentModalOpen] = useState();
   return (
     <div className="documents-body">
       <div className="text-end mb16">
@@ -101,6 +109,7 @@ const StaffDocument = () => {
             text="Add Document"
             buttonActionType="create"
             gradient={true}
+            onClick={() => setCreateDocumentModalOpen(true)}
           />
         </div>
       </div>
@@ -110,6 +119,21 @@ const StaffDocument = () => {
         pagination={false}
         size="small"
       />
+      {isCreateDocumentModalOpen && (
+        <CommonModalComponent
+          open={isCreateDocumentModalOpen}
+          setOpen={setCreateDocumentModalOpen}
+          modalWidthSize={418}
+          modalHeightSize={520}
+          isClosable={true}
+        >
+          <StaffDocumentForm
+            CardTitle={"Add Document"}
+            classroomId={null}
+            closeModal={() => setCreateDocumentModalOpen(false)}
+          />
+        </CommonModalComponent>
+      )}
     </div>
   );
 };

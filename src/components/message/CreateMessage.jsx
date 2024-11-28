@@ -1,13 +1,16 @@
-import { Avatar, Col, DatePicker, Row, TimePicker } from "antd";
+import { Avatar, Col, DatePicker, Input, Row, TimePicker } from "antd";
 import dayjs from "dayjs";
-import ButtonComponent from "../../components/ButtonComponent";
-function SignOut({ setCancel }) {
+import ButtonComponent from "../ButtonComponent";
+import { useState } from "react";
+const { TextArea } = Input;
+function CreateMessage({ setCancel }) {
+  const [value, setValue] = useState("");
   const handleCancelClick = () => {
     setCancel(false);
   };
   return (
     <div className="card modal-card-padding">
-      <span className="modal-card-label-name">Sign-Out</span>
+      <span className="modal-card-label-name">Create Message</span>
       <Row gutter={9}>
         <Col span={8}>
           <Row className="modal-card-actor-details-border" align="middle">
@@ -63,26 +66,15 @@ function SignOut({ setCancel }) {
 
       {/* Date and Time */}
       <Row>
-        <Col className="mr-10">
-          <div>
-            <label className="model-card-calender-label">Date</label>
-          </div>
-          <DatePicker
-            defaultValue={dayjs("2024-10-29")}
-            format="MMM DD, YYYY"
-            className="w-full modal-card-calender"
-          />
-        </Col>
-        <Col>
-          <div>
-            <label className="model-card-calender-label">Time</label>
-          </div>
-          <TimePicker
-            defaultValue={dayjs("12:31", "HH:mm")}
-            format="h:mm A"
-            className="w-full modal-card-calender"
-          />
-        </Col>
+        <TextArea
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="Enter Message"
+          autoSize={{
+            minRows: 3,
+            maxRows: 5,
+          }}
+        />
       </Row>
       <div className="text-center">
         <ButtonComponent
@@ -90,6 +82,7 @@ function SignOut({ setCancel }) {
           padding={"16px 62.6px"}
           margin="0 16px 0 0"
           onClick={handleCancelClick}
+          gradient={false}
         />
 
         <ButtonComponent
@@ -102,4 +95,4 @@ function SignOut({ setCancel }) {
   );
 }
 
-export default SignOut;
+export default CreateMessage;

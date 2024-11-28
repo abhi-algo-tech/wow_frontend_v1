@@ -1,61 +1,60 @@
 /* Container Styles */
-.container {
+/* .container {
     border-radius: 8px;
-    /* background: rgba(177, 175, 233, 0.10); */
     height: 40px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 8px;
-}
+} */
 
 /* Chip Styles */
 .chip {
-    border: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 3px;
-    background: rgba(177, 175, 233, 0.10);
-    color: #1B237E;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 24px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  background: rgba(177, 175, 233, 0.1);
+  color: #1b237e;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 24px;
 }
 
 /* Remove the bottom border of the tab */
 .ant-tabs-nav {
-    border-bottom: none !important;
+  border-bottom: none !important;
 }
 
 /* Remove the border around the tab items */
 .ant-tabs-tab {
-    border: none !important;
+  border: none !important;
 }
 
 /* Optional: Remove the active tab underline */
 .ant-tabs-tab-active {
-    border-bottom: none !important;
+  border-bottom: none !important;
 }
 
 /* Optional: Remove border around the TabPanel */
 .ant-tabs-tabpane {
-    border: none !important;
+  border: none !important;
 }
 
 /* Remove the border from the select box */
 .ant-select-selector {
-    border: none !important;
-    box-shadow: none !important;
-    height: 40px !important;
-    /* Remove the shadow if there's any */
+  border: none !important;
+  box-shadow: none !important;
+  height: 40px !important;
+  /* Remove the shadow if there's any */
 }
 
 /* Optional: Remove the focus border on the select */
 .ant-select-focused .ant-select-selector {
-    border: none !important;
-    box-shadow: none !important;
-    height: 40px !important;
+  border: none !important;
+  box-shadow: none !important;
+  height: 40px !important;
 }

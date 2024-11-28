@@ -14,7 +14,7 @@ import CommonModalComponent from "../../components/CommonModalComponent";
 import dayjs from "dayjs";
 import ButtonComponent from "../../components/ButtonComponent";
 import SignIn from "./SignIn";
-import SignOut from "./SignOut";
+import SignOut from "../../components/attendance/SignOut";
 import Transfer from "./Transfer";
 import MarkAbsent from "./MarkAbsent";
 import StaffCardDetails from "./StaffCardDetails";
@@ -198,7 +198,7 @@ function ClassroomOverviewTab() {
           setOpen={setAssignStudent}
           modalWidthSize={549}
         >
-          <SignIn setCancel={setAssignStudent} />
+          {/* <SignIn setCancel={setAssignStudent} /> */}
           {/* <SignOut setCancel={setAssignStudent} /> */}
           {/* <Transfer setCancel={setAssignStudent} /> */}
           {/* <MarkAbsent setCancel={setAssignStudent} /> */}
