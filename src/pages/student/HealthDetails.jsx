@@ -14,6 +14,7 @@ import { CheckCircleOutlined, EditOutlined } from "@ant-design/icons";
 import { MdOutlineModeEdit, MdOutlineModeEditOutline } from "react-icons/md";
 import HealthDetailsForm from "./HealthDetailsForm";
 import CommonModalComponent from "../../components/CommonModalComponent";
+import { useStudentById } from "../../hooks/useStudent";
 
 const { Text } = Typography;
 const { TabPane } = Tabs;
@@ -26,8 +27,13 @@ const LabelCol = ({ children }) => (
 
 const ContentCol = ({ children }) => <Col span={19}>{children}</Col>;
 
-const HealthDetails = () => {
-  const [isCreateHealthDetailsModalOpen, setCreateHealthDetailsModalOpen] = useState(false);
+const HealthDetails = ({ studentId }) => {
+  const [isCreateHealthDetailsModalOpen, setCreateHealthDetailsModalOpen] =
+    useState(false);
+  const { data: studentData, isLoading, error } = useStudentById(studentId);
+
+  if (isLoading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error fetching student health data</Text>;
   return (
     <div className="padding30">
       {/* Floating Edit Button */}
@@ -41,7 +47,11 @@ const HealthDetails = () => {
         }}
       >
         <Badge className="pointer about-floating-edit-div">
-          <Avatar shape="square" icon={<MdOutlineModeEditOutline />} onClick={() => setCreateHealthDetailsModalOpen(true)} />
+          <Avatar
+            shape="square"
+            icon={<MdOutlineModeEditOutline />}
+            onClick={() => setCreateHealthDetailsModalOpen(true)}
+          />
         </Badge>
         {/* <MdOutlineModeEditOutline
           style={{
@@ -69,12 +79,12 @@ const HealthDetails = () => {
           <Text className="student-about-tab-label-value">No Restrictions</Text>
         </ContentCol>
 
-        <LabelCol>Last Physical Date</LabelCol>
+        {/* <LabelCol>Last Physical Date</LabelCol>
         <ContentCol>
           <Text className="student-about-tab-label-value">
             No Last Physical Date
           </Text>
-        </ContentCol>
+        </ContentCol> */}
       </Row>
       {isCreateHealthDetailsModalOpen && (
         <CommonModalComponent
@@ -86,10 +96,9 @@ const HealthDetails = () => {
         >
           <HealthDetailsForm
             CardTitle={"Edit Student Health Details"}
-            classroomId={null}
+            studentData={studentData}
             closeModal={() => setCreateHealthDetailsModalOpen(false)}
           />
-        
         </CommonModalComponent>
       )}
     </div>

@@ -42,7 +42,7 @@ function App() {
           <Route path="/classroom" element={<Classroom />} />
           <Route path="/classroom-profile/:id" element={<ClassroomProfile />} />
           <Route path="/student" element={<Student />} />
-          <Route path="/student-profile/:id" element={<StudentProfile />} />
+          <Route path="/student-profile" element={<StudentProfile />} />
           <Route path="/Staffs" element={<Staff />} />
           <Route path="/staff-profile/:id" element={<StaffProfile />} />
           <Route path="/staff-attendance/:id" element={<StaffAttendance />} />

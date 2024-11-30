@@ -6,7 +6,7 @@ import Pickup from "./Pickup";
 
 const { TabPane } = Tabs;
 
-function StudentAboutTab() {
+function StudentAboutTab({ studentId }) {
   const [activeTab, setActiveTab] = useState("1");
   const [isAssignStudentModalOpen, setAssignStudent] = useState(false);
 
@@ -24,7 +24,7 @@ function StudentAboutTab() {
         className="student-custom-tabs"
       >
         <TabPane tab={<span>About</span>} key="1">
-          <StudentAbout />
+          <StudentAbout studentId={studentId} />
         </TabPane>
 
         <TabPane tab={<span>Family</span>} key="2">
@@ -36,33 +36,33 @@ function StudentAboutTab() {
         </TabPane>
       </Tabs>
       {/* <Tabs
-        activeKey={activeTab}
-        type="card"
-        onChange={onTabChange}
-        className="classroom-custom-tabs"
-      >
-        <TabPane tab={<span>About</span>} key="1">
-          <StudentAbout />
-        </TabPane>
+          activeKey={activeTab}
+          type="card"
+          onChange={onTabChange}
+          className="classroom-custom-tabs"
+        >
+          <TabPane tab={<span>About</span>} key="1">
+            <StudentAbout />
+          </TabPane>
 
-        <TabPane tab={<span>Family</span>} key="2">
-                <span>Notes Content</span>
-        </TabPane>
+          <TabPane tab={<span>Family</span>} key="2">
+                  <span>Notes Content</span>
+          </TabPane>
 
-        <TabPane tab={<span>Pickup</span>} key="3">
-          <span>Notes Content</span>
-        </TabPane>
-      </Tabs> */}
+          <TabPane tab={<span>Pickup</span>} key="3">
+            <span>Notes Content</span>
+          </TabPane>
+        </Tabs> */}
 
       {/* {isAssignStudentModalOpen && (
-        <CommonModalComponent
-          open={isAssignStudentModalOpen}
-          setOpen={setAssignStudent}
-          modalWidthSize={549}
-        >
-          <SignIn setCancel={setAssignStudent} />
-        </CommonModalComponent>
-      )} */}
+          <CommonModalComponent
+            open={isAssignStudentModalOpen}
+            setOpen={setAssignStudent}
+            modalWidthSize={549}
+          >
+            <SignIn setCancel={setAssignStudent} />
+          </CommonModalComponent>
+        )} */}
     </>
   );
 }

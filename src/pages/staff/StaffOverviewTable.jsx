@@ -64,9 +64,9 @@ const StaffOverviewTable = () => {
 
     if (isError) {
       CustomMessage.error(
-        "Failed to load student details. Please try again later."
+        "Failed to load staff details. Please try again later."
       );
-      console.error("Error fetching student details:", error);
+      console.error("Error fetching staff details:", error);
     }
   }, [staff, isError, error]);
 
@@ -96,10 +96,10 @@ const StaffOverviewTable = () => {
         staffId: id,
         staffData: formData,
       });
-      CustomMessage.success("Student deleted successfully!");
+      CustomMessage.success("Staff deleted successfully!");
       setDeleteModalOpen(false); // Close the modal after deletion
     } catch (error) {
-      CustomMessage.error(`Failed to delete student: ${error.message}`);
+      CustomMessage.error(`Failed to delete staff: ${error.message}`);
       setDeleteModalOpen(false);
     }
   };
@@ -483,7 +483,7 @@ const StaffOverviewTable = () => {
             isClosable={true}
           >
             <CreateStaff
-              CardTitle={"Edit Student"}
+              CardTitle={"Edit Staff"}
               staffId={selectedStaffId}
               closeModal={() => setEditModalOpen(false)}
               module="Staff"

@@ -10,7 +10,7 @@ import ImmunizationRecord from "./ImmunizationRecord";
 
 const { TabPane } = Tabs;
 
-function StudentHealthTab() {
+function StudentHealthTab({ studentId }) {
   const [activeTab, setActiveTab] = useState("1");
   const [isAssignStudentModalOpen, setAssignStudent] = useState(false);
 
@@ -28,7 +28,7 @@ function StudentHealthTab() {
         className="student-custom-tabs"
       >
         <TabPane tab={<span>Health Details</span>} key="1">
-          <HealthDetails />
+          <HealthDetails studentId={studentId} />
         </TabPane>
 
         <TabPane tab={<span>Physician Details</span>} key="2">

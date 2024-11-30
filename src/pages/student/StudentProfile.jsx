@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Tabs, Row, Col } from "antd";
 import StudentProfileTab from "./StudentAboutTab";
 import StudentHealthTab from "./StudentHealthTab";
@@ -7,8 +7,22 @@ import Schedule from "./Schedule";
 import Document from "./Document";
 import Events from "../classroom/Events";
 import ProfileCardv1 from "./ProfileCardv1";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function StudentProfile() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Extract `studentId` from state
+  const studentId = location.state?.studentId;
+
+  // Handle missing `state` (e.g., direct URL access)
+  useEffect(() => {
+    if (!studentId) {
+      navigate("/"); // Redirect to home or error page
+    }
+  }, [studentId, navigate]);
+
   const [activeTab, setActiveTab] = useState("1");
 
   // Function to handle tab change
@@ -16,8 +30,8 @@ export default function StudentProfile() {
 
   // Tab content components
   const tabContentComponents = {
-    1: <StudentProfileTab />,
-    2: <StudentHealthTab />,
+    1: <StudentProfileTab studentId={studentId} />,
+    2: <StudentHealthTab studentId={studentId} />,
     3: <ImportantDates />,
     // 4: <Schedule />,
     4: <Document />,

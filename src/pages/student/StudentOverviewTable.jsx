@@ -151,7 +151,11 @@ const StudentOverviewTable = () => {
             />
           </div>
           <Link
-            to={`/student-profile/${record.key}`}
+            to="/student-profile"
+            state={{
+              studentId: record.key,
+              name: record.name,
+            }}
             style={{
               display: "flex",
               justifyContent: "space-between",

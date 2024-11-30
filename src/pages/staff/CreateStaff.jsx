@@ -208,6 +208,8 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
                 <Input
                   placeholder="E.g. (000) 000-0000"
                   className="w-100 student-form-input"
+                  maxLength={10}
+                  minLength={10}
                 />
               </Form.Item>
             </div>
@@ -217,16 +219,18 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
                 Designation
                 <span className="text-danger"> *</span>
               </div>
-              <Form.Item name="designation">
+              <Form.Item
+                name="designation"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the Primary Classroom!",
+                  },
+                ]}
+              >
                 <Select
                   className="select-student-add-from"
                   placeholder="Select"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select the designation address!",
-                    },
-                  ]}
                 >
                   <Option value="select">Select</Option>
                   <Option value="Admin">Admin</Option>
@@ -271,17 +275,19 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
                 Primary Classroom
                 <span className="text-danger"> *</span>
               </div>
-              <Form.Item name="primaryClassroom">
+              <Form.Item
+                name="primaryClassroom"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the Primary Classroom!",
+                  },
+                ]}
+              >
                 <Select
                   className="select-student-add-from"
                   placeholder="Select"
                   disabled={selectedAllowedClassrooms.length === 0} // Disable until at least one Allowed Classroom is selected
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select the Primary Classroom!",
-                    },
-                  ]}
                 >
                   {selectedAllowedClassrooms
                     .sort((a, b) =>
@@ -309,16 +315,18 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
                 Status
                 <span className="text-danger"> *</span>
               </div>
-              <Form.Item name="status">
+              <Form.Item
+                name="status"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the status!",
+                  },
+                ]}
+              >
                 <Select
                   className="select-student-add-from"
                   placeholder="Select"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select the status!",
-                    },
-                  ]}
                 >
                   <Option value="select">Select</Option>
                   <Option value="Active">Active</Option>

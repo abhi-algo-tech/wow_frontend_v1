@@ -13,12 +13,14 @@ import {
 } from "antd";
 import {
   CheckCircleOutlined,
+  CloseCircleOutlined,
   EditOutlined,
   RightOutlined,
 } from "@ant-design/icons";
 import { MdOutlineModeEdit, MdOutlineModeEditOutline } from "react-icons/md";
 import StudentProfileForm from "./StudentProfileForm";
 import CommonModalComponent from "../../components/CommonModalComponent";
+import { useStudentById } from "../../hooks/useStudent";
 
 const { Text } = Typography;
 const { TabPane } = Tabs;
@@ -31,12 +33,33 @@ const LabelCol = ({ children }) => (
 
 const ContentCol = ({ children }) => <Col span={19}>{children}</Col>;
 const status = "present";
-const StudentAbout = () => {
+const StudentAbout = ({ studentId }) => {
   const [isCreateStudentAboutModalOpen, setCreateStudentAboutModalOpen] =
     useState(false);
+  const { data: studentData, isLoading, error } = useStudentById(studentId);
+
+  if (isLoading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error fetching student data</Text>;
+
+  const student = studentData?.data || {};
   const date = { month: "Jan", day: 14 };
   const fromClassroom = "1-Blue-D";
   const toClassroom = "2-Green-D";
+
+  const formatDate = (dob) => {
+    const date = new Date(dob);
+    const options = { month: "long", day: "2-digit", year: "numeric" };
+    const formattedDate = date.toLocaleDateString("en-US", options);
+    const now = new Date();
+    let years = now.getFullYear() - date.getFullYear();
+    let months = now.getMonth() - date.getMonth();
+    if (months < 0) {
+      years -= 1;
+      months += 12;
+    }
+    return `${formattedDate} (${years} years ${months} months)`;
+  };
+
   return (
     <>
       <div className="padding30">
@@ -70,19 +93,49 @@ const StudentAbout = () => {
         <Row gutter={[0, 14]}>
           <LabelCol>Name</LabelCol>
           <ContentCol>
-            <Text className="student-about-tab-label-value">Lex Fenwick</Text>
+            <Text className="student-about-tab-label-value">
+              {" "}
+              <Text className="student-about-tab-label-value">
+                {student?.firstName
+                  ? student.firstName.charAt(0).toUpperCase() +
+                    student.firstName.slice(1)
+                  : ""}{" "}
+                {student?.lastName
+                  ? student.lastName.charAt(0).toUpperCase() +
+                    student.lastName.slice(1)
+                  : ""}
+              </Text>
+            </Text>
           </ContentCol>
 
           <LabelCol>Status</LabelCol>
           <ContentCol>
-            <Tag color="success" style={{ padding: "0 8px" }}>
-              Active <CheckCircleOutlined />
+            <Tag
+              color={student?.status === "active" ? "success" : "error"}
+              style={{ padding: "0 8px" }}
+            >
+              {student?.status === "active" ? (
+                <>
+                  Active <CheckCircleOutlined />
+                </>
+              ) : student?.status === "inactive" ? (
+                <>
+                  Inactive <CloseCircleOutlined />
+                </>
+              ) : (
+                // For null or undefined status, show "Inactive" with red color and cross icon
+                <>
+                  Inactive <CloseCircleOutlined />
+                </>
+              )}
             </Tag>
           </ContentCol>
 
           <LabelCol>Classroom</LabelCol>
           <ContentCol>
-            <Text className="student-about-tab-label-value">1-Blue-D</Text>
+            <Text className="student-about-tab-label-value">
+              {student?.classroomName}
+            </Text>
           </ContentCol>
 
           <LabelCol>Tags</LabelCol>
@@ -95,7 +148,7 @@ const StudentAbout = () => {
           <LabelCol>Birthdate</LabelCol>
           <ContentCol>
             <Text className="student-about-tab-label-value">
-              Oct 14, 2020 (3 years 10 months)
+              {formatDate(student?.dateOfBirth)}
             </Text>
           </ContentCol>
 

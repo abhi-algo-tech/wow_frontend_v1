@@ -1,69 +1,74 @@
 import { Form, Input, message, Select, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
-import { useCreateStudent, useStudentById, useUpdateStudent } from "../../hooks/useStudent";
-import CustomDatePicker from "../../components/CustomDatePicker";
+import {
+  useCreateStudent,
+  useStudentById,
+  useUpdateStudent,
+} from "../../hooks/useStudent";
+// import CustomDatePicker from "../../components/CustomDatePicker";
 
+function HealthDetailsForm({ CardTitle, studentData, closeModal }) {
+  const [form] = Form.useForm();
 
-function HealthDetailsForm({ CardTitle, studentId, closeModal }) {
-    const [form] = Form.useForm();
-  
-    const { data: parentData } = useStudentById(studentId);
-    const createStudentMutation = useCreateStudent();
-    const updateStudentMutation = useUpdateStudent();
-    const isEdit = Boolean(studentId);
-  
-    useEffect(() => {
-      if (parentData) {
-        form.setFieldsValue({
-          allergies: parentData.data.allergies,
-          medication: parentData.data.medication,
-          dietRestrictions: parentData.data.dietRestrictions,
-          lastPhysicalDate: parentData.data.lastPhysicalDate,
-        });
-      }
-    }, [parentData, form]);
-  
-    const handleSubmit = (values) => {
-      const { allergies, medication, dietRestrictions, lastPhysicalDate } = values;
-  
-      if (!lastPhysicalDate) {
-        message.error("Last Physical Date is required!");
-        return;
-      }
-  
-      const formData = new FormData();
-      formData.append("allergies", allergies || "No Allergies");
-      formData.append("medication", medication || "No Medication");
-      formData.append("dietRestrictions", dietRestrictions || "No Diet Restrictions");
-      formData.append("lastPhysicalDate", lastPhysicalDate.format("YYYY-MM-DD"));
-  
-      if (isEdit) {
-        updateStudentMutation.mutate(
-          { studentId, parentData: formData },
-          {
-            onSuccess: () => {
-              message.success("Student updated successfully!");
-              closeModal();
-            },
-            onError: (error) => {
-              message.error(`Failed to update student: ${error.message}`);
-            },
-          }
-        );
-      } else {
-        createStudentMutation.mutate(formData, {
+  const createStudentMutation = useCreateStudent();
+  const updateStudentMutation = useUpdateStudent();
+  const isEdit = Boolean(studentData);
+
+  useEffect(() => {
+    if (studentData) {
+      form.setFieldsValue({
+        allergies: studentData.data.allergies,
+        medication: studentData.data.medication,
+        dietRestrictions: studentData.data.dietRestrictions,
+        // lastPhysicalDate: studentData.data.lastPhysicalDate,
+      });
+    }
+  }, [studentData, form]);
+
+  const handleSubmit = (values) => {
+    const { allergies, medication, dietRestrictions, lastPhysicalDate } =
+      values;
+
+    if (!lastPhysicalDate) {
+      message.error("Last Physical Date is required!");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("allergies", allergies || "No Allergies");
+    formData.append("medication", medication || "No Medication");
+    formData.append(
+      "dietRestrictions",
+      dietRestrictions || "No Diet Restrictions"
+    );
+    // formData.append("lastPhysicalDate", lastPhysicalDate.format("YYYY-MM-DD"));
+
+    if (isEdit) {
+      updateStudentMutation.mutate(
+        { studentId, studentData: formData },
+        {
           onSuccess: () => {
-            message.success("Student created successfully!");
+            message.success("Student updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            message.error(`Failed to create student: ${error.message}`);
+            message.error(`Failed to update student: ${error.message}`);
           },
-        });
-      }
-    };
-  
+        }
+      );
+    } else {
+      createStudentMutation.mutate(formData, {
+        onSuccess: () => {
+          message.success("Student created successfully!");
+          closeModal();
+        },
+        onError: (error) => {
+          message.error(`Failed to create student: ${error.message}`);
+        },
+      });
+    }
+  };
 
   return (
     <div className="card">
@@ -78,56 +83,46 @@ function HealthDetailsForm({ CardTitle, studentId, closeModal }) {
         {CardTitle}
       </span>
       <div className="student-create">
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-        >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <div className="row">
             <div className=" items-center gap-1 student-label ">
-            Allergies
+              Allergies
               {/* <span className="text-danger"> *</span> */}
             </div>
-            <Form.Item
-                name="allergies"
-               
-              >
-                <Input
-                  placeholder="No Allergies"
-                  className="w-100 student-form-input"
-                />
-              </Form.Item>
-              <div className=" items-center gap-1 student-label ">
+            <Form.Item name="allergies">
+              <Input
+                placeholder="No Allergies"
+                className="w-100 student-form-input"
+              />
+            </Form.Item>
+            <div className=" items-center gap-1 student-label ">
               Medication
               {/* <span className="text-danger"> *</span> */}
             </div>
             <Form.Item
-                name="medication"
-                // rules={[
-                //     { required: true, message: "Please input the email address!" },
-                //     { type: "email", message: "Please enter a valid email address!" },
-                //   ]}
-              >
-                <Input
-                  placeholder="No Medication"
-                  className="w-100 student-form-input"
-                />
-              </Form.Item>
-              <div className=" items-center gap-1 student-label ">
+              name="medication"
+              // rules={[
+              //     { required: true, message: "Please input the email address!" },
+              //     { type: "email", message: "Please enter a valid email address!" },
+              //   ]}
+            >
+              <Input
+                placeholder="No Medication"
+                className="w-100 student-form-input"
+              />
+            </Form.Item>
+            <div className=" items-center gap-1 student-label ">
               Diet Restrictions
               {/* <span className="text-danger"> *</span> */}
             </div>
-            <Form.Item
-                name="dietRestrictions"
-                
-              >
-                <Input
-                  placeholder="No Diet Restrictions"
-                  className="w-100 student-form-input"
-                />
-              </Form.Item>
+            <Form.Item name="dietRestrictions">
+              <Input
+                placeholder="No Diet Restrictions"
+                className="w-100 student-form-input"
+              />
+            </Form.Item>
 
-              <div className=" items-center gap-1 student-label ">
+            {/* <div className=" items-center gap-1 student-label ">
               Last Physical Date
             </div>
             <Form.Item
@@ -137,9 +132,8 @@ function HealthDetailsForm({ CardTitle, studentId, closeModal }) {
               ]}
             >
               <CustomDatePicker name="lastPhysicalDate" />
-            </Form.Item>
-   
-           
+            </Form.Item> */}
+
             <div className="text-center ">
               <Form.Item>
                 <ButtonComponent
