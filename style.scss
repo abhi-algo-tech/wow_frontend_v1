@@ -14,4 +14,7 @@
   .padding#{$i} {
     padding: #{$i}px !important;
   }
+  .gap#{$i} {
+    gap: #{$i}px !important;
+  }
 }

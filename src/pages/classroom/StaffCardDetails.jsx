@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import { Button, Checkbox, Input, Select } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, Card, Checkbox, Input, Select } from "antd";
 
 import { SearchOutlined } from "@ant-design/icons";
 import ActorBigCard from "../../components/ActorBigCard";
+import CommonModalComponent from "../../components/CommonModalComponent";
+import CreateMessage from "../../components/message/CreateMessage";
 const { Option } = Select;
 
 // Sample student data
@@ -33,9 +35,31 @@ const staffs = [
   },
 ];
 
+const leftRenderData = [
+  { icon: "/classroom_icons/png/Sign in.png", label: "Sign In" },
+  { icon: "/classroom_icons/png/Sign out.png", label: "Sign Out" },
+  { icon: "/classroom_icons/png/transfer.png", label: "Transfer" },
+  { icon: "/classroom_icons/png/Mark absent.png", label: "Absent" },
+];
+const rightRenderData = [
+  {
+    icon: "/wow_icons/png/Attendance.png",
+    label: "Attendance",
+    modal: "Attendance",
+  },
+  {
+    icon: "/wow_icons/png/chat-white-bg.png",
+    label: "Message",
+    modal: "Message",
+  },
+];
+
 export default function StaffCardDetails() {
   const [selectedStaffs, setSelectedStaffs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showLeftCard, setShowLeftCard] = useState(false);
+  const [isFloatingCardVisible, setFloatingCardVisible] = useState();
+  const [isCreateMessageModalOpen, setCreateMessageModalOpen] = useState(false);
 
   // Function to handle "Select All" functionality
   const handleSelectAll = (e) => {
@@ -59,8 +83,76 @@ export default function StaffCardDetails() {
     staff.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  useEffect(() => {
+    if (selectedStaffs?.length >= 1) {
+      setFloatingCardVisible(true);
+    } else {
+      setFloatingCardVisible(false);
+    }
+  }, [selectedStaffs]);
+  const setShowRightActionCard = (action) => {
+    switch (action.toLowerCase()) {
+      case "attendance":
+        setShowLeftCard(true);
+        break;
+      case "message":
+        setCreateMessageModalOpen(true);
+        break;
+      default:
+        "";
+        break;
+    }
+
+    // setLeftRenderData(selectedAction); // return the data if needed
+  };
+  const renderLFloatingRightCard = () => (
+    <div className="classroom-students-l-overflowborder text-center">
+      {leftRenderData.map((data, i) => (
+        <div
+          key={i}
+          className=" d-flex flex-column align-items-center pointer"
+          // onClick={() => setShowAttendancediv(true)}
+        >
+          <img
+            className="classroom-students-r-icon"
+            src={data?.icon}
+            alt={data?.label}
+          />
+          <div className="label-14-500 mt16 ">{data?.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+  const renderRFloatingRightCard = () => (
+    <>
+      {showLeftCard && renderLFloatingRightCard()}
+      <div className="classroom-students-r-overflowborder">
+        <div
+          className="close-icon position-absolute "
+          onClick={() => setFloatingCardVisible(false)}
+        >
+          &#x2715; {/* Unicode for cross icon (✕) */}
+        </div>
+        {rightRenderData.map((data, i) => (
+          <div
+            className=" d-flex flex-column align-items-center pointer"
+            onClick={() => setShowRightActionCard(data?.label)}
+          >
+            <img
+              className="classroom-students-r-icon"
+              src={data?.icon}
+              alt={data?.label}
+            />
+            <div className="label-14-400 text-white mt16">{data?.label}</div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+
   return (
     <div className="container my-3">
+      {isFloatingCardVisible && renderRFloatingRightCard()}
       <div className="d-flex align-items-center my-3 justify-content-between">
         <div>
           <Input
@@ -123,6 +215,15 @@ export default function StaffCardDetails() {
           </div>
         ))}
       </div>
+      {isCreateMessageModalOpen && (
+        <CommonModalComponent
+          open={isCreateMessageModalOpen}
+          setOpen={setCreateMessageModalOpen}
+          modalWidthSize={549}
+        >
+          <CreateMessage setCancel={setCreateMessageModalOpen} />
+        </CommonModalComponent>
+      )}
     </div>
   );
 }

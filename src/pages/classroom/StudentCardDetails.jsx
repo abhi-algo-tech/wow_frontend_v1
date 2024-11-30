@@ -1,8 +1,17 @@
-import React, { useState } from "react";
-import { Button, Checkbox, Input, Select } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, Card, Checkbox, Input, Select } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import StudentActivityDetails from "../student/StudentActivityDetails";
 import ActorBigCard from "../../components/ActorBigCard";
+import CommonModalComponent from "../../components/CommonModalComponent";
+import SignIn from "./SignIn";
+import SignOut from "../../components/attendance/SignOut";
+import Transfer from "./Transfer";
+import MarkAbsent from "./MarkAbsent";
+import ActivitySubMenu from "./ActivitySubMenu";
+import ActivityIconSubMenu from "./ActivityIconSubMenu";
+import CreateMessage from "../../components/message/CreateMessage";
+import AssignConfirm from "./AssignConfirm";
 const { Option } = Select;
 
 // Sample student data
@@ -93,9 +102,65 @@ const students = [
   },
 ];
 
+const leftRenderAttendanceData = [
+  {
+    icon: "/classroom_icons/png/Sign in.png",
+    label: "Sign In",
+    modal: "signin",
+  },
+  {
+    icon: "/classroom_icons/png/Sign out.png",
+    label: "Sign Out",
+    modal: "signout",
+  },
+  {
+    icon: "/classroom_icons/png/transfer.png",
+    label: "Transfer",
+    modal: "Transfer",
+  },
+  {
+    icon: "/classroom_icons/png/Mark absent.png",
+    label: "Absent",
+    modal: "Absent",
+  },
+];
+const leftRenderDefaultData = [
+  { icon: "/wow_icons/png/Nap.png", label: "Nap", modal: "Nap" },
+  { icon: "/wow_icons/png/Bathroom.png", label: "Bathroom", modal: "Bathroom" },
+  { icon: "/wow_icons/png/Bottle.png", label: "Bottle", modal: "Bottle" },
+];
+const rightRenderData = [
+  {
+    icon: "/wow_icons/png/Attendance.png",
+    label: "Attendance",
+    modal: "Attendance",
+  },
+  {
+    icon: "/wow_icons/png/Activities-7.png",
+    label: "Activity",
+    modal: "Activity",
+  },
+  {
+    icon: "/wow_icons/png/chat-white-bg.png",
+    label: "Message",
+    modal: "Message",
+  },
+];
 export default function StudentCardDetails() {
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isFloatingCardVisible, setFloatingCardVisible] = useState();
+  const [currentAction, setCurrentAction] = useState("student");
+  const [leftRenderData, setLeftRenderData] = useState([]);
+  const [isSignInModalOpen, setSignInModalOpen] = useState(false);
+  const [isSignOutModalOpen, setSignOutModalOpen] = useState(false);
+  const [isTransferModalOpen, setTransferModalOpen] = useState(false);
+  const [isMarkAbsentModalOpen, setMarkAbsentModalOpen] = useState(false);
+  const [isActivityIconSubMenuModalOpen, setActivityIconSubMenuModalOpen] =
+    useState(false);
+  const [isCreateMessageModalOpen, setCreateMessageModalOpen] = useState(false);
+  const [isAssignConfirmModalOpen, setAssignConfirmModalOpen] = useState(false);
+
   // Function to handle "Select All" functionality
   const handleSelectAll = (e) => {
     if (e.target.checked) {
@@ -106,6 +171,8 @@ export default function StudentCardDetails() {
       setSelectedStudents([]);
     }
   };
+
+  console.log("isAssignConfirmModalOpen", isAssignConfirmModalOpen);
 
   // Function to handle individual checkbox changes
   const handleCheckboxChange = (id) => {
@@ -120,8 +187,118 @@ export default function StudentCardDetails() {
     student.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const setShowRightActionCard = (action) => {
+    let selectedAction;
+    setCurrentAction(action.toLowerCase());
+    switch (action.toLowerCase()) {
+      case "attendance":
+        selectedAction = leftRenderAttendanceData;
+        break;
+      case "activity":
+        setActivityIconSubMenuModalOpen(true);
+        selectedAction = leftRenderDefaultData;
+        setCurrentAction("student");
+        break;
+      case "message":
+        setCreateMessageModalOpen(true);
+        selectedAction = leftRenderDefaultData;
+        setCurrentAction("student");
+        break;
+      default:
+        selectedAction = leftRenderDefaultData;
+        setCurrentAction("student");
+        break;
+    }
+
+    setLeftRenderData(selectedAction); // return the data if needed
+  };
+  const handleModalOpen = (action) => {
+    setCurrentAction(action.toLowerCase());
+    switch (action.toLowerCase()) {
+      case "signin":
+        setSignInModalOpen(true);
+        break;
+      case "signout":
+        setSignOutModalOpen(true);
+        break;
+      case "transfer":
+        setTransferModalOpen(true);
+        break;
+      case "absent":
+        setMarkAbsentModalOpen(true);
+        break;
+      default:
+        "";
+        break;
+    }
+  };
+
+  useEffect(() => {
+    setLeftRenderData(leftRenderDefaultData);
+  }, []);
+  useEffect(() => {
+    if (selectedStudents?.length >= 1) {
+      setFloatingCardVisible(true);
+    } else {
+      setFloatingCardVisible(false);
+      setCurrentAction("student");
+    }
+  }, [selectedStudents]);
+  const renderLFloatingRightCard = () => (
+    <div className="classroom-students-l-overflowborder text-center">
+      {currentAction === "student" ? (
+        <div className="label-12-400">Recents</div>
+      ) : (
+        <></>
+      )}
+      {leftRenderData.map((data, i) => (
+        <div
+          key={i}
+          className=" d-flex flex-column align-items-center pointer"
+          onClick={() => handleModalOpen(data?.modal)}
+        >
+          <img
+            className="classroom-students-r-icon"
+            src={data?.icon}
+            alt={data?.label}
+          />
+          <div className="label-14-500 mt16 ">{data?.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderRFloatingRightCard = () => (
+    <>
+      {renderLFloatingRightCard()}
+      <div className="classroom-students-r-overflowborder">
+        <div
+          className="close-icon position-absolute "
+          onClick={() => setFloatingCardVisible(false)}
+        >
+          &#x2715; {/* Unicode for cross icon (✕) */}
+        </div>
+        {rightRenderData.map((data, i) => (
+          <div
+            key={i}
+            className=" d-flex flex-column align-items-center pointer"
+            onClick={() => setShowRightActionCard(data?.label)}
+          >
+            <img
+              className="classroom-students-r-icon"
+              src={data?.icon}
+              alt={data?.label}
+            />
+            <div className="label-14-400 text-white mt16">{data?.label}</div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
   return (
     <div className="container my-3">
+      {/* {renderLFloatingRightCard()} */}
+      {isFloatingCardVisible && renderRFloatingRightCard()}
       <div className="d-flex align-items-center my-3 justify-content-between">
         <div>
           <Input
@@ -195,6 +372,74 @@ export default function StudentCardDetails() {
           </div>
         ))}
       </div>
+      {isSignInModalOpen && (
+        <CommonModalComponent
+          open={isSignInModalOpen}
+          setOpen={setSignInModalOpen}
+          modalWidthSize={549}
+        >
+          <SignIn setCancel={setSignInModalOpen} />
+        </CommonModalComponent>
+      )}
+      {isSignOutModalOpen && (
+        <CommonModalComponent
+          open={isSignOutModalOpen}
+          setOpen={setSignOutModalOpen}
+          modalWidthSize={549}
+        >
+          <SignOut setCancel={setSignOutModalOpen} />
+        </CommonModalComponent>
+      )}
+      {isTransferModalOpen && (
+        <CommonModalComponent
+          open={isTransferModalOpen}
+          setOpen={setTransferModalOpen}
+          modalWidthSize={549}
+        >
+          <Transfer setCancel={setTransferModalOpen} />
+        </CommonModalComponent>
+      )}
+      {isMarkAbsentModalOpen && (
+        <CommonModalComponent
+          open={isMarkAbsentModalOpen}
+          setOpen={setMarkAbsentModalOpen}
+          modalWidthSize={549}
+        >
+          <MarkAbsent setCancel={setMarkAbsentModalOpen} />
+        </CommonModalComponent>
+      )}
+      {isActivityIconSubMenuModalOpen && (
+        <CommonModalComponent
+          open={isActivityIconSubMenuModalOpen}
+          setOpen={setActivityIconSubMenuModalOpen}
+          modalWidthSize={804}
+          isClosable={true}
+        >
+          <ActivityIconSubMenu />
+          {/* <ActivitySubMenu setCancel={setMarkAbsentModalOpen} /> */}
+        </CommonModalComponent>
+      )}
+      {isCreateMessageModalOpen && (
+        <CommonModalComponent
+          open={isCreateMessageModalOpen}
+          setOpen={setCreateMessageModalOpen}
+          modalWidthSize={549}
+        >
+          <CreateMessage
+            setCancel={setCreateMessageModalOpen}
+            setAssignConfirm={setAssignConfirmModalOpen}
+          />
+        </CommonModalComponent>
+      )}
+      {isAssignConfirmModalOpen && (
+        <CommonModalComponent
+          open={isAssignConfirmModalOpen}
+          setOpen={setAssignConfirmModalOpen}
+          modalWidthSize={402}
+        >
+          <AssignConfirm setCancel={setAssignConfirmModalOpen} />
+        </CommonModalComponent>
+      )}
     </div>
   );
 }

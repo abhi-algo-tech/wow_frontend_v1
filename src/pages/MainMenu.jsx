@@ -27,7 +27,7 @@ function MainMenu() {
     },
     {
       key: "staff",
-      icon: <img src="/wow_icons/png/Staff.png" width={22} height={22} />,
+      icon: <img src="/wow_icons/png/Staff.png" width={22} height={18} />,
       label: <Link to="/staffs">Staff</Link>,
     },
     {
@@ -157,7 +157,7 @@ function MainMenu() {
     },
     {
       key: "billing",
-      icon: <img src="/wow_icons/png/Billing.png" width={22} height={22} />,
+      icon: <img src="/wow_icons/png/Billing.png" width={17} height={22} />,
       label: "Billing",
       children: [
         {

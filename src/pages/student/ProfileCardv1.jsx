@@ -22,7 +22,7 @@ const tooltipConfig = {
     {
       title: "Billing",
       iconSrc: "/wow_icons/png/Billing.png",
-      iconStyle: { width: 20, height: 24 },
+      iconStyle: { width: 17, height: 24 },
     },
   ],
   staff: [

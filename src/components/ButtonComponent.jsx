@@ -15,6 +15,7 @@ const ButtonComponent = ({
   margin = "auto",
   removeIcon = false,
   fontWeight = "bold",
+  borderRadius,
 }) => {
   // Set the icon based on the buttonActionType prop
   const getIcon = () => {
@@ -36,7 +37,13 @@ const ButtonComponent = ({
     : { backgroundColor: color };
   const paddingStyle = { padding: padding };
   const marginStyle = { margin: margin };
-  const combinedStyle = { ...buttonStyle, ...paddingStyle, ...marginStyle };
+  const borderRadiusStyle = { borderRadius: borderRadius };
+  const combinedStyle = {
+    ...buttonStyle,
+    ...paddingStyle,
+    ...marginStyle,
+    ...borderRadiusStyle,
+  };
 
   return (
     <Button

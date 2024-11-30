@@ -212,9 +212,9 @@ const StaffOverviewTable = () => {
           </Avatar>
 
           <span className="ml9 staff-table--body-label">{text}</span>
-          {record.subClass && (
+          {record.subClass[0] && (
             <Popover
-              color="#d9ffcb66"
+              color="#F0FFEA"
               content={record.subClass.map((item) => (
                 <div className="plus-number-count-label" key={item.name}>
                   {item.name}

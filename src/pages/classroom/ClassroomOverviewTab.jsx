@@ -19,6 +19,8 @@ import Transfer from "./Transfer";
 import MarkAbsent from "./MarkAbsent";
 import StaffCardDetails from "./StaffCardDetails";
 import ActivitySubMenu from "./ActivitySubMenu";
+import ClassroomNotes from "./ClassroomNotes";
+import AssignStudent from "./AssignStudent";
 
 const { TabPane } = Tabs;
 
@@ -59,19 +61,6 @@ function ClassroomOverviewTab() {
           <span className="inner-text">Assign Staff</span>
         </div>
       );
-    } else if (Number(activeTab) === 3) {
-      return (
-        <Button
-          type="primary"
-          //   icon={<PlusOutlined />}
-          style={{
-            backgroundColor: "#FFA500",
-            borderColor: "#FFA500",
-          }}
-        >
-          Add Program
-        </Button>
-      );
     }
     // <div onClick={() => setActiveTab("4")} className={"right-tab-active"}>
     //   <span className="inner-text">Right-Side Tab</span>
@@ -85,48 +74,6 @@ function ClassroomOverviewTab() {
   const renderFloatingRigthCard = () => (
     <div className="overflowCard-left">
       <Card className="">
-        <div className="overflowborder-icon-label">
-          <div>
-            <img
-              className="overflowBorder-icon"
-              src="/classroom_icons/png/Sign in.png"
-            />
-          </div>
-          <div className="overflowBorder-label">Sign In</div>
-        </div>
-        <div className="overflowborder-icon-label">
-          <div>
-            <img
-              className="overflowBorder-icon"
-              src="/classroom_icons/png/Sign out.png"
-            />
-          </div>
-          <div className="overflowBorder-label">Sign Out</div>
-        </div>
-        <div className="overflowborder-icon-label">
-          <div>
-            <img
-              className="overflowBorder-icon"
-              src="/classroom_icons/png/transfer.png"
-            />
-          </div>
-          <div className="overflowBorder-label">Transfer</div>
-        </div>
-        <div className="overflowborder-icon-label">
-          <div>
-            <img
-              className="overflowBorder-icon"
-              src="/classroom_icons/png/Mark absent.png"
-            />
-          </div>
-          <div className="overflowBorder-label">Absent</div>
-        </div>
-      </Card>
-    </div>
-  );
-  const renderFloatingLeftCard = () => (
-    <div className="overflowCard">
-      <Card className="overflowborder">
         <div className="overflowborder-icon-label">
           <div>
             <img
@@ -185,7 +132,7 @@ function ClassroomOverviewTab() {
         </TabPane>
 
         <TabPane tab={<span>Notes</span>} key="3">
-          <span>Notes Content</span>
+          <ClassroomNotes />
         </TabPane>
       </Tabs>
 
@@ -196,8 +143,9 @@ function ClassroomOverviewTab() {
         <CommonModalComponent
           open={isAssignStudentModalOpen}
           setOpen={setAssignStudent}
-          modalWidthSize={549}
+          modalWidthSize={900}
         >
+          <AssignStudent setCancel={setAssignStudent} />
           {/* <SignIn setCancel={setAssignStudent} /> */}
           {/* <SignOut setCancel={setAssignStudent} /> */}
           {/* <Transfer setCancel={setAssignStudent} /> */}
