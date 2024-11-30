@@ -12,7 +12,8 @@ const columns = [
     dataIndex: "vaccine",
     key: "vaccine",
     align: "start",
-    fixed: "left",
+    width: 60,
+    // fixed: "left",
     render: (vaccine) => <strong>{vaccine}</strong>, // Highlight vaccine name
   },
   ...Array.from({ length: 6 }, (_, i) => ({
@@ -20,6 +21,7 @@ const columns = [
     dataIndex: `dose${i + 1}`,
     key: `dose${i + 1}`,
     align: "start",
+    width: 70,
     render: (dose) => {
       if (!dose) return ""; // Handle missing dose data
       return (
@@ -32,18 +34,18 @@ const columns = [
       );
     },
   })),
-  {
-    title: "Notes",
-    key: "notes",
-    align: "start",
-    fixed: "right",
-    render: () => (
-      <Space>
-        <Button type="text" icon={<PlusOutlined />} />
-        <Button type="text" icon={<FileTextOutlined />} />
-      </Space>
-    ),
-  },
+  // {
+  //   title: "Notes",
+  //   key: "notes",
+  //   align: "start",
+  //   fixed: "right",
+  //   render: () => (
+  //     <Space>
+  //       <Button type="text" icon={<PlusOutlined />} />
+  //       <Button type="text" icon={<FileTextOutlined />} />
+  //     </Space>
+  //   ),
+  // },
 ];
 
 const data = [
@@ -122,7 +124,8 @@ const ImmunizationRecord = () => {
           dataSource={data}
           pagination={false}
           size="small"
-          scroll={{ x: 1200 }} // Ensure responsiveness
+          // scroll={{ x: 1200 }} // Ensure responsiveness
+          // tableLayout="fixed"
         />
       </div>
       {isCreateImmunizationRecordModalOpen && (

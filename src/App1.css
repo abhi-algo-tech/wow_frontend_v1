@@ -296,6 +296,9 @@
   border: solid 1px var(--color-dark-blue) !important; /* Border for the table */
   /* border-top: none; Remove top border */
 }
+.classroom-custom-tabs .ant-tabs-content {
+  height: 490px !important;
+}
 /* border for tab body */
 .ant-tabs-content-holder {
   border: solid 1px var(--color-dark-blue) !important;
@@ -678,32 +681,56 @@
   text-align: center;
 }
 
-.overflowborder {
+.classroom-students-l-overflowborder {
   position: absolute;
   width: 92px;
-  height: 288px;
-  top: 40px;
-  right: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 16px;
-  margin: 2px 6px 18.6px 50.1px;
+  height: auto;
+  top: -2.5vh;
+  right: 1vh;
+  z-index: 9;
   border-radius: 8px;
-  border-style: solid;
-  border-width: 1px;
-  border-image-source: linear-gradient(to right, #5978f7, #9c84ff);
-  border-image-slice: 1;
+  border: 1px solid #5978f7 !important;
   background-image: linear-gradient(
       to bottom,
       var(--variable-collection-color-white),
       var(--variable-collection-color-white)
     ),
     linear-gradient(to right, #5978f7, #9c84ff);
-  background-origin: border-box;
-  z-index: 999;
-  /* background-clip: content-box, border-box; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background-color: #ffffff;
+}
+
+/* Cross Icon */
+.close-icon {
+  top: 3px;
+  right: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  z-index: 1; /* Ensures it stays above other content */
+}
+.classroom-students-r-overflowborder {
+  position: absolute;
+  right: -20vh;
+  top: -2.5vh;
+  z-index: 9;
+  border-radius: 8px;
+  background: var(--2, linear-gradient(90deg, #6f8cff 0%, #9c84ff 100%));
+  width: 110px;
+  gap: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.classroom-students-r-icon {
+  width: 24px;
+  height: 24px;
 }
 
 .overflowCard-left .ant-card .ant-card-body {
@@ -718,7 +745,7 @@
   align-items: center;
   gap: 9px;
   padding: 0;
-  margin-bottom: 16px;
+  /* margin-bottom: 16px; */
   cursor: pointer;
 }
 .overflowBorder-icon {
@@ -1137,6 +1164,13 @@
   line-height: normal;
 }
 
+.label-14-400 {
+  color: var(--font-colour, #573353);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
 .label-14-500 {
   color: var(--font-colour, #573353);
   font-size: 14px;
@@ -1267,4 +1301,170 @@
     ),
     linear-gradient(to right, #5978f7, #9c84ff); /* Apply both background and border gradient */
   background-clip: padding-box; /* This ensures the background gradient respects the border radius */
+}
+
+.activity-submenu-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* Creates 5 equal-width columns */
+  gap: 16px; /* Adjust space between the cards */
+  width: 100%;
+}
+
+.activity-submenu-icon {
+  display: flex;
+  width: 100%;
+  padding: 16px;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 1px solid rgba(87, 51, 83, 0.1);
+  background: var(--White-colour, #fff);
+}
+
+.activity-submenu-icon-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+}
+
+.activity-submenu-icon-size {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+  .activity-submenu-grid {
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ); /* 3 columns for tablet or medium screen */
+  }
+}
+
+@media (max-width: 768px) {
+  .activity-submenu-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for small screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .activity-submenu-grid {
+    grid-template-columns: 1fr; /* 1 column for very small screens */
+  }
+}
+
+.lable-16-600 {
+  color: var(--Color-Secondary, #573353);
+
+  /* H1 */
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 150% */
+  letter-spacing: -0.48px;
+}
+
+.notes-main-card {
+  display: flex;
+  padding: 8px 16px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--Color-1, #465cb3);
+  background: var(--White-colour, #fff);
+}
+.message-container {
+  /* max-width: 80%; */
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  overflow-y: auto;
+  max-height: 380px;
+  margin-top: 5px;
+}
+.message-card {
+  display: flex;
+  flex-direction: column; /* Stack the items vertically */
+  /* gap: 16px; Ensure 16px gap between all child elements */
+}
+.notes-message-outer-layer {
+  display: inline-flex; /* Ensures the styling applies only to the text content */
+  padding: 16px 24px;
+  align-items: center;
+  gap: 10px;
+  border-radius: 32px 32px 32px 0px;
+  background: rgba(160, 170, 193, 0.1);
+  max-width: 100%; /* Restrict width to 80% of the parent container */
+  word-wrap: break-word; /* Ensure text wraps when necessary */
+}
+
+.notes-message-input-box {
+  height: 50px;
+  padding: 8px 16px;
+  border-radius: 24px;
+  border: 1px solid var(--2, #6f8cff);
+  background: var(--White-colour, #fff);
+}
+
+.custom-message-bar {
+  height: 355px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  /* Remove border, outline, or shadow from the card container */
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Custom Scrollbar Styles */
+.custom-message-bar::-webkit-scrollbar {
+  width: 6px;
+  background-color: transparent;
+}
+
+.custom-message-bar::-webkit-scrollbar-track {
+  background-color: #f5f5ff;
+  border-radius: 3px;
+}
+
+.custom-message-bar::-webkit-scrollbar-thumb {
+  background-color: #e7e7ff;
+  border-radius: 3px;
+}
+
+.custom-message-bar::-webkit-scrollbar-thumb:hover {
+  background-color: #d1d1ff;
+}
+
+/* Firefox */
+.custom-message-bar {
+  scrollbar-width: thin;
+  scrollbar-color: #e7e7ff #f5f5ff;
+}
+
+.modal-card-padding-student {
+  gap: 20px;
+  /* padding: 20px 20px; */
+  position: relative; /* Needed for the absolute positioning of the button container */
+}
+
+.center-bottom-buttons {
+  position: absolute;
+  bottom: 16px; /* Adjust to match your design */
+  left: 60%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  justify-content: center;
 }
