@@ -9,23 +9,54 @@ import { useEffect, useState } from "react";
 import CreateClassroom from "./CreateClassroom";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import useNavigate from "../../hooks/useNavigate";
-import { useGetAllClassrooms } from "../../hooks/useClassroom";
+import {
+  useClassroomById,
+  useGetAllClassrooms,
+} from "../../hooks/useClassroom";
+import { useLocation } from "react-router-dom";
 
 const { Title, Text } = Typography;
 function ClassroomProfile() {
-  const { activeId } = useNavigate();
-  const [selectedAcademy, setSelectedAcademy] = useState("1-Blue-D");
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Extract `studentId` from state
+  const classroomId = location.state?.classroomId;
+  const classname = location.state?.name;
+  const [selectedAcademy, setSelectedAcademy] = useState(classname);
   const [isEditClassroomModalOpen, setEditClassroomModalOpen] = useState(false);
-  const [currentClassroomId, setCurrentClassroomId] = useState(activeId);
+  const [currentClassroomId, setCurrentClassroomId] = useState(classroomId);
+  // const [currentClassroomData, setCurrentClassroomData] = useState(null);
+
+  const { data: currentClassroomData } = useClassroomById(currentClassroomId);
 
   useEffect(() => {
-    setCurrentClassroomId(activeId);
-  }, [activeId]);
+    if (!classroomId) {
+      navigate("/"); // Redirect to home or error page
+    }
+  }, [classroomId, navigate]);
+
+  // useEffect(() => {
+  //   const { data: currentClassroomData } = useClassroomById(currentClassroomId);
+  //   setCurrentClassroomData(currentClassroomData);
+  // }, [currentClassroomId]);
 
   const handleMenuClick = (e) => {
-    const selected = academyMenu.items.find((item) => item.key === e.key); // Find the selected item
+    const { key } = e; // Extract the key from the event object
+    console.log("Clicked key:", key);
+
+    let selected = null; // Variable to store the selected item
+
+    // Loop through the items to find the matching key
+    for (let i = 0; i < academyMenu.items.length; i++) {
+      if (academyMenu.items[i].key == key) {
+        selected = academyMenu.items[i];
+        break; // Exit the loop once the match is found
+      }
+    }
+    console.log("selected:", selected);
     if (selected) {
-      setSelectedAcademy(selected.label); // Update state with the selected label
+      setSelectedAcademy(selected.label);
       setCurrentClassroomId(selected.key);
     }
   };
@@ -37,20 +68,11 @@ function ClassroomProfile() {
   } = useGetAllClassrooms();
   // console.log("classroomData", classroomData);
   const academyMenu = {
-    items: [
-      {
-        key: "36",
-        label: "1-Blue-D",
-      },
-      {
-        key: "37",
-        label: "2-Green-D",
-      },
-      {
-        key: "38",
-        label: "3-Purple-D",
-      },
-    ],
+    items: (classroomData?.data || []).map((classroom) => ({
+      key: classroom?.id || "unknown", // Handle potential undefined id
+      label: classroom?.name || "Unnamed", // Handle potential undefined name
+    })),
+    onClick: handleMenuClick,
   };
 
   const MAX_TEXT_LENGTH = 11; // Define the max length of the displayed text
@@ -59,6 +81,36 @@ function ClassroomProfile() {
     return text.length > maxLength
       ? `${text.substring(0, maxLength)}...`
       : text;
+  };
+
+  const formatRange = (range) => {
+    if (!range) return ""; // Handle undefined or null values
+
+    // Split the range into start and end parts
+    const [start, end] = range.split("-").map((value) => {
+      const [years, months] = value.split(".").map(Number);
+      return { years, months };
+    });
+
+    // Helper function to format individual parts
+    const formatPart = ({ years, months }) => {
+      if (years && months) {
+        return `${years} years ${months} months`;
+      } else if (years) {
+        return `${years} year${years > 1 ? "s" : ""}`;
+      } else if (months) {
+        return `${months} month${months > 1 ? "s" : ""}`;
+      } else {
+        return "";
+      }
+    };
+
+    // Format the start and end parts
+    const startFormatted = formatPart(start);
+    const endFormatted = formatPart(end);
+
+    // Combine the formatted parts into a range
+    return `${startFormatted} to ${endFormatted}`;
   };
   return (
     <>
@@ -74,17 +126,21 @@ function ClassroomProfile() {
                     color: "#fff", // Set text color for initials
                     fontSize: "20px", // Adjust font size if needed
                   }}
+                  {...(currentClassroomData?.data?.profileUrl
+                    ? { src: currentClassroomData.data.profileUrl } // Set src only if profileUrl exists
+                    : {})}
                 >
-                  {getInitialsTitle(selectedAcademy)}
+                  {getInitialsTitle(selectedAcademy)}{" "}
+                  {/* Show initials if no profileUrl */}
                 </Avatar>
               </div>
-              <div className="ms-3 flex-grow-1">
+              <div className="ms-2 flex-grow-1">
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="profile-name-title">
                     {/* 1-Blue-D <IoChevronDownOutline /> */}
                     <div style={{ display: "flex", alignItems: "start" }}>
                       <Dropdown
-                        menu={{ ...academyMenu, onClick: handleMenuClick }}
+                        menu={{ ...academyMenu, onChange: handleMenuClick }}
                         trigger={["click"]}
                         className="school-selection-drpd"
                       >
@@ -110,12 +166,18 @@ function ClassroomProfile() {
                   </div>
                 </div>
                 <div className="">
-                  <Text className="font-12-details">2 to 11 Months</Text>
+                  <Text className="font-12-details">
+                    {/* 2 to 11 Months */}
+                    {formatRange(currentClassroomData?.data?.ageRange)}
+                  </Text>
                 </div>
                 <div className="d-flex justify-content-between align-items-center">
-                  <Text className="font-12-details">Capacity: 13</Text>
                   <Text className="font-12-details">
-                    Required: 4:1{" "}
+                    Capacity: {currentClassroomData?.data?.maxCapacity}
+                  </Text>
+                  <Text className="font-12-details">
+                    Required: {currentClassroomData?.data?.maxCapacity}:
+                    {currentClassroomData?.data?.staffRatio}{" "}
                     <Avatar
                       src="/classroom_icons/png/thumb_up.png"
                       className="classroom-table-thumb"

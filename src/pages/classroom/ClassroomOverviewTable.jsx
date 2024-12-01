@@ -185,7 +185,13 @@ function ClassroomOverviewTable() {
                   }}
                 />
               )}
-              <Link to={`/classroom-profile/${record.key}`}>
+              <Link
+                to="/classroom-profile"
+                state={{
+                  classroomId: record.key,
+                  name: record.name,
+                }}
+              >
                 <span>{text}</span>
               </Link>
             </Space>

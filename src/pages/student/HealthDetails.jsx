@@ -66,17 +66,23 @@ const HealthDetails = ({ studentId }) => {
       <Row gutter={[0, 10]}>
         <LabelCol>Allergies</LabelCol>
         <ContentCol>
-          <Text className="student-about-tab-label-value">No Allergies</Text>
+          <Text className="student-about-tab-label-value">
+            {studentData?.data?.allergies}
+          </Text>
         </ContentCol>
 
         <LabelCol>Medication</LabelCol>
         <ContentCol>
-          <Text className="student-about-tab-label-value">No Medication</Text>
+          <Text className="student-about-tab-label-value">
+            {studentData?.data?.medications}
+          </Text>
         </ContentCol>
 
         <LabelCol>Diet Restrictions</LabelCol>
         <ContentCol>
-          <Text className="student-about-tab-label-value">No Restrictions</Text>
+          <Text className="student-about-tab-label-value">
+            {studentData?.data?.dietRestriction}
+          </Text>
         </ContentCol>
 
         {/* <LabelCol>Last Physical Date</LabelCol>
@@ -97,6 +103,7 @@ const HealthDetails = ({ studentId }) => {
           <HealthDetailsForm
             CardTitle={"Edit Student Health Details"}
             studentData={studentData}
+            studentId={studentId}
             closeModal={() => setCreateHealthDetailsModalOpen(false)}
           />
         </CommonModalComponent>

@@ -6,65 +6,66 @@ import {
   useStudentById,
   useUpdateStudent,
 } from "../../hooks/useStudent";
+import { CustomMessage } from "../../utils/CustomMessage";
 // import CustomDatePicker from "../../components/CustomDatePicker";
 
-function HealthDetailsForm({ CardTitle, studentData, closeModal }) {
+function HealthDetailsForm({ CardTitle, studentData, studentId, closeModal }) {
   const [form] = Form.useForm();
-
+  console.log("studentData:", studentData);
   const createStudentMutation = useCreateStudent();
   const updateStudentMutation = useUpdateStudent();
-  const isEdit = Boolean(studentData);
+  const isEdit = Boolean(studentId);
 
   useEffect(() => {
     if (studentData) {
       form.setFieldsValue({
         allergies: studentData.data.allergies,
-        medication: studentData.data.medication,
-        dietRestrictions: studentData.data.dietRestrictions,
+        medications: studentData.data.medications,
+        dietRestriction: studentData.data.dietRestriction,
         // lastPhysicalDate: studentData.data.lastPhysicalDate,
       });
     }
   }, [studentData, form]);
 
   const handleSubmit = (values) => {
-    const { allergies, medication, dietRestrictions, lastPhysicalDate } =
-      values;
-
-    if (!lastPhysicalDate) {
-      message.error("Last Physical Date is required!");
-      return;
-    }
+    const { allergies, medications, dietRestriction } = values;
 
     const formData = new FormData();
     formData.append("allergies", allergies || "No Allergies");
-    formData.append("medication", medication || "No Medication");
+    formData.append("medications", medications || "No Medications");
     formData.append(
-      "dietRestrictions",
-      dietRestrictions || "No Diet Restrictions"
+      "dietRestriction",
+      dietRestriction || "No Diet Restrictions"
     );
     // formData.append("lastPhysicalDate", lastPhysicalDate.format("YYYY-MM-DD"));
 
     if (isEdit) {
+      console.log("first");
       updateStudentMutation.mutate(
         { studentId, studentData: formData },
         {
           onSuccess: () => {
-            message.success("Student updated successfully!");
+            CustomMessage.success(
+              "Student Health details updated successfully!"
+            );
             closeModal();
           },
           onError: (error) => {
-            message.error(`Failed to update student: ${error.message}`);
+            CustomMessage.error(
+              `Failed to update student Health details: ${error.message}`
+            );
           },
         }
       );
     } else {
+      console.log("second");
       createStudentMutation.mutate(formData, {
         onSuccess: () => {
-          message.success("Student created successfully!");
+          CustomMessage.success("Student created successfully!");
           closeModal();
         },
         onError: (error) => {
-          message.error(`Failed to create student: ${error.message}`);
+          CustomMessage.error(`Failed to create student: ${error.message}`);
         },
       });
     }
@@ -96,18 +97,18 @@ function HealthDetailsForm({ CardTitle, studentData, closeModal }) {
               />
             </Form.Item>
             <div className=" items-center gap-1 student-label ">
-              Medication
+              Medications
               {/* <span className="text-danger"> *</span> */}
             </div>
             <Form.Item
-              name="medication"
+              name="medications"
               // rules={[
               //     { required: true, message: "Please input the email address!" },
               //     { type: "email", message: "Please enter a valid email address!" },
               //   ]}
             >
               <Input
-                placeholder="No Medication"
+                placeholder="No Medications"
                 className="w-100 student-form-input"
               />
             </Form.Item>
@@ -115,7 +116,7 @@ function HealthDetailsForm({ CardTitle, studentData, closeModal }) {
               Diet Restrictions
               {/* <span className="text-danger"> *</span> */}
             </div>
-            <Form.Item name="dietRestrictions">
+            <Form.Item name="dietRestriction">
               <Input
                 placeholder="No Diet Restrictions"
                 className="w-100 student-form-input"
