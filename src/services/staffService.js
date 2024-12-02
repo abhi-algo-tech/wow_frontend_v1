@@ -13,6 +13,21 @@ const StaffService = {
     }
   },
 
+  getStaffByClassroom: async (classroomId) => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.STAFF.BY_CLASSROOM}/${classroomId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        `Error fetching staff with classroomID ${classroomId}:`,
+        error
+      );
+      throw error;
+    }
+  },
+
   getStaff: async (staffId) => {
     try {
       const response = await axiosInstance.get(

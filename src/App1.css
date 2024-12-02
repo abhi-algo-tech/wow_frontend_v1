@@ -1288,7 +1288,7 @@
 .staff-attendance-overflowborder {
   position: absolute;
   width: 69px;
-  height: 288px;
+  height: auto;
   top: 25vh;
   right: 9vh;
   z-index: 999;

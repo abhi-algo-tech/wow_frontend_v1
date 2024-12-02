@@ -29,6 +29,21 @@ export const useStaffById = (staffId) => {
   });
 };
 
+// Fetch a staff by classroom
+export const useStaffByClassroom = (classroomId) => {
+  return useQuery({
+    queryKey: [staffKeys.staff, classroomId],
+    queryFn: () => StaffService.getStaffByClassroom(classroomId),
+    enabled: Boolean(classroomId), // Enable query only if classroomId is defined
+    onError: (error) => {
+      console.error(
+        `Error fetching staff member with classroomID ${classroomId}:`,
+        error
+      );
+    },
+  });
+};
+
 // Create a new staff member
 export const useCreateStaff = () => {
   const queryClient = useQueryClient();

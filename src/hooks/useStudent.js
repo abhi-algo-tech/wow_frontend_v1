@@ -31,6 +31,21 @@ export const useStudentById = (studentId) => {
   });
 };
 
+// Fetch a student by classroom
+export const useStudentByClassroom = (classroomId) => {
+  return useQuery({
+    queryKey: [studentKeys.students, classroomId],
+    queryFn: () => StudentService.getStudentByClassroom(classroomId),
+    enabled: Boolean(classroomId), // Enable query only if classroomId is defined
+    onError: (error) => {
+      console.error(
+        `Error fetching student with classroomID ${classroomId}:`,
+        error
+      );
+    },
+  });
+};
+
 // Create a new student
 export const useCreateStudent = () => {
   const queryClient = useQueryClient();
@@ -65,10 +80,10 @@ export const useUpdateStudent = () => {
       // message.success("Student updated successfully!"); // Success message
     },
 
-  //   onError: (error) => {
-  //     message.error("Error updating student!"); // Error message
-  //     console.error("Error updating student:", error);
-  //   },
+    //   onError: (error) => {
+    //     message.error("Error updating student!"); // Error message
+    //     console.error("Error updating student:", error);
+    //   },
   });
 };
 
@@ -88,5 +103,3 @@ export const useDeleteStudent = () => {
     },
   });
 };
-
-

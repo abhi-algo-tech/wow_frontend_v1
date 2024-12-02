@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://16.171.7.25:8080/api",
+  baseURL: "http://16.16.25.101:8080/api",
   // baseURL: "https://wow-backend-v1.onrender.com/api",
   // baseURL: "http://localhost:8080/api",
   timeout: 10000,

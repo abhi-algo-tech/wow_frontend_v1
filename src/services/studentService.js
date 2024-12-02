@@ -25,6 +25,21 @@ const StudentService = {
     }
   },
 
+  getStudentByClassroom: async (classroomId) => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.STUDENT.BY_CLASSROOM}/${classroomId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        `Error fetching student with classroomID ${classroomId}:`,
+        error
+      );
+      throw error;
+    }
+  },
+
   createStudent: async (studentData) => {
     try {
       const response = await axiosInstance.post(
@@ -62,8 +77,6 @@ const StudentService = {
       throw error;
     }
   },
-
-  
 };
 
 export default StudentService;

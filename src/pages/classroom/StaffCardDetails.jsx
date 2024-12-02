@@ -5,35 +5,37 @@ import { SearchOutlined } from "@ant-design/icons";
 import ActorBigCard from "../../components/ActorBigCard";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import CreateMessage from "../../components/message/CreateMessage";
+import { useStaffByClassroom } from "../../hooks/useStaff";
+import { formatStaffData } from "./ClassroomCommon";
 const { Option } = Select;
 
 // Sample student data
-const staffs = [
-  {
-    id: 1,
-    name: "Aadhira",
-    avatar: "/classroom_icons/png/Aadhira.png",
-    flags: ["mail"],
-    status: "",
-    designation: "Admin",
-  },
-  {
-    id: 2,
-    name: "Aarav",
-    avatar: "/classroom_icons/png/Aarav.png",
-    flags: ["mail"],
-    status: "",
-    designation: "Staff",
-  },
-  {
-    id: 3,
-    name: "Aarjav",
-    avatar: "/classroom_icons/png/Aarjav.png",
-    flags: ["mail"],
-    status: "",
-    designation: "Lead Teacher",
-  },
-];
+// const staffs = [
+//   {
+//     id: 1,
+//     name: "Aadhira",
+//     avatar: "/classroom_icons/png/Aadhira.png",
+//     flags: ["mail"],
+//     status: "",
+//     designation: "Admin",
+//   },
+//   {
+//     id: 2,
+//     name: "Aarav",
+//     avatar: "/classroom_icons/png/Aarav.png",
+//     flags: ["mail"],
+//     status: "",
+//     designation: "Staff",
+//   },
+//   {
+//     id: 3,
+//     name: "Aarjav",
+//     avatar: "/classroom_icons/png/Aarjav.png",
+//     flags: ["mail"],
+//     status: "",
+//     designation: "Lead Teacher",
+//   },
+// ];
 
 const leftRenderData = [
   { icon: "/classroom_icons/png/Sign in.png", label: "Sign In" },
@@ -54,15 +56,37 @@ const rightRenderData = [
   },
 ];
 
-export default function StaffCardDetails() {
+export default function StaffCardDetails({ classroomId }) {
   const [selectedStaffs, setSelectedStaffs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showLeftCard, setShowLeftCard] = useState(false);
   const [isFloatingCardVisible, setFloatingCardVisible] = useState();
   const [isCreateMessageModalOpen, setCreateMessageModalOpen] = useState(false);
+  const [staffs, setStaffs] = useState([]);
 
+  const {
+    data: staffData,
+    isLoading,
+    isError,
+    error,
+  } = useStaffByClassroom(classroomId);
+
+  useEffect(() => {
+    if (staffData) {
+      const formattedData = formatStaffData(staffData);
+      setStaffs(formattedData);
+    }
+  }, [staffData]);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error: {error.message}</p>;
   // Function to handle "Select All" functionality
   const handleSelectAll = (e) => {
+    if (selectedStaffs?.length >= 1) {
+      setFloatingCardVisible(false);
+    } else {
+      setFloatingCardVisible(true);
+    }
     if (e.target.checked) {
       setSelectedStaffs(staffs.map((staff) => staff.id));
     } else {
@@ -72,6 +96,11 @@ export default function StaffCardDetails() {
 
   // Function to handle individual checkbox changes
   const handleCheckboxChange = (id) => {
+    if (selectedStaffs?.length >= 1) {
+      setFloatingCardVisible(false);
+    } else {
+      setFloatingCardVisible(true);
+    }
     setSelectedStaffs((prevSelected) =>
       prevSelected.includes(id)
         ? prevSelected.filter((staffId) => staffId !== id)
@@ -83,13 +112,13 @@ export default function StaffCardDetails() {
     staff.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  useEffect(() => {
-    if (selectedStaffs?.length >= 1) {
-      setFloatingCardVisible(true);
-    } else {
-      setFloatingCardVisible(false);
-    }
-  }, [selectedStaffs]);
+  // useEffect(() => {
+  //   if (selectedStaffs?.length >= 1) {
+  //     setFloatingCardVisible(true);
+  //   } else {
+  //     setFloatingCardVisible(false);
+  //   }
+  // }, [selectedStaffs]);
   const setShowRightActionCard = (action) => {
     switch (action.toLowerCase()) {
       case "attendance":

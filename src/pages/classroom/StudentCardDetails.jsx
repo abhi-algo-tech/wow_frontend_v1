@@ -12,95 +12,11 @@ import ActivitySubMenu from "./ActivitySubMenu";
 import ActivityIconSubMenu from "./ActivityIconSubMenu";
 import CreateMessage from "../../components/message/CreateMessage";
 import AssignConfirm from "./AssignConfirm";
+import { useStudentByClassroom } from "../../hooks/useStudent";
+import { formatStudentData } from "./ClassroomCommon";
 const { Option } = Select;
 
 // Sample student data
-const students = [
-  {
-    id: 1,
-    name: "Ajay",
-    avatar: "/classroom_icons/png/Ajay.png",
-    flags: ["Notes", "Allergies", "Dietary-Restrictions", "no-photo"],
-    status: "",
-  },
-  {
-    id: 2,
-    name: "Lex",
-    avatar: "/classroom_icons/png/Lex.png",
-    flags: ["Notes", "Dietary-Restrictions", "Allergies"],
-    status: "",
-  },
-  {
-    id: 3,
-    name: "Lisa",
-    avatar: "/classroom_icons/png/Lisa.png",
-    flags: ["Medication", "no-photo"],
-    status: "",
-  },
-  {
-    id: 4,
-    name: "Keri",
-    avatar: "/classroom_icons/png/Keri.png",
-    flags: ["Notes", "Dietary-Restrictions", "no-photo"],
-    status: "present",
-  },
-  {
-    id: 5,
-    name: "Erica",
-    avatar: "/classroom_icons/png/Erica.png",
-    flags: ["Notes", "Medication"],
-    status: "present",
-  },
-  {
-    id: 6,
-    name: "Robert",
-    avatar: "/classroom_icons/png/Robert.png",
-    flags: ["Dietary-Restrictions", "Notes"],
-    status: "present",
-  },
-  {
-    id: 7,
-    name: "Thomas",
-    avatar: "/classroom_icons/png/Thomas.png",
-    flags: ["Notes", "Dietary-Restrictions", "Allergies"],
-    status: "present",
-  },
-  {
-    id: 8,
-    name: "Olivia",
-    avatar: "/classroom_icons/png/Olivia.png",
-    flags: ["Notes", "Dietary-Restrictions", "Allergies"],
-    status: "present",
-  },
-  {
-    id: 9,
-    name: "Lara",
-    avatar: "/classroom_icons/png/Lara.png",
-    flags: ["no-photo", "Medication"],
-    status: "present",
-  },
-  {
-    id: 10,
-    name: "Brux",
-    avatar: "/classroom_icons/png/Brux.png",
-    flags: ["Dietary-Restrictions", "Allergies", "Notes"],
-    status: "absent",
-  },
-  {
-    id: 11,
-    name: "Emma",
-    avatar: "/classroom_icons/png/Emma.png",
-    flags: ["Notes", "Allergies", "Medication"],
-    status: "absent",
-  },
-  {
-    id: 12,
-    name: "Arvind",
-    avatar: "/classroom_icons/png/Ajay.png",
-    flags: ["Allergies", "Notes", "Medication"],
-    status: "absent",
-  },
-];
 
 const leftRenderAttendanceData = [
   {
@@ -146,7 +62,8 @@ const rightRenderData = [
     modal: "Message",
   },
 ];
-export default function StudentCardDetails() {
+export default function StudentCardDetails({ classroomId }) {
+  const [students, setStudents] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isFloatingCardVisible, setFloatingCardVisible] = useState();
@@ -161,6 +78,24 @@ export default function StudentCardDetails() {
   const [isCreateMessageModalOpen, setCreateMessageModalOpen] = useState(false);
   const [isAssignConfirmModalOpen, setAssignConfirmModalOpen] = useState(false);
 
+  const {
+    data: studentData,
+    isLoading,
+    isError,
+    error,
+  } = useStudentByClassroom(classroomId);
+
+  useEffect(() => {
+    if (studentData) {
+      const formattedData = formatStudentData(studentData);
+      console.log("formattedData:", formattedData);
+      setStudents(formattedData);
+    }
+  }, [studentData]);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error: {error.message}</p>;
+
   // Function to handle "Select All" functionality
   const handleSelectAll = (e) => {
     if (e.target.checked) {
@@ -170,12 +105,24 @@ export default function StudentCardDetails() {
       // Deselect all
       setSelectedStudents([]);
     }
+    if (selectedStudents?.length >= 1) {
+      setFloatingCardVisible(false);
+    } else {
+      setFloatingCardVisible(true);
+      setCurrentAction("student");
+    }
+    setLeftRenderData(leftRenderDefaultData);
   };
-
-  console.log("isAssignConfirmModalOpen", isAssignConfirmModalOpen);
 
   // Function to handle individual checkbox changes
   const handleCheckboxChange = (id) => {
+    if (selectedStudents?.length >= 1) {
+      setFloatingCardVisible(false);
+    } else {
+      setFloatingCardVisible(true);
+      setCurrentAction("student");
+    }
+    setLeftRenderData(leftRenderDefaultData);
     setSelectedStudents((prevSelected) =>
       prevSelected.includes(id)
         ? prevSelected.filter((studentId) => studentId !== id)
@@ -233,17 +180,18 @@ export default function StudentCardDetails() {
     }
   };
 
-  useEffect(() => {
-    setLeftRenderData(leftRenderDefaultData);
-  }, []);
-  useEffect(() => {
-    if (selectedStudents?.length >= 1) {
-      setFloatingCardVisible(true);
-    } else {
-      setFloatingCardVisible(false);
-      setCurrentAction("student");
-    }
-  }, [selectedStudents]);
+  // useEffect(() => {
+  //   setLeftRenderData(leftRenderDefaultData);
+  // }, [leftRenderDefaultData]);
+  // useEffect(() => {
+  //   if (selectedStudents?.length >= 1) {
+  //     setFloatingCardVisible(true);
+  //   } else {
+  //     setFloatingCardVisible(false);
+  //     setCurrentAction("student");
+  //   }
+  // }, [selectedStudents]);
+
   const renderLFloatingRightCard = () => (
     <div className="classroom-students-l-overflowborder text-center">
       {currentAction === "student" ? (

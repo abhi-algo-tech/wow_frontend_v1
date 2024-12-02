@@ -295,7 +295,7 @@ function ClassroomProfile() {
       </Row>
       <Row gutter={[16, 0]} className="mt21">
         <Col span={17}>
-          <ClassroomOverviewTab />
+          <ClassroomOverviewTab classroomId={currentClassroomId} />
         </Col>
         <Col span={7}>
           <div className="mb13">

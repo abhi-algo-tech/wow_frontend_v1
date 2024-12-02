@@ -51,6 +51,7 @@ const StaffOverviewTable = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [selectedStaffId, setSelectedStaffId] = useState(null);
+  const [hoveredRow, setHoveredRow] = useState(null);
 
   const { data: staff, isLoading, isError, error } = useGetAllStaff();
   const updateStaffMutation = useUpdateStaff();
@@ -199,7 +200,10 @@ const StaffOverviewTable = () => {
       key: "primaryClass",
       align: "start",
       render: (text, record) => (
-        <div>
+        <div
+          onMouseEnter={() => setHoveredRow(record.key)}
+          onMouseLeave={() => setHoveredRow(null)}
+        >
           <Avatar
             size={24}
             style={{
@@ -223,6 +227,17 @@ const StaffOverviewTable = () => {
             >
               <Tag className="no-border-tag plus-number-count">{`+${record.subClassroomCount}`}</Tag>
             </Popover>
+          )}
+          {hoveredRow === record.key && (
+            <Tooltip title="Edit Tags" style={{ backgroundColor: "#41414ECC" }}>
+              <Avatar
+                size={20}
+                src={"/classroom_icons/png/edit-tag.png"}
+                style={{
+                  cursor: "pointer",
+                }}
+              />
+            </Tooltip>
           )}
         </div>
       ),

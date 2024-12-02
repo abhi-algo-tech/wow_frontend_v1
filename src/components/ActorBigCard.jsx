@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, Checkbox, Avatar, Space } from "antd";
+import { getInitialsTitleWithColor } from "../services/common";
 
 function ActorBigCard({
   actor,
@@ -19,7 +20,17 @@ function ActorBigCard({
         onChange={() => handleCheckboxChange(actor.id)}
       />
       <div className="position-relative d-inline-block mb-2">
-        <Avatar src={actor.avatar} size={48} />
+        <Avatar
+          src={actor.avatar || null} // Use avatar if available
+          size={48}
+          style={{
+            backgroundColor: !actor.avatar
+              ? getInitialsTitleWithColor(actor.name).backgroundColor
+              : "transparent", // Set background color if no avatar
+          }}
+        >
+          {!actor.avatar && getInitialsTitleWithColor(actor.name).initials}
+        </Avatar>
         <div
           className={`position-absolute top-0 end-0 translate-middle rounded-circle ${
             actor.status === "present" ? "active-green" : ""

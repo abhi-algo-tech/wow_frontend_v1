@@ -24,7 +24,7 @@ import AssignStudent from "./AssignStudent";
 
 const { TabPane } = Tabs;
 
-function ClassroomOverviewTab() {
+function ClassroomOverviewTab({ classroomId }) {
   const [activeTab, setActiveTab] = useState("1");
   const [isAssignStudentModalOpen, setAssignStudent] = useState(false);
 
@@ -124,11 +124,11 @@ function ClassroomOverviewTab() {
         className="classroom-custom-tabs"
       >
         <TabPane tab={<span>Students</span>} key="1">
-          <StudentCardDetails />
+          <StudentCardDetails classroomId={classroomId} />
         </TabPane>
 
         <TabPane tab={<span>Staff</span>} key="2">
-          <StaffCardDetails />
+          <StaffCardDetails classroomId={classroomId} />
         </TabPane>
 
         <TabPane tab={<span>Notes</span>} key="3">
