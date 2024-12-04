@@ -14,6 +14,7 @@ import CreateMessage from "../../components/message/CreateMessage";
 import AssignConfirm from "./AssignConfirm";
 import { useStudentByClassroom } from "../../hooks/useStudent";
 import { formatStudentData } from "./ClassroomCommon";
+import LoaderComponent from "../../components/loader/LoaderComponent";
 const { Option } = Select;
 
 // Sample student data
@@ -93,7 +94,12 @@ export default function StudentCardDetails({ classroomId }) {
     }
   }, [studentData]);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading)
+    return (
+      <p>
+        <LoaderComponent isLoading={isLoading} />
+      </p>
+    );
   if (isError) return <p>Error: {error.message}</p>;
 
   // Function to handle "Select All" functionality

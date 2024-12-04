@@ -7,12 +7,16 @@ function ActorBigCard({
   selectedActors,
   handleCheckboxChange,
   renderFlag,
+  module,
 }) {
   return (
     <Card
       className={`text-center position-relative classroom-student-profile-card  mb15 ${
         actor.status === "absent" ? "opacity-50" : ""
       }`}
+      styles={{
+        body: module === "staff" ? { height: "152px" } : { height: "132px" },
+      }}
     >
       <Checkbox
         className="position-absolute top-0 start-0 mt-2 ms-2"
@@ -48,16 +52,21 @@ function ActorBigCard({
           }
         />
       </div>
-      <div className="fw-medium">{actor.name}</div>
+      <div
+        className="label-14-500 actorbig-card-text-ellipsis "
+        data-full-text={actor.name}
+      >
+        {actor.name}
+      </div>
       {actor?.designation && (
-        <div className="staff-designation-label">{actor.designation}</div>
+        <div className="label-11-400 mt6">{actor.designation}</div>
       )}
-      <Space size={4} className="d-flex justify-content-center mt-2">
+      <Space size={4} className="d-flex justify-content-center mt10">
         {actor.flags.map((flag, index) => (
           <img
             key={index}
             className="student-activity-type-icons"
-            src={`/classroom_icons/png/${flag}.png`}
+            src={`/classroom_icons/png/Notes.png`}
             alt={flag}
           />
         ))}
