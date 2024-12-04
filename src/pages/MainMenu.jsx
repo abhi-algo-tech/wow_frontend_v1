@@ -21,14 +21,14 @@ function MainMenu() {
       label: <Link to="/classroom">Classroom</Link>,
     },
     {
-      key: "students",
+      key: "student",
       icon: <img src="/wow_icons/png/Students.png" width={22} height={22} />,
       label: <Link to="/student">Students</Link>,
     },
     {
       key: "staff",
       icon: <img src="/wow_icons/png/Staff.png" width={22} height={18} />,
-      label: <Link to="/staffs">Staff</Link>,
+      label: <Link to="/staff">Staff</Link>,
     },
     {
       key: "attendance",
@@ -129,7 +129,7 @@ function MainMenu() {
     {
       key: "scheduling",
       icon: <img src="/wow_icons/png/Scheduling.png" width={22} height={22} />,
-      label: "Scheduling",
+      label: <Link to={"/schedule"}>Scheduling</Link>,
       children: [
         {
           key: "staff-schedule",
