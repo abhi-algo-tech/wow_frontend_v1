@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Table, Button, Input, Switch, Typography, Dropdown, Menu } from "antd";
+import {
+  Table,
+  Button,
+  Input,
+  Switch,
+  Typography,
+  Dropdown,
+  Menu,
+  Avatar,
+} from "antd";
 import {
   FileImageOutlined,
   FileTextOutlined,
@@ -9,43 +18,104 @@ import ButtonComponent from "../../components/ButtonComponent";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import DocumentForm from "./DocumentForm";
 const { Text } = Typography;
+// const columns = [
+//   {
+//     title: "Document Name",
+//     dataIndex: "name",
+//     key: "name",
+//     align: "start",
+//     render: (text) => (
+//       <Input
+//         value={text}
+//         bordered={false}
+//         readOnly
+//         style={{ border: "1px solid #d9d9d9", borderRadius: "4px" }}
+//       />
+//     ),
+//   },
+//   {
+//     title: "Expiry Date",
+//     dataIndex: "expiry",
+//     key: "expiry",
+//     align: "center",
+//   },
+//   {
+//     title: "Document",
+//     key: "document",
+//     align: "center",
+//     render: (record) => (
+//       <>
+//         {record.type === "image" ? (
+//           <FileImageOutlined style={{ fontSize: "20px", color: "#1890ff" }} />
+//         ) : (
+//           <FileTextOutlined style={{ fontSize: "20px", color: "#1890ff" }} />
+//         )}
+//       </>
+//     ),
+//   },
+//   {
+//     title: "",
+//     key: "action",
+//     render: (record) => (
+//       <Dropdown
+//         menu={{
+//           items: [
+//             {
+//               key: "edit",
+//               label: "Edit",
+//               //   icon: <EditOutlined />,
+//               onClick: () => console.log("Edit record:", record),
+//             },
+//             {
+//               key: "delete",
+//               label: "Delete",
+//               //   icon: <DeleteOutlined />,
+//               onClick: () => console.log("Delete record:", record),
+//             },
+//           ],
+//         }}
+//         trigger={["click"]}
+//       >
+//         <EllipsisOutlined />
+//       </Dropdown>
+//     ),
+//   },
+// ];
+
 const columns = [
   {
     title: "Document Name",
     dataIndex: "name",
     key: "name",
     align: "start",
-    render: (text) => (
-      <Input
-        value={text}
-        bordered={false}
-        readOnly
-        style={{ border: "1px solid #d9d9d9", borderRadius: "4px" }}
-      />
-    ),
+    className: "label-14-600",
+    render: (text) => <div className="label-14-500">{text}</div>,
   },
   {
     title: "Expiry Date",
     dataIndex: "expiry",
     key: "expiry",
-    align: "center",
+    align: "start",
+    className: "label-14-600",
+    render: (text) => <div className="label-14-500">{text}</div>,
   },
   {
     title: "Document",
     key: "document",
     align: "center",
+    className: "label-14-600",
     render: (record) => (
       <>
         {record.type === "image" ? (
-          <FileImageOutlined style={{ fontSize: "20px", color: "#1890ff" }} />
+          <Avatar src="/wow_icons/png/image.png" size={24} />
         ) : (
-          <FileTextOutlined style={{ fontSize: "20px", color: "#1890ff" }} />
+          <Avatar src="/wow_icons/png/pdf.png" size={24} />
         )}
       </>
     ),
   },
   {
-    title: "",
+    title: "Action",
     key: "action",
     render: (record) => (
       <Dropdown
@@ -72,7 +142,6 @@ const columns = [
     ),
   },
 ];
-
 const data = [
   {
     key: "1",
@@ -95,33 +164,34 @@ const data = [
 ];
 
 const Document = () => {
-  const [isCreateDocumentModalOpen, setCreateDocumentModalOpen] = useState(false);
+  const [isCreateDocumentModalOpen, setCreateDocumentModalOpen] =
+    useState(false);
   return (
     <>
-    <div className="documents-body">
-      <div
-        className="d-flex justify-content-between align-items-center mb-3"
-        style={{ gap: "12px" }}
-      >
-        <div className="align-content-center">
-          <Switch className="mr10" />
-          <Text>Exempt student from all immunizations</Text>
+      <div className="documents-body">
+        <div
+          className="d-flex justify-content-between align-items-center mb-3"
+          style={{ gap: "12px" }}
+        >
+          <div className="align-content-center">
+            <Switch className="mr10" />
+            <Text>Exempt student from all immunizations</Text>
+          </div>
+          <div>
+            <ButtonComponent
+              text="Add Document"
+              buttonActionType="create"
+              gradient={true}
+              onClick={() => setCreateDocumentModalOpen(true)}
+            />
+          </div>
         </div>
-        <div>
-          <ButtonComponent
-            text="Add Document"
-            buttonActionType="create"
-            gradient={true}
-            onClick={() => setCreateDocumentModalOpen(true)}
-          />
-        </div>
-      </div>
-      <Table
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-        size="small"
-      />
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={false}
+          size="small"
+        />
       </div>
       {isCreateDocumentModalOpen && (
         <CommonModalComponent
@@ -136,10 +206,9 @@ const Document = () => {
             classroomId={null}
             closeModal={() => setCreateDocumentModalOpen(false)}
           />
-        
         </CommonModalComponent>
       )}
-      </>
+    </>
   );
 };
 

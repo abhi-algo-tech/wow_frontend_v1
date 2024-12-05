@@ -322,7 +322,7 @@ function ClassroomOverviewTable() {
                   }
                 },
               }}
-              trigger={["click"]}
+              // trigger={["click"]}
             >
               <IoIosMore className="pointer" />
             </Dropdown>
@@ -389,12 +389,12 @@ function ClassroomOverviewTable() {
           setOpen={setDeleteModalOpen}
           modalWidthSize={493}
           modalHeightSize={280}
-          isClosable={true}
+          isClosable={false}
         >
           <DeletePopUp
             setCancel={setDeleteModalOpen}
             deleteData={selectedRecord}
-            CardTitle="Delete Classroom"
+            // CardTitle="Delete Classroom"
             handleDelete={handleDelete} // Pass the updated handleDelete function
             module="Classroom"
           />

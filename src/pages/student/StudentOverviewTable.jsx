@@ -164,7 +164,7 @@ const StudentOverviewTable = () => {
               textDecoration: "none", // Optional to remove underline
             }}
           >
-            <span>{record.name}</span>
+            <span className="label-14-500">{record.name}</span>
             {record.upcoming && (
               <Tag
                 style={{
@@ -387,7 +387,7 @@ const StudentOverviewTable = () => {
               }
             },
           }}
-          trigger={["click"]}
+          // trigger={["click"]}
         >
           <IoIosMore className="pointer" />
         </Dropdown>
@@ -500,12 +500,12 @@ const StudentOverviewTable = () => {
           setOpen={setDeleteModalOpen}
           modalWidthSize={493}
           modalHeightSize={232}
-          isClosable={true}
+          isClosable={false}
         >
           <DeletePopUp
             setCancel={setDeleteModalOpen}
             deleteData={selectedRecord}
-            CardTitle="Delete Student"
+            // CardTitle="Delete Student"
             handleDelete={handleDelete} // Pass the updated handleDelete function
             module="Student"
           />

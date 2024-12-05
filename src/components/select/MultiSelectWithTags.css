@@ -1,8 +1,7 @@
-
 /* Chip Styles */
 .chip {
   border: none;
-  display: flex;
+  display: inline-flex; /* Allow tags to wrap */
   justify-content: center;
   align-items: center;
   border-radius: 3px;
@@ -12,39 +11,18 @@
   font-size: 13px;
   font-weight: 400;
   line-height: 24px;
+  margin: 4px 4px 0 0; /* Add space between tags */
+  white-space: nowrap; /* Prevent tags from breaking */
+  overflow: hidden; /* Handle long text */
+  text-overflow: ellipsis;
 }
 
-/* Remove the bottom border of the tab */
-.ant-tabs-nav {
-  border-bottom: none !important;
-}
-
-/* Remove the border around the tab items */
-.ant-tabs-tab {
-  border: none !important;
-}
-
-/* Optional: Remove the active tab underline */
-.ant-tabs-tab-active {
-  border-bottom: none !important;
-}
-
-/* Optional: Remove border around the TabPanel */
-.ant-tabs-tabpane {
-  border: none !important;
-}
-
-/* Remove the border from the select box */
+/* Select Box Styling */
 .ant-select-selector {
-  border: none !important;
-  box-shadow: none !important;
-  height: 40px !important;
-  /* Remove the shadow if there's any */
-}
-
-/* Optional: Remove the focus border on the select */
-.ant-select-focused .ant-select-selector {
-  border: none !important;
-  box-shadow: none !important;
-  height: 40px !important;
+  display: flex;
+  flex-wrap: wrap; /* Allow tags to wrap */
+  align-items: center;
+  gap: 4px; /* Add spacing between tags */
+  overflow-y: auto; /* Enable scrolling if necessary */
+  padding: 8px; /* Ensure padding consistency */
 }

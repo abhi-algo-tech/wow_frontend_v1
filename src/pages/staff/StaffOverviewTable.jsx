@@ -155,8 +155,13 @@ const StaffOverviewTable = () => {
       ),
       dataIndex: "name",
       key: "name",
+      className: "label-14-600",
+      sorter: (a, b) => a.name.localeCompare(b.name), // Sorting by staff name alphabetically
       render: (text, record) => (
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div
+          style={{ display: "flex", alignItems: "center" }}
+          className="label-14-500"
+        >
           <Checkbox
             checked={selectedRowKeys.includes(record.key)}
             onChange={(e) => handleRowSelection(record.key, e.target.checked)}
@@ -189,7 +194,7 @@ const StaffOverviewTable = () => {
             )}
           </div>
           <Link to={`/staff-profile/${record.key}`} style={{ marginLeft: 8 }}>
-            {text}
+            <span className="label-14-500">{text}</span>
           </Link>
         </div>
       ),
@@ -199,45 +204,57 @@ const StaffOverviewTable = () => {
       dataIndex: "primaryClass",
       key: "primaryClass",
       align: "start",
+      width: 180,
+      className: "label-14-600",
+      sorter: (a, b) => a.primaryClass.localeCompare(b.primaryClass), // Sorting by classroom name alphabetically
       render: (text, record) => (
         <div
           onMouseEnter={() => setHoveredRow(record.key)}
           onMouseLeave={() => setHoveredRow(null)}
+          className="d-flex justify-content-between"
         >
-          <Avatar
-            size={24}
-            style={{
-              backgroundColor: getInitialsTitleWithColor(text).backgroundColor,
-              color: "#fff",
-              fontWeight: "bold",
-            }}
-          >
-            {getInitialsTitleWithColor(text).initials}
-          </Avatar>
-
-          <span className="ml9 staff-table--body-label">{text}</span>
-          {record.subClass[0] && (
-            <Popover
-              color="#F0FFEA"
-              content={record.subClass.map((item) => (
-                <div className="plus-number-count-label" key={item.name}>
-                  {item.name}
-                </div>
-              ))}
+          <div>
+            <Avatar
+              size={24}
+              style={{
+                backgroundColor:
+                  getInitialsTitleWithColor(text).backgroundColor,
+                color: "#fff",
+                fontWeight: "bold",
+              }}
             >
-              <Tag className="no-border-tag plus-number-count">{`+${record.subClassroomCount}`}</Tag>
-            </Popover>
-          )}
+              {getInitialsTitleWithColor(text).initials}
+            </Avatar>
+
+            <span className="ml9 staff-table--body-label">{text}</span>
+            {record.subClass[0] && (
+              <Popover
+                color="#F0FFEA"
+                content={record.subClass.map((item) => (
+                  <div className="plus-number-count-label" key={item.name}>
+                    {item.name}
+                  </div>
+                ))}
+              >
+                <Tag className="no-border-tag plus-number-count label-12-400">{`+${record.subClassroomCount}`}</Tag>
+              </Popover>
+            )}
+          </div>
           {hoveredRow === record.key && (
-            <Tooltip title="Edit Tags" style={{ backgroundColor: "#41414ECC" }}>
-              <Avatar
-                size={20}
-                src={"/classroom_icons/png/edit-tag.png"}
-                style={{
-                  cursor: "pointer",
-                }}
-              />
-            </Tooltip>
+            <div className="text-start">
+              <Tooltip
+                title="Edit Tags"
+                style={{ backgroundColor: "#41414ECC" }}
+              >
+                <Avatar
+                  size={20}
+                  src={"/classroom_icons/png/edit-tag.png"}
+                  style={{
+                    cursor: "pointer",
+                  }}
+                />
+              </Tooltip>
+            </div>
           )}
         </div>
       ),
@@ -247,6 +264,8 @@ const StaffOverviewTable = () => {
       dataIndex: "designation",
       key: "designation",
       align: "start",
+      className: "label-14-600",
+      sorter: (a, b) => a.designation.localeCompare(b.designation), // Sorting by designation alphabetically
       render: (text, _) => (
         <span className="staff-table--body-label">{text}</span>
       ),
@@ -256,6 +275,7 @@ const StaffOverviewTable = () => {
       dataIndex: "schedule",
       key: "schedule",
       align: "start",
+      className: "label-14-600",
       render: (schedule) =>
         ["Mon", "Tue", "Wed", "Thu", "Fri"].map((day) => (
           <Tooltip
@@ -263,11 +283,12 @@ const StaffOverviewTable = () => {
             key={day}
             title={getTooltipContent(day, schedule[day])}
             placement="bottom"
-            className="no-border-tag"
+            className="no-border-tag "
           >
             <Tag
               color={schedule[day] ? "#B1AFE94D" : "default"}
               style={{ color: "#1B237E" }}
+              className="label-12-400"
             >
               {day}
             </Tag>
@@ -279,24 +300,28 @@ const StaffOverviewTable = () => {
       dataIndex: "phone",
       key: "phone",
       align: "start",
+      className: "label-14-600",
+      render: (text) => <span className="label-14-500">{text}</span>,
     },
     {
       title: "Action",
       key: "action",
+      className: "label-14-600",
       render: (_, record) => (
         <Dropdown
+          className="pointer"
           menu={{
             items: [
               {
                 key: "edit",
                 label: "Edit",
-                icon: <EditOutlined />,
+                // icon: <EditOutlined />,
                 onClick: () => handleEditModal(record),
               },
               {
                 key: "delete",
                 label: "Delete",
-                icon: <DeleteOutlined />,
+                // icon: <DeleteOutlined />,
                 onClick: () => handleDeleteModal(record.key, record.name),
               },
             ],
@@ -464,6 +489,7 @@ const StaffOverviewTable = () => {
           <CommonModalComponent
             open={isFilterModalOpen}
             setOpen={setFilterModalOpen}
+            isClosable={true}
           >
             <StaffFilter
               CardTitle={"Staff Filter"}
@@ -478,12 +504,12 @@ const StaffOverviewTable = () => {
             setOpen={setDeleteModalOpen}
             modalWidthSize={493}
             modalHeightSize={232}
-            isClosable={true}
+            isClosable={false}
           >
             <DeletePopUp
               setCancel={setDeleteModalOpen}
               deleteData={selectedRecord}
-              CardTitle="Delete Staff"
+              // CardTitle="Delete Staff"
               handleDelete={handleDelete} // Pass the updated handleDelete function
               module="Staff"
             />

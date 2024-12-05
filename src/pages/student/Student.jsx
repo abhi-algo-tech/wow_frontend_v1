@@ -35,15 +35,7 @@ const Student = () => {
                     </div>
                   </Col>
                   <Col>
-                    <div
-                      style={{
-                        fontWeight: 700,
-                        color: "#1890ff",
-                        fontSize: 20,
-                      }}
-                    >
-                      12
-                    </div>
+                    <div className=" classroom-overview-card-number">12</div>
                   </Col>
                 </Row>
               </Card>
