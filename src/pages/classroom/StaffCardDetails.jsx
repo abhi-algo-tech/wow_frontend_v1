@@ -7,6 +7,7 @@ import CommonModalComponent from "../../components/CommonModalComponent";
 import CreateMessage from "../../components/message/CreateMessage";
 import { useStaffByClassroom } from "../../hooks/useStaff";
 import { formatStaffData } from "./ClassroomCommon";
+import LoaderComponent from "../../components/loader/LoaderComponent";
 const { Option } = Select;
 
 // Sample student data
@@ -78,7 +79,7 @@ export default function StaffCardDetails({ classroomId }) {
     }
   }, [staffData]);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <LoaderComponent />;
   if (isError) return <p>Error: {error.message}</p>;
   // Function to handle "Select All" functionality
   const handleSelectAll = (e) => {
@@ -240,6 +241,7 @@ export default function StaffCardDetails({ classroomId }) {
               actor={staff}
               selectedActors={selectedStaffs}
               handleCheckboxChange={handleCheckboxChange}
+              module={"staff"}
             />
           </div>
         ))}

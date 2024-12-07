@@ -18,3 +18,8 @@
     gap: #{$i}px !important;
   }
 }
+@for $i from 1 through 300 {
+  .height#{$i} {
+    height: #{$i}px !important;
+  }
+}

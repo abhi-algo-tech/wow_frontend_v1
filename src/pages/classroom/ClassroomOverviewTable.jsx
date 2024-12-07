@@ -150,7 +150,7 @@ function ClassroomOverviewTable() {
           key: "name",
           fixed: "left",
           align: "left",
-          className: "name-column",
+          className: "name-column label-14-600",
           render: (text, record) => (
             <Space>
               {record.color.startsWith("#") ? (
@@ -192,7 +192,7 @@ function ClassroomOverviewTable() {
                   name: record.name,
                 }}
               >
-                <span>{text}</span>
+                <span className="label-14-500">{text}</span>
               </Link>
             </Space>
           ),
@@ -201,69 +201,76 @@ function ClassroomOverviewTable() {
           title: "Capacity",
           dataIndex: "capacity",
           key: "capacity",
-          className: "name-column",
+          className: "name-column label-14-600",
           align: "center",
+          render: (text) => <span className="label-14-500">{text}</span>,
         },
         {
           title: "FTE",
           dataIndex: "fte",
           key: "fte",
-          className: "name-column",
+          className: "name-column label-14-600",
           align: "center",
+          render: (text) => <span className="label-14-500">{text}</span>,
         },
       ],
     },
 
     {
       title: "Students",
-      className: "students-column",
+      className: "students-column label-14-600",
       children: [
         {
           title: "Active",
           dataIndex: "active",
           key: "active",
           align: "center",
-          className: "students-column",
+          className: "students-column label-14-600",
+          render: (text) => <span className="label-14-500">{text}</span>,
         },
         {
           align: "center",
           title: "Upcoming",
           dataIndex: "upcoming",
           key: "upcoming",
-          className: "students-column",
+          className: "students-column label-14-600",
+          render: (text) => <span className="label-14-500">{text}</span>,
         },
         {
           align: "center",
           title: "Present",
           dataIndex: "present",
           key: "present",
-          className: "students-column",
+          className: "students-column label-14-600",
+          render: (text) => <span className="label-14-500">{text}</span>,
         },
       ],
     },
     {
       title: "Staff",
-      className: "staff-column",
+      className: "staff-column label-14-600",
       children: [
         {
           align: "center",
           title: "Assigned",
           dataIndex: "assignedStaff",
           key: "assignedStaff",
-          className: "staff-column",
+          className: "staff-column label-14-600",
+          render: (text) => <span className="label-14-500">{text}</span>,
         },
         {
           align: "center",
           title: "Present",
           dataIndex: "presentStaff",
           key: "presentStaff",
-          className: "staff-column",
+          className: "staff-column label-14-600",
+          render: (text) => <span className="label-14-500">{text}</span>,
         },
       ],
     },
     {
       title: "Ratio",
-      className: "ratio-column",
+      className: "ratio-column label-14-600 ",
       align: "center",
       children: [
         {
@@ -271,7 +278,7 @@ function ClassroomOverviewTable() {
           dataIndex: "status",
           key: "status",
           align: "center",
-          className: "ratio-column",
+          className: "ratio-column label-14-600",
           render: (status) =>
             status === "warning" ? (
               <Avatar
@@ -295,6 +302,7 @@ function ClassroomOverviewTable() {
           title: "Action",
           key: "action",
           align: "center",
+          className: "label-14-600",
           render: (_, record) => (
             <Dropdown
               menu={{
@@ -314,7 +322,7 @@ function ClassroomOverviewTable() {
                   }
                 },
               }}
-              trigger={["click"]}
+              // trigger={["click"]}
             >
               <IoIosMore className="pointer" />
             </Dropdown>
@@ -326,13 +334,13 @@ function ClassroomOverviewTable() {
   return (
     <>
       <div className="card">
-        <div className="d-flex justify-content-between align-items-center mr50  mt12 px-2">
+        <div className="d-flex justify-content-between align-items-center mr25  mt12 px-2">
           <div className="ml">
             <Select
               border={false}
               value={selectedClassroom}
               onChange={onClassroomSelect}
-              className="select-classroom"
+              className="select-classroom label-14-500"
               style={{ width: 276, height: 40, border: "none" }}
               placeholder="Select Classroom"
               options={uniqueClassrooms} // Use uniqueClassrooms for dropdown options
@@ -381,12 +389,12 @@ function ClassroomOverviewTable() {
           setOpen={setDeleteModalOpen}
           modalWidthSize={493}
           modalHeightSize={280}
-          isClosable={true}
+          isClosable={false}
         >
           <DeletePopUp
             setCancel={setDeleteModalOpen}
             deleteData={selectedRecord}
-            CardTitle="Delete Classroom"
+            // CardTitle="Delete Classroom"
             handleDelete={handleDelete} // Pass the updated handleDelete function
             module="Classroom"
           />

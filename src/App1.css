@@ -516,10 +516,6 @@
   background-color: rgba(177, 175, 233, 0.1);
 }
 
-.staff-designation-label {
-  font-size: 11px;
-  color: var(--variable-collection-color-secondary);
-}
 .main-body-activity-submenu-img {
   gap: 12px;
   padding: 10px 16px;
@@ -1198,7 +1194,6 @@
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
-  line-height: normal;
 }
 .label-20-500 {
   color: var(--font-colour, #573353);
@@ -1467,4 +1462,53 @@
   display: flex;
   gap: 16px;
   justify-content: center;
+}
+
+.label-11-400 {
+  color: var(--font-colour, #573353);
+  font-family: Manrope;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.actorbig-card-text-ellipsis {
+  width: 80px; /* Set a fixed width */
+  white-space: nowrap; /* Prevent wrapping */
+  overflow: hidden; /* Hide the overflowing text */
+  text-overflow: ellipsis; /* Add the ellipsis */
+  position: relative; /* Ensure hover content is positioned correctly */
+}
+
+.actorbig-card-text-ellipsis:hover::after {
+  content: attr(data-full-text);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background-color: #fff;
+  color: #000;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+  z-index: 10;
+}
+
+.label-12-600 {
+  color: var(--Color-Secondary, #573353);
+  font-family: Manrope;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.label-13-400 {
+  color: var(--Color-Secondary, #573353);
+  font-family: Manrope;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }

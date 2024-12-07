@@ -99,11 +99,11 @@ export default function ClassroomNotes() {
                 <span className="label-14-500">{message.user.name}</span>
               </div>
 
-              <div className="notes-message-outer-layer">{message.text}</div>
-
-              <div style={{ fontSize: "12px", color: "#666" }}>
-                {message.time}
+              <div className="notes-message-outer-layer label-12-600">
+                {message.text}
               </div>
+
+              <div className="label-13-400">{message.time}</div>
             </div>
           </>
         ))}

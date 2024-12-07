@@ -149,7 +149,7 @@ function ClassroomProfile() {
                           style={{ color: "inherit" }}
                         >
                           <Space size={5}>
-                            <span style={{ fontSize: "16px", fontWeight: 500 }}>
+                            <span style={{ fontSize: "20px", fontWeight: 500 }}>
                               {truncateText(selectedAcademy, MAX_TEXT_LENGTH)}
                             </span>
                             <IoChevronDownOutline />
