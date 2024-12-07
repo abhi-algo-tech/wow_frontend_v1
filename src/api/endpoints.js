@@ -11,4 +11,20 @@ export const API_ENDPOINTS = {
     BASE: "/v1/staff",
     BY_CLASSROOM: "/v1/staff/classroom",
   },
+  SCHOOL: {
+    BASE: "/v1/school",
+  },
+  MASTER_LOOKUP: {
+    BASE: "/v1/master-lookup",
+    BY_TYPE: "/v1/master-lookup/type",
+  },
+  COUNTRY: {
+    BASE: "/v1/countries",
+  },
+  STATE: {
+    BASE: "/v1/states",
+  },
+  CITY: {
+    BASE: "/v1/cities",
+  },
 };

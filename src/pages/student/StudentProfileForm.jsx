@@ -10,34 +10,111 @@ import CustomDatePicker from "../../components/CustomDatePicker";
 import FileUploadComponent from "../../components/fileUpload/FileUploadComponent";
 import YesNoRadio from "../../components/radio/YesNoRadio";
 import MultiSelectWithTags from "../../components/select/MultiSelectWithTags";
+import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
+import { useGetAllClassrooms } from "../../hooks/useClassroom";
+import { useGetAllCountries } from "../../hooks/useCountry";
+import { useGetAllStates } from "../../hooks/useState";
+import { useGetAllCities } from "../../hooks/useCity";
 
 const { Option } = Select;
 
-function StudentProfileForm({ CardTitle, studentId, closeModal }) {
+function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
   const [form] = Form.useForm();
   const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedOption, setSelectedOption] = useState("no");
 
-  const { data: parentData } = useStudentById(studentId);
+  // const { data: parentData } = useStudentById(studentId);
+  const { data: statusData } = useMasterLookupsByType("status");
+  const { data: custodyData } = useMasterLookupsByType("parent");
+  const { data: countries } = useGetAllCountries();
+  const { data: states } = useGetAllStates();
+  const { data: cities } = useGetAllCities();
+  const { data: tagData, isLoading } = useMasterLookupsByType("tags");
+  const { data: classroomData } = useGetAllClassrooms();
   const createStudentMutation = useCreateStudent();
   const updateStudentMutation = useUpdateStudent();
   const isEdit = Boolean(studentId);
 
+  const statusOptions = {
+    items: statusData?.data?.map((status) => ({
+      key: status.id.toString(), // Convert id to string as keys are typically strings
+      label: status.name, // Use the name property for the label
+    })),
+  };
+  const classRoomOptions = {
+    items: classroomData?.data?.map((classroom) => ({
+      key: classroom.id.toString(), // Convert id to string as keys are typically strings
+      label: classroom.name, // Use the name property for the label
+    })),
+  };
+  const custodyOptions = {
+    items: custodyData?.data?.map((custody) => ({
+      key: custody.id.toString(), // Convert id to string as keys are typically strings
+      label: custody.name, // Use the name property for the label
+    })),
+  };
+  const counntryOptions = {
+    items: countries?.data?.map((country) => ({
+      key: country.id.toString(), // Convert id to string as keys are typically strings
+      label: country.name, // Use the name property for the label
+    })),
+  };
+  const stateOptions = {
+    items: states?.data?.map((state) => ({
+      key: state.id.toString(), // Convert id to string as keys are typically strings
+      label: state.name, // Use the name property for the label
+    })),
+  };
+  const cityOptions = {
+    items: cities?.data?.map((city) => ({
+      key: city.id.toString(), // Convert id to string as keys are typically strings
+      label: city.name, // Use the name property for the label
+    })),
+  };
+
   useEffect(() => {
-    if (parentData) {
+    if (studentData) {
+      setSelectedOption(studentData.isStateSubsidy ? "Yes" : "No");
       form.setFieldsValue({
-        firstName: parentData.data.firstName,
-        lastName: parentData.data.lastName,
-        phoneNumber: parentData.data.phoneNumber,
-        relation: parentData.data.relation,
+        firstName: studentData.firstName,
+        lastName: studentData.lastName,
+        status: studentData.status,
+        classroom: studentData.classroomName,
+        birthDate: studentData.dateOfBirth,
+        isStateSubsidy: studentData.isStateSubsidy,
+        tags: studentData.tags.map((tag) => tag.tagId),
+        notes: studentData.note,
+        childCustody: studentData.childCustody,
+        address: studentData.addressLine,
+        city: studentData?.city?.name,
+        state: studentData?.state?.name,
+        country: studentData?.country?.name,
+        zipCode: studentData.zipCode,
       });
+      setSelectedTags(studentData.tags.map((tag) => tag.tagId));
     }
-  }, [parentData, form]);
+  }, [studentData, form]);
 
   const handleTagChange = (value) => {
     setSelectedTags(value);
   };
   const handleSubmit = (values) => {
-    const { firstName, lastName, relation, phoneNumber } = values;
+    const {
+      firstName,
+      lastName,
+      status,
+      classroom,
+      birthDate,
+      isStateSubsidy,
+      tags,
+      notes,
+      childCustody,
+      address,
+      city,
+      state,
+      country,
+      zipCode,
+    } = values;
 
     if (!firstName || !lastName) {
       message.error("All fields are required!");
@@ -47,14 +124,27 @@ function StudentProfileForm({ CardTitle, studentId, closeModal }) {
     const formData = new FormData();
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
-    formData.append("phoneNumber", phoneNumber);
-    formData.append("relation", relation);
+    formData.append("status", status);
+    formData.append("classroom", classroom);
+    formData.append("birthDate", birthDate);
+    formData.append("isStateSubsidy", isStateSubsidy);
+    formData.append("notes", notes);
+    formData.append("childCustody", childCustody);
+    formData.append("address", address);
+    formData.append("city", city);
+    formData.append("state", state);
+    formData.append("country", country);
+    formData.append("zipCode", zipCode);
+
+    tags.forEach((tagId, index) => {
+      formData.append(`tagIds[]`, tagId);
+    });
 
     if (isEdit) {
       updateStudentMutation.mutate(
         {
           studentId,
-          parentData: formData,
+          studentData: formData,
         },
         {
           onSuccess: () => {
@@ -83,6 +173,10 @@ function StudentProfileForm({ CardTitle, studentId, closeModal }) {
     console.log("Selected Value:", e.target.value);
   };
 
+  const options = [
+    { label: "Yes", value: "Yes" },
+    { label: "No", value: "No" },
+  ];
   return (
     <div className="card">
       <span
@@ -145,6 +239,7 @@ function StudentProfileForm({ CardTitle, studentId, closeModal }) {
               </div>
               <Form.Item
                 name="status"
+                // Uncomment if validation is needed
                 // rules={[
                 //   {
                 //     required: true,
@@ -156,9 +251,11 @@ function StudentProfileForm({ CardTitle, studentId, closeModal }) {
                   className="select-student-add-from"
                   placeholder="Select"
                 >
-                  <Option value="select">Select</Option>
-                  <Option value="1">Active</Option>
-                  <Option value="2">Inactive</Option>
+                  {statusOptions.items?.map((status) => (
+                    <Option key={status.key} value={status.key}>
+                      {status.label}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>
@@ -180,9 +277,11 @@ function StudentProfileForm({ CardTitle, studentId, closeModal }) {
                   className="select-student-add-from"
                   placeholder="Select"
                 >
-                  <Option value="select">Select</Option>
-                  <Option value="1">black-1</Option>
-                  <Option value="2">blue</Option>
+                  {classRoomOptions.items?.map((classRoom) => (
+                    <Option key={classRoom.key} value={classRoom.key}>
+                      {classRoom.label}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>
@@ -203,11 +302,9 @@ function StudentProfileForm({ CardTitle, studentId, closeModal }) {
                 State Subsidy
               </div>
               <YesNoRadio
-                options={[
-                  { label: "Yes", value: "yes" },
-                  { label: "No", value: "no" },
-                ]}
-                defaultValue="no"
+                options={options}
+                name="isStateSubsidy"
+                value={selectedOption}
                 onChange={handleChange}
               />
             </div>
@@ -227,12 +324,16 @@ function StudentProfileForm({ CardTitle, studentId, closeModal }) {
                 name="tags"
                 value={selectedTags}
                 onChange={handleTagChange}
-                options={[
-                  { value: "5 days" },
-                  { value: "Full Day" },
-                  { value: "Photo Permission" },
-                  { value: "cyan" },
-                ]}
+                options={
+                  !isLoading &&
+                  tagData?.data
+                    ?.sort((a, b) => a.name.localeCompare(b.name)) // Sort classrooms by name in ascending order
+                    .map((tag) => ({
+                      label: tag.name,
+                      value: tag.id,
+                    }))
+                }
+                loading={isLoading}
                 placeholder="Select"
               />
             </Form.Item>
@@ -275,9 +376,11 @@ function StudentProfileForm({ CardTitle, studentId, closeModal }) {
                   className="select-student-add-from"
                   placeholder="Select"
                 >
-                  <Option value="select">Select</Option>
-                  <Option value="1">Father</Option>
-                  <Option value="2">Mother</Option>
+                  {custodyOptions.items?.map((custody) => (
+                    <Option key={custody.key} value={custody.key}>
+                      {custody.label}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>
@@ -312,14 +415,20 @@ function StudentProfileForm({ CardTitle, studentId, closeModal }) {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the City!",
+                    message: "Please select the city!",
                   },
                 ]}
               >
-                <Input
-                  placeholder="e.g. Report Card"
-                  className="w-100 student-form-input"
-                />
+                <Select
+                  className="select-student-add-from"
+                  placeholder="Select"
+                >
+                  {cityOptions.items?.map((city) => (
+                    <Option key={city.key} value={city.key}>
+                      {city.label}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
             </div>
 
@@ -341,9 +450,11 @@ function StudentProfileForm({ CardTitle, studentId, closeModal }) {
                   className="select-student-add-from"
                   placeholder="Select"
                 >
-                  <Option value="select">Select</Option>
-                  <Option value="1">test</Option>
-                  <Option value="2">demo</Option>
+                  {stateOptions.items?.map((state) => (
+                    <Option key={state.key} value={state.key}>
+                      {state.label}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>
@@ -366,9 +477,11 @@ function StudentProfileForm({ CardTitle, studentId, closeModal }) {
                   className="select-student-add-from"
                   placeholder="Select"
                 >
-                  <Option value="select">Select</Option>
-                  <Option value="1">India</Option>
-                  <Option value="2">USA</Option>
+                  {counntryOptions.items?.map((country) => (
+                    <Option key={country.key} value={country.key}>
+                      {country.label}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>

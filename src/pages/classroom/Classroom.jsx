@@ -1,5 +1,5 @@
 import { Card, Typography, Tabs, Col, Row } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
 import { MdOutlineMoving } from "react-icons/md";
 import ClassroomOverviewTable from "./ClassroomOverviewTable";
@@ -8,6 +8,7 @@ import ProgressBarClassroomOverview from "./ProgressBarClassroomOverview";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import CreateClassroom from "./CreateClassroom";
 import DeletePopUp from "../../components/DeletePopUp";
+import { useSchoolById } from "../../hooks/useSchool";
 
 const { Title, Text } = Typography;
 
@@ -24,6 +25,39 @@ export default function Classroom() {
   const onTabChange = (key) => {
     setActiveTab(key);
   };
+
+  const [academyId, setAcademyId] = useState(
+    sessionStorage.getItem("selectedAcademy") || null
+  );
+
+  const {
+    data: schools,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useSchoolById(academyId);
+
+  // Watch for changes in session storage
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const updatedAcademyId = sessionStorage.getItem("selectedAcademy");
+      setAcademyId(updatedAcademyId);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  // Refetch data when academyId changes
+  useEffect(() => {
+    if (academyId) {
+      refetch();
+    }
+  }, [academyId, refetch]);
 
   const tabButtonItems = [
     {
@@ -49,7 +83,7 @@ export default function Classroom() {
                         </div>
                         <div className="col-6 d-flex align-items-center justify-content-end">
                           <span className="m-0 classroom-overview-card-number">
-                            12
+                            {schools?.data?.totalClassrooms}
                           </span>
                         </div>
                       </div>
@@ -66,7 +100,7 @@ export default function Classroom() {
                         </div>
                         <div className="col-6 d-flex align-items-center justify-content-end">
                           <span className="m-0 classroom-overview-card-number">
-                            120
+                            {schools?.data?.totalCapacity}
                           </span>
                         </div>
                       </div>

@@ -88,7 +88,7 @@ export default function StudentCardDetails({ classroomId }) {
   useEffect(() => {
     if (studentData) {
       const formattedData = formatStudentData(studentData);
-      console.log("formattedData:", formattedData);
+      // console.log("formattedData:", formattedData);
       setStudents(formattedData);
     }
   }, [studentData]);

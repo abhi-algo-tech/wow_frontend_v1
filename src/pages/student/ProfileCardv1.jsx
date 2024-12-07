@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Avatar, Typography, Space, Tooltip } from "antd";
 import { Link } from "react-router-dom";
+import { useStudentById } from "../../hooks/useStudent";
+import { getInitialsTitleWithColor } from "../../services/common";
+import { formatStudentDataForCard } from "../classroom/ClassroomCommon";
 
 const { Text } = Typography;
 const tooltipConfig = {
@@ -43,17 +46,39 @@ const tooltipConfig = {
   ],
 };
 
-const flagsConfig = ["Notes", "no-photo", "Dietary-Restrictions", "Allergies"];
+// const flagsConfig = ["Notes", "no-photo", "Dietary-Restrictions", "Allergies"];
 
-const ProfileCardv1 = ({ role = "student" }) => {
+const ProfileCardv1 = ({ studentId, role = "student" }) => {
   const tooltipItems = tooltipConfig[role.toLowerCase()] || [];
+  const [flagsConfig, setFlagsConfig] = useState([]);
+
   const flags = flagsConfig;
 
+  const { data: studentData, isLoading, error } = useStudentById(studentId);
+
+  useEffect(() => {
+    if (studentData) {
+      const formattedData = formatStudentDataForCard(studentData);
+      // console.log("formattedData:", formattedData);
+      setFlagsConfig(formattedData);
+    }
+  }, [studentData]);
   const profileDetails = {
     student: {
-      imgSrc: "/wow_images/image@2x-1.png",
-      title: "Lex Fenwick",
-      classInfo: "1-Blue-D",
+      imgSrc: studentData?.data?.profileUrl,
+      title: `${
+        studentData?.data?.firstName
+          ? studentData.data.firstName.charAt(0).toUpperCase() +
+            studentData.data.firstName.slice(1)
+          : ""
+      } ${
+        studentData?.data?.lastName
+          ? studentData.data.lastName.charAt(0).toUpperCase() +
+            studentData.data.lastName.slice(1)
+          : ""
+      }`.trim(),
+      classInfo: studentData?.data?.classroomName,
+      status: studentData?.data?.status.toLowerCase(),
       nameClass: "mb10",
       classroomClass: "mb10",
     },
@@ -66,7 +91,7 @@ const ProfileCardv1 = ({ role = "student" }) => {
     },
   };
 
-  const { imgSrc, title, classInfo, nameClass, classroomClass } =
+  const { imgSrc, title, classInfo, nameClass, classroomClass, status } =
     profileDetails[role.toLowerCase()] || {};
 
   return (
@@ -79,19 +104,38 @@ const ProfileCardv1 = ({ role = "student" }) => {
       }}
       bodyStyle={{ padding: "24px 0px 0px 0" }}
     >
-      <Avatar size={100} src={imgSrc} className="mb8" />
-      <div
-        style={{
-          position: "absolute",
-          top: "30px",
-          right: "calc(50% - 45px)",
-          backgroundColor: "#52c41a",
-          borderRadius: "50%",
-          width: "20px",
-          height: "20px",
-          border: "2px solid white",
-        }}
-      />
+      <div className={`position-relative d-inline-block mr8`}>
+        <Avatar
+          size={100}
+          src={imgSrc || undefined}
+          className="mb8"
+          style={{
+            backgroundColor: imgSrc
+              ? undefined
+              : getInitialsTitleWithColor(title).backgroundColor,
+            color: "#fff",
+          }}
+        >
+          {!imgSrc && getInitialsTitleWithColor(title).initials}
+        </Avatar>
+        <div
+          className={`position-absolute top-0 end-0 translate-middle rounded-circle ${
+            status === "active" ? "active-green" : ""
+          }`}
+          style={
+            status === "active"
+              ? {
+                  width: "20px",
+                  height: "20px",
+                  margin: "10px 0px",
+                  backgroundColor: "#52c41a",
+                  borderRadius: "50%",
+                  border: "2px solid white",
+                }
+              : {}
+          }
+        />
+      </div>
       <Text className={`-profile-name ${nameClass}`}>{title}</Text>
       {role !== "student" && (
         <Text className={`-profile-role ${nameClass}`}>{role}</Text>
@@ -101,11 +145,11 @@ const ProfileCardv1 = ({ role = "student" }) => {
       {role === "student" && (
         <Space size="middle" className="d-flex justify-content-center mb18">
           {flags.map((flag, index) => (
-            <Tooltip key={index} title={flag}>
+            <Tooltip key={index} title={flag.flagValue}>
               <img
                 className="student-activity-type-icons"
-                src={`/classroom_icons/png/${flag}.png`}
-                alt={flag}
+                src={`/classroom_icons/png/${flag.flag}.png`}
+                alt={flag.flag}
                 style={{ width: 20, height: 20 }}
               />
             </Tooltip>

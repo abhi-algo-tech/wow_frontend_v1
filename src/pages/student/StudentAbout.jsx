@@ -21,6 +21,7 @@ import { MdOutlineModeEdit, MdOutlineModeEditOutline } from "react-icons/md";
 import StudentProfileForm from "./StudentProfileForm";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import { useStudentById } from "../../hooks/useStudent";
+import { getInitialsTitleWithColor } from "../../services/common";
 
 const { Text } = Typography;
 const { TabPane } = Tabs;
@@ -58,6 +59,20 @@ const StudentAbout = ({ studentId }) => {
       months += 12;
     }
     return `${formattedDate} (${years} years ${months} months)`;
+  };
+
+  const getRandomColor = () => {
+    const colors = [
+      "purple",
+      "blue",
+      "green",
+      "red",
+      "orange",
+      "yellow",
+      "cyan",
+      "volcano",
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
   };
 
   return (
@@ -111,14 +126,16 @@ const StudentAbout = ({ studentId }) => {
           <LabelCol>Status</LabelCol>
           <ContentCol>
             <Tag
-              color={student?.status === "active" ? "success" : "error"}
+              color={
+                student?.status.toLowerCase() === "active" ? "success" : "error"
+              }
               style={{ padding: "0 8px" }}
             >
-              {student?.status === "active" ? (
+              {student?.status.toLowerCase() === "active" ? (
                 <>
                   Active <CheckCircleOutlined />
                 </>
-              ) : student?.status === "inactive" ? (
+              ) : student?.status.toLowerCase() === "inactive" ? (
                 <>
                   Inactive <CloseCircleOutlined />
                 </>
@@ -140,9 +157,11 @@ const StudentAbout = ({ studentId }) => {
 
           <LabelCol>Tags</LabelCol>
           <ContentCol>
-            <Tag color="purple">5 Days</Tag>
-            <Tag color="blue">Full Day</Tag>
-            <Tag color="green">Photo Permission</Tag>
+            {student?.tags.map((tag, index) => (
+              <Tag key={index} color={getRandomColor()}>
+                {tag.tagName}
+              </Tag>
+            ))}
           </ContentCol>
 
           <LabelCol>Birthdate</LabelCol>
@@ -155,62 +174,94 @@ const StudentAbout = ({ studentId }) => {
           <LabelCol>Notes</LabelCol>
           <ContentCol>
             <Text className="student-about-tab-label-value">
-              Full days from May 1st 2023
+              {student?.note}
             </Text>
           </ContentCol>
 
           <LabelCol>Child Custody</LabelCol>
           <ContentCol>
             <Text className="student-about-tab-label-value">
-              Child custody not selected
+              {student?.childCustody}
             </Text>
           </ContentCol>
 
           <LabelCol>State Subsidy</LabelCol>
           <ContentCol>
             <Text className="student-about-tab-label-value">
-              No State Subsidy
+              {student?.isStateSubsidy ? "State Subsidy" : "No State Subsidy"}
             </Text>
           </ContentCol>
 
           <LabelCol>Address</LabelCol>
           <ContentCol>
             <Text className="student-about-tab-label-value">
-              50 Barrington Avenue Unit 503, Nashua, New Hampshire, United
-              States, 03062
+              `{student?.addressLine}, {student?.city?.name},{" "}
+              {student?.state?.name}, {student?.country?.name},{" "}
+              {student?.zipCode}`
             </Text>
           </ContentCol>
 
           <LabelCol>Sibling</LabelCol>
-          <ContentCol>
-            <div className="position-relative d-inline-block mr8">
-              <Avatar src={"/classroom_icons/png/Lisa.png"} size={24} />
-              <div
-                className={`position-absolute top-0 end-0 translate-middle rounded-circle ${
-                  status === "present" ? "active-green" : ""
-                }`}
-                style={
-                  status === "present"
-                    ? {
-                        width: "5px",
-                        height: "3px",
-                        margin: "5px -8px",
-                        padding: "3px",
-                        border: "solid 3px #fff",
-                      }
-                    : {}
-                }
-              />
-            </div>
-            {/* <Avatar
-            src="/placeholder.svg?height=24&width=24"
-            size={24}
-            style={{ marginRight: 8 }}
-          /> */}
-            <Text className="student-about-tab-label-value">
-              Alsia Fenwick (Sister)
-            </Text>
-          </ContentCol>
+          {student?.siblings?.map((sibling, index) => (
+            <ContentCol>
+              <div className="position-relative d-inline-block mr8">
+                <div
+                  key={index}
+                  className={`position-relative d-inline-block mr8`}
+                >
+                  {/* <Avatar src={sibling?.siblingProfileUrl} size={24} /> */}
+                  <Avatar
+                    size={24}
+                    src={sibling?.siblingProfileUrl}
+                    style={{
+                      backgroundColor: sibling?.siblingProfileUrl
+                        ? undefined
+                        : getInitialsTitleWithColor(
+                            `${sibling?.siblingFirstName}  ${sibling?.siblingLastName}`
+                          ).backgroundColor,
+                      color: "#fff",
+                    }}
+                  >
+                    {!sibling?.siblingProfileUrl &&
+                      getInitialsTitleWithColor(
+                        `${sibling?.siblingFirstName}  ${sibling?.siblingLastName}`
+                      ).initials}
+                  </Avatar>
+                  <div
+                    className={`position-absolute top-0 end-0 translate-middle rounded-circle ${
+                      sibling?.siblingStatus.toLowerCase() === "active"
+                        ? "active-green"
+                        : ""
+                    }`}
+                    style={
+                      sibling?.siblingStatus.toLowerCase() === "active"
+                        ? {
+                            width: "5px",
+                            height: "3px",
+                            margin: "5px -8px",
+                            padding: "3px",
+                            border: "solid 3px #fff",
+                          }
+                        : {}
+                    }
+                  />
+                </div>
+              </div>
+              <Text className="student-about-tab-label-value">
+                {sibling?.siblingFirstName
+                  ? sibling.siblingFirstName.charAt(0).toUpperCase() +
+                    sibling.siblingFirstName.slice(1)
+                  : ""}{" "}
+                {sibling?.siblingLastName
+                  ? sibling.siblingLastName.charAt(0).toUpperCase() +
+                    sibling.siblingLastName.slice(1)
+                  : ""}{" "}
+                <span>
+                  ({sibling?.siblingGender === "male" ? "Brother" : "Sister"})
+                </span>
+              </Text>
+            </ContentCol>
+          ))}
 
           <LabelCol>Schedule</LabelCol>
           <ContentCol>
@@ -302,7 +353,8 @@ const StudentAbout = ({ studentId }) => {
         >
           <StudentProfileForm
             CardTitle={"Edit  Profile Details"}
-            classroomId={null}
+            studentId={studentId}
+            studentData={student}
             closeModal={() => setCreateStudentAboutModalOpen(false)}
           />
         </CommonModalComponent>

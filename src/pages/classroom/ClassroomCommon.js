@@ -21,7 +21,8 @@ export const formatStudentData = (studentData) => {
     // Check for dietary restrictions
     if (
       student.dietRestriction &&
-      student.dietRestriction.toLowerCase() !== "no restriction"
+      student.dietRestriction.toLowerCase() !== "No Diet Restrictions" &&
+      student.dietRestriction.toLowerCase() !== "No Restriction"
     ) {
       flags.push("Dietary-Restrictions");
       flagValues["Dietary-Restrictions"] = student.dietRestriction;
@@ -81,4 +82,47 @@ export const formatStaffData = (staffData) => {
       designation: staff.designation || "",
     };
   });
+};
+
+export const formatStudentDataForCard = (studentData) => {
+  const student = studentData.data;
+
+  const flags = [];
+
+  // Check for notes
+  if (student.note) {
+    flags.push({ flag: "Notes", flagValue: student.note });
+  }
+
+  // Check for allergies
+  if (student.allergies && student.allergies.toLowerCase() !== "no allergies") {
+    flags.push({ flag: "Allergies", flagValue: student.allergies });
+  }
+
+  // Check for dietary restrictions
+  if (
+    student.dietRestriction &&
+    student.dietRestriction.toLowerCase() !== "no diet restrictions" &&
+    student.dietRestriction.toLowerCase() !== "no restriction"
+  ) {
+    flags.push({
+      flag: "Dietary-Restrictions",
+      flagValue: student.dietRestriction,
+    });
+  }
+
+  // Check for medication
+  if (
+    student.medications &&
+    student.medications.toLowerCase() !== "no medications"
+  ) {
+    flags.push({ flag: "Medication", flagValue: student.medications });
+  }
+
+  // Check if photo is available
+  // if (!student.profileUrl || student.profileUrl.trim() === "") {
+  //   flags.push({ flag: "no-photo", flagValue: "Profile photo not available" });
+  // }
+
+  return flags; // Return an array of objects with flag and flagValue
 };

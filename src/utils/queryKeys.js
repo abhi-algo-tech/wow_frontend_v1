@@ -1,6 +1,5 @@
-
 export const classRoomKeys = {
-  classrooms: "classrooms"
+  classrooms: "classrooms",
 };
 
 export const studentKeys = {
@@ -9,4 +8,24 @@ export const studentKeys = {
 
 export const staffKeys = {
   staff: "staff",
+};
+
+export const schoolKeys = {
+  schools: "schools",
+};
+
+export const countryKeys = {
+  countries: "countries",
+};
+
+export const masterLookUpKeys = {
+  masterLookups: "masterLookups",
+};
+
+export const stateKeys = {
+  states: "states",
+};
+
+export const cityKeys = {
+  cities: "cities",
 };

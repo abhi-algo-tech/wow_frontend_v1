@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SearchOutlined, CaretDownOutlined } from "@ant-design/icons";
 import { Layout, Input, Badge, Dropdown, Space, Avatar, Button } from "antd";
 import { AiOutlineMenuUnfold } from "react-icons/ai";
+import { useGetAllSchools } from "../hooks/useSchool";
 
 const { Header } = Layout;
 
@@ -21,6 +22,8 @@ function MainHeader({
   };
   const [searchValue, setSearchValue] = useState("");
 
+  const { data: schools, isLoading, isError, error } = useGetAllSchools();
+
   const profileMenu = {
     items: [
       {
@@ -39,21 +42,48 @@ function MainHeader({
   };
 
   const academyMenu = {
-    items: [
-      {
-        key: "1",
-        label: "Joy Academy",
-      },
-      {
-        key: "2",
-        label: "WOW Academy",
-      },
-      {
-        key: "3",
-        label: "Happy Academy",
-      },
-    ],
+    items: schools?.data?.map((school) => ({
+      key: school.id.toString(), // Convert id to string as keys are typically strings
+      label: school.name, // Use the name property for the label
+    })),
   };
+
+  const [selectedAcademy, setSelectedAcademy] = useState();
+  const [selectedLabel, setSelectedLabel] = useState();
+
+  useEffect(() => {
+    // Check sessionStorage for previous selection
+    const savedAcademyKey = sessionStorage.getItem("selectedAcademy");
+    const savedAcademyLabel = sessionStorage.getItem("selectedAcademyLabel");
+
+    if (savedAcademyKey && savedAcademyLabel) {
+      setSelectedAcademy(savedAcademyKey);
+      setSelectedLabel(savedAcademyLabel);
+    } else if (academyMenu.items?.length) {
+      // If no sessionStorage values exist, default to the first menu item
+      const defaultKey = academyMenu.items[0].key;
+      const defaultLabel = academyMenu.items[0].label;
+
+      setSelectedAcademy(defaultKey);
+      setSelectedLabel(defaultLabel);
+
+      sessionStorage.setItem("selectedAcademy", defaultKey);
+      sessionStorage.setItem("selectedAcademyLabel", defaultLabel);
+    }
+  }, [academyMenu.items]);
+
+  const handleMenuClick = ({ key }) => {
+    const selectedItem = academyMenu.items.find((item) => item.key === key);
+    if (selectedItem) {
+      setSelectedAcademy(key);
+      setSelectedLabel(selectedItem.label);
+
+      // Save to sessionStorage
+      sessionStorage.setItem("selectedAcademy", key);
+      sessionStorage.setItem("selectedAcademyLabel", selectedItem.label);
+    }
+  };
+
   return (
     <Header
       style={{
@@ -82,14 +112,17 @@ function MainHeader({
       {/* Left Section - Academy Name */}
       <div style={{ display: "flex", alignItems: "center" }}>
         <Dropdown
-          menu={academyMenu}
+          menu={{
+            items: academyMenu.items,
+            onClick: handleMenuClick, // Assign the click handler
+          }}
           trigger={["click"]}
           className="school-selection-drpd"
         >
           <a onClick={(e) => e.preventDefault()} style={{ color: "inherit" }}>
             <Space size={14}>
               <span style={{ fontSize: "16px", fontWeight: 500 }}>
-                Kidi Academy
+                {selectedLabel} {/* Display the currently selected label */}
               </span>
               <CaretDownOutlined />
             </Space>
