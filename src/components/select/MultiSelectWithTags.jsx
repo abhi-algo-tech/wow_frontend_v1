@@ -53,22 +53,24 @@ const MultiSelectWithTags = ({ value, onChange, name, options, ...props }) => {
 
   const dropdownRender = (menu) => (
     <div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          padding: "4px 12px",
-          borderBottom: "1px solid #f0f0f0",
-        }}
-      >
-        <Checkbox
-          checked={value.length === options.length}
-          indeterminate={value.length > 0 && value.length < options.length}
-          onChange={(e) => handleSelectAll(e.target.checked)}
+      {value && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "4px 12px",
+            borderBottom: "1px solid #f0f0f0",
+          }}
         >
-          Select All
-        </Checkbox>
-      </div>
+          <Checkbox
+            checked={value.length === options.length}
+            indeterminate={value.length > 0 && value.length < options.length}
+            onChange={(e) => handleSelectAll(e.target.checked)}
+          >
+            Select All
+          </Checkbox>
+        </div>
+      )}
       {menu}
     </div>
   );

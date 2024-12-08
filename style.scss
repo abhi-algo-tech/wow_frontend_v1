@@ -17,6 +17,10 @@
   .gap#{$i} {
     gap: #{$i}px !important;
   }
+  .size-#{$i} {
+    width: #{$i}px !important;
+    height: #{$i}px !important;
+  }
 }
 @for $i from 1 through 300 {
   .height#{$i} {

@@ -16,13 +16,3 @@
   overflow: hidden; /* Handle long text */
   text-overflow: ellipsis;
 }
-
-/* Select Box Styling */
-.ant-select-selector {
-  display: flex;
-  flex-wrap: wrap; /* Allow tags to wrap */
-  align-items: center;
-  gap: 4px; /* Add spacing between tags */
-  overflow-y: auto; /* Enable scrolling if necessary */
-  padding: 8px; /* Ensure padding consistency */
-}
