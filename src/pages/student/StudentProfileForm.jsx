@@ -15,13 +15,14 @@ import { useGetAllClassrooms } from "../../hooks/useClassroom";
 import { useGetAllCountries } from "../../hooks/useCountry";
 import { useGetAllStates } from "../../hooks/useState";
 import { useGetAllCities } from "../../hooks/useCity";
+import { formatDateToCustomStyle } from "../../services/common";
 
 const { Option } = Select;
 
 function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
   const [form] = Form.useForm();
   const [selectedTags, setSelectedTags] = useState([]);
-  const [selectedOption, setSelectedOption] = useState("no");
+  const [selectedOption, setSelectedOption] = useState(null);
 
   // const { data: parentData } = useStudentById(studentId);
   const { data: statusData } = useMasterLookupsByType("status");
@@ -75,14 +76,16 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
   useEffect(() => {
     if (studentData) {
       setSelectedOption(studentData.isStateSubsidy ? "Yes" : "No");
+
+      const mappedTags = studentData.tags.map((tag) => tag.tagId);
       form.setFieldsValue({
         firstName: studentData.firstName,
         lastName: studentData.lastName,
         status: studentData.status,
         classroom: studentData.classroomName,
-        birthDate: studentData.dateOfBirth,
-        isStateSubsidy: studentData.isStateSubsidy,
-        tags: studentData.tags.map((tag) => tag.tagId),
+        birthDate: formatDateToCustomStyle(studentData.dateOfBirth),
+        isStateSubsidy: studentData.isStateSubsidy ? "yes" : "no",
+        tags: mappedTags,
         notes: studentData.note,
         childCustody: studentData.childCustody,
         address: studentData.addressLine,
@@ -91,7 +94,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
         country: studentData?.country?.name,
         zipCode: studentData.zipCode,
       });
-      setSelectedTags(studentData.tags.map((tag) => tag.tagId));
+      setSelectedTags(mappedTags);
     }
   }, [studentData, form]);
 
@@ -125,20 +128,21 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
     formData.append("status", status);
-    formData.append("classroom", classroom);
-    formData.append("birthDate", birthDate);
-    formData.append("isStateSubsidy", isStateSubsidy);
-    formData.append("notes", notes);
+    formData.append("classroomId", classroom);
+    if (birthDate) {
+      // const formattedDate = new Date(birthDate).toISOString().split("T")[0]; // Format to 'yyyy-mm-dd'
+      formData.append("dateOfBirth", birthDate);
+    }
+    formData.append("isStateSubsidy", selectedOption === "yes");
+    formData.append("note", notes);
     formData.append("childCustody", childCustody);
-    formData.append("address", address);
-    formData.append("city", city);
-    formData.append("state", state);
-    formData.append("country", country);
+    formData.append("addressLine", address);
+    formData.append("cityId", city);
+    formData.append("stateId", state);
+    formData.append("countryId", country);
     formData.append("zipCode", zipCode);
 
-    tags.forEach((tagId, index) => {
-      formData.append(`tagIds[]`, tagId);
-    });
+    tags.forEach((tagId) => formData.append("studentTags[]", tagId));
 
     if (isEdit) {
       updateStudentMutation.mutate(
@@ -171,6 +175,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
 
   const handleChange = (e) => {
     console.log("Selected Value:", e.target.value);
+    setSelectedOption(e.target.value);
   };
 
   const options = [
@@ -290,19 +295,20 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 Birthdate
               </div>
 
-              <CustomDatePicker
+              {/* <CustomDatePicker
                 name="birthDate"
-                // rules={[
-                //   { required: true, message: "Please select the Document Type!" },
-                // ]}
-              />
+                value={studentData?.dateOfBirth} // Ensure it's parsed
+              /> */}
             </div>
             <div className="col-6">
               <div className=" items-center gap-1 student-label ">
                 State Subsidy
               </div>
               <YesNoRadio
-                options={options}
+                options={[
+                  { value: "yes", label: "Yes" },
+                  { value: "no", label: "No" },
+                ]}
                 name="isStateSubsidy"
                 value={selectedOption}
                 onChange={handleChange}
