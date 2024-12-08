@@ -101,8 +101,9 @@ function Family() {
                     borderRadius: "16px",
                     boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
                   }}
+                  styles={{ body: { padding: 16 } }}
                 >
-                  <div className="d-flex justify-content-between align-items-center mb-3">
+                  <div className="d-flex justify-content-between align-items-center mb10">
                     <Space>
                       <Avatar src={guardian.photoUrl} size={52} />
                       <Text className="student-about-tab-label-value">
