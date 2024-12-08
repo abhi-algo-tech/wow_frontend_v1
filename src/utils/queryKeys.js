@@ -29,3 +29,9 @@ export const stateKeys = {
 export const cityKeys = {
   cities: "cities",
 };
+export const guardianKeys = {
+  guardians: "guardians",
+};
+export const studentPickupsKey = {
+  studentPickup: "studentPickup",
+};

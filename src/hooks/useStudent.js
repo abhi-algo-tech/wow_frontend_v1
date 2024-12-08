@@ -1,7 +1,11 @@
 // src/hooks/useStudentService.js
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import StudentService from "../services/studentService";
-import { studentKeys } from "../utils/queryKeys";
+import {
+  guardianKeys,
+  studentKeys,
+  studentPickupsKey,
+} from "../utils/queryKeys";
 import { message } from "antd";
 import { useState } from "react";
 import { CustomMessage } from "../utils/CustomMessage";
@@ -100,6 +104,112 @@ export const useDeleteStudent = () => {
     onError: (error) => {
       CustomMessage.error("Error deleting student!"); // Error message
       console.error("Error deleting student:", error);
+    },
+  });
+};
+
+// Create a new gauradian
+export const useCreateGuardian = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (guardianData) => StudentService.createGuardian(guardianData),
+    onSuccess: () => {
+      queryClient.invalidateQueries(guardianKeys.guardians); // Refetch all guardians
+      CustomMessage.success("Gaurdian created successfully!"); // Success message
+    },
+    onError: (error) => {
+      CustomMessage.error("Error creating gaurdian!"); // Error message
+      console.error("Error creating gaurdian:", error);
+    },
+  });
+};
+
+// Update an existing student
+export const useUpdateGuardian = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ guardianId, guardianData }) =>
+      StudentService.updateGuardian(guardianId, guardianData),
+    onSuccess: (data, { guardianId }) => {
+      // Invalidate the relevant queries
+      queryClient.invalidateQueries(guardianKeys.guardians); // Refetch all guardians
+      queryClient.invalidateQueries({
+        queryKey: [guardianKeys.guardians, guardianId],
+      });
+      // message.success("Student updated successfully!"); // Success message
+    },
+  });
+};
+
+// Delete a student
+export const useDeleteGuardian = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ guardianId, studentId }) =>
+      StudentService.deleteGuardian(guardianId, studentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: guardianKeys.guardians });
+      CustomMessage.success("gaurdian deleted successfully!"); // Success message
+    },
+    onError: (error) => {
+      CustomMessage.error("Error deleting gaurdian!"); // Error message
+      console.error("Error deleting gaurdian:", error);
+    },
+  });
+};
+
+// Create a new Pickup
+export const useCreatePickup = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (pickupData) => StudentService.createPickup(pickupData),
+    onSuccess: () => {
+      queryClient.invalidateQueries(studentPickupsKey.studentPickup); // Refetch all pickup
+      CustomMessage.success("Pickup created successfully!"); // Success message
+    },
+    onError: (error) => {
+      CustomMessage.error("Error creating pickup!"); // Error message
+      console.error("Error creating pickup:", error);
+    },
+  });
+};
+
+// Update an existing student
+export const useUpdatePickup = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ pickupId, pickupData }) =>
+      StudentService.updatePickup(pickupId, pickupData),
+    onSuccess: (data, { pickupId }) => {
+      // Invalidate the relevant queries
+      queryClient.invalidateQueries(studentPickupsKey.studentPickup); // Refetch all studentPickup
+      queryClient.invalidateQueries({
+        queryKey: [studentPickupsKey.studentPickup, pickupId],
+      });
+    },
+  });
+};
+
+// Delete a pickup
+export const useDeletePickup = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ pickupId, studentId }) =>
+      StudentService.deletePickup(pickupId, studentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: studentPickupsKey.studentPickup,
+      });
+      CustomMessage.success("Pickup deleted successfully!"); // Success message
+    },
+    onError: (error) => {
+      CustomMessage.error("Error deleting pickup!"); // Error message
     },
   });
 };

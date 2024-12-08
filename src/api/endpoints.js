@@ -27,4 +27,12 @@ export const API_ENDPOINTS = {
   CITY: {
     BASE: "/v1/cities",
   },
+  GUARDIAN: {
+    BASE: "/v1/guardians",
+    DELETE: "/v1/guardians/soft-delete-by-student",
+  },
+  PICKUP: {
+    BASE: "/v1/student-pickups",
+    DELETE: "/v1/student-pickups/soft-delete-by-student",
+  },
 };

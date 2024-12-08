@@ -77,6 +77,87 @@ const StudentService = {
       throw error;
     }
   },
+
+  createGuardian: async (guardianData) => {
+    try {
+      const response = await axiosInstance.post(
+        API_ENDPOINTS.GUARDIAN.BASE,
+        guardianData
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error creating gaurdian:", error);
+      throw error;
+    }
+  },
+
+  updateGuardian: async (guardianId, guardianData) => {
+    try {
+      const response = await axiosInstance.put(
+        `${API_ENDPOINTS.GUARDIAN.BASE}/${guardianId}`,
+        guardianData
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating gaurdian with ID ${guardianId}:`, error);
+      throw error;
+    }
+  },
+
+  deleteGuardian: async (guardianId, studentId) => {
+    try {
+      const response = await axiosInstance.patch(
+        `${API_ENDPOINTS.GUARDIAN.DELETE}?guardianId=${guardianId}&studentId=${studentId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        `Error deleting gaurdian with ID ${guardianId} & student ID ${studentId}:`,
+        error
+      );
+      throw error;
+    }
+  },
+
+  createPickup: async (pickupData) => {
+    try {
+      const response = await axiosInstance.post(
+        API_ENDPOINTS.PICKUP.BASE,
+        pickupData
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error creating pickup:", error);
+      throw error;
+    }
+  },
+  updatePickup: async (pickupId, pickupData) => {
+    try {
+      const response = await axiosInstance.put(
+        `${API_ENDPOINTS.PICKUP.BASE}/${pickupId}`,
+        pickupData
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating pickup with ID ${pickupId}:`, error);
+      throw error;
+    }
+  },
+
+  deletePickup: async (pickupId, studentId) => {
+    try {
+      const response = await axiosInstance.patch(
+        `${API_ENDPOINTS.PICKUP.DELETE}?studentPickupId=${pickupId}&studentId=${studentId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        `Error deleting pickup with ID ${pickupId} & student ID ${studentId}:`,
+        error
+      );
+      throw error;
+    }
+  },
 };
 
 export default StudentService;

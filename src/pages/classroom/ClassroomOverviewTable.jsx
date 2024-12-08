@@ -66,7 +66,7 @@ function ClassroomOverviewTable() {
 
     if (isError) {
       CustomMessage.error("Failed to load classrooms. Please try again later.");
-      console.error("Error fetching classrooms:", error);
+      // console.error("Error fetching classrooms:", error);
     }
   }, [classroomData, isError, error]);
 

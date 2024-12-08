@@ -1,72 +1,68 @@
-import { Form, Input, message, Select, Switch } from "antd";
+import { Form, Input, InputNumber, message, Select, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
-import { useCreateStudent, useStudentById, useUpdateStudent } from "../../hooks/useStudent";
+import { useCreatePickup, useUpdatePickup } from "../../hooks/useStudent";
 
 const { Option } = Select;
 
-function AddPickup({ CardTitle, studentId, closeModal }) {
+function AddPickup({
+  cardTitle,
+  selectedStudentData,
+  selectedGaurdianData,
+  closeModal,
+}) {
   const [form] = Form.useForm();
 
-  const { data: parentData } = useStudentById(studentId);
-  const createStudentMutation = useCreateStudent();
-  const updateStudentMutation = useUpdateStudent();
-  const isEdit = Boolean(studentId);
+  const createPickupMutation = useCreatePickup();
+  const updatePickupMutation = useUpdatePickup();
+  const isEdit = Boolean(selectedGaurdianData?.studentPickupId);
 
   useEffect(() => {
-    if (parentData) {
+    if (selectedGaurdianData) {
       form.setFieldsValue({
-        firstName: parentData.data.firstName,
-        lastName: parentData.data.lastName,
-        phoneNumber: parentData.data.phoneNumber,
-        relation: parentData.data.relation,
+        firstName: selectedGaurdianData?.firstName,
+        lastName: selectedGaurdianData?.lastName,
+        phoneNumber: selectedGaurdianData?.phoneNumber,
+        relation: selectedGaurdianData?.relation,
       });
     }
-  }, [parentData, form]);
+  }, [selectedGaurdianData, form]);
 
   const handleSubmit = (values) => {
     const { firstName, lastName, relation, phoneNumber } = values;
 
-    if (!firstName || !lastName ) {
+    if (!firstName || !lastName) {
       message.error("All fields are required!");
       return;
     }
-
+    const pickupId = selectedGaurdianData?.studentPickupId;
     const formData = new FormData();
+    formData.append("studentId", selectedStudentData?.studentId);
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
     formData.append("phoneNumber", phoneNumber);
     formData.append("relation", relation);
 
     if (isEdit) {
-      updateStudentMutation.mutate(
-        { 
-          studentId, 
-          parentData: formData 
-        }, 
+      updatePickupMutation.mutate(
+        {
+          pickupId,
+          pickupData: formData,
+        },
         {
           onSuccess: () => {
-            message.success("Student updated successfully!");
             closeModal();
-          },
-          onError: (error) => {
-            message.error(`Failed to update student: ${error.message}`);
           },
         }
       );
     } else {
-      createStudentMutation.mutate(formData, {
+      createPickupMutation.mutate(formData, {
         onSuccess: () => {
-          message.success("Student created successfully!");
           closeModal();
-        },
-        onError: (error) => {
-          message.error(`Failed to create student: ${error.message}`);
         },
       });
     }
-  }
-    
+  };
 
   return (
     <div className="card">
@@ -78,14 +74,10 @@ function AddPickup({ CardTitle, studentId, closeModal }) {
           borderRadius: "8px 8px 0 0",
         }}
       >
-        {CardTitle}
+        {cardTitle}
       </span>
       <div className="student-create">
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-        >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <div className="row">
             <div className="col-6">
               <div className="flex items-center gap-1 student-label">
@@ -94,7 +86,9 @@ function AddPickup({ CardTitle, studentId, closeModal }) {
               </div>
               <Form.Item
                 name="firstName"
-                rules={[{ required: true, message: "Please input the first name!" }]}
+                rules={[
+                  { required: true, message: "Please input the first name!" },
+                ]}
               >
                 <Input
                   placeholder="E.g. John"
@@ -109,7 +103,9 @@ function AddPickup({ CardTitle, studentId, closeModal }) {
               </div>
               <Form.Item
                 name="lastName"
-                rules={[{ required: true, message: "Please input the last name!" }]}
+                rules={[
+                  { required: true, message: "Please input the last name!" },
+                ]}
               >
                 <Input
                   placeholder="E.g. Smith"
@@ -118,9 +114,7 @@ function AddPickup({ CardTitle, studentId, closeModal }) {
               </Form.Item>
             </div>
 
-          
-
-              <div className="col-6">
+            <div className="col-6">
               <div className="flex items-center gap-1 student-label">
                 Phone Number
                 {/* <span className="text-danger"> *</span> */}
@@ -128,32 +122,36 @@ function AddPickup({ CardTitle, studentId, closeModal }) {
               <Form.Item
                 name="phoneNumber"
                 rules={[
-                    { pattern: /^[0-9]+$/, message: "Contact number must be numeric!" },
-                  ]}
+                  {
+                    pattern: /^[0-9]+$/,
+                    message: "Contact number must be numeric!",
+                  },
+                ]}
               >
-                <Input placeholder="E.g. (000) 000-0000" className="w-100 student-form-input" />
-
+                <InputNumber
+                  maxLength={10}
+                  minLength={10}
+                  placeholder="E.g. (000) 000-0000"
+                  className="w-100 student-form-input"
+                />
               </Form.Item>
             </div>
-              <div className="col-6">
-            <div className=" items-center gap-1 student-label ">
-            Relation
-              {/* <span className="text-danger"> *</span> */}
+            <div className="col-6">
+              <div className=" items-center gap-1 student-label ">
+                Relation
+                {/* <span className="text-danger"> *</span> */}
+              </div>
+              <Form.Item name="relation">
+                <Select
+                  className="select-student-add-from"
+                  placeholder="Select"
+                >
+                  <Option value="select">Select</Option>
+                  <Option value="Father">Father</Option>
+                  <Option value="Mother">Mother</Option>
+                </Select>
+              </Form.Item>
             </div>
-            <Form.Item
-              name="relation"
-            >
-              <Select
-                className="select-student-add-from"
-                placeholder="Select"
-              >
-                <Option value="select">Select</Option>
-                <Option value="1">Father</Option>
-                <Option value="2">Mother</Option>
-              </Select>
-            </Form.Item>
-            </div>
-   
 
             <div className="text-center ">
               <Form.Item>

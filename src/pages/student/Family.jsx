@@ -1,57 +1,69 @@
-import React, { useState } from "react";
-import {
-  Card,
-  Avatar,
-  Typography,
-  Row,
-  Col,
-  Button,
-  Tabs,
-  Space,
-  Dropdown,
-  Menu,
-} from "antd";
-import {
-  EllipsisOutlined,
-  MailOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import { Card, Avatar, Typography, Row, Col, Space, Dropdown } from "antd";
+import { EllipsisOutlined } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent";
 import ParentForm from "./ParentForm";
 import CommonModalComponent from "../../components/CommonModalComponent";
+import { useDeleteGuardian, useStudentById } from "../../hooks/useStudent";
+import DeletePopUp from "../../components/DeletePopUp";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Text } = Typography;
 
 function Family() {
+  const deleteGuardianMutation = useDeleteGuardian();
+  const { data: students, isLoading, isError, error } = useStudentById(2);
   const [isCreateParentModalOpen, setCreateParentModalOpen] = useState(false);
-  const handleMenuClick = ({ key }) => {
+  const [data, setData] = useState([]);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [selectedGaurdianData, setSelectedGaurdianData] = useState(null);
+  const [selectedStudentData, setSelectedStudentData] = useState({});
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+
+  const studentData = {
+    studentId: data?.id,
+    classroomId: data?.classroomId,
+  };
+  const handleMenuClick = ({ key, guardian }) => {
     if (key === "edit") {
-      console.log("Edit action triggered");
-      // Add your edit logic here
+      setSelectedStudentData(studentData);
+      setSelectedGaurdianData(guardian);
+      setEditModalOpen(true); // Open the delete modal
     } else if (key === "delete") {
-      console.log("Delete action triggered");
-      // Add your delete logic here
+      setSelectedRecord({
+        id: guardian.gurdianId,
+        name: `${guardian.gurdianFirstName} ${guardian.gurdianLastName}`,
+      });
+      setDeleteModalOpen(true); // Open the delete modal
     }
   };
-
-  const menu = {
-    items: [
-      {
-        key: "edit",
-        label: <span className="student-table-action-label">Edit</span>,
-      },
-      {
-        key: "delete",
-        label: <span className="student-table-action-label">Delete</span>,
-      },
-    ],
-    onClick: handleMenuClick,
+  const handleDelete = async (id) => {
+    try {
+      deleteGuardianMutation.mutate({ guardianId: id, studentId: data?.id });
+    } catch (error) {
+      CustomMessage.error(`Failed to delete classroom: ${error.message}`);
+    } finally {
+      setDeleteModalOpen(false); // Close the modal after operation (success or failure)
+    }
   };
+  useEffect(() => {
+    if (students) {
+      setData(students?.data || []);
+    }
+
+    if (isError) {
+      CustomMessage.error(
+        "Failed to load student details. Please try again later."
+      );
+      console.error("Error fetching student details:", error);
+    }
+  }, [students, isError, error]);
+
   return (
     <>
       <div className="padding16">
-        <div className=" text-end mb-4 ">
-          {/* <MailOutlined className="mx-4" /> */}
+        <div className="text-end mb-4">
           <ButtonComponent
             text="Add Parent"
             gradient={true}
@@ -60,142 +72,105 @@ function Family() {
           />
         </div>
         <Row gutter={16}>
-          <Col xs={24} md={12}>
-            <Card
-              bordered={false}
-              style={{
-                borderRadius: "16px",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <Space>
-                  <Avatar src="/wow_images/Andrew-Fenwick.png" size={52} />
-                  <Text className="student-about-tab-label-value">
-                    Sanjal Fenwick
-                  </Text>
-                </Space>
-                <Dropdown menu={menu} trigger={["click"]}>
-                  <EllipsisOutlined className="pointer" />
-                </Dropdown>
-              </div>
-              <Space
-                direction="vertical"
-                size="small"
-                style={{ width: "100%" }}
-              >
-                <Row>
-                  <Col span={8}>
-                    <Text className="student-about-tab-label">Relation</Text>
-                  </Col>
-                  <Col span={16} className="text-end">
-                    <Text className="student-about-tab-label-value">
-                      Mother
-                    </Text>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <Text className="student-about-tab-label">Email</Text>
-                  </Col>
-                  <Col span={16} className="text-end">
-                    <Text className="student-about-tab-label-value">
-                      testa5011@gmail.com
-                    </Text>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <Text className="student-about-tab-label">Sign-in Pin</Text>
-                  </Col>
-                  <Col span={16} className="text-end">
-                    <Text className="student-about-tab-label-value">
-                      263630
-                    </Text>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <Text className="student-about-tab-label">
-                      Phone Number
-                    </Text>
-                  </Col>
-                  <Col span={16} className="text-end">
-                    <Text className="student-about-tab-label-value">
-                      (986) 027-1627
-                    </Text>
-                  </Col>
-                </Row>
-              </Space>
-            </Card>
-          </Col>
-          <Col xs={24} md={12}>
-            <Card
-              bordered={false}
-              style={{
-                borderRadius: "16px",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <Space>
-                  <Avatar src="/wow_images/Emma-Fenwick.png" size={52} />
-                  <Text className="student-about-tab-label-value">
-                    Shane Fenwick
-                  </Text>
-                </Space>
-                <EllipsisOutlined />
-              </div>
-              <Space
-                direction="vertical"
-                size="small"
-                style={{ width: "100%" }}
-              >
-                <Row>
-                  <Col span={8}>
-                    <Text className="student-about-tab-label">Relation</Text>
-                  </Col>
-                  <Col span={16} className="text-end">
-                    <Text className="student-about-tab-label-value">
-                      Father
-                    </Text>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <Text className="student-about-tab-label">Email</Text>
-                  </Col>
-                  <Col span={16} className="text-end">
-                    <Text className="student-about-tab-label-value">
-                      testa5011@gmail.com
-                    </Text>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <Text className="student-about-tab-label">Sign-in Pin</Text>
-                  </Col>
-                  <Col span={16} className="text-end">
-                    <Text className="student-about-tab-label-value">
-                      753432
-                    </Text>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <Text className="student-about-tab-label">
-                      Phone Number
-                    </Text>
-                  </Col>
-                  <Col span={16} className="text-end">
-                    <Text className="student-about-tab-label-value">
-                      (986) 027-1627
-                    </Text>
-                  </Col>
-                </Row>
-              </Space>
-            </Card>
-          </Col>
+          {data?.guardians?.map((guardian, index) => {
+            // Dynamically create the menu for each guardian
+            const menu = {
+              items: [
+                {
+                  key: "edit",
+                  label: (
+                    <span className="student-table-action-label">Edit</span>
+                  ),
+                },
+                {
+                  key: "delete",
+                  label: (
+                    <span className="student-table-action-label">Delete</span>
+                  ),
+                },
+              ],
+              onClick: ({ key }) =>
+                handleMenuClick({ key, guardian: guardian }),
+            };
+
+            return (
+              <Col xs={24} md={12} key={index} className="mb16">
+                <Card
+                  bordered={false}
+                  style={{
+                    borderRadius: "16px",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <Space>
+                      <Avatar src={guardian.photoUrl} size={52} />
+                      <Text className="student-about-tab-label-value">
+                        {guardian?.gurdianFirstName} {guardian.gurdianLastName}
+                      </Text>
+                    </Space>
+                    <Dropdown menu={menu} trigger={["click"]}>
+                      <EllipsisOutlined className="pointer" />
+                    </Dropdown>
+                  </div>
+                  <Space
+                    direction="vertical"
+                    size="small"
+                    style={{ width: "100%" }}
+                  >
+                    <Row>
+                      <Col span={8}>
+                        <Text className="student-about-tab-label">
+                          Relation
+                        </Text>
+                      </Col>
+                      <Col span={16} className="text-end">
+                        <Text className="student-about-tab-label-value">
+                          {guardian?.relation
+                            ? "Emergency Contact"
+                            : "Guardian"}
+                        </Text>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col span={8}>
+                        <Text className="student-about-tab-label">Email</Text>
+                      </Col>
+                      <Col span={16} className="text-end">
+                        <Text className="student-about-tab-label-value">
+                          {guardian?.email}
+                        </Text>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col span={8}>
+                        <Text className="student-about-tab-label">
+                          Sign-in Pin
+                        </Text>
+                      </Col>
+                      <Col span={16} className="text-end">
+                        <Text className="student-about-tab-label-value">
+                          {guardian?.signInPin || "N/A"}
+                        </Text>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col span={8}>
+                        <Text className="student-about-tab-label">
+                          Phone Number
+                        </Text>
+                      </Col>
+                      <Col span={16} className="text-end">
+                        <Text className="student-about-tab-label-value">
+                          {guardian?.phoneNumber}
+                        </Text>
+                      </Col>
+                    </Row>
+                  </Space>
+                </Card>
+              </Col>
+            );
+          })}
         </Row>
       </div>
       {isCreateParentModalOpen && (
@@ -207,9 +182,42 @@ function Family() {
           isClosable={true}
         >
           <ParentForm
-            CardTitle={"Add Parent"}
-            classroomId={null}
+            cardTitle="Add Parent"
+            selectedStudentData={studentData}
+            selectedGaurdianData={null}
             closeModal={() => setCreateParentModalOpen(false)}
+          />
+        </CommonModalComponent>
+      )}
+      {isEditModalOpen && (
+        <CommonModalComponent
+          open={isEditModalOpen}
+          setOpen={setEditModalOpen}
+          modalWidthSize={498}
+          isClosable={true}
+        >
+          <ParentForm
+            cardTitle={"Edit Parent"}
+            selectedStudentData={selectedStudentData}
+            selectedGaurdianData={selectedGaurdianData}
+            closeModal={() => setEditModalOpen(false)}
+          />
+        </CommonModalComponent>
+      )}
+      {isDeleteModalOpen && (
+        <CommonModalComponent
+          open={isDeleteModalOpen}
+          setOpen={setDeleteModalOpen}
+          modalWidthSize={493}
+          modalHeightSize={280}
+          isClosable={false}
+        >
+          <DeletePopUp
+            setCancel={setDeleteModalOpen}
+            deleteData={selectedRecord}
+            // CardTitle="Delete Classroom"
+            handleDelete={handleDelete} // Pass the updated handleDelete function
+            module="Parent"
           />
         </CommonModalComponent>
       )}
