@@ -152,3 +152,9 @@ export const generateClassroomData = (apiData) => {
     status: Number(item.staffRatio) >= 75 ? "success" : "warning",
   }));
 };
+
+export function formatDateToCustomStyle(dateStr) {
+  const date = new Date(dateStr);
+  const options = { month: "short", day: "2-digit", year: "numeric" };
+  return date.toLocaleDateString("en-US", options);
+}
