@@ -1005,6 +1005,10 @@
   flex-shrink: 0;
 }
 
+.custom-date-picker:hover {
+  background: rgba(177, 175, 233, 0.1);
+}
+
 .custom-date-picker .ant-picker-suffix {
   color: #573353; /* Change to a darker shade as needed */
 }
@@ -1511,4 +1515,257 @@
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+}
+
+/* Add gap between rows in the main table */
+.schedule-custom-table .ant-table-tbody > tr {
+  border-bottom: 16px solid transparent; /* Adds a gap between rows */
+}
+.child-table {
+  padding: 0;
+}
+
+.child-table table {
+  width: 100%;
+  border-collapse: collapse; /* Ensures no extra gaps between table cells */
+}
+
+.child-table > table > tbody > tr > td {
+  padding: 16px !important; /* Uniform padding inside the table cells */
+}
+
+.ant-table-expanded-row-level-1 td {
+  padding: 0 !important; /* Removes padding from the parent <td> */
+}
+
+.ant-table-row-expand-icon-cell {
+  display: none; /* Hides the expand-cell completely */
+}
+
+.ant-table {
+  table-layout: fixed; /* Ensures consistent column width between parent and child tables */
+}
+
+.schedule-custom-table .ant-table-thead > tr > th {
+  width: auto; /* Ensures columns adjust dynamically */
+}
+
+.teacher-name-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
+}
+.teacher-time-container {
+  display: flex;
+  padding-right: 8px;
+  align-items: center;
+  gap: 6px;
+}
+.teacher-toggle-history {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border-right: 1px solid
+    var(--Miscellaneous-Button---Disabeld-BG, rgba(118, 118, 128, 0.12));
+}
+.teacher-more-time {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.teacher-schedule-time-card {
+  width: 140px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 1px solid #89a0ff;
+  background: rgba(177, 175, 233, 0.1);
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+.teacher-unpublished-time-card {
+  width: 140px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 1px dashed #89a0ff;
+  background: rgba(177, 175, 233, 0.1);
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.schedule-add-shift-btn {
+  display: flex;
+  height: 40px;
+  padding: 0px 16px 0px 8px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--2, #6f8cff);
+}
+
+.gradient-text {
+  background: var(--2, linear-gradient(90deg, #6f8cff 0%, #9c84ff 100%));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.schedule-publish-drp-btn {
+  display: flex;
+  height: 40px;
+  padding: 0px 16px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #5978f7 0%, #9c84ff 100%);
+}
+.schedule-publish-drp-btn:hover {
+  border-radius: 12px;
+  background: linear-gradient(90deg, #5978f7 0%, #9c84ff 100%) !important;
+}
+.schedule-publish-drp-btn-text {
+  color: var(--White-colour, #fff);
+  text-align: center;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 16px; /* 100% */
+}
+.schedule-publish-drp .ant-dropdown-menu-title-content {
+  color: var(--font-colour, #573353) !important;
+  font-size: 12px !important;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.schedule-copy-btn {
+  width: 132px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #f7f4fc;
+}
+
+.schedule-date-arrow {
+  display: flex;
+  width: 40px !important;
+  height: 40px;
+  padding: 8px 8px 9px 9px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  background: var(--2, linear-gradient(90deg, #6f8cff 0%, #9c84ff 100%));
+}
+.schedule-date-arrow:hover {
+  background: var(
+    --2,
+    linear-gradient(90deg, #6f8cff 0%, #9c84ff 100%)
+  ) !important;
+}
+
+.schedule-16-500 {
+  color: #241631;
+  text-align: center;
+  font-family: Manrope;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.not-published-line {
+  width: 18px;
+  height: 1px;
+  /* background: repeating-linear-gradient(
+    to right,
+    #89a0ff,
+    #89a0ff 1px,
+    transparent 6px,
+    transparent 8px
+  ); */
+  border: 1px dashed #89a0ff;
+}
+.published-line {
+  width: 18px;
+  height: 1px;
+  background: #89a0ff;
+}
+
+.time-picker {
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(177, 175, 233, 0.1) !important;
+}
+.shift-week-day {
+  display: flex;
+  padding: 4px 16px;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  border-radius: 3px;
+  background: rgba(177, 175, 233, 0.1);
+}
+
+.opacity05 {
+  opacity: 0.5;
+}
+
+.opacity1 {
+  opacity: 1;
+}
+
+.text-gray {
+  color: #a0aec0; /* Gray color */
+}
+
+.text-blue {
+  color: #1b237e; /* Desired blue color */
+}
+
+.shift-add-note {
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: rgba(177, 175, 233, 0.1) !important;
+}
+.addshift-form .ant-form-item {
+  margin-bottom: 11px !important;
+}
+
+.label-10-400 {
+  color: var(--font-colour, #573353);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.label-10-500 {
+  color: var(--font-colour, #573353);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.label-12-500 {
+  color: var(--font-colour, #573353);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+}
+.scheduling-tag-status {
+  display: flex;
+  padding: 2px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  border-radius: 3px;
+  background: #f38d8d;
 }

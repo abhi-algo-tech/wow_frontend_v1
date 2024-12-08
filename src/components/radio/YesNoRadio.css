@@ -1,31 +1,32 @@
 .yes-no-radio-container {
-    display: flex;
-    height: 40px;
-    align-items: center;
-    gap: 24px;
-    color: rgba(87, 51, 83, 0.50);
-    font-family: Manrope;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
+  display: flex;
+  height: 40px;
+  align-items: center;
+  gap: 24px;
+  color: rgba(87, 51, 83, 0.5);
+  font-family: Manrope;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .ant-radio-wrapper {
-    color: rgba(87, 51, 83, 0.50);
-    /* Default color for inactive state */
-    font-size: 14px;
-    transition: color 0.3s ease;
+  color: rgba(87, 51, 83, 0.5);
+  /* Default color for inactive state */
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 .ant-radio-wrapper:hover {
-    color: rgba(87, 51, 83, 0.75);
-    /* Slightly darker on hover */
+  color: rgba(87, 51, 83, 0.75);
+  /* Slightly darker on hover */
 }
 
 .ant-radio-wrapper-checked {
-    color: rgba(87, 51, 83, 1);
-    /* Color for active state */
-    font-weight: 400;
-    /* Optional: make the active option bold */
+  color: rgba(87, 51, 83, 1);
+  /* Color for active state */
+  font-weight: 400;
+  /* Optional: make the active option bold */
 }

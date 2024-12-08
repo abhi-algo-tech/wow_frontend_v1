@@ -16,8 +16,12 @@ const CustomDatePicker = ({ name, required = false, rules = [] }) => {
   return (
     <Form.Item
       name={name}
+      initialValue={dayjs()} // Set the default value to the current date
       rules={[
         ...rules, // Allow additional custom validation rules
+        ...(required
+          ? [{ required: true, message: "Please select a date" }]
+          : []),
       ]}
     >
       <DatePicker

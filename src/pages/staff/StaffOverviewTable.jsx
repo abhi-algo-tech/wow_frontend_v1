@@ -10,26 +10,17 @@ import {
   Popover,
   Tooltip,
 } from "antd";
-import {
-  SearchOutlined,
-  EditOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import TableComponent from "../../components/TableComponent";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import DeletePopUp from "../../components/DeletePopUp";
-import ApplyFilter from "../student/ApplyFilter";
 import ButtonComponent from "../../components/ButtonComponent";
 import CreateStaff from "./CreateStaff";
 import { IoIosMore } from "react-icons/io";
 import { Link } from "react-router-dom";
-import {
-  getInitialsTitle,
-  getInitialsTitleWithColor,
-} from "../../services/common";
+import { getInitialsTitleWithColor } from "../../services/common";
 import { useGetAllStaff, useUpdateStaff } from "../../hooks/useStaff";
 import { generateStaffData } from "./CommonStaff";
-import CreateStudent from "../student/CreateStudent";
 import { CustomMessage } from "../../utils/CustomMessage";
 import StaffFilter from "./StaffFilter";
 import SignOut from "../../components/attendance/SignOut";
@@ -282,7 +273,6 @@ const StaffOverviewTable = () => {
             color="#F3F2FF"
             key={day}
             title={getTooltipContent(day, schedule[day])}
-            placement="bottom"
             className="no-border-tag "
           >
             <Tag

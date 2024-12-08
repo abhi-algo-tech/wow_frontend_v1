@@ -3,14 +3,21 @@ import { Radio } from "antd";
 import PropTypes from "prop-types";
 import "./YesNoRadio.css";
 
-// YesNoRadio Component
-const YesNoRadio = ({ options, name, value, onChange }) => {
+const YesNoRadio = ({
+  options,
+  name,
+  value,
+  defaultValue,
+  onChange,
+  style,
+}) => {
   return (
     <div className="yes-no-radio-container">
       <Radio.Group
         name={name}
         value={value} // Controlled value directly from parent
         onChange={onChange}
+        style={style}
       >
         {options.map((option) => (
           <Radio key={option.value} value={option.value}>

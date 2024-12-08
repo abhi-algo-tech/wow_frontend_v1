@@ -129,7 +129,7 @@ function MainMenu() {
     {
       key: "scheduling",
       icon: <img src="/wow_icons/png/Scheduling.png" width={22} height={22} />,
-      label: <Link to={"/schedule"}>Scheduling</Link>,
+      label: "Scheduling",
       children: [
         {
           key: "staff-schedule",
@@ -140,7 +140,7 @@ function MainMenu() {
             />
           ),
 
-          label: <Link to="/scheduling/staff">Staff Schedule</Link>,
+          label: <Link to="/schedule">Staff Schedule</Link>,
         },
         {
           key: "classroom-schedule",
