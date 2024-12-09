@@ -35,6 +35,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
   const createStudentMutation = useCreateStudent();
   const updateStudentMutation = useUpdateStudent();
   const isEdit = Boolean(studentId);
+  const [selectedDate, setSelectedDate] = useState("");
 
   const statusOptions = {
     items: statusData?.data?.map((status) => ({
@@ -76,14 +77,14 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
   useEffect(() => {
     if (studentData) {
       setSelectedOption(studentData.isStateSubsidy ? "Yes" : "No");
-
+      setSelectedDate(studentData.dateOfBirth);
       const mappedTags = studentData.tags.map((tag) => tag.tagId);
       form.setFieldsValue({
         firstName: studentData.firstName,
         lastName: studentData.lastName,
         status: studentData.status,
         classroom: studentData.classroomName,
-        birthDate: formatDateToCustomStyle(studentData.dateOfBirth),
+        birthDate: selectedDate,
         isStateSubsidy: studentData.isStateSubsidy ? "yes" : "no",
         tags: mappedTags,
         notes: studentData.note,
@@ -295,6 +296,12 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 Birthdate
               </div>
 
+              <CustomDatePicker
+                name="birthDate"
+                value={selectedDate}
+                onChange={setSelectedDate}
+                required
+              />
               {/* <CustomDatePicker
                 name="birthDate"
                 value={studentData?.dateOfBirth} // Ensure it's parsed

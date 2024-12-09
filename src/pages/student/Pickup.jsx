@@ -92,7 +92,7 @@ function Pickup({ studentId }) {
                 boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
               }}
             >
-              <div className="d-flex justify-content-between align-items-center mb-3">
+              <div className="d-flex justify-content-between align-items-center mb10">
                 <Space>
                   <Avatar src="/wow_images/Andrew-Fenwick.png" size={52} />
                   <Text className="student-about-tab-label-value">
