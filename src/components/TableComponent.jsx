@@ -12,6 +12,8 @@ const TableComponent = ({
   tableSize = "middle",
   sizeChanger = false,
   showTotalProp = false,
+  scrollY = false,
+  scrollX = false,
 }) => {
   const [pagination, setPagination] = useState({
     current: 1,
@@ -38,7 +40,7 @@ const TableComponent = ({
         loading={loading}
         rowKey={rowKey}
         scroll={{ x: true }}
-        className="ant-table-sticky"
+        className="ant-table-sticky "
         size={tableSize}
         pagination={{
           showSizeChanger: sizeChanger,

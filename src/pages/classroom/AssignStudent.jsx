@@ -32,7 +32,7 @@ const ClassroomList = styled.div`
 
   /* Firefox */
   scrollbar-width: thin;
-  scrollbar-color: #e7e7ff #f5f5ff;
+  scrollbar-color: #e7e7ff #ffffff;
 `;
 
 const ClassroomItem = styled.div`
@@ -54,11 +54,12 @@ const StudentCard = styled.div`
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #465cb3;
   border-radius: 8px;
   margin-bottom: 12px;
   cursor: pointer;
   transition: all 0.2s;
+  background: var(--White-colour, #fff);
 
   &:hover {
     border-color: #6366f1;
@@ -231,7 +232,7 @@ export default function AssignStudent({ setCancel, setAssignConfirm }) {
                 <Col span={8} key={student.id}>
                   <StudentCard onClick={() => handleStudentSelect(student.id)}>
                     <Avatar src={student.avatar} />
-                    <span>{student.name}</span>
+                    <span className="label-14-500">{student.name}</span>
                     <Checkbox
                       style={{ marginLeft: "auto" }}
                       checked={selectedStudents.includes(student.id)}

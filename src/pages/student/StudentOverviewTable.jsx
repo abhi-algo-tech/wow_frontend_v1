@@ -126,6 +126,7 @@ const StudentOverviewTable = () => {
       ),
       dataIndex: "name",
       key: "name",
+      align: "start",
       width: 240,
       className: "student-table-body-label", // Custom class
       render: (_, record) => (

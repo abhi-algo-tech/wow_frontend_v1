@@ -64,7 +64,7 @@
   font-size: 20px;
   font-weight: var(--font-weight-bold);
   text-align: right;
-  color: #465cb3;
+  color: #5978f7;
 }
 .classroom-overview-card-progress-text {
   font-size: 10px;
@@ -124,10 +124,12 @@
 }
 
 .parent-create-toggle-btn .ant-switch {
-  background: linear-gradient(-260deg, #f5e8ed, #caf4f9de) !important;
+  background: linear-gradient(90deg, #5978f7 0%, #9c84ff 100%) !important;
+  opacity: 0.4;
 }
-.parent-create-toggle-btn .ant-switch-checked {
+.parent-create-toggle-btn .ant-switch.ant-switch-checked {
   background: linear-gradient(-260deg, #5978f7, #9c84ff) !important;
+  opacity: 1;
 }
 .classroom-create-toggle-btn .ant-switch {
   background: linear-gradient(-260deg, #657af9, #4f46e5) !important;
@@ -136,10 +138,12 @@
   background: linear-gradient(-260deg, #f965a0, #e54649) !important;
 }
 .classroom-show-inactive-toggle-btn .ant-switch {
-  background: linear-gradient(-260deg, #f5e8ed, #caf4f9de) !important;
+  background: linear-gradient(90deg, #5978f7 0%, #9c84ff 100%) !important;
+  opacity: 0.4;
 }
-.classroom-show-inactive-toggle-btn .ant-switch-checked {
+.classroom-show-inactive-toggle-btn .ant-switch.ant-switch-checked {
   background: linear-gradient(to right, #5978f7, #9c84ff) !important;
+  opacity: 1;
 }
 
 .classroom-inactive-label {
@@ -963,7 +967,7 @@
   line-height: normal;
 }
 .staff-overview-card-number {
-  color: var(--Color-1, #465cb3);
+  color: var(--Color-1, #5978f7);
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
@@ -1232,15 +1236,15 @@
   scrollbar-color: #5978f7 #f0f0f0 !important; /* Thumb color and track color */
 }
 
-/* Styling the scrollbar inside the Ant Design Table */
+/* For Chrome, Edge, Safari */
 .ant-table-body::-webkit-scrollbar {
-  width: 6px; /* Vertical scrollbar width */
-  height: 6px; /* Horizontal scrollbar height */
+  width: 8px; /* Width of the scrollbar */
+  height: 8px; /* Height of the horizontal scrollbar */
 }
 
 .ant-table-body::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, #5978f7 0%, #9c84ff 100%);
-  border-radius: 8px;
+  background-color: #dee4fd; /* Thumb color */
+  border-radius: 8px; /* Rounded corners for the scrollbar thumb */
 }
 
 .ant-table-body::-webkit-scrollbar-thumb:hover {
@@ -1248,13 +1252,14 @@
 }
 
 .ant-table-body::-webkit-scrollbar-track {
-  background: #f0f0f0;
-  border-radius: 8px;
+  background-color: #ffffff; /* Track color */
+  border-radius: 8px; /* Rounded corners for the scrollbar track */
 }
 
 .ant-table-body {
   scrollbar-width: thin; /* For Firefox */
-  scrollbar-color: #5978f7 #f0f0f0; /* Thumb color and track color */
+  scrollbar-color: #dee4fd #ffffff; /* Thumb color and track color */
+  border-radius: 8px; /* Rounded corners for the scrollable container */
 }
 
 /* Staff Table Floating Card */
@@ -1394,10 +1399,10 @@
 }
 .notes-message-outer-layer {
   display: inline-flex; /* Ensures the styling applies only to the text content */
-  padding: 16px 24px;
+  padding: 8px 8px 8px 16px;
   align-items: center;
   gap: 10px;
-  border-radius: 32px 32px 32px 0px;
+  border-radius: 32px 32px 32px 32px;
   background: rgba(160, 170, 193, 0.1);
   max-width: 100%; /* Restrict width to 80% of the parent container */
   word-wrap: break-word; /* Ensure text wraps when necessary */
@@ -1768,4 +1773,8 @@
   gap: 16px;
   border-radius: 3px;
   background: #f38d8d;
+}
+
+.ant-breadcrumb-separator {
+  margin: 0px !important;
 }

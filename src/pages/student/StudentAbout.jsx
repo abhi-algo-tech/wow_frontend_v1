@@ -127,7 +127,9 @@ const StudentAbout = ({ studentId }) => {
           <ContentCol>
             <Tag
               color={
-                student?.status.toLowerCase() === "active" ? "success" : "error"
+                student?.status?.toLowerCase() === "active"
+                  ? "success"
+                  : "error"
               }
               style={{ padding: "0 8px" }}
             >

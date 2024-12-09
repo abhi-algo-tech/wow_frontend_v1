@@ -6,28 +6,44 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 // Extend dayjs to handle custom parsing format
 dayjs.extend(customParseFormat);
 
-const dateFormat = "MMM DD, YYYY"; // Format "Oct 29, 2024"
+const dateFormat = "MMM DD, YYYY"; // Desired format: Dec 04, 2024
 
-// Custom DatePicker format
-const customFormat = (value) =>
-  value ? value.format(dateFormat) : "Not a valid date";
+const CustomDatePicker = ({
+  name,
+  required = false,
+  rules = [],
+  value,
+  onChange,
+  placeholder = "Select a date",
+}) => {
+  // Parse the incoming value to a dayjs object or null if invalid
+  const parsedValue = value ? dayjs(value, "YYYY-MM-DD", true) : null;
+  const changeDateFormate = parsedValue?.format("MMM DD, YYYY");
+  // Handle date changes and ensure the format
+  const handleChange = (date) => {
+    if (onChange) {
+      onChange(date ? date.format("YYYY-MM-DD") : null); // Emit ISO format
+    }
+  };
 
-const CustomDatePicker = ({ name, required = false, rules = [] }) => {
   return (
     <Form.Item
       name={name}
-      initialValue={dayjs()} // Set the default value to the current date
+      initialValue={changeDateFormate} // Set the initial value for the form field as a dayjs object
       rules={[
-        ...rules, // Allow additional custom validation rules
+        ...rules,
         ...(required
           ? [{ required: true, message: "Please select a date" }]
           : []),
       ]}
     >
       <DatePicker
-        format={dateFormat}
+        value={parsedValue} // Pass the dayjs object to DatePicker
+        onChange={handleChange} // Trigger change handler
+        format={dateFormat} // Display format
         className="custom-date-picker"
-        placeholder="Select a date"
+        placeholder={placeholder}
+        allowClear // Allow clearing the date
       />
     </Form.Item>
   );

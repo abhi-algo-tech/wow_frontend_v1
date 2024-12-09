@@ -12,7 +12,7 @@ export default function ClassroomNotes() {
         avatar: "/wow_images/person1.png",
       },
       text: "Erica's Bag is in the office... Next teacher please take it and give it to the parents",
-      time: "04:45 PM",
+      time: "17th Nov, 2024 | 04:45 PM",
     },
     {
       id: 2,
@@ -21,7 +21,7 @@ export default function ClassroomNotes() {
         avatar: "/wow_images/staff.png",
       },
       text: "Children are sleeping now. Please feed them once they wake up",
-      time: "04:45 PM",
+      time: "17th Nov, 2024 | 04:45 PM",
     },
     {
       id: 3,
@@ -30,7 +30,7 @@ export default function ClassroomNotes() {
         avatar: "/wow_images/Andrew-Fenwick.png",
       },
       text: "Children are sleeping now. Please feed them once they wake up",
-      time: "04:45 PM",
+      time: "17th Nov, 2024 | 04:45 PM",
     },
   ]);
 
@@ -80,7 +80,7 @@ export default function ClassroomNotes() {
         {messages.map((message) => (
           <>
             <div key={message.id} className="message-card">
-              <div className="d-flex align-items-center gap9 mb16">
+              <div className="d-flex align-items-center gap9 mb9">
                 <div style={{ position: "relative" }}>
                   <Avatar src={message.user.avatar} size={24} />
                   <div
@@ -99,11 +99,11 @@ export default function ClassroomNotes() {
                 <span className="label-14-500">{message.user.name}</span>
               </div>
 
-              <div className="notes-message-outer-layer label-12-600">
+              <div className="notes-message-outer-layer label-11-400">
                 {message.text}
               </div>
 
-              <div className="label-13-400">{message.time}</div>
+              <div className="label-10-500">{message.time}</div>
             </div>
           </>
         ))}
