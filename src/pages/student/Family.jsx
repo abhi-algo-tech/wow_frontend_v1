@@ -10,9 +10,15 @@ import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Text } = Typography;
 
-function Family() {
+function Family({ studentId }) {
   const deleteGuardianMutation = useDeleteGuardian();
-  const { data: students, isLoading, isError, error } = useStudentById(2);
+  const {
+    data: students,
+    isLoading,
+    isError,
+    refetch,
+    error,
+  } = useStudentById(studentId);
   const [isCreateParentModalOpen, setCreateParentModalOpen] = useState(false);
   const [data, setData] = useState([]);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -38,15 +44,39 @@ function Family() {
       setDeleteModalOpen(true); // Open the delete modal
     }
   };
+  // const handleDelete = async (id) => {
+  //   try {
+  //     deleteGuardianMutation.mutate({ guardianId: id, studentId: data?.id });
+  //     CustomMessage.success(`sucessfully delete parent: ${id}`);
+  //   } catch (error) {
+  //     CustomMessage.error(`Failed to delete parent: ${error.message}`);
+  //   } finally {
+  //     setDeleteModalOpen(false); // Close the modal after operation (success or failure)
+  //   }
+  // };
   const handleDelete = async (id) => {
     try {
-      deleteGuardianMutation.mutate({ guardianId: id, studentId: data?.id });
+      deleteGuardianMutation.mutate(
+        { guardianId: id, studentId: studentId },
+        {
+          onSuccess: () => {
+            // Refetch the student data
+            // CustomMessage.success(`Successfully deleted parent: ${id}`);
+            // Refetch the students data
+            refetch();
+          },
+          onError: (error) => {
+            CustomMessage.error(`Failed to delete parent: ${error.message}`);
+          },
+        }
+      );
     } catch (error) {
-      CustomMessage.error(`Failed to delete classroom: ${error.message}`);
+      CustomMessage.error(`Unexpected error: ${error.message}`);
     } finally {
       setDeleteModalOpen(false); // Close the modal after operation (success or failure)
     }
   };
+
   useEffect(() => {
     if (students) {
       setData(students?.data || []);
@@ -127,9 +157,11 @@ function Family() {
                       </Col>
                       <Col span={16} className="text-end">
                         <Text className="student-about-tab-label-value">
-                          {guardian?.relation
-                            ? "Emergency Contact"
-                            : "Guardian"}
+                          {guardian?.relation === "1"
+                            ? "Father"
+                            : guardian?.relation === "2"
+                            ? "Mother"
+                            : "N/A"}
                         </Text>
                       </Col>
                     </Row>

@@ -10,8 +10,14 @@ import DeletePopUp from "../../components/DeletePopUp";
 
 const { Text } = Typography;
 
-function Pickup() {
-  const { data: students, isLoading, isError, error } = useStudentById(2);
+function Pickup({ studentId }) {
+  const {
+    data: students,
+    isLoading,
+    isError,
+    refetch,
+    error,
+  } = useStudentById(studentId);
   const deletePickupMutation = useDeletePickup();
   const [data, setData] = useState([]);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -48,7 +54,17 @@ function Pickup() {
   }, [students, isError, error]);
   const handleDelete = async (id) => {
     try {
-      deletePickupMutation.mutate({ pickupId: id, studentId: data?.id });
+      deletePickupMutation.mutate(
+        { pickupId: id, studentId: studentId },
+        {
+          onSuccess: () => {
+            refetch();
+          },
+          onError: (error) => {
+            CustomMessage.error(`Failed to delete pickup: ${error.message}`);
+          },
+        }
+      );
     } catch (error) {
       CustomMessage.error(`Failed to delete classroom: ${error.message}`);
     } finally {
@@ -121,7 +137,7 @@ function Pickup() {
                   </Col>
                   <Col span={16} className="text-end">
                     <Text className="student-about-tab-label-value">
-                      {pickup?.relation}
+                      {pickup?.relation || "N/A"}
                     </Text>
                   </Col>
                 </Row>
@@ -180,7 +196,7 @@ function Pickup() {
             cardTitle={"Edit Pickup"}
             selectedStudentData={studentData}
             selectedGaurdianData={selectedRecord}
-            closeModal={() => setCreatePickupModalOpen(false)}
+            closeModal={() => setEditModalOpen(false)}
           />
         </CommonModalComponent>
       )}

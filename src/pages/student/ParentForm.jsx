@@ -2,6 +2,7 @@ import { Form, Input, message, Select, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
 import { useCreateGuardian, useUpdateGuardian } from "../../hooks/useStudent";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Option } = Select;
 
@@ -60,22 +61,22 @@ function ParentForm({
         },
         {
           onSuccess: () => {
-            message.success("Student updated successfully!");
+            CustomMessage.success("Student updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            message.error(`Failed to update student: ${error.message}`);
+            CustomMessage.error(`Failed to update student: ${error.message}`);
           },
         }
       );
     } else {
       createGaurdianMutation.mutate(formData, {
         onSuccess: () => {
-          message.success("Student created successfully!");
+          // CustomMessage.success("Student created successfully!");
           closeModal();
         },
         onError: (error) => {
-          message.error(`Failed to create student: ${error.message}`);
+          CustomMessage.error(`Failed to create student: ${error.message}`);
         },
       });
     }

@@ -8,15 +8,17 @@ dayjs.extend(customParseFormat);
 
 const dateFormat = "MMM DD, YYYY"; // Format "Oct 29, 2024"
 
-// Custom DatePicker format
-const customFormat = (value) =>
-  value ? value.format(dateFormat) : "Not a valid date";
-
-const CustomDatePicker = ({ name, required = false, rules = [] }) => {
+const CustomDatePicker = ({
+  name,
+  required = false,
+  rules = [],
+  value, // Add the value prop
+  onChange, // Add the onChange handler
+}) => {
   return (
     <Form.Item
       name={name}
-      initialValue={dayjs()} // Set the default value to the current date
+      initialValue={value ? dayjs(value) : dayjs()} // Initialize with provided value or default to current date
       rules={[
         ...rules, // Allow additional custom validation rules
         ...(required
@@ -28,6 +30,8 @@ const CustomDatePicker = ({ name, required = false, rules = [] }) => {
         format={dateFormat}
         className="custom-date-picker"
         placeholder="Select a date"
+        value={value ? dayjs(value) : undefined} // Set the selected value
+        onChange={onChange} // Handle date changes
       />
     </Form.Item>
   );

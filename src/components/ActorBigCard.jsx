@@ -37,10 +37,10 @@ function ActorBigCard({
         </Avatar>
         <div
           className={`position-absolute top-0 end-0 translate-middle rounded-circle ${
-            actor.status === "present" ? "active-green" : ""
+            actor.status === "Active" ? "active-green" : ""
           }`}
           style={
-            actor.status === "present"
+            actor.status === "Active"
               ? {
                   width: "12px",
                   height: "12px",
@@ -66,7 +66,7 @@ function ActorBigCard({
           <img
             key={index}
             className="student-activity-type-icons"
-            src={`/classroom_icons/png/Notes.png`}
+            src={`/classroom_icons/png/${flag}.png`}
             alt={flag}
           />
         ))}

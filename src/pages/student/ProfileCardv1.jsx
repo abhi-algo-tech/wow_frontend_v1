@@ -78,7 +78,7 @@ const ProfileCardv1 = ({ studentId, role = "student" }) => {
           : ""
       }`.trim(),
       classInfo: studentData?.data?.classroomName,
-      status: studentData?.data?.status.toLowerCase(),
+      status: studentData?.data?.status?.toLowerCase(),
       nameClass: "mb10",
       classroomClass: "mb10",
     },

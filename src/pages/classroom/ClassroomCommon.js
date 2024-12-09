@@ -21,8 +21,8 @@ export const formatStudentData = (studentData) => {
     // Check for dietary restrictions
     if (
       student.dietRestriction &&
-      student.dietRestriction.toLowerCase() !== "No Diet Restrictions" &&
-      student.dietRestriction.toLowerCase() !== "No Restriction"
+      student.dietRestriction.toLowerCase() !== "no diet restrictions" &&
+      student.dietRestriction.toLowerCase() !== "no restriction"
     ) {
       flags.push("Dietary-Restrictions");
       flagValues["Dietary-Restrictions"] = student.dietRestriction;

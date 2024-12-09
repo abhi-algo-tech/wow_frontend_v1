@@ -28,11 +28,11 @@ function StudentAboutTab({ studentId }) {
         </TabPane>
 
         <TabPane tab={<span>Family</span>} key="2">
-          <Family />
+          <Family studentId={studentId} />
         </TabPane>
 
         <TabPane tab={<span>Pickup</span>} key="3">
-          <Pickup />
+          <Pickup studentId={studentId} />
         </TabPane>
       </Tabs>
       {/* <Tabs

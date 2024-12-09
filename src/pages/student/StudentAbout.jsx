@@ -127,15 +127,17 @@ const StudentAbout = ({ studentId }) => {
           <ContentCol>
             <Tag
               color={
-                student?.status.toLowerCase() === "active" ? "success" : "error"
+                student?.status?.toLowerCase() === "active"
+                  ? "success"
+                  : "error"
               }
               style={{ padding: "0 8px" }}
             >
-              {student?.status.toLowerCase() === "active" ? (
+              {student?.status?.toLowerCase() === "active" ? (
                 <>
                   Active <CheckCircleOutlined />
                 </>
-              ) : student?.status.toLowerCase() === "inactive" ? (
+              ) : student?.status?.toLowerCase() === "inactive" ? (
                 <>
                   Inactive <CloseCircleOutlined />
                 </>
@@ -194,22 +196,23 @@ const StudentAbout = ({ studentId }) => {
 
           <LabelCol>Address</LabelCol>
           <ContentCol>
-            <Text className="student-about-tab-label-value">
-              `{student?.addressLine}, {student?.city?.name},{" "}
-              {student?.state?.name}, {student?.country?.name},{" "}
-              {student?.zipCode}`
-            </Text>
+            {student?.addressLine && (
+              <Text className="student-about-tab-label-value">
+                {`${student.addressLine}, ${student?.city?.name || ""}, ${
+                  student?.state?.name || ""
+                }, ${student?.country?.name || ""}, ${student?.zipCode || ""}`
+                  .replace(/,\s*(,|$)/g, ",")
+                  .replace(/,\s*$/, "")}
+              </Text>
+            )}
           </ContentCol>
 
           <LabelCol>Sibling</LabelCol>
-          {student?.siblings?.map((sibling, index) => (
-            <ContentCol>
-              <div className="position-relative d-inline-block mr8">
-                <div
-                  key={index}
-                  className={`position-relative d-inline-block mr8`}
-                >
-                  {/* <Avatar src={sibling?.siblingProfileUrl} size={24} /> */}
+
+          <ContentCol>
+            {student?.siblings?.map((sibling, index) => (
+              <div key={index} className="position-relative d-inline-block mr8">
+                <div className="position-relative d-inline-block">
                   <Avatar
                     size={24}
                     src={sibling?.siblingProfileUrl}
@@ -217,51 +220,50 @@ const StudentAbout = ({ studentId }) => {
                       backgroundColor: sibling?.siblingProfileUrl
                         ? undefined
                         : getInitialsTitleWithColor(
-                            `${sibling?.siblingFirstName}  ${sibling?.siblingLastName}`
+                            `${sibling?.siblingFirstName} ${sibling?.siblingLastName}`
                           ).backgroundColor,
                       color: "#fff",
                     }}
                   >
                     {!sibling?.siblingProfileUrl &&
                       getInitialsTitleWithColor(
-                        `${sibling?.siblingFirstName}  ${sibling?.siblingLastName}`
+                        `${sibling?.siblingFirstName} ${sibling?.siblingLastName}`
                       ).initials}
                   </Avatar>
-                  <div
-                    className={`position-absolute top-0 end-0 translate-middle rounded-circle ${
-                      sibling?.siblingStatus.toLowerCase() === "active"
-                        ? "active-green"
-                        : ""
-                    }`}
-                    style={
-                      sibling?.siblingStatus.toLowerCase() === "active"
-                        ? {
-                            width: "5px",
-                            height: "3px",
-                            margin: "5px -8px",
-                            padding: "3px",
-                            border: "solid 3px #fff",
-                          }
-                        : {}
-                    }
-                  />
+                  {sibling?.siblingStatus?.toLowerCase() === "active" && (
+                    <div
+                      className="position-absolute top-0 end-0 translate-middle rounded-circle active-green"
+                      style={{
+                        width: "5px",
+                        height: "5px",
+                        margin: "5px -8px",
+                        padding: "3px",
+                        border: "solid 3px #fff",
+                      }}
+                    />
+                  )}
                 </div>
+                {"  "}
+                <Text className="student-about-tab-label-value">
+                  {sibling?.siblingFirstName
+                    ? sibling.siblingFirstName.charAt(0).toUpperCase() +
+                      sibling.siblingFirstName.slice(1)
+                    : ""}{" "}
+                  {sibling?.siblingLastName
+                    ? sibling.siblingLastName.charAt(0).toUpperCase() +
+                      sibling.siblingLastName.slice(1)
+                    : ""}{" "}
+                  <span>
+                    (
+                    {sibling?.siblingGender?.toLowerCase() === "male"
+                      ? "Brother"
+                      : "Sister"}
+                    )
+                  </span>
+                </Text>
               </div>
-              <Text className="student-about-tab-label-value">
-                {sibling?.siblingFirstName
-                  ? sibling.siblingFirstName.charAt(0).toUpperCase() +
-                    sibling.siblingFirstName.slice(1)
-                  : ""}{" "}
-                {sibling?.siblingLastName
-                  ? sibling.siblingLastName.charAt(0).toUpperCase() +
-                    sibling.siblingLastName.slice(1)
-                  : ""}{" "}
-                <span>
-                  ({sibling?.siblingGender === "male" ? "Brother" : "Sister"})
-                </span>
-              </Text>
-            </ContentCol>
-          ))}
+            ))}
+          </ContentCol>
 
           <LabelCol>Schedule</LabelCol>
           <ContentCol>

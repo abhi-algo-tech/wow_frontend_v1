@@ -2,6 +2,7 @@ import { Form, Input, InputNumber, message, Select, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
 import { useCreatePickup, useUpdatePickup } from "../../hooks/useStudent";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Option } = Select;
 
@@ -52,6 +53,7 @@ function AddPickup({
         {
           onSuccess: () => {
             closeModal();
+            CustomMessage.success(`pickup updated sucessfully`);
           },
         }
       );
