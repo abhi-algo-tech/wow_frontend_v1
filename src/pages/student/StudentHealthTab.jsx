@@ -32,7 +32,7 @@ function StudentHealthTab({ studentId }) {
         </TabPane>
 
         <TabPane tab={<span>Physician Details</span>} key="2">
-          <PhysicianDetails />
+          <PhysicianDetails studentId={studentId} />
         </TabPane>
 
         <TabPane tab={<span>Physical Examination</span>} key="3">
