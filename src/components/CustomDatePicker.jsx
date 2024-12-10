@@ -16,9 +16,8 @@ const CustomDatePicker = ({
   onChange,
   placeholder = "Select a date",
 }) => {
-  // Parse the incoming value to a dayjs object or null if invalid
-  const parsedValue = value ? dayjs(value, "YYYY-MM-DD", true) : null;
-  const changeDateFormate = parsedValue?.format("MMM DD, YYYY");
+  const defaultValue = dayjs("2000-01-01"); // Hardcoded default value
+
   // Handle date changes and ensure the format
   const handleChange = (date) => {
     if (onChange) {
@@ -29,7 +28,6 @@ const CustomDatePicker = ({
   return (
     <Form.Item
       name={name}
-      initialValue={changeDateFormate} // Set the initial value for the form field as a dayjs object
       rules={[
         ...rules,
         ...(required
@@ -38,15 +36,66 @@ const CustomDatePicker = ({
       ]}
     >
       <DatePicker
-        value={parsedValue} // Pass the dayjs object to DatePicker
+        defaultValue={defaultValue} // Set the default value here
+        // value={defaultValue}
+        // value={value ? dayjs(value, "YYYY-MM-DD") : undefined} // Handle controlled input
         onChange={handleChange} // Trigger change handler
-        format={dateFormat} // Display format
+        // format={dateFormat} // Display format
         className="custom-date-picker"
         placeholder={placeholder}
-        allowClear // Allow clearing the date
       />
     </Form.Item>
   );
 };
 
 export default CustomDatePicker;
+
+// import React from "react";
+// import DatePicker from "react-datepicker";
+// import "react-datepicker/dist/react-datepicker.css";
+// import { Form } from "antd";
+// import { parse, format } from "date-fns";
+
+// const dateFormat = "MMM dd, yyyy"; // Desired format: Dec 04, 2024
+
+// const CustomDatePicker = ({
+//   name,
+//   required = false,
+//   rules = [],
+//   value,
+//   onChange,
+//   placeholder = "Select a date",
+// }) => {
+//   // Parse the incoming value to a Date object or null if invalid
+//   const parsedValue = value ? parse(value, "yyyy-MM-dd", new Date()) : null;
+
+//   // Handle date changes and ensure the format
+//   const handleChange = (date) => {
+//     if (onChange) {
+//       onChange(date ? format(date, "yyyy-MM-dd") : null); // Emit ISO format
+//     }
+//   };
+
+//   return (
+//     <Form.Item
+//       name={name}
+//       initialValue={parsedValue} // Pass the Date object directly
+//       rules={[
+//         ...rules,
+//         ...(required
+//           ? [{ required: true, message: "Please select a date" }]
+//           : []),
+//       ]}
+//     >
+//       <DatePicker
+//         selected={parsedValue} // Pass the Date object to DatePicker
+//         onChange={handleChange} // Trigger change handler
+//         dateFormat={dateFormat} // Display format
+//         placeholderText={placeholder}
+//         className="custom-date-picker"
+//       />
+//     </Form.Item>
+//   );
+// };
+
+// export default CustomDatePicker;
