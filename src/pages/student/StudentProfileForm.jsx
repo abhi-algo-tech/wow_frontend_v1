@@ -76,7 +76,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
 
   useEffect(() => {
     if (studentData) {
-      setSelectedOption(studentData.isStateSubsidy ? "Yes" : "No");
+      setSelectedOption(studentData.isStateSubsidy ? "yes" : "no");
       setSelectedDate(studentData.dateOfBirth);
       const mappedTags = studentData.tags.map((tag) => tag.tagId);
       form.setFieldsValue({
@@ -296,12 +296,25 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 Birthdate
               </div>
 
-              <CustomDatePicker
+              {/* <input
+                type="date"
                 name="birthDate"
-                value={selectedDate}
-                onChange={setSelectedDate}
-                required
-              />
+                value="2024-12-22"
+                className="custom-date-picker"
+              /> */}
+              <Form.Item
+                name="birthDate"
+                rules={[
+                  { required: true, message: "Please select at least one tag" },
+                ]}
+              >
+                <CustomDatePicker
+                  name="birthDate"
+                  value={selectedDate}
+                  onChange={setSelectedDate}
+                  required
+                />
+              </Form.Item>
               {/* <CustomDatePicker
                 name="birthDate"
                 value={studentData?.dateOfBirth} // Ensure it's parsed
