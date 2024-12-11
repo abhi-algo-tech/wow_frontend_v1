@@ -97,7 +97,14 @@ function ParentForm({
         {cardTitle}
       </span>
       <div className="student-create">
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={{
+            isEmergencyContact: true, // Default value for the Switch
+          }}
+          onFinish={handleSubmit}
+        >
           <div className="row">
             <div className="col-6">
               <div className="flex items-center gap-1 student-label">
@@ -189,8 +196,11 @@ function ParentForm({
                   placeholder="Select"
                 >
                   <Option value="select">Select</Option>
-                  <Option value="1">Father</Option>
-                  <Option value="2">Mother</Option>
+                  <Option value="Father">Father</Option>
+                  <Option value="Mother">Mother</Option>
+                  <Option value="Grandfather">Grandfather</Option>
+                  <Option value="Grandmother">Grandmother</Option>
+                  <Option value="Other">Other</Option>
                 </Select>
               </Form.Item>
             </div>
@@ -202,6 +212,7 @@ function ParentForm({
               >
                 <span className="text-muted">Is Emergency Contact?</span>
                 <Switch
+                  defaultChecked
                   name="isEmergencyContact"
                   className="ml10"
                   onChange={handleEmergencyContact}

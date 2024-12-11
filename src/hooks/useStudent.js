@@ -138,6 +138,7 @@ export const useUpdateGuardian = () => {
       queryClient.invalidateQueries({
         queryKey: [guardianKeys.guardians, guardianId],
       });
+      CustomMessage.success("Gaurdian updated successfully!"); // Success message
       // message.success("Student updated successfully!"); // Success message
     },
   });

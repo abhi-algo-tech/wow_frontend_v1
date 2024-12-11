@@ -79,25 +79,30 @@ function PhysicianDetails({ studentId }) {
       title: "Physician Name",
       dataIndex: "name",
       key: "name",
+      align: "start",
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      align: "start",
     },
     {
       title: "Phone Number",
       dataIndex: "phone",
       key: "phone",
+      align: "start",
     },
     {
       title: "Address",
       dataIndex: "address",
       key: "address",
+      align: "start",
     },
     {
       title: "Action",
       key: "action",
+      align: "center",
       render: (_, record) => {
         const menu = {
           items: [

@@ -54,7 +54,7 @@ export default function ClassroomNotes() {
         <div style={{ display: "flex", gap: "8px" }}>
           {users.map((user, index) => (
             <div key={index} className="notes-main-card">
-              <div className="d-flex align-item-center gap9">
+              <div className="d-flex align-items-center gap9">
                 <div style={{ position: "relative" }}>
                   <Avatar src={user.avatar} size={24} />
                   <div
@@ -80,7 +80,7 @@ export default function ClassroomNotes() {
         {messages.map((message) => (
           <>
             <div key={message.id} className="message-card">
-              <div className="d-flex align-items-center gap9 mb9">
+              <div className="d-flex  gap9 mb10">
                 <div style={{ position: "relative" }}>
                   <Avatar src={message.user.avatar} size={24} />
                   <div
@@ -96,14 +96,15 @@ export default function ClassroomNotes() {
                     }}
                   />
                 </div>
-                <span className="label-14-500">{message.user.name}</span>
-              </div>
+                <div>
+                  <div className="label-11-400 mb9">{message.user.name}</div>
+                  <div className="notes-message-outer-layer label-14-500 mb7">
+                    {message.text}
+                  </div>
 
-              <div className="notes-message-outer-layer label-11-400">
-                {message.text}
+                  <div className="label-9-500">{message.time}</div>
+                </div>
               </div>
-
-              <div className="label-10-500">{message.time}</div>
             </div>
           </>
         ))}

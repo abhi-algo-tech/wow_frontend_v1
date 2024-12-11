@@ -68,15 +68,26 @@ const Document = ({ isstudentData }) => {
       key: "document",
       align: "center",
       className: "label-14-600",
-      render: (record) => (
-        <>
-          {record.fileType === "image/png" ? (
-            <Avatar src="/wow_icons/png/image.png" size={24} />
-          ) : (
-            <Avatar src="/wow_icons/png/pdf.png" size={24} />
-          )}
-        </>
-      ),
+      render: (record) => {
+        const handleDownload = () => {
+          const link = document.createElement("a");
+          link.href = record.fileUrl; // URL of the file to be downloaded
+          link.download = record.name; // File name for the download
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        };
+
+        return (
+          <div onClick={handleDownload} style={{ cursor: "pointer" }}>
+            {record.fileType === "image/png" ? (
+              <Avatar src="/wow_icons/png/image.png" size={24} />
+            ) : (
+              <Avatar src="/wow_icons/png/pdf.png" size={24} />
+            )}
+          </div>
+        );
+      },
     },
     {
       title: "Action",
@@ -94,7 +105,6 @@ const Document = ({ isstudentData }) => {
               {
                 key: "delete",
                 label: "Delete",
-                //   icon: <DeleteOutlined />,
                 onClick: () =>
                   handleDeleteModal(record?.documentId, record?.name),
               },
@@ -107,6 +117,7 @@ const Document = ({ isstudentData }) => {
       ),
     },
   ];
+
   const handleEditAction = (record) => {
     console.log("record", record);
     setEditDocumentModalOpen(true);

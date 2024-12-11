@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Switch, Button, Tag, Space, Typography } from "antd";
+import { Table, Switch, Button, Tag, Space, Typography, Form } from "antd";
 import { PlusOutlined, FileTextOutlined } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent";
 import CommonModalComponent from "../../components/CommonModalComponent";
@@ -107,9 +107,19 @@ const ImmunizationRecord = () => {
           className="d-flex justify-content-between align-items-center mb-3"
           style={{ gap: "12px" }}
         >
-          <div className="align-content-center">
-            <Switch className="mr10" />
-            <Text>Exempt student from all immunizations</Text>
+          <div className="d-flex align-items-center">
+            <Form.Item
+              name="expiredDocument"
+              valuePropName="checked"
+              className="mb-0 me-2 classroom-show-inactive-toggle-btn"
+            >
+              <Switch />
+            </Form.Item>
+            <span className="classroom-inactive-label">
+              Exempt student from all immunizations
+            </span>
+            {/* <Switch className="mr10" />
+            <Text>Exempt student from all immunizations</Text> */}
           </div>
           <div>
             <ButtonComponent
