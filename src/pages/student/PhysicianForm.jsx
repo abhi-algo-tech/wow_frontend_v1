@@ -1,18 +1,28 @@
 import { Form, Input, message, Select, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
-import { useCreateStudent, useStudentById, useUpdateStudent } from "../../hooks/useStudent";
+import {
+  useCreateStudent,
+  useStudentById,
+  useUpdateStudent,
+} from "../../hooks/useStudent";
 import TextArea from "antd/es/input/TextArea";
+import {
+  useCreatePhysician,
+  usePhysicianById,
+  useUpdatePhysician,
+} from "../../hooks/usePhysician";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Option } = Select;
 
-function PhysicianForm({ CardTitle, studentId, closeModal }) {
+function PhysicianForm({ CardTitle, physicianId, studentId, closeModal }) {
   const [form] = Form.useForm();
 
-  const { data: parentData } = useStudentById(studentId);
-  const createStudentMutation = useCreateStudent();
-  const updateStudentMutation = useUpdateStudent();
-  const isEdit = Boolean(studentId);
+  const { data: parentData } = usePhysicianById(physicianId);
+  const createPhysicianMutation = useCreatePhysician();
+  const updatePhysicianMutation = useUpdatePhysician();
+  const isEdit = Boolean(physicianId);
 
   useEffect(() => {
     if (parentData) {
@@ -27,49 +37,50 @@ function PhysicianForm({ CardTitle, studentId, closeModal }) {
   }, [parentData, form]);
 
   const handleSubmit = (values) => {
-    const { firstName, lastName, relation, email, phoneNumber } = values;
+    const { firstName, lastName, email, phoneNumber, address } = values;
 
-    if (!firstName || !lastName || relation === "select") {
+    if (!firstName || !lastName) {
       message.error("All fields are required!");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("firstName", firstName);
-    formData.append("lastName", lastName);
-    formData.append("email", email);
-    formData.append("phoneNumber", phoneNumber);
-    formData.append("address", address);
+    const payload = {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      address,
+      studentId,
+    };
 
     if (isEdit) {
-      updateStudentMutation.mutate(
-        { 
-          studentId, 
-          parentData: formData 
-        }, 
+      updatePhysicianMutation.mutate(
+        {
+          physicianId: physicianId,
+          physicianData: payload,
+        },
         {
           onSuccess: () => {
-            message.success("Student updated successfully!");
+            CustomMessage.success("physician updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            message.error(`Failed to update student: ${error.message}`);
+            CustomMessage.error(`Failed to update physician: ${error.message}`);
           },
         }
       );
     } else {
-      createStudentMutation.mutate(formData, {
+      createPhysicianMutation.mutate(payload, {
         onSuccess: () => {
-          message.success("Student created successfully!");
+          CustomMessage.success("physician created successfully!");
           closeModal();
         },
         onError: (error) => {
-          message.error(`Failed to create student: ${error.message}`);
+          CustomMessage.error(`Failed to create physician: ${error.message}`);
         },
       });
     }
-  }
-    
+  };
 
   return (
     <div className="card">
@@ -84,11 +95,7 @@ function PhysicianForm({ CardTitle, studentId, closeModal }) {
         {CardTitle}
       </span>
       <div className="student-create">
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-        >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <div className="row">
             <div className="col-6">
               <div className="flex items-center gap-1 student-label">
@@ -97,7 +104,9 @@ function PhysicianForm({ CardTitle, studentId, closeModal }) {
               </div>
               <Form.Item
                 name="firstName"
-                rules={[{ required: true, message: "Please input the first name!" }]}
+                rules={[
+                  { required: true, message: "Please input the first name!" },
+                ]}
               >
                 <Input
                   placeholder="E.g. John"
@@ -112,7 +121,9 @@ function PhysicianForm({ CardTitle, studentId, closeModal }) {
               </div>
               <Form.Item
                 name="lastName"
-                rules={[{ required: true, message: "Please input the last name!" }]}
+                rules={[
+                  { required: true, message: "Please input the last name!" },
+                ]}
               >
                 <Input
                   placeholder="E.g. Smith"
@@ -126,44 +137,51 @@ function PhysicianForm({ CardTitle, studentId, closeModal }) {
               <span className="text-danger"> *</span>
             </div>
             <Form.Item
-                name="email"
-                rules={[
-                    { required: true, message: "Please input the email address!" },
-                    { type: "email", message: "Please enter a valid email address!" },
-                  ]}
-              >
-                <Input
-                  placeholder="E.g. jane.doe@example.com"
-                  className="w-100 student-form-input"
-                />
-              </Form.Item>
+              name="email"
+              rules={[
+                { required: true, message: "Please input the email address!" },
+                {
+                  type: "email",
+                  message: "Please enter a valid email address!",
+                },
+              ]}
+            >
+              <Input
+                placeholder="E.g. jane.doe@example.com"
+                className="w-100 student-form-input"
+              />
+            </Form.Item>
 
-              <div className="flex items-center gap-1 student-label">
-                Phone Number
-                <span className="text-danger"> *</span>
-              </div>
-              <Form.Item
-                name="phoneNumber"
-                rules={[
-                    { required: true, message: "Please input the contact number!" },
-                    { pattern: /^[0-9]+$/, message: "Contact number must be numeric!" },
-                  ]}
-              >
-                <Input placeholder="E.g. (000) 000-0000" className="w-100 student-form-input" />
+            <div className="flex items-center gap-1 student-label">
+              Phone Number
+              <span className="text-danger"> *</span>
+            </div>
+            <Form.Item
+              name="phoneNumber"
+              rules={[
+                { required: true, message: "Please input the contact number!" },
+                {
+                  pattern: /^[0-9]+$/,
+                  message: "Contact number must be numeric!",
+                },
+              ]}
+            >
+              <Input
+                placeholder="E.g. (000) 000-0000"
+                className="w-100 student-form-input"
+              />
+            </Form.Item>
 
-              </Form.Item>
-
-              <div className="flex items-center gap-1 student-label">
-                Address
-                {/* <span className="text-danger"> *</span> */}
-              </div>
-              <Form.Item
-                name="address"
-              >
-                <TextArea placeholder="Enter Address" className="w-100 student-form-input" />
-
-              </Form.Item>
-           
+            <div className="flex items-center gap-1 student-label">
+              Address
+              {/* <span className="text-danger"> *</span> */}
+            </div>
+            <Form.Item name="address">
+              <TextArea
+                placeholder="Enter Address"
+                className="w-100 student-form-input"
+              />
+            </Form.Item>
 
             <div className="text-center ">
               <Form.Item>

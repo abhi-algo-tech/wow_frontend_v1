@@ -1,104 +1,146 @@
-import React, { useState } from "react";
-import TableComponent from "../../components/TableComponent";
+import React, { useState, useEffect } from "react";
 import { Button, Dropdown } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent";
 import CommonModalComponent from "../../components/CommonModalComponent";
+import TableComponent from "../../components/TableComponent";
 import PhysicianForm from "./PhysicianForm";
+import {
+  useGetAllPhysiciansByStudent,
+  useUpdatePhysician,
+} from "../../hooks/usePhysician";
+import DeletePopUp from "../../components/DeletePopUp";
+import { CustomMessage } from "../../utils/CustomMessage";
 
-const columns = [
-  {
-    title: "Physician Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-    key: "email",
-  },
-  {
-    title: "Phone Number",
-    dataIndex: "phone",
-    key: "phone",
-  },
-  {
-    title: "Type",
-    dataIndex: "type",
-    key: "type",
-  },
-  {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
-  },
-  {
-    title: "Action",
-    key: "action",
-    render: (_, record) => (
-      <Dropdown
-        menu={{
+function PhysicianDetails({ studentId }) {
+  const [
+    isCreatePhysicianDetailsModalOpen,
+    setCreatePhysicianDetailsModalOpen,
+  ] = useState(false);
+
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+
+  const {
+    data: physicians,
+    isLoading,
+    isError,
+  } = useGetAllPhysiciansByStudent(studentId);
+  const updatePhysicianMutation = useUpdatePhysician();
+
+  // Map the data into the expected format
+  const mappedData = physicians
+    ? physicians?.data?.map((physician, index) => ({
+        key: String(index + 1),
+        name: `${physician.firstName} ${physician.lastName}`,
+        email: physician.email,
+        phone: physician.phoneNumber,
+        address: physician.address,
+      }))
+    : [];
+
+  // Handle Menu Click
+  const handleMenuClick = ({ key, record }) => {
+    if (key === "edit") {
+      setEditModalOpen(true);
+      setSelectedRecord(record);
+    } else if (key === "delete") {
+      setSelectedRecord(record);
+      setDeleteModalOpen(true);
+    }
+  };
+
+  const handleDelete = () => {
+    console.log("Deleted:", selectedRecord);
+
+    const payload = {
+      isDeleted: true,
+    };
+    updatePhysicianMutation.mutate(
+      {
+        physicianId: selectedRecord.key,
+        physicianData: payload,
+      },
+      {
+        onSuccess: () => {
+          CustomMessage.success("physician deleted successfully!");
+        },
+        onError: (error) => {
+          CustomMessage.error(`Failed to deleted physician: ${error.message}`);
+        },
+      }
+    );
+    setDeleteModalOpen(false);
+  };
+
+  const columns = [
+    {
+      title: "Physician Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Phone Number",
+      dataIndex: "phone",
+      key: "phone",
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => {
+        const menu = {
           items: [
             {
               key: "edit",
-              label: (
-                <div
-                // onClick={() => handleEdit(record)}
-                >
-                  Edit Physician Details
-                </div>
-              ),
+              label: <span className="student-table-action-label">Edit</span>,
             },
             {
               key: "delete",
-              label: (
-                <div
-                // onClick={() => handleDelete(record)}
-                >
-                  Delete Physician Details
-                </div>
-              ),
+              label: <span className="student-table-action-label">Delete</span>,
             },
           ],
-        }}
-        trigger={["click"]}
-      >
-        <EllipsisOutlined />
-      </Dropdown>
-    ),
-  },
-];
+          onClick: ({ key }) => handleMenuClick({ key, record }),
+        };
 
-const data = [
-  {
-    key: "1",
-    name: "Sanjay Verma",
-    email: "testa5011@gmail.com",
-    phone: "(986) 027-1627",
-    type: "-",
-    address: "Nashua, New Hampshire",
-  },
-  {
-    key: "2",
-    name: "Marry Dsouza",
-    email: "testa5011@gmail.com",
-    phone: "(986) 027-1627",
-    type: "-",
-    address: "Nashua, New Hampshire",
-  },
-];
+        return (
+          <Dropdown menu={menu} trigger={["click"]}>
+            <EllipsisOutlined />
+          </Dropdown>
+        );
+      },
+    },
+  ];
 
-function PhysicianDetails() {
-  const [isCreatePhysicianDetailsModalOpen, setCreatePhysicianDetailsModalOpen] = useState(false);
   return (
     <>
-    <div className="padding16">
-      <div className=" text-end mb-4 ">
-        <ButtonComponent text="Add Physician" buttonActionType="create" onClick={() => setCreatePhysicianDetailsModalOpen(true)}/>
+      <div className="padding16">
+        <div className="text-end mb-4">
+          <ButtonComponent
+            text="Add Physician"
+            buttonActionType="create"
+            onClick={() => setCreatePhysicianDetailsModalOpen(true)}
+          />
+        </div>
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : isError ? (
+          <div>Error loading physicians</div>
+        ) : (
+          <TableComponent columns={columns} dataSource={mappedData} />
+        )}
       </div>
-      <TableComponent columns={columns} dataSource={data} />
-    </div>
-    {isCreatePhysicianDetailsModalOpen && (
+      {isCreatePhysicianDetailsModalOpen && (
         <CommonModalComponent
           open={isCreatePhysicianDetailsModalOpen}
           setOpen={setCreatePhysicianDetailsModalOpen}
@@ -108,10 +150,40 @@ function PhysicianDetails() {
         >
           <PhysicianForm
             CardTitle={"Add Physician"}
-            classroomId={null}
+            studentId={studentId}
+            physicianId={null}
             closeModal={() => setCreatePhysicianDetailsModalOpen(false)}
           />
-        
+        </CommonModalComponent>
+      )}
+      {isEditModalOpen && (
+        <CommonModalComponent
+          open={isEditModalOpen}
+          setOpen={setEditModalOpen}
+          modalWidthSize={498}
+          isClosable={true}
+        >
+          <PhysicianForm
+            CardTitle={"Edit Physician"}
+            physicianId={selectedRecord.key}
+            closeModal={() => setEditModalOpen(false)}
+          />
+        </CommonModalComponent>
+      )}
+      {isDeleteModalOpen && (
+        <CommonModalComponent
+          open={isDeleteModalOpen}
+          setOpen={setDeleteModalOpen}
+          modalWidthSize={493}
+          modalHeightSize={280}
+          isClosable={false}
+        >
+          <DeletePopUp
+            setCancel={() => setDeleteModalOpen(false)}
+            deleteData={selectedRecord}
+            handleDelete={handleDelete}
+            module="Physician"
+          />
         </CommonModalComponent>
       )}
     </>

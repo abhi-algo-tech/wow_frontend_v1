@@ -35,6 +35,14 @@ export const API_ENDPOINTS = {
     BASE: "/v1/student-pickups",
     DELETE: "/v1/student-pickups/soft-delete-by-student",
   },
+  PHYSICIAN: {
+    BASE: "/v1/physicians",
+    GET_BY_STUDENT: "/v1/physicians/student",
+  },
+  PHYSICAL_TRACKER: {
+    BASE: "/v1/physical-trackers",
+    GET_BY_STUDENT: "/v1/physical-trackers/student",
+  },
   DOCUMENT: {
     BASE: "/v1/documents",
     DELETE: "/v1/documents/soft-delete-by-student",

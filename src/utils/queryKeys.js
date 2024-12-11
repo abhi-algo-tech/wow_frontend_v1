@@ -35,6 +35,14 @@ export const guardianKeys = {
 export const studentPickupsKey = {
   studentPickup: "studentPickup",
 };
+
+export const physicianKeys = {
+  physicians: ["physicians"],
+};
+
+export const physicalTrackerKeys = {
+  trackers: ["physicalTrackers"],
+};
 export const documentKey = {
   document: "document",
 };
