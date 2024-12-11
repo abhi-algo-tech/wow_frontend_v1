@@ -28,17 +28,17 @@ const DocumentService = {
   //   }
   // },
 
-  getStaff: async (staffId) => {
-    try {
-      const response = await axiosInstance.get(
-        `${API_ENDPOINTS.STAFF.BASE}/${staffId}`
-      );
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching staff member with ID ${staffId}:`, error);
-      throw error;
-    }
-  },
+  // getStaff: async (staffId) => {
+  //   try {
+  //     const response = await axiosInstance.get(
+  //       `${API_ENDPOINTS.STAFF.BASE}/${staffId}`
+  //     );
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error(`Error fetching staff member with ID ${staffId}:`, error);
+  //     throw error;
+  //   }
+  // },
 
   createDocument: async (documentData) => {
     try {
@@ -53,27 +53,30 @@ const DocumentService = {
     }
   },
 
-  updateStaff: async (staffId, documentData) => {
-    try {
-      const response = await axiosInstance.put(
-        `${API_ENDPOINTS.STAFF.BASE}/${staffId}`,
-        documentData
-      );
-      return response.data;
-    } catch (error) {
-      console.error(`Error updating staff member with ID ${staffId}:`, error);
-      throw error;
-    }
-  },
+  // updateStaff: async (staffId, documentData) => {
+  //   try {
+  //     const response = await axiosInstance.put(
+  //       `${API_ENDPOINTS.STAFF.BASE}/${staffId}`,
+  //       documentData
+  //     );
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error(`Error updating staff member with ID ${staffId}:`, error);
+  //     throw error;
+  //   }
+  // },
 
-  deleteStaff: async (staffId) => {
+  deleteDocument: async (studentId, documentId) => {
     try {
-      const response = await axiosInstance.delete(
-        `${API_ENDPOINTS.STAFF.BASE}/${staffId}`
+      const response = await axiosInstance.patch(
+        `${API_ENDPOINTS.DOCUMENT.DELETE}/?documentId=${documentId}&studentId=${studentId}`
       );
       return response.data;
     } catch (error) {
-      console.error(`Error deleting staff member with ID ${staffId}:`, error);
+      console.error(
+        `Error deleting staff member with ID ${documentId}:`,
+        error
+      );
       throw error;
     }
   },

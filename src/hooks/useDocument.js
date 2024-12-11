@@ -63,33 +63,34 @@ export const useCreateDocument = () => {
 };
 
 // Update an existing Document
-export const useUpdateStaff = () => {
-  const queryClient = useQueryClient();
+// export const useUpdateStaff = () => {
+//   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: ({ staffId, documentData }) =>
-      StaffService.updateStaff(staffId, documentData),
-    onSuccess: (data, { staffId }) => {
-      // Invalidate the relevant queries
-      queryClient.invalidateQueries(documentKey.document); // Refetch all staff
-      queryClient.invalidateQueries({
-        queryKey: [documentKey.document, staffId],
-      });
-      // CustomMessage.success("Document updated successfully!"); // Success message
-    },
-    onError: (error) => {
-      // CustomMessage.error("Error updating Document!"); // Error message
-      console.error("Error updating Document:", error);
-    },
-  });
-};
+//   return useMutation({
+//     mutationFn: ({ staffId, documentData }) =>
+//       StaffService.updateStaff(staffId, documentData),
+//     onSuccess: (data, { staffId }) => {
+//       // Invalidate the relevant queries
+//       queryClient.invalidateQueries(documentKey.document); // Refetch all staff
+//       queryClient.invalidateQueries({
+//         queryKey: [documentKey.document, staffId],
+//       });
+//       // CustomMessage.success("Document updated successfully!"); // Success message
+//     },
+//     onError: (error) => {
+//       // CustomMessage.error("Error updating Document!"); // Error message
+//       console.error("Error updating Document:", error);
+//     },
+//   });
+// };
 
 // Delete a Document
-export const useDeleteStaff = () => {
+export const useDeleteDocument = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: StaffService.deleteStaff,
+    mutationFn: ({ studentId, documentId }) =>
+      DocumentService.deleteDocument(studentId, documentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: documentKey.document });
       CustomMessage.success("Document deleted successfully!"); // Success message

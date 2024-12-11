@@ -1,24 +1,11 @@
 import React, { useState } from "react";
-import {
-  Table,
-  Button,
-  Input,
-  Switch,
-  Typography,
-  Dropdown,
-  Menu,
-  Avatar,
-  Form,
-} from "antd";
-import {
-  FileImageOutlined,
-  FileTextOutlined,
-  EllipsisOutlined,
-} from "@ant-design/icons";
+import { Table, Switch, Dropdown, Avatar, Form } from "antd";
+import { EllipsisOutlined } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import DocumentForm from "./DocumentForm";
-const { Text } = Typography;
+import DeletePopUp from "../../components/DeletePopUp";
+import { useDeleteDocument } from "../../hooks/useDocument";
 
 // const data = [
 //   {
@@ -42,11 +29,15 @@ const { Text } = Typography;
 // ];
 
 const Document = ({ isstudentData }) => {
+  const deleteDocumentMutation = useDeleteDocument();
   const [studentData, setStudentData] = useState(isstudentData);
+  const [editSelectedStudentData, setEditSelectedStudentData] = useState({});
   const [isCreateDocumentModalOpen, setCreateDocumentModalOpen] =
     useState(false);
   const [isEditDocumentModalOpen, setEditDocumentModalOpen] = useState(false);
-  console.log("studentData", studentData.document);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  // console.log("studentData", studentData);
   const columns = [
     {
       title: "Document Name",
@@ -79,7 +70,7 @@ const Document = ({ isstudentData }) => {
       className: "label-14-600",
       render: (record) => (
         <>
-          {record.fileType === "application/image" ? (
+          {record.fileType === "image/png" ? (
             <Avatar src="/wow_icons/png/image.png" size={24} />
           ) : (
             <Avatar src="/wow_icons/png/pdf.png" size={24} />
@@ -98,14 +89,14 @@ const Document = ({ isstudentData }) => {
               {
                 key: "edit",
                 label: "Edit",
-                //   icon: <EditOutlined />,
-                onClick: () => setEditDocumentModalOpen(true),
+                onClick: () => handleEditAction(record),
               },
               {
                 key: "delete",
                 label: "Delete",
                 //   icon: <DeleteOutlined />,
-                onClick: () => console.log("Delete record:", record),
+                onClick: () =>
+                  handleDeleteModal(record?.documentId, record?.name),
               },
             ],
           }}
@@ -116,6 +107,29 @@ const Document = ({ isstudentData }) => {
       ),
     },
   ];
+  const handleEditAction = (record) => {
+    console.log("record", record);
+    setEditDocumentModalOpen(true);
+    setEditSelectedStudentData(record);
+  };
+  const handleDeleteModal = (id, name) => {
+    setSelectedRecord({ id, name }); // Store the clicked item's id and name
+    setDeleteModalOpen(true); // Open the delete modal
+  };
+  const handleDelete = async (id) => {
+    const formData = new FormData();
+    formData.append("isDeleted", true);
+
+    try {
+      await deleteDocumentMutation.mutateAsync({
+        studentId: studentData?.id,
+        documentId: id,
+      });
+      setDeleteModalOpen(false); // Close the modal after deletion
+    } catch (error) {
+      setDeleteModalOpen(false);
+    }
+  };
   return (
     <>
       <div className="documents-body">
@@ -161,7 +175,7 @@ const Document = ({ isstudentData }) => {
         >
           <DocumentForm
             CardTitle={"Add Document"}
-            classroomId={null}
+            StudentId={null}
             closeModal={() => setCreateDocumentModalOpen(false)}
             studentData={studentData}
           />
@@ -177,9 +191,26 @@ const Document = ({ isstudentData }) => {
         >
           <DocumentForm
             CardTitle={"Edit Document"}
-            classroomId={null}
+            StudentId={studentData}
             closeModal={() => setEditDocumentModalOpen(false)}
-            studentData={studentData}
+            studentData={editSelectedStudentData}
+          />
+        </CommonModalComponent>
+      )}
+      {isDeleteModalOpen && (
+        <CommonModalComponent
+          open={isDeleteModalOpen}
+          setOpen={setDeleteModalOpen}
+          modalWidthSize={493}
+          modalHeightSize={232}
+          isClosable={false}
+        >
+          <DeletePopUp
+            setCancel={setDeleteModalOpen}
+            deleteData={selectedRecord}
+            // CardTitle="Delete Student"
+            handleDelete={handleDelete} // Pass the updated handleDelete function
+            module="Document"
           />
         </CommonModalComponent>
       )}

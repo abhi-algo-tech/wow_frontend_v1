@@ -1,31 +1,35 @@
 import { Form, Input, message, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
-import {
-  useCreateStudent,
-  useStudentById,
-  useUpdateStudent,
-} from "../../hooks/useStudent";
+import { useUpdateStudent } from "../../hooks/useStudent";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import FileUploadComponent from "../../components/fileUpload/FileUploadComponent";
+import { useCreateDocument } from "../../hooks/useDocument";
+import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 
 const { Option } = Select;
 
-function DocumentForm({ CardTitle, studentId, closeModal, studentData }) {
+function DocumentForm({ CardTitle, StudentId, closeModal, studentData }) {
   const [form] = Form.useForm();
-
-  // const { data: parentData } = useStudentById(studentId);
-  const createStudentMutation = useCreateStudent();
+  const {
+    data: documentDrpDwnData,
+    isLoading,
+    isError,
+    error,
+  } = useMasterLookupsByType("document");
+  const createDocumentMutation = useCreateDocument();
   const updateStudentMutation = useUpdateStudent();
-  const isEdit = Boolean(studentData.id);
+  const [selectedValue, setSelectedValue] = useState(null);
+  const [documentOptions, setDocumentOptions] = useState([]);
+  const isEdit = Boolean(StudentId?.id);
 
   useEffect(() => {
-    if (studentData) {
+    if (studentData && StudentId?.id) {
       form.setFieldsValue({
-        // documentName: studentData.data.documentName,
-        // documentType: studentData.data.documentType,
-        // expiryDate: studentData.data.expiryDate,
-        // uploadDocument: studentData.data.uploadDocument,
+        documentName: studentData?.name,
+        documentType: studentData?.docTypeId,
+        expiryDate: studentData?.expiryDate,
+        uploadDocument: studentData?.fileType,
       });
     }
   }, [studentData, form]);
@@ -42,16 +46,17 @@ function DocumentForm({ CardTitle, studentId, closeModal, studentData }) {
 
     const formData = new FormData();
     formData.append("name", values.documentName);
-    formData.append("docTypeName", values.documentType);
+    formData.append("docTypeId", values.documentType);
     formData.append("expiryDate", values.expiryDate);
     formData.append("contentType", "student");
-    formData.append("documentFile", values.uploadDocument);
-    formData.append("studentId", values.uploadDocument);
-    formData.append("schoolId", values.uploadDocument);
+    formData.append("documentFile", "");
+    formData.append("studentId", StudentId?.id);
+    formData.append("schoolId", StudentId?.schoolId);
 
     if (isEdit) {
+      const studentId = StudentId?.id;
       updateStudentMutation.mutate(
-        { studentId, parentData: formData },
+        { studentId, studentData: formData },
         {
           onSuccess: () => {
             message.success("Document updated successfully!");
@@ -63,7 +68,7 @@ function DocumentForm({ CardTitle, studentId, closeModal, studentData }) {
         }
       );
     } else {
-      createStudentMutation.mutate(formData, {
+      createDocumentMutation.mutate(formData, {
         onSuccess: () => {
           message.success("Document created successfully!");
           closeModal();
@@ -73,6 +78,31 @@ function DocumentForm({ CardTitle, studentId, closeModal, studentData }) {
         },
       });
     }
+  };
+  const handleFileBlob = (blob) => {
+    form.setFieldsValue({ uploadDocument: blob });
+  };
+  useEffect(() => {
+    if (documentDrpDwnData) {
+      setDocumentOptions(documentDrpDwnData.data);
+    }
+  }, [documentDrpDwnData, isError, error]);
+
+  useEffect(() => {
+    // Set the initial value for edit mode
+    if (studentData?.documentId) {
+      setSelectedValue(studentData?.documentId);
+    }
+  }, [studentData?.documentId]);
+  useEffect(() => {
+    // Set the initial value for edit mode
+    if (studentData?.documentId) {
+      setSelectedValue(studentData?.documentId);
+    }
+  }, [studentData?.documentId]);
+
+  const handleChange = (value) => {
+    setSelectedValue(value);
   };
 
   return (
@@ -114,13 +144,17 @@ function DocumentForm({ CardTitle, studentId, closeModal, studentData }) {
                 { required: true, message: "Please select the document type!" },
               ]}
             >
-              <Select className="select-student-add-from" placeholder="Select">
-                <Option value="Birth Cirtificate">Birth Cirtificate</Option>
-                <Option value="Registration Forms">Registration Forms</Option>
-                <Option value="Special Program Forms">
-                  Special Program Forms
-                </Option>
-                <Option value="Other">Other</Option>
+              <Select
+                className="select-student-add-from"
+                placeholder="Select"
+                value={selectedValue}
+                onChange={handleChange}
+              >
+                {documentOptions?.map((doc) => (
+                  <Option key={doc.id} value={doc.id}>
+                    {doc.name}
+                  </Option>
+                ))}
               </Select>
             </Form.Item>
 
@@ -139,7 +173,7 @@ function DocumentForm({ CardTitle, studentId, closeModal, studentData }) {
                 { required: true, message: "Please upload the document!" },
               ]}
             >
-              <FileUploadComponent />
+              <FileUploadComponent onFileBlob={handleFileBlob} />
             </Form.Item>
           </div>
 
