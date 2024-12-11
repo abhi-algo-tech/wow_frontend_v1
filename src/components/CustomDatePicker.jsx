@@ -15,7 +15,6 @@ const CustomDatePicker = ({
 }) => {
   // Parse the incoming value to a dayjs object or null if invalid
   const parsedValue = value ? dayjs(value, "YYYY-MM-DD", true) : null;
-  console.log("parsedValue:", parsedValue);
   // Handle date changes and ensure the format
   const handleChange = (date) => {
     if (onChange) {

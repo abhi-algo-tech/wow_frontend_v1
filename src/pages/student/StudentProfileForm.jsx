@@ -39,37 +39,37 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
 
   const statusOptions = {
     items: statusData?.data?.map((status) => ({
-      key: status.id.toString(), // Convert id to string as keys are typically strings
+      key: status.id, // Convert id to string as keys are typically strings
       label: status.name, // Use the name property for the label
     })),
   };
   const classRoomOptions = {
     items: classroomData?.data?.map((classroom) => ({
-      key: classroom.id.toString(), // Convert id to string as keys are typically strings
+      key: classroom.id, // Convert id to string as keys are typically strings
       label: classroom.name, // Use the name property for the label
     })),
   };
   const custodyOptions = {
     items: custodyData?.data?.map((custody) => ({
-      key: custody.id.toString(), // Convert id to string as keys are typically strings
+      key: custody.id, // Convert id to string as keys are typically strings
       label: custody.name, // Use the name property for the label
     })),
   };
   const counntryOptions = {
     items: countries?.data?.map((country) => ({
-      key: country.id.toString(), // Convert id to string as keys are typically strings
+      key: country.id, // Convert id to string as keys are typically strings
       label: country.name, // Use the name property for the label
     })),
   };
   const stateOptions = {
     items: states?.data?.map((state) => ({
-      key: state.id.toString(), // Convert id to string as keys are typically strings
+      key: state.id, // Convert id to string as keys are typically strings
       label: state.name, // Use the name property for the label
     })),
   };
   const cityOptions = {
     items: cities?.data?.map((city) => ({
-      key: city.id.toString(), // Convert id to string as keys are typically strings
+      key: city.id, // Convert id to string as keys are typically strings
       label: city.name, // Use the name property for the label
     })),
   };
@@ -82,17 +82,17 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
       form.setFieldsValue({
         firstName: studentData.firstName,
         lastName: studentData.lastName,
-        status: studentData.status,
-        classroom: studentData.classroomName,
-        birthDate: selectedDate,
+        status: studentData.statusId,
+        classroom: studentData.classroomId,
+        birthDate: studentData.dateOfBirth,
         isStateSubsidy: studentData.isStateSubsidy ? "yes" : "no",
         tags: mappedTags,
         notes: studentData.note,
         childCustody: studentData.childCustody,
         address: studentData.addressLine,
-        city: studentData?.city?.name,
-        state: studentData?.state?.name,
-        country: studentData?.country?.name,
+        city: studentData?.city?.id,
+        state: studentData?.state?.id,
+        country: studentData?.country?.id,
         zipCode: studentData.zipCode,
       });
       setSelectedTags(mappedTags);
@@ -128,7 +128,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
     const formData = new FormData();
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
-    formData.append("status", status);
+    formData.append("statusId", status);
     formData.append("classroomId", classroom);
     if (birthDate) {
       // const formattedDate = new Date(birthDate).toISOString().split("T")[0]; // Format to 'yyyy-mm-dd'
@@ -448,6 +448,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 <Select
                   className="select-student-add-from"
                   placeholder="Select"
+                  value={studentData?.city}
                 >
                   {cityOptions.items?.map((city) => (
                     <Option key={city.key} value={city.key}>
