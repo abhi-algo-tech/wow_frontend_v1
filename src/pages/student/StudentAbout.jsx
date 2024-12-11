@@ -159,7 +159,7 @@ const StudentAbout = ({ studentId }) => {
 
           <LabelCol>Tags</LabelCol>
           <ContentCol>
-            {student?.tags.map((tag, index) => (
+            {student?.tags?.map((tag, index) => (
               <Tag key={index} color={getRandomColor()}>
                 {tag.tagName}
               </Tag>

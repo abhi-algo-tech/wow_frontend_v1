@@ -21,7 +21,7 @@ export const useGetAllPhysicalTrackersByStudent = (studentId) => {
   return useQuery({
     queryKey: [physicalTrackerKeys.trackers, "byStudent", studentId],
     queryFn: () =>
-      PhysicalTrackerService.getAllPhysicalTrackersByStudent(studentId),
+      PhysicalTrackerService.getPhysicalTrackersByStudent(studentId),
     enabled: Boolean(studentId),
     refetchOnWindowFocus: false,
     retry: 3,
@@ -56,11 +56,11 @@ export const useCreatePhysicalTracker = () => {
       PhysicalTrackerService.createPhysicalTracker(trackerData),
     onSuccess: () => {
       queryClient.invalidateQueries(physicalTrackerKeys.trackers);
-      CustomMessage.success("Physical tracker created successfully!");
+      // CustomMessage.success("Physical tracker created successfully!");
     },
     onError: (error) => {
       console.error("Error creating physical tracker:", error);
-      CustomMessage.error("Error creating physical tracker!");
+      // CustomMessage.error("Error creating physical tracker!");
     },
   });
 };
@@ -73,11 +73,11 @@ export const useUpdatePhysicalTracker = () => {
       PhysicalTrackerService.updatePhysicalTracker(trackerId, trackerData),
     onSuccess: () => {
       queryClient.invalidateQueries(physicalTrackerKeys.trackers);
-      CustomMessage.success("Physical tracker updated successfully!");
+      // CustomMessage.success("Physical tracker updated successfully!");
     },
     onError: (error) => {
       console.error("Error updating physical tracker:", error);
-      CustomMessage.error("Error updating physical tracker!");
+      // CustomMessage.error("Error updating physical tracker!");
     },
   });
 };
@@ -90,11 +90,11 @@ export const useDeletePhysicalTracker = () => {
       PhysicalTrackerService.deletePhysicalTracker(trackerId),
     onSuccess: () => {
       queryClient.invalidateQueries(physicalTrackerKeys.trackers);
-      CustomMessage.success("Physical tracker deleted successfully!");
+      // CustomMessage.success("Physical tracker deleted successfully!");
     },
     onError: (error) => {
       console.error("Error deleting physical tracker:", error);
-      CustomMessage.error("Error deleting physical tracker!");
+      // CustomMessage.error("Error deleting physical tracker!");
     },
   });
 };

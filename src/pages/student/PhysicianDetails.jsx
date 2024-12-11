@@ -32,7 +32,7 @@ function PhysicianDetails({ studentId }) {
   // Map the data into the expected format
   const mappedData = physicians
     ? physicians?.data?.map((physician, index) => ({
-        key: String(index + 1),
+        key: physician.id,
         name: `${physician.firstName} ${physician.lastName}`,
         email: physician.email,
         phone: physician.phoneNumber,
