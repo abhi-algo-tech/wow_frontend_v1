@@ -35,4 +35,8 @@ export const API_ENDPOINTS = {
     BASE: "/v1/student-pickups",
     DELETE: "/v1/student-pickups/soft-delete-by-student",
   },
+  DOCUMENT: {
+    BASE: "/v1/documents",
+    DELETE: "/v1/documents/soft-delete-by-student",
+  },
 };

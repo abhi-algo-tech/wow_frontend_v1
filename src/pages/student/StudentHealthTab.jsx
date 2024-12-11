@@ -1,8 +1,5 @@
-import { Button, Card, Tabs } from "antd";
+import { Tabs } from "antd";
 import React, { useState } from "react";
-import StudentAbout from "./StudentAbout";
-import Family from "./Family";
-import Pickup from "./Pickup";
 import HealthDetails from "./HealthDetails";
 import PhysicianDetails from "./PhysicianDetails";
 import PhysicianExamination from "./PhysicalExamination";
@@ -10,7 +7,7 @@ import ImmunizationRecord from "./ImmunizationRecord";
 
 const { TabPane } = Tabs;
 
-function StudentHealthTab({ studentId }) {
+function StudentHealthTab({ isstudentData, studentId }) {
   const [activeTab, setActiveTab] = useState("1");
   const [isAssignStudentModalOpen, setAssignStudent] = useState(false);
 

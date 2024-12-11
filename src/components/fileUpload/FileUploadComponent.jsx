@@ -11,7 +11,7 @@ const FileUploadComponent = ({ onFileBlob }) => {
     try {
       const blob = new Blob([file], { type: file.type });
       setFileName(file.name); // Update the state with the file name
-      onFileBlob(blob); // Return the Blob to the parent component
+      // onFileBlob(blob); // Return the Blob to the parent component
       CustomMessage.success(`${file.name} is added`);
     } catch (error) {
       console.error("Error creating Blob:", error);

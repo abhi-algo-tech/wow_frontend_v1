@@ -1,49 +1,42 @@
-import { Form, Input, message, Select, Switch } from "antd";
-import React, { useEffect, useState } from "react";
+import { Form, message } from "antd";
+import React, { useEffect } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
-import { useCreateStudent, useStudentById, useUpdateStudent } from "../../hooks/useStudent";
+import { useCreateStudent, useUpdateStudent } from "../../hooks/useStudent";
 import CustomDatePicker from "../../components/CustomDatePicker";
 
-const { Option } = Select;
-
-function ImportantDateForm({ CardTitle, studentId, closeModal }) {
+function ImportantDateForm({ CardTitle, closeModal, studentData }) {
   const [form] = Form.useForm();
 
-  const { data: parentData } = useStudentById(studentId);
   const createStudentMutation = useCreateStudent();
   const updateStudentMutation = useUpdateStudent();
-  const isEdit = Boolean(studentId);
+  const isEdit = Boolean(studentData?.id);
 
   useEffect(() => {
-    if (parentData) {
+    if (studentData) {
       form.setFieldsValue({
-        enrollDate: parentData.data.enrollDate,
-        schoolStartDate: parentData.data.schoolStartDate,
-        currentClassroomDate: parentData.data.currentClassroomDate,
-        upcomingMoveDate: parentData.data.upcomingMoveDate,
-        schoolLeavingDate: parentData.data.schoolLeavingDate,
+        enrollDate: studentData?.registrationDate,
+        schoolStartDate: studentData?.startDate,
+        currentClassroomDate: studentData?.roomStartDate,
+        upcomingMoveDate: studentData?.expectedMoveDate,
+        schoolLeavingDate: studentData?.leavingDate,
       });
     }
-  }, [parentData, form]);
+  }, [studentData, form]);
 
   const handleSubmit = (values) => {
-    const { status, date } = values;
-
-    if (!status || !date ) {
-      message.error("All fields are required!");
-      return;
-    }
-
     const formData = new FormData();
-    formData.append("status", status);
-    formData.append("date", date);
-   
+    formData.append("registrationDate", values.enrollDate);
+    formData.append("startDate", values.schoolStartDate);
+    formData.append("roomStartDate", values.currentClassroomDate);
+    formData.append("expectedMoveDate", values.upcomingMoveDate);
+    formData.append("leavingDate", values.schoolLeavingDate);
+
     if (isEdit) {
       updateStudentMutation.mutate(
-        { 
-          studentId, 
-          parentData: formData 
-        }, 
+        {
+          studentId: studentData.id,
+          studentData: formData,
+        },
         {
           onSuccess: () => {
             message.success("Student updated successfully!");
@@ -65,8 +58,15 @@ function ImportantDateForm({ CardTitle, studentId, closeModal }) {
         },
       });
     }
-  }
-    
+  };
+
+  const dateFields = [
+    { name: "enrollDate", label: "Enroll Date" },
+    { name: "schoolStartDate", label: "School Start Date" },
+    { name: "currentClassroomDate", label: "Current Classroom Date" },
+    { name: "upcomingMoveDate", label: "Upcoming Move Date" },
+    { name: "schoolLeavingDate", label: "School Leaving Date" },
+  ];
 
   return (
     <div className="card">
@@ -81,79 +81,24 @@ function ImportantDateForm({ CardTitle, studentId, closeModal }) {
         {CardTitle}
       </span>
       <div className="student-create">
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-        >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <div className="row">
-            <div className="col-6">
-            <div className=" items-center gap-1 student-label ">
-            Enroll Date
-            </div>
-            <Form.Item
-              name="enrollDate"
-              rules={[
-                { required: true, message: "enrollDate is required!" },
-              ]}
-            >
-              <CustomDatePicker name="enrollDate" />
-            </Form.Item>
-            </div>
-            <div className="col-6">
-            <div className=" items-center gap-1 student-label ">
-            School Start Date
-            </div>
-            <Form.Item
-              name="schoolStartDate"
-              rules={[
-                { required: true, message: "schoolStartDate is required!" },
-              ]}
-            >
-              <CustomDatePicker name="schoolStartDate" />
-            </Form.Item>
-            </div>
-            <div className="col-6">
-            <div className=" items-center gap-1 student-label ">
-            Current Classroom Date
-            </div>
-            <Form.Item
-              name="currentClassroomDate"
-              rules={[
-                { required: true, message: "currentClassroomDate is required!" },
-              ]}
-            >
-              <CustomDatePicker name="currentClassroomDate" />
-            </Form.Item>
-            </div>
-            <div className="col-6">
-            <div className=" items-center gap-1 student-label ">
-            Upcoming Move Date
-            </div>
-            <Form.Item
-              name="upcomingMoveDate"
-              rules={[
-                { required: true, message: "upcomingMoveDate is required!" },
-              ]}
-            >
-              <CustomDatePicker name="upcomingMoveDate" />
-            </Form.Item>
-            </div>
-            <div className="col-6">
-            <div className=" items-center gap-1 student-label ">
-            School Leaving Date
-            </div>
-            <Form.Item
-              name="schoolLeavingDate"
-              rules={[
-                { required: true, message: "schoolLeavingDate is required!" },
-              ]}
-            >
-              <CustomDatePicker name="schoolLeavingDate" />
-            </Form.Item>
-            </div>
-
-            <div className="text-center ">
+            {dateFields.map((field) => (
+              <div className="col-6" key={field.name}>
+                <div className="items-center gap-1 student-label">
+                  {field.label}
+                </div>
+                <Form.Item
+                  name={field.name}
+                  rules={[
+                    { required: true, message: `${field.label} is required!` },
+                  ]}
+                >
+                  <CustomDatePicker name={field.name} />
+                </Form.Item>
+              </div>
+            ))}
+            <div className="text-center">
               <Form.Item>
                 <ButtonComponent
                   text={isEdit ? "Save" : "Add"}

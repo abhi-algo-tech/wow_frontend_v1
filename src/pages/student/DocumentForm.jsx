@@ -1,4 +1,4 @@
-import { Form, Input, message, Select, Switch } from "antd";
+import { Form, Input, message, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
 import {
@@ -11,70 +11,68 @@ import FileUploadComponent from "../../components/fileUpload/FileUploadComponent
 
 const { Option } = Select;
 
-function DocumentForm({ CardTitle, studentId, closeModal }) {
+function DocumentForm({ CardTitle, studentId, closeModal, studentData }) {
   const [form] = Form.useForm();
 
-  const { data: parentData } = useStudentById(studentId);
+  // const { data: parentData } = useStudentById(studentId);
   const createStudentMutation = useCreateStudent();
   const updateStudentMutation = useUpdateStudent();
-  const isEdit = Boolean(studentId);
+  const isEdit = Boolean(studentData.id);
 
   useEffect(() => {
-    if (parentData) {
+    if (studentData) {
       form.setFieldsValue({
-        firstName: parentData.data.firstName,
-        lastName: parentData.data.lastName,
-        phoneNumber: parentData.data.phoneNumber,
-        relation: parentData.data.relation,
+        // documentName: studentData.data.documentName,
+        // documentType: studentData.data.documentType,
+        // expiryDate: studentData.data.expiryDate,
+        // uploadDocument: studentData.data.uploadDocument,
       });
     }
-  }, [parentData, form]);
+  }, [studentData, form]);
 
   const handleSubmit = (values) => {
-    const { firstName, lastName, relation, phoneNumber } = values;
-
-    if (!firstName || !lastName) {
-      message.error("All fields are required!");
+    if (
+      !values.documentName ||
+      !values.documentType ||
+      !values.uploadDocument
+    ) {
+      message.error("All required fields must be filled!");
       return;
     }
 
     const formData = new FormData();
-    formData.append("firstName", firstName);
-    formData.append("lastName", lastName);
-    formData.append("phoneNumber", phoneNumber);
-    formData.append("relation", relation);
+    formData.append("name", values.documentName);
+    formData.append("docTypeName", values.documentType);
+    formData.append("expiryDate", values.expiryDate);
+    formData.append("contentType", "student");
+    formData.append("documentFile", values.uploadDocument);
+    formData.append("studentId", values.uploadDocument);
+    formData.append("schoolId", values.uploadDocument);
 
     if (isEdit) {
       updateStudentMutation.mutate(
-        {
-          studentId,
-          parentData: formData,
-        },
+        { studentId, parentData: formData },
         {
           onSuccess: () => {
-            message.success("Student updated successfully!");
+            message.success("Document updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            message.error(`Failed to update student: ${error.message}`);
+            message.error(`Failed to update document: ${error.message}`);
           },
         }
       );
     } else {
       createStudentMutation.mutate(formData, {
         onSuccess: () => {
-          message.success("Student created successfully!");
+          message.success("Document created successfully!");
           closeModal();
         },
         onError: (error) => {
-          message.error(`Failed to create student: ${error.message}`);
+          message.error(`Failed to create document: ${error.message}`);
         },
       });
     }
-  };
-  const handleFileBlob = (blob) => {
-    console.log("Received Blob:", blob);
-    // Handle the Blob file here (e.g., upload it, preview it, etc.)
   };
 
   return (
@@ -93,8 +91,7 @@ function DocumentForm({ CardTitle, studentId, closeModal }) {
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <div className="row">
             <div className="flex items-center gap-1 student-label">
-              Document name
-              <span className="text-danger"> *</span>
+              Document Name<span className="text-danger"> *</span>
             </div>
             <Form.Item
               name="documentName"
@@ -107,43 +104,46 @@ function DocumentForm({ CardTitle, studentId, closeModal }) {
                 className="w-100 student-form-input"
               />
             </Form.Item>
-            <div className=" items-center gap-1 student-label ">
-              Document Type
-              <span className="text-danger"> *</span>
+
+            <div className="items-center gap-1 student-label">
+              Document Type<span className="text-danger"> *</span>
             </div>
             <Form.Item
               name="documentType"
               rules={[
-                { required: true, message: "Please select the Document Type!" },
+                { required: true, message: "Please select the document type!" },
               ]}
             >
               <Select className="select-student-add-from" placeholder="Select">
-                <Option value="select">Select</Option>
-                <Option value="1">Father</Option>
-                <Option value="2">Mother</Option>
+                <Option value="Birth Cirtificate">Birth Cirtificate</Option>
+                <Option value="Registration Forms">Registration Forms</Option>
+                <Option value="Special Program Forms">
+                  Special Program Forms
+                </Option>
+                <Option value="Other">Other</Option>
               </Select>
             </Form.Item>
-          </div>
-          <div className=" items-center gap-1 student-label ">Expiry Date</div>
 
-          <CustomDatePicker
-            name="expiryDate"
-            // rules={[
-            //   { required: true, message: "Please select the Document Type!" },
-            // ]}
-          />
-          <div className=" items-center gap-1 student-label ">
-            Upload Document
-            <span className="text-danger"> *</span>
-          </div>
-          <Form.Item
-            name="uploadDocument"
-            rules={[{ required: true, message: "Please upload the Document!" }]}
-          >
-            <FileUploadComponent onFileBlob={handleFileBlob} />
-          </Form.Item>
+            <div className="items-center gap-1 student-label">Expiry Date</div>
+            <Form.Item name="expiryDate">
+              <CustomDatePicker />
+            </Form.Item>
 
-          <div className="text-center ">
+            <div className="items-center gap-1 student-label">
+              Upload Document<span className="text-danger"> *</span>
+            </div>
+            <Form.Item
+              name="uploadDocument"
+              valuePropName="file"
+              rules={[
+                { required: true, message: "Please upload the document!" },
+              ]}
+            >
+              <FileUploadComponent />
+            </Form.Item>
+          </div>
+
+          <div className="text-center">
             <Form.Item>
               <ButtonComponent
                 text={isEdit ? "Save" : "Add"}

@@ -35,3 +35,6 @@ export const guardianKeys = {
 export const studentPickupsKey = {
   studentPickup: "studentPickup",
 };
+export const documentKey = {
+  document: "document",
+};

@@ -8,14 +8,19 @@ import Document from "./Document";
 import Events from "../classroom/Events";
 import ProfileCardv1 from "./ProfileCardv1";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useStudentById } from "../../hooks/useStudent";
 
 export default function StudentProfile() {
   const location = useLocation();
   const navigate = useNavigate();
-
+  const [isstudentData, setStudentData] = useState();
   // Extract `studentId` from state
   const studentId = location.state?.studentId;
+  const { data: studentData, isLoading, error } = useStudentById(studentId);
 
+  useEffect(() => {
+    setStudentData(studentData?.data || {});
+  }, [studentData]);
   // Handle missing `state` (e.g., direct URL access)
   useEffect(() => {
     if (!studentId) {
@@ -31,10 +36,10 @@ export default function StudentProfile() {
   // Tab content components
   const tabContentComponents = {
     1: <StudentProfileTab studentId={studentId} />,
-    2: <StudentHealthTab studentId={studentId} />,
-    3: <ImportantDates />,
+    2: <StudentHealthTab isstudentData={isstudentData} studentId={studentId} />,
+    3: <ImportantDates isstudentData={isstudentData} />,
     // 4: <Schedule />,
-    4: <Document />,
+    4: <Document isstudentData={isstudentData} />,
   };
 
   // Tab items configuration

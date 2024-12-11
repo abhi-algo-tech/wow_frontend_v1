@@ -6,73 +6,70 @@ import CommonModalComponent from "../../components/CommonModalComponent";
 
 const { Text } = Typography;
 
-const LabelCol = ({ children }) => (
-  <Col span={9}>
-    <Text className="student-about-tab-label">{children}</Text>
-  </Col>
+// Reusable component for displaying labeled rows
+const InfoRow = ({ label, value }) => (
+  <Row className="mb20">
+    <Col span={9}>
+      <Text className="student-about-tab-label">{label}</Text>
+    </Col>
+    <Col span={15}>
+      <Text className="student-about-tab-label-value">{value || "N/A"}</Text>
+    </Col>
+  </Row>
 );
 
-const ContentCol = ({ children }) => <Col span={15}>{children}</Col>;
+function ImportantDates({ isstudentData }) {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [studentData, setStudentData] = useState(isstudentData);
 
-function ImportantDates() {
-  const [isCreateImportantDatesModalOpen, setCreateImportantDatesModalOpen] = useState(false);
+  const handleEditClick = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
+
   return (
     <>
       <div className="padding30 important-dates-page">
         {/* Floating Edit Button */}
         <div
-          style={{
-            position: "absolute",
-            top: 16,
-            right: 30,
-            margin: "8px",
-            zIndex: 10,
-          }}
+          className="pointer about-floating-edit-div"
+          style={{ position: "absolute", top: 16, right: 30, zIndex: 10 }}
         >
-          <Badge className="pointer about-floating-edit-div">
-            <Avatar shape="square" icon={<MdOutlineModeEditOutline />} onClick={() => setCreateImportantDatesModalOpen(true)}/>
+          <Badge>
+            <Avatar
+              shape="square"
+              icon={<MdOutlineModeEditOutline />}
+              onClick={handleEditClick}
+            />
           </Badge>
         </div>
-        <Row gutter={[0, 10]}>
-          <LabelCol>Enroll Date</LabelCol>
-          <ContentCol>
-            <Text className="student-about-tab-label-value">Oct 23, 2024</Text>
-          </ContentCol>
 
-          <LabelCol>School Start Date</LabelCol>
-          <ContentCol>
-            <Text className="student-about-tab-label-value">Oct 27, 2024</Text>
-          </ContentCol>
-
-          <LabelCol>Current Classroom Start Date</LabelCol>
-          <ContentCol>
-            <Text className="student-about-tab-label-value">Nov 03, 2024</Text>
-          </ContentCol>
-
-          <LabelCol>Upcoming Move Date</LabelCol>
-          <ContentCol>
-            <Text className="student-about-tab-label-value">Nov 17, 2024</Text>
-          </ContentCol>
-          <LabelCol>School Leaving Date</LabelCol>
-          <ContentCol>
-            <Text className="student-about-tab-label-value">Nov 29, 2024</Text>
-          </ContentCol>
-        </Row>
+        {/* Display important dates */}
+        <InfoRow label="Enroll Date" value={studentData?.registrationDate} />
+        <InfoRow label="School Start Date" value={studentData?.startDate} />
+        <InfoRow
+          label="Current Classroom Start Date"
+          value={studentData?.roomStartDate}
+        />
+        <InfoRow
+          label="Upcoming Move Date"
+          value={studentData?.expectedMoveDate}
+        />
+        <InfoRow label="School Leaving Date" value={studentData?.leavingDate} />
       </div>
-      {isCreateImportantDatesModalOpen && (
+
+      {/* Modal for editing important dates */}
+      {isModalOpen && (
         <CommonModalComponent
-          open={isCreateImportantDatesModalOpen}
-          setOpen={setCreateImportantDatesModalOpen}
+          open={isModalOpen}
+          setOpen={setModalOpen}
           modalWidthSize={418}
           modalHeightSize={547}
           isClosable={true}
         >
           <ImportantDateForm
-            CardTitle={"Edit Important Dates"}
-            classroomId={null}
-            closeModal={() => setCreateImportantDatesModalOpen(false)}
+            CardTitle="Edit Important Dates"
+            closeModal={closeModal}
+            studentData={studentData}
           />
-        
         </CommonModalComponent>
       )}
     </>
