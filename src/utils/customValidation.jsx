@@ -7,6 +7,11 @@ export const validateMinMaxAge = (_, value, form) => {
   const totalMinMonths = minYear * 12 + minMonth;
   const totalMaxMonths = maxYear * 12 + maxMonth;
 
+  // Check if totalMinMonths is less than 2
+  if (totalMinMonths < 2) {
+    return Promise.reject(new Error("at least 2 months."));
+  }
+
   if (totalMaxMonths >= totalMinMonths) {
     return Promise.resolve();
   } else {
