@@ -58,10 +58,10 @@ export const useCreateStudent = () => {
     mutationFn: (studentData) => StudentService.createStudent(studentData),
     onSuccess: () => {
       queryClient.invalidateQueries(studentKeys.students); // Refetch all students
-      CustomMessage.success("Student created successfully!"); // Success message
+      // CustomMessage.success("Student created successfully!"); // Success message
     },
     onError: (error) => {
-      CustomMessage.error("Error creating student!"); // Error message
+      // CustomMessage.error("Error creating student!"); // Error message
       console.error("Error creating student:", error);
     },
   });
@@ -78,14 +78,14 @@ export const useUpdateStudent = () => {
     onSuccess: (data, { studentId }) => {
       // Invalidate the relevant queries
       queryClient.invalidateQueries(studentKeys.students); // Refetch all students
-      queryClient.invalidateQueries({
-        queryKey: [studentKeys.students, studentId],
-      });
-      // message.success("Student updated successfully!"); // Success message
+      // queryClient.invalidateQueries({
+      //   queryKey: [studentKeys.students, studentId],
+      // });
+      // CustomMessage.success("Student updated successfully!"); // Success message
     },
 
     //   onError: (error) => {
-    //     message.error("Error updating student!"); // Error message
+    //     CustomMessage.error("Error updating student!"); // Error message
     //     console.error("Error updating student:", error);
     //   },
   });
@@ -99,10 +99,10 @@ export const useDeleteStudent = () => {
     mutationFn: StudentService.deleteStudent,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentKeys.students });
-      CustomMessage.success("Student deleted successfully!"); // Success message
+      // CustomMessage.success("Student deleted successfully!"); // Success message
     },
     onError: (error) => {
-      CustomMessage.error("Error deleting student!"); // Error message
+      // CustomMessage.error("Error deleting student!"); // Error message
       console.error("Error deleting student:", error);
     },
   });
@@ -116,10 +116,10 @@ export const useCreateGuardian = () => {
     mutationFn: (guardianData) => StudentService.createGuardian(guardianData),
     onSuccess: () => {
       queryClient.invalidateQueries(guardianKeys.guardians); // Refetch all guardians
-      CustomMessage.success("Gaurdian created successfully!"); // Success message
+      // CustomMessage.success("Gaurdian created successfully!"); // Success message
     },
     onError: (error) => {
-      CustomMessage.error("Error creating gaurdian!"); // Error message
+      // CustomMessage.error("Error creating gaurdian!"); // Error message
       console.error("Error creating gaurdian:", error);
     },
   });
@@ -138,8 +138,8 @@ export const useUpdateGuardian = () => {
       queryClient.invalidateQueries({
         queryKey: [guardianKeys.guardians, guardianId],
       });
-      CustomMessage.success("Gaurdian updated successfully!"); // Success message
-      // message.success("Student updated successfully!"); // Success message
+      // CustomMessage.success("Gaurdian updated successfully!"); // Success message
+      // CustomMessage.success("Student updated successfully!"); // Success message
     },
   });
 };
@@ -153,10 +153,10 @@ export const useDeleteGuardian = () => {
       StudentService.deleteGuardian(guardianId, studentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: guardianKeys.guardians });
-      CustomMessage.success("gaurdian deleted successfully!"); // Success message
+      // CustomMessage.success("gaurdian deleted successfully!"); // Success message
     },
     onError: (error) => {
-      CustomMessage.error("Error deleting gaurdian!"); // Error message
+      // CustomMessage.error("Error deleting gaurdian!"); // Error message
       console.error("Error deleting gaurdian:", error);
     },
   });
@@ -170,10 +170,10 @@ export const useCreatePickup = () => {
     mutationFn: (pickupData) => StudentService.createPickup(pickupData),
     onSuccess: () => {
       queryClient.invalidateQueries(studentPickupsKey.studentPickup); // Refetch all pickup
-      CustomMessage.success("Pickup created successfully!"); // Success message
+      // CustomMessage.success("Pickup created successfully!"); // Success message
     },
     onError: (error) => {
-      CustomMessage.error("Error creating pickup!"); // Error message
+      // CustomMessage.error("Error creating pickup!"); // Error message
       console.error("Error creating pickup:", error);
     },
   });
@@ -207,10 +207,10 @@ export const useDeletePickup = () => {
       queryClient.invalidateQueries({
         queryKey: studentPickupsKey.studentPickup,
       });
-      CustomMessage.success("Pickup deleted successfully!"); // Success message
+      // CustomMessage.success("Pickup deleted successfully!"); // Success message
     },
     onError: (error) => {
-      CustomMessage.error("Error deleting pickup!"); // Error message
+      // CustomMessage.error("Error deleting pickup!"); // Error message
     },
   });
 };

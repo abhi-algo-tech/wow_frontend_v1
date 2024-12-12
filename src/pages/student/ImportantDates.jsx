@@ -1,8 +1,9 @@
 import { Avatar, Badge, Col, Row, Typography } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdOutlineModeEditOutline } from "react-icons/md";
 import ImportantDateForm from "./ImportantDateForm";
 import CommonModalComponent from "../../components/CommonModalComponent";
+import { useStudentById } from "../../hooks/useStudent";
 
 const { Text } = Typography;
 
@@ -18,12 +19,26 @@ const InfoRow = ({ label, value }) => (
   </Row>
 );
 
-function ImportantDates({ isstudentData }) {
+function ImportantDates({ studentId }) {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [studentData, setStudentData] = useState(isstudentData);
+  const [studentData, setStudentData] = useState();
+
+  const {
+    data: student,
+    isLoading,
+    error,
+    refetch,
+  } = useStudentById(studentId);
+
+  useEffect(() => {
+    setStudentData(student?.data || {});
+  }, [student]);
 
   const handleEditClick = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
+  const closeModal = async () => {
+    setModalOpen(false);
+    await refetch();
+  };
 
   return (
     <>

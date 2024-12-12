@@ -40,7 +40,7 @@ function PhysicianForm({ CardTitle, physicianId, studentId, closeModal }) {
     const { firstName, lastName, email, phoneNumber, address } = values;
 
     if (!firstName || !lastName) {
-      message.error("All fields are required!");
+      CustomMessage.error("All fields are required!");
       return;
     }
 

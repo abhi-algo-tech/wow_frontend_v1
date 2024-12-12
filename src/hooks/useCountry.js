@@ -4,6 +4,7 @@ import CountryService from "../services/countryService";
 import { countryKeys } from "../utils/queryKeys";
 import { message } from "antd";
 import { useState } from "react";
+import { CustomMessage } from "../utils/CustomMessage";
 
 // Fetch all countries
 export const useGetAllCountries = () => {
@@ -34,11 +35,11 @@ export const useCreateCountry = () => {
     mutationFn: (countryData) => CountryService.createCountry(countryData),
     onSuccess: () => {
       queryClient.invalidateQueries(countryKeys.countries);
-      message.success("Country created successfully!");
+      CustomMessage.success("Country created successfully!");
     },
     onError: (error) => {
       console.error("Error creating country:", error);
-      message.error("Error creating country!");
+      CustomMessage.error("Error creating country!");
     },
   });
 };
@@ -51,11 +52,11 @@ export const useUpdateCountry = () => {
       CountryService.updateCountry(countryId, countryData),
     onSuccess: () => {
       queryClient.invalidateQueries(countryKeys.countries);
-      message.success("Country updated successfully!");
+      CustomMessage.success("Country updated successfully!");
     },
     onError: (error) => {
       console.error("Error updating country:", error);
-      message.error("Error updating country!");
+      CustomMessage.error("Error updating country!");
     },
   });
 };
@@ -67,11 +68,11 @@ export const useDeleteCountry = () => {
     mutationFn: CountryService.deleteCountry,
     onSuccess: () => {
       queryClient.invalidateQueries(countryKeys.countries);
-      message.success("Country deleted successfully!");
+      CustomMessage.success("Country deleted successfully!");
     },
     onError: (error) => {
       console.error("Error deleting country:", error);
-      message.error("Error deleting country!");
+      CustomMessage.error("Error deleting country!");
     },
   });
 };

@@ -1,8 +1,13 @@
 import { Form, Input, message, Select, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
-import { useCreateStudent, useStudentById, useUpdateStudent } from "../../hooks/useStudent";
+import {
+  useCreateStudent,
+  useStudentById,
+  useUpdateStudent,
+} from "../../hooks/useStudent";
 import CustomDatePicker from "../../components/CustomDatePicker";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Option } = Select;
 
@@ -26,44 +31,43 @@ function ImmunizationStatusForm({ CardTitle, studentId, closeModal }) {
   const handleSubmit = (values) => {
     const { status, date } = values;
 
-    if (!status || !date ) {
-      message.error("All fields are required!");
+    if (!status || !date) {
+      CustomMessage.error("All fields are required!");
       return;
     }
 
     const formData = new FormData();
     formData.append("status", status);
     formData.append("date", date);
-   
+
     if (isEdit) {
       updateStudentMutation.mutate(
-        { 
-          studentId, 
-          parentData: formData 
-        }, 
+        {
+          studentId,
+          parentData: formData,
+        },
         {
           onSuccess: () => {
-            message.success("Student updated successfully!");
+            CustomMessage.success("Student updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            message.error(`Failed to update student: ${error.message}`);
+            CustomMessage.error(`Failed to update student: ${error.message}`);
           },
         }
       );
     } else {
       createStudentMutation.mutate(formData, {
         onSuccess: () => {
-          message.success("Student created successfully!");
+          CustomMessage.success("Student created successfully!");
           closeModal();
         },
         onError: (error) => {
-          message.error(`Failed to create student: ${error.message}`);
+          CustomMessage.error(`Failed to create student: ${error.message}`);
         },
       });
     }
-  }
-    
+  };
 
   return (
     <div className="card">
@@ -78,43 +82,32 @@ function ImmunizationStatusForm({ CardTitle, studentId, closeModal }) {
         {CardTitle}
       </span>
       <div className="student-create">
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-        >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <div className="row">
-           
-              <div className="col-6">
-            <div className=" items-center gap-1 student-label ">
-            Status
-              {/* <span className="text-danger"> *</span> */}
-            </div>
-            <Form.Item
-              name="status"
-            >
-              <Select
-                className="select-student-add-from"
-                placeholder="Select"
-              >
-                <Option value="select">Select</Option>
-                <Option value="1">Completed</Option>
-                <Option value="2">Pending</Option>
-              </Select>
-            </Form.Item>
+            <div className="col-6">
+              <div className=" items-center gap-1 student-label ">
+                Status
+                {/* <span className="text-danger"> *</span> */}
+              </div>
+              <Form.Item name="status">
+                <Select
+                  className="select-student-add-from"
+                  placeholder="Select"
+                >
+                  <Option value="select">Select</Option>
+                  <Option value="1">Completed</Option>
+                  <Option value="2">Pending</Option>
+                </Select>
+              </Form.Item>
             </div>
             <div className="col-6">
-            <div className=" items-center gap-1 student-label ">
-            Date
-            </div>
-            <Form.Item
-              name="date"
-              rules={[
-                { required: true, message: "Date is required!" },
-              ]}
-            >
-              <CustomDatePicker name="date" />
-            </Form.Item>
+              <div className=" items-center gap-1 student-label ">Date</div>
+              <Form.Item
+                name="date"
+                rules={[{ required: true, message: "Date is required!" }]}
+              >
+                <CustomDatePicker name="date" />
+              </Form.Item>
             </div>
 
             <div className="text-center ">

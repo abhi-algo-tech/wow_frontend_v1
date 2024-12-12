@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import CityService from "../services/cityService";
 import { cityKeys } from "../utils/queryKeys";
 import { message } from "antd";
+import { CustomMessage } from "../utils/CustomMessage";
 
 // Fetch all cities
 export const useGetAllCities = () => {
@@ -33,11 +34,11 @@ export const useCreateCity = () => {
     mutationFn: (cityData) => CityService.createCity(cityData),
     onSuccess: () => {
       queryClient.invalidateQueries(cityKeys.cities);
-      message.success("City created successfully!");
+      CustomMessage.success("City created successfully!");
     },
     onError: (error) => {
       console.error("Error creating city:", error);
-      message.error("Error creating city!");
+      CustomMessage.error("Error creating city!");
     },
   });
 };
@@ -50,11 +51,11 @@ export const useUpdateCity = () => {
       CityService.updateCity(cityId, cityData),
     onSuccess: () => {
       queryClient.invalidateQueries(cityKeys.cities);
-      message.success("City updated successfully!");
+      CustomMessage.success("City updated successfully!");
     },
     onError: (error) => {
       console.error("Error updating city:", error);
-      message.error("Error updating city!");
+      CustomMessage.error("Error updating city!");
     },
   });
 };
@@ -66,11 +67,11 @@ export const useDeleteCity = () => {
     mutationFn: CityService.deleteCity,
     onSuccess: () => {
       queryClient.invalidateQueries(cityKeys.cities);
-      message.success("City deleted successfully!");
+      CustomMessage.success("City deleted successfully!");
     },
     onError: (error) => {
       console.error("Error deleting city:", error);
-      message.error("Error deleting city!");
+      CustomMessage.error("Error deleting city!");
     },
   });
 };

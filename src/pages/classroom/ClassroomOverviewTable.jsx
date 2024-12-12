@@ -117,7 +117,7 @@ function ClassroomOverviewTable() {
       //   classroomId: id,
       //   classroomData: formData
       // });
-      // message.success("Classroom deleted successfully!");
+      // CustomMessage.success("Classroom deleted successfully!");
       await new Promise((resolve, reject) => {
         updateClassroom(
           { classroomId: id, classroomData: formData },

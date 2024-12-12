@@ -33,7 +33,7 @@ function AddPickup({
     const { firstName, lastName, relation, phoneNumber } = values;
 
     if (!firstName || !lastName) {
-      message.error("All fields are required!");
+      CustomMessage.error("All fields are required!");
       return;
     }
     const pickupId = selectedGaurdianData?.studentPickupId;

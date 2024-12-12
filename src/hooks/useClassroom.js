@@ -39,10 +39,10 @@ export const useCreateClassroom = () => {
       ClassroomService.createClassroom(classroomData),
     onSuccess: () => {
       queryClient.invalidateQueries(classRoomKeys.classrooms); // Refetch all classrooms
-      // message.success("Classroom created successfully!"); // Success message
+      // CustomMessage.success("Classroom created successfully!"); // Success message
     },
     onError: (error) => {
-      // message.error("Error creating classroom!"); // Error message
+      // CustomMessage.error("Error creating classroom!"); // Error message
       console.error("Error creating classroom:", error);
     },
   });
@@ -62,12 +62,12 @@ export const useUpdateClassroom = () => {
       queryClient.invalidateQueries({
         queryKey: [classRoomKeys.classrooms, classroomId],
       });
-      // message.success("Classroom updated successfully!"); // Success message
+      // CustomMessage.success("Classroom updated successfully!"); // Success message
       queryClient.invalidateQueries({ queryKey: classRoomKeys.classrooms }); // Refresh list after creation
     },
 
     onError: (error) => {
-      // message.error("Error update classroom!"); // Error message
+      // CustomMessage.error("Error update classroom!"); // Error message
       console.error("Error update classroom:", error);
     },
   });

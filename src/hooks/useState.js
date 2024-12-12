@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import StateService from "../services/stateService";
 import { stateKeys } from "../utils/queryKeys";
 import { message } from "antd";
+import { CustomMessage } from "../utils/CustomMessage";
 
 // Fetch all states
 export const useGetAllStates = () => {
@@ -33,11 +34,11 @@ export const useCreateState = () => {
     mutationFn: (stateData) => StateService.createState(stateData),
     onSuccess: () => {
       queryClient.invalidateQueries(stateKeys.states);
-      message.success("State created successfully!");
+      CustomMessage.success("State created successfully!");
     },
     onError: (error) => {
       console.error("Error creating state:", error);
-      message.error("Error creating state!");
+      CustomMessage.error("Error creating state!");
     },
   });
 };
@@ -50,11 +51,11 @@ export const useUpdateState = () => {
       StateService.updateState(stateId, stateData),
     onSuccess: () => {
       queryClient.invalidateQueries(stateKeys.states);
-      message.success("State updated successfully!");
+      CustomMessage.success("State updated successfully!");
     },
     onError: (error) => {
       console.error("Error updating state:", error);
-      message.error("Error updating state!");
+      CustomMessage.error("Error updating state!");
     },
   });
 };
@@ -66,11 +67,11 @@ export const useDeleteState = () => {
     mutationFn: StateService.deleteState,
     onSuccess: () => {
       queryClient.invalidateQueries(stateKeys.states);
-      message.success("State deleted successfully!");
+      CustomMessage.success("State deleted successfully!");
     },
     onError: (error) => {
       console.error("Error deleting state:", error);
-      message.error("Error deleting state!");
+      CustomMessage.error("Error deleting state!");
     },
   });
 };

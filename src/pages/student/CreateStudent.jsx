@@ -46,6 +46,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
     const formData = new FormData();
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
+    formData.append("statusId", 4);
     formData.append("classroomId", classroom);
 
     if (isEdit) {
@@ -67,7 +68,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
     } else {
       createStudentMutation.mutate(formData, {
         onSuccess: () => {
-          // message.success("Student created successfully!");
+          CustomMessage.success("Student created successfully!");
           closeModal();
         },
         onError: (error) => {
@@ -158,13 +159,13 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
                 }
               >
                 {!isLoading &&
-  classroomData?.data
-    ?.sort((a, b) => a.name.localeCompare(b.name)) // Sort classrooms by name in ascending order
-    .map((classroom) => (
-      <Option key={classroom.id} value={classroom.id}>
-        {classroom.name}
-      </Option>
-    ))}
+                  classroomData?.data
+                    ?.sort((a, b) => a.name.localeCompare(b.name)) // Sort classrooms by name in ascending order
+                    .map((classroom) => (
+                      <Option key={classroom.id} value={classroom.id}>
+                        {classroom.name}
+                      </Option>
+                    ))}
               </Select>
             </Form.Item>
 

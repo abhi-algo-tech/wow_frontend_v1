@@ -4,6 +4,7 @@ import ButtonComponent from "../../components/ButtonComponent";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import { useCreatePhysicalTracker } from "../../hooks/usePhysicalTracker";
 import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Option } = Select;
 
@@ -18,7 +19,7 @@ function PhysicalExaminationForm({ CardTitle, studentId, closeModal }) {
     const { status, physicalCheckupDate } = values;
 
     if (!status || !physicalCheckupDate) {
-      message.error("All fields are required!");
+      CustomMessage.error("All fields are required!");
       return;
     }
 
@@ -29,11 +30,13 @@ function PhysicalExaminationForm({ CardTitle, studentId, closeModal }) {
     };
     createPhysicalTrackerMutation.mutate(payload, {
       onSuccess: () => {
-        message.success("Physical Tracker created successfully!");
+        CustomMessage.success("Physical Tracker created successfully!");
         closeModal();
       },
       onError: (error) => {
-        message.error(`Failed to create Physical Tracker: ${error.message}`);
+        CustomMessage.error(
+          `Failed to create Physical Tracker: ${error.message}`
+        );
       },
     });
   };
