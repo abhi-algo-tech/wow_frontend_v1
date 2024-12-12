@@ -16,6 +16,7 @@ import { useGetAllCountries } from "../../hooks/useCountry";
 import { useGetAllStates } from "../../hooks/useState";
 import { useGetAllCities } from "../../hooks/useCity";
 import { formatDateToCustomStyle } from "../../services/common";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Option } = Select;
 
@@ -121,7 +122,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
     } = values;
 
     if (!firstName || !lastName) {
-      message.error("All fields are required!");
+      CustomMessage.error("All fields are required!");
       return;
     }
 
@@ -153,22 +154,22 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
         },
         {
           onSuccess: () => {
-            message.success("Student updated successfully!");
+            CustomMessage.success("Student updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            message.error(`Failed to update student: ${error.message}`);
+            CustomMessage.error(`Failed to update student: ${error.message}`);
           },
         }
       );
     } else {
       createStudentMutation.mutate(formData, {
         onSuccess: () => {
-          message.success("Student created successfully!");
+          CustomMessage.success("Student created successfully!");
           closeModal();
         },
         onError: (error) => {
-          message.error(`Failed to create student: ${error.message}`);
+          CustomMessage.error(`Failed to create student: ${error.message}`);
         },
       });
     }
@@ -294,6 +295,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
             <div className="col-6">
               <div className=" items-center gap-1 student-label ">
                 Birthdate
+                <span className="text-danger"> *</span>
               </div>
 
               {/* <input
@@ -304,9 +306,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
               /> */}
               <Form.Item
                 name="birthDate"
-                rules={[
-                  { required: true, message: "Please select at least one tag" },
-                ]}
+                rules={[{ required: true, message: "Please select birthDate" }]}
               >
                 <CustomDatePicker
                   name="birthDate"
@@ -366,16 +366,16 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
             <div className="col-6">
               <div className="flex items-center gap-1 student-label">
                 Notes
-                <span className="text-danger"> *</span>
+                {/* <span className="text-danger"> *</span> */}
               </div>
               <Form.Item
                 name="notes"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the Notes!",
-                  },
-                ]}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: "Please input the Notes!",
+                //   },
+                // ]}
               >
                 <Input
                   placeholder="e.g. Report Card"
@@ -387,16 +387,16 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
             <div className="col-6">
               <div className=" items-center gap-1 student-label ">
                 Child Custody
-                <span className="text-danger"> *</span>
+                {/* <span className="text-danger"> *</span> */}
               </div>
               <Form.Item
                 name="childCustody"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select the Child Custody!",
-                  },
-                ]}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: "Please select the Child Custody!",
+                //   },
+                // ]}
               >
                 <Select
                   className="select-student-add-from"

@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
 import { useCreateStudent, useUpdateStudent } from "../../hooks/useStudent";
 import CustomDatePicker from "../../components/CustomDatePicker";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 function ImportantDateForm({ CardTitle, closeModal, studentData }) {
   const [form] = Form.useForm();
@@ -39,22 +40,22 @@ function ImportantDateForm({ CardTitle, closeModal, studentData }) {
         },
         {
           onSuccess: () => {
-            message.success("Student updated successfully!");
+            CustomMessage.success("Student updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            message.error(`Failed to update student: ${error.message}`);
+            CustomMessage.error(`Failed to update student: ${error.message}`);
           },
         }
       );
     } else {
       createStudentMutation.mutate(formData, {
         onSuccess: () => {
-          message.success("Student created successfully!");
+          CustomMessage.success("Student created successfully!");
           closeModal();
         },
         onError: (error) => {
-          message.error(`Failed to create student: ${error.message}`);
+          CustomMessage.error(`Failed to create student: ${error.message}`);
         },
       });
     }
@@ -90,9 +91,9 @@ function ImportantDateForm({ CardTitle, closeModal, studentData }) {
                 </div>
                 <Form.Item
                   name={field.name}
-                  rules={[
-                    { required: true, message: `${field.label} is required!` },
-                  ]}
+                  // rules={[
+                  //   { required: true, message: `${field.label} is required!` },
+                  // ]}
                 >
                   <CustomDatePicker name={field.name} />
                 </Form.Item>

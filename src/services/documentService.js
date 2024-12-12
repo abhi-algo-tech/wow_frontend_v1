@@ -69,7 +69,7 @@ const DocumentService = {
   deleteDocument: async (studentId, documentId) => {
     try {
       const response = await axiosInstance.patch(
-        `${API_ENDPOINTS.DOCUMENT.DELETE}/?documentId=${documentId}&studentId=${studentId}`
+        `${API_ENDPOINTS.DOCUMENT.DELETE}?documentId=${documentId}&studentId=${studentId}`
       );
       return response.data;
     } catch (error) {

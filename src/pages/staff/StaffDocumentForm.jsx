@@ -8,6 +8,7 @@ import {
 } from "../../hooks/useStudent";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import FileUploadComponent from "../../components/fileUpload/FileUploadComponent";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Option } = Select;
 
@@ -34,7 +35,7 @@ function StaffDocumentForm({ CardTitle, studentId, closeModal }) {
     const { firstName, lastName, relation, phoneNumber } = values;
 
     if (!firstName || !lastName) {
-      message.error("All fields are required!");
+      CustomMessage.error("All fields are required!");
       return;
     }
 
@@ -52,22 +53,22 @@ function StaffDocumentForm({ CardTitle, studentId, closeModal }) {
         },
         {
           onSuccess: () => {
-            message.success("Student updated successfully!");
+            CustomMessage.success("Student updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            message.error(`Failed to update student: ${error.message}`);
+            CustomMessage.error(`Failed to update student: ${error.message}`);
           },
         }
       );
     } else {
       createStudentMutation.mutate(formData, {
         onSuccess: () => {
-          message.success("Student created successfully!");
+          CustomMessage.success("Student created successfully!");
           closeModal();
         },
         onError: (error) => {
-          message.error(`Failed to create student: ${error.message}`);
+          CustomMessage.error(`Failed to create student: ${error.message}`);
         },
       });
     }

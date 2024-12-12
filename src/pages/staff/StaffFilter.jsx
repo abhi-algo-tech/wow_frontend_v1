@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Select, Button, message } from "antd";
 import ButtonComponent from "../../components/ButtonComponent";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Option } = Select;
 
@@ -23,7 +24,7 @@ function StaffFilter({ CardTitle, closeModal, onApplyFilter }) {
     );
     onApplyFilter(appliedFilters);
     closeModal();
-    message.success("Filters applied successfully!");
+    CustomMessage.success("Filters applied successfully!");
   };
 
   const handleClearAll = () => {
@@ -34,7 +35,7 @@ function StaffFilter({ CardTitle, closeModal, onApplyFilter }) {
       designation: null,
     });
     onApplyFilter({}); // Notify parent to clear all filters
-    message.success("Filters cleared successfully!");
+    CustomMessage.success("Filters cleared successfully!");
   };
 
   return (

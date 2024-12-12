@@ -4,8 +4,8 @@ import { Button, Upload } from "antd";
 import "./FileUploadStyles.css";
 import { CustomMessage } from "../../utils/CustomMessage";
 
-const FileUploadComponent = ({ onFileBlob }) => {
-  const [file, setFile] = useState(null); // Store the file object
+const FileUploadComponent = ({ defaultBlob, onFileBlob }) => {
+  const [file, setFile] = useState(defaultBlob); // Store the file object
 
   const handleFile = (file) => {
     try {

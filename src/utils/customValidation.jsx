@@ -10,6 +10,6 @@ export const validateMinMaxAge = (_, value, form) => {
   if (totalMaxMonths >= totalMinMonths) {
     return Promise.resolve();
   } else {
-    return Promise.reject(new Error("Max Age must not be less than Min Age."));
+    return Promise.reject(new Error("Invalid Age Range."));
   }
 };

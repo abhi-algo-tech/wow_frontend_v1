@@ -9,7 +9,7 @@ import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 
 const { Option } = Select;
 
-function DocumentForm({ CardTitle, StudentId, closeModal, studentData }) {
+function DocumentForm({ CardTitle, studentData, closeModal, studentId }) {
   const [form] = Form.useForm();
   const {
     data: documentDrpDwnData,
@@ -19,18 +19,32 @@ function DocumentForm({ CardTitle, StudentId, closeModal, studentData }) {
   } = useMasterLookupsByType("document");
   const createDocumentMutation = useCreateDocument();
   const updateStudentMutation = useUpdateStudent();
-  const [selectedValue, setSelectedValue] = useState(null);
-  const [documentOptions, setDocumentOptions] = useState([]);
-  const isEdit = Boolean(StudentId?.id);
+  const isEdit = Boolean(studentData);
 
   useEffect(() => {
-    if (studentData && StudentId?.id) {
+    if (studentData) {
+      console.log("studentData:", studentData);
       form.setFieldsValue({
-        documentName: studentData?.name,
-        documentType: studentData?.docTypeId,
-        expiryDate: studentData?.expiryDate,
-        uploadDocument: studentData?.fileType,
+        documentName: studentData.name,
+        documentType: studentData.docTypeId,
+        expiryDate: studentData.expiryDate,
+        uploadDocument: studentData.fileType,
       });
+
+      // Convert file URL to Blob and set it in the form
+      if (studentData.fileurl) {
+        fetch(studentData.fileurl)
+          .then((response) => response.blob())
+          .then((blob) => {
+            form.setFieldsValue({ documentFile: blob });
+          })
+          .catch((error) => {
+            console.error(
+              "Failed to fetch or convert file URL to Blob:",
+              error
+            );
+          });
+      }
     }
   }, [studentData, form]);
 
@@ -40,7 +54,7 @@ function DocumentForm({ CardTitle, StudentId, closeModal, studentData }) {
       !values.documentType ||
       !values.uploadDocument
     ) {
-      message.error("All required fields must be filled!");
+      CustomMessage.error("All required fields must be filled!");
       return;
     }
 
@@ -49,60 +63,36 @@ function DocumentForm({ CardTitle, StudentId, closeModal, studentData }) {
     formData.append("docTypeId", values.documentType);
     formData.append("expiryDate", values.expiryDate);
     formData.append("contentType", "student");
-    formData.append("documentFile", "");
-    formData.append("studentId", StudentId?.id);
-    formData.append("schoolId", StudentId?.schoolId);
+    formData.append("documentFile", form.getFieldValue);
+    formData.append("studentId", studentId);
 
     if (isEdit) {
-      const studentId = StudentId?.id;
       updateStudentMutation.mutate(
         { studentId, studentData: formData },
         {
           onSuccess: () => {
-            message.success("Document updated successfully!");
+            // CustomMessage.success("Document updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            message.error(`Failed to update document: ${error.message}`);
+            // CustomMessage.error(`Failed to update document: ${error.message}`);
           },
         }
       );
     } else {
       createDocumentMutation.mutate(formData, {
         onSuccess: () => {
-          message.success("Document created successfully!");
+          // CustomMessage.success("Document created successfully!");
           closeModal();
         },
         onError: (error) => {
-          message.error(`Failed to create document: ${error.message}`);
+          // CustomMessage.error(`Failed to create document: ${error.message}`);
         },
       });
     }
   };
   const handleFileBlob = (blob) => {
     form.setFieldsValue({ uploadDocument: blob });
-  };
-  useEffect(() => {
-    if (documentDrpDwnData) {
-      setDocumentOptions(documentDrpDwnData.data);
-    }
-  }, [documentDrpDwnData, isError, error]);
-
-  useEffect(() => {
-    // Set the initial value for edit mode
-    if (studentData?.documentId) {
-      setSelectedValue(studentData?.documentId);
-    }
-  }, [studentData?.documentId]);
-  useEffect(() => {
-    // Set the initial value for edit mode
-    if (studentData?.documentId) {
-      setSelectedValue(studentData?.documentId);
-    }
-  }, [studentData?.documentId]);
-
-  const handleChange = (value) => {
-    setSelectedValue(value);
   };
 
   return (
@@ -145,12 +135,11 @@ function DocumentForm({ CardTitle, StudentId, closeModal, studentData }) {
               ]}
             >
               <Select
+                name="documentType"
                 className="select-student-add-from"
                 placeholder="Select"
-                value={selectedValue}
-                onChange={handleChange}
               >
-                {documentOptions?.map((doc) => (
+                {documentDrpDwnData?.data?.map((doc) => (
                   <Option key={doc.id} value={doc.id}>
                     {doc.name}
                   </Option>
@@ -173,7 +162,17 @@ function DocumentForm({ CardTitle, StudentId, closeModal, studentData }) {
                 { required: true, message: "Please upload the document!" },
               ]}
             >
-              <FileUploadComponent onFileBlob={handleFileBlob} />
+              {isEdit ? (
+                <FileUploadComponent
+                  defaultBlob={form.getFieldValue}
+                  onFileBlob={handleFileBlob}
+                />
+              ) : (
+                <FileUploadComponent
+                  defaultBlob={null}
+                  onFileBlob={handleFileBlob}
+                />
+              )}
             </Form.Item>
           </div>
 

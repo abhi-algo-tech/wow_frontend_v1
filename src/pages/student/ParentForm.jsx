@@ -35,7 +35,7 @@ function ParentForm({
     const { firstName, lastName, relation, email, phoneNumber } = values;
 
     if (!firstName || !lastName || relation === "select") {
-      message.error("All fields are required!");
+      CustomMessage.error("All fields are required!");
       return;
     }
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Switch, Dropdown, Avatar, Form } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent";
@@ -6,6 +6,7 @@ import CommonModalComponent from "../../components/CommonModalComponent";
 import DocumentForm from "./DocumentForm";
 import DeletePopUp from "../../components/DeletePopUp";
 import { useDeleteDocument } from "../../hooks/useDocument";
+import { useStudentById } from "../../hooks/useStudent";
 
 // const data = [
 //   {
@@ -28,16 +29,27 @@ import { useDeleteDocument } from "../../hooks/useDocument";
 //   },
 // ];
 
-const Document = ({ isstudentData }) => {
+const Document = ({ studentId }) => {
   const deleteDocumentMutation = useDeleteDocument();
-  const [studentData, setStudentData] = useState(isstudentData);
   const [editSelectedStudentData, setEditSelectedStudentData] = useState({});
   const [isCreateDocumentModalOpen, setCreateDocumentModalOpen] =
     useState(false);
   const [isEditDocumentModalOpen, setEditDocumentModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  // console.log("studentData", studentData);
+  const [studentData, setStudentData] = useState();
+
+  const {
+    data: student,
+    isLoading,
+    error,
+    refetch,
+  } = useStudentById(studentId);
+
+  useEffect(() => {
+    setStudentData(student?.data || {});
+  }, [student]);
+
   const columns = [
     {
       title: "Document Name",
@@ -127,6 +139,7 @@ const Document = ({ isstudentData }) => {
     setSelectedRecord({ id, name }); // Store the clicked item's id and name
     setDeleteModalOpen(true); // Open the delete modal
   };
+
   const handleDelete = async (id) => {
     const formData = new FormData();
     formData.append("isDeleted", true);
@@ -136,11 +149,14 @@ const Document = ({ isstudentData }) => {
         studentId: studentData?.id,
         documentId: id,
       });
-      setDeleteModalOpen(false); // Close the modal after deletion
+      await refetch(); // Re-fetch the data after deletion
+      setDeleteModalOpen(false);
     } catch (error) {
+      console.error("Failed to delete document", error);
       setDeleteModalOpen(false);
     }
   };
+
   return (
     <>
       <div className="documents-body">
@@ -186,9 +202,9 @@ const Document = ({ isstudentData }) => {
         >
           <DocumentForm
             CardTitle={"Add Document"}
-            StudentId={null}
+            studentData={null}
             closeModal={() => setCreateDocumentModalOpen(false)}
-            studentData={studentData}
+            studentId={studentId}
           />
         </CommonModalComponent>
       )}
@@ -202,9 +218,9 @@ const Document = ({ isstudentData }) => {
         >
           <DocumentForm
             CardTitle={"Edit Document"}
-            StudentId={studentData}
-            closeModal={() => setEditDocumentModalOpen(false)}
             studentData={editSelectedStudentData}
+            closeModal={() => setEditDocumentModalOpen(false)}
+            studentId={studentId}
           />
         </CommonModalComponent>
       )}
@@ -220,6 +236,7 @@ const Document = ({ isstudentData }) => {
             setCancel={setDeleteModalOpen}
             deleteData={selectedRecord}
             // CardTitle="Delete Student"
+
             handleDelete={handleDelete} // Pass the updated handleDelete function
             module="Document"
           />

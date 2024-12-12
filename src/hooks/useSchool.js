@@ -12,7 +12,7 @@ export const useGetAllSchools = () => {
     retry: 3,
     onError: (error) => {
       console.error("Error fetching schools:", error);
-      // message.error("Error fetching schools!"); // Uncomment for error message
+      // CustomMessage.error("Error fetching schools!"); // Uncomment for error message
     },
   });
 };
@@ -25,7 +25,7 @@ export const useSchoolById = (schoolId) => {
     enabled: Boolean(schoolId), // Enable query only if schoolId is defined
     onError: (error) => {
       console.error(`Error fetching school with ID ${schoolId}:`, error);
-      // message.error(`Error fetching school with ID ${schoolId}`); // Uncomment for error message
+      // CustomMessage.error(`Error fetching school with ID ${schoolId}`); // Uncomment for error message
     },
   });
 };
@@ -38,10 +38,10 @@ export const useCreateSchool = () => {
     mutationFn: (schoolData) => SchoolService.createSchool(schoolData),
     onSuccess: () => {
       queryClient.invalidateQueries(schoolKeys.schools); // Refetch all schools
-      // message.success("School created successfully!"); // Success message
+      // CustomMessage.success("School created successfully!"); // Success message
     },
     onError: (error) => {
-      // message.error("Error creating school!"); // Uncomment for error message
+      // CustomMessage.error("Error creating school!"); // Uncomment for error message
       console.error("Error creating school:", error);
     },
   });
@@ -60,10 +60,10 @@ export const useUpdateSchool = () => {
       queryClient.invalidateQueries({
         queryKey: [schoolKeys.schools, schoolId],
       });
-      // message.success("School updated successfully!"); // Success message
+      // CustomMessage.success("School updated successfully!"); // Success message
     },
     onError: (error) => {
-      // message.error("Error updating school!"); // Uncomment for error message
+      // CustomMessage.error("Error updating school!"); // Uncomment for error message
       console.error("Error updating school:", error);
     },
   });
@@ -77,10 +77,10 @@ export const useDeleteSchool = () => {
     mutationFn: SchoolService.deleteSchool,
     onSuccess: () => {
       queryClient.invalidateQueries(schoolKeys.schools); // Refetch all schools
-      // message.success("School deleted successfully!"); // Success message
+      // CustomMessage.success("School deleted successfully!"); // Success message
     },
     onError: (error) => {
-      // message.error("Error deleting school!"); // Uncomment for error message
+      // CustomMessage.error("Error deleting school!"); // Uncomment for error message
       console.error("Error deleting school:", error);
     },
   });

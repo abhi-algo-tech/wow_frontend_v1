@@ -169,7 +169,7 @@ const StudentAbout = ({ studentId }) => {
           <LabelCol>Birthdate</LabelCol>
           <ContentCol>
             <Text className="student-about-tab-label-value">
-              {formatDate(student?.dateOfBirth)}
+              {student?.dateOfBirth && formatDate(student.dateOfBirth)}
             </Text>
           </ContentCol>
 

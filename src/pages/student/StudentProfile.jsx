@@ -37,9 +37,9 @@ export default function StudentProfile() {
   const tabContentComponents = {
     1: <StudentProfileTab studentId={studentId} />,
     2: <StudentHealthTab isstudentData={isstudentData} studentId={studentId} />,
-    3: <ImportantDates isstudentData={isstudentData} />,
+    3: <ImportantDates studentId={studentId} />,
     // 4: <Schedule />,
-    4: <Document isstudentData={isstudentData} />,
+    4: <Document studentId={studentId} />,
   };
 
   // Tab items configuration

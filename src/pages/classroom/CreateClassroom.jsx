@@ -135,27 +135,27 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
       formData.append("profilePic", profilePicture, profilePicture.name);
     }
 
-   try {
-  if (isEdit) {
-    await new Promise((resolve, reject) => {
-      updateClassroom(
-        { classroomId, classroomData: formData },
-        { onSuccess: resolve, onError: reject }
-      );
-    });
-    CustomMessage.success("Classroom updated successfully!");
-    closeModal();
-  } else {
-    await new Promise((resolve, reject) => {
-      createClassroom(formData, { onSuccess: resolve, onError: reject });
-    });
-    CustomMessage.success("Classroom created successfully!");
-    closeModal();
-  }
-} catch (error) {
-  console.error("Error while submitting classroom data:", error);
-  // CustomMessage.error("Something went wrong. Please try again.");
-}
+    try {
+      if (isEdit) {
+        await new Promise((resolve, reject) => {
+          updateClassroom(
+            { classroomId, classroomData: formData },
+            { onSuccess: resolve, onError: reject }
+          );
+        });
+        CustomMessage.success("Classroom updated successfully!");
+        closeModal();
+      } else {
+        await new Promise((resolve, reject) => {
+          createClassroom(formData, { onSuccess: resolve, onError: reject });
+        });
+        CustomMessage.success("Classroom created successfully!");
+        closeModal();
+      }
+    } catch (error) {
+      console.error("Error while submitting classroom data:", error);
+      // CustomMessage.error("Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -256,8 +256,8 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                 <div className="col-6">
                   <Form.Item name="minAgeYear" className="mb-0 classroom-label">
                     <InputNumber
-                      min={3}
-                      max={10}
+                      min={0}
+                      max={7}
                       placeholder="Year"
                       className="w-100"
                     />
@@ -270,7 +270,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                   <Form.Item name="minAgeMonth" className="mb-0">
                     <InputNumber
                       min={0}
-                      max={12}
+                      max={11}
                       placeholder="Month"
                       className="w-100"
                     />
@@ -298,8 +298,8 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                     ]}
                   >
                     <InputNumber
-                      min={3}
-                      max={10}
+                      min={0}
+                      max={7}
                       placeholder="Year"
                       className="w-100"
                     />
@@ -321,7 +321,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                   >
                     <InputNumber
                       min={0}
-                      max={12}
+                      max={11}
                       placeholder="Month"
                       className="w-100"
                     />
