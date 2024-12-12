@@ -37,7 +37,7 @@ function ClassroomOverviewTable() {
     useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-
+  const [showInactive, setShowInactive] = useState(false);
   const [currentClassroomId, setCurrentClassroomId] = useState(null);
   // const [loading, setLoading] = useState(false);
   const {
@@ -46,6 +46,7 @@ function ClassroomOverviewTable() {
     isError,
     error,
   } = useGetAllClassrooms();
+  // console.log("classroomData", classroomData);
 
   const { mutate: updateClassroom } = useUpdateClassroom();
 
@@ -54,6 +55,13 @@ function ClassroomOverviewTable() {
     setDeleteModalOpen(true); // Open the delete modal
   };
 
+  // Filter data when `showInactive` changes
+  useEffect(() => {
+    const filteredClassrooms = showInactive
+      ? filteredData?.filter((classroom) => classroom.status === "Active")
+      : data;
+    setFilteredData(filteredClassrooms);
+  }, [showInactive, classroomData]);
   useEffect(() => {
     if (classroomData) {
       // Format data using generateClassroomData if needed
@@ -82,6 +90,8 @@ function ClassroomOverviewTable() {
       setFilteredData(filtered);
     }
   };
+  // console.log("filteredData", filteredData);
+  // console.log("showInactive", showInactive);
 
   // Handle action click (Edit, Assign, Manage)
   const onActionClick = (action, record) => {
@@ -94,7 +104,7 @@ function ClassroomOverviewTable() {
       const classroomId = record.key;
       updateClassroom({ classroomId, classroomData: formData });
     } else {
-      console.log(action, record);
+      // console.log(action, record);
     }
   };
 
@@ -153,7 +163,7 @@ function ClassroomOverviewTable() {
           className: "name-column label-14-600",
           render: (text, record) => (
             <Space>
-              {record.color.startsWith("#") ? (
+              {record?.color?.startsWith("#") ? (
                 // Display a colored circle if record.color is a color code
                 <div
                   className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs"
@@ -275,7 +285,7 @@ function ClassroomOverviewTable() {
       children: [
         {
           title: "Current",
-          dataIndex: "status",
+          dataIndex: "ratio",
           key: "status",
           align: "center",
           className: "ratio-column label-14-600",
@@ -352,7 +362,10 @@ function ClassroomOverviewTable() {
               valuePropName="checked"
               className="mb-0 me-2 classroom-show-inactive-toggle-btn"
             >
-              <Switch />
+              <Switch
+                checked={showInactive}
+                onChange={(checked) => setShowInactive(checked)}
+              />
               <span className="classroom-inactive-label ml20">
                 Show Inactive
               </span>

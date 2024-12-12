@@ -38,11 +38,11 @@ const StudentOverviewTable = () => {
   const [selectedFilters, setSelectedFilters] = useState({});
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-
+  const [showInactive, setShowInactive] = useState(false);
   const { data: students, isLoading, isError, error } = useGetAllStudents();
   const updateStudentMutation = useUpdateStudent();
 
-  // console.log("filteredData", filteredData);
+  console.log("students", students);
 
   useEffect(() => {
     if (students) {
@@ -59,6 +59,13 @@ const StudentOverviewTable = () => {
     }
   }, [students, isError, error]);
 
+  // Filter data when `showInactive` changes
+  useEffect(() => {
+    const filteredStudents = showInactive
+      ? filteredData?.filter((student) => student.status === "Active")
+      : data;
+    setFilteredData(filteredStudents);
+  }, [showInactive, students]);
   // Handle filter application
   const handleApplyFilters = (filters) => {
     setSelectedFilters(filters);
@@ -459,7 +466,10 @@ const StudentOverviewTable = () => {
                 valuePropName="checked"
                 className="mb-0 me-2 classroom-show-inactive-toggle-btn"
               >
-                <Switch />
+                <Switch
+                  checked={showInactive}
+                  onChange={(checked) => setShowInactive(checked)}
+                />
               </Form.Item>
               <span className="classroom-inactive-label">Show Inactive</span>
               {/* <span style={{ fontSize: "14px", color: "#718096" }}>

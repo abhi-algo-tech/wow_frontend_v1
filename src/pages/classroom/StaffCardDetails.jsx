@@ -79,7 +79,6 @@ export default function StaffCardDetails({ classroomId }) {
     }
   }, [staffData]);
 
-  if (isLoading) return <LoaderComponent />;
   if (isError) return <p>Error: {error.message}</p>;
   // Function to handle "Select All" functionality
   const handleSelectAll = (e) => {
@@ -182,69 +181,87 @@ export default function StaffCardDetails({ classroomId }) {
 
   return (
     <div className="container my-3">
-      {isFloatingCardVisible && renderRFloatingRightCard()}
-      <div className="d-flex align-items-center my-3 justify-content-between">
-        <div>
-          <Input
-            placeholder="Search staffs"
-            prefix={<SearchOutlined />}
-            style={{ width: 246, height: 40 }}
-            className="light-font"
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
-      <div className="d-flex  align-items-center">
-        <div className="me-2">
-          <Checkbox
-            onChange={handleSelectAll}
-            checked={selectedStaffs.length === staffs.length}
-            style={{ marginBottom: 0 }} /* Remove margin to center-align */
+      <div>
+        {isLoading ? (
+          <div
+            className="d-flex align-items-center justify-content-center"
+            style={{ height: "100vh" }}
           >
-            Select All
-          </Checkbox>
-        </div>
-        <div className="me-2">
-          <Select
-            className="select-staff light-font"
-            defaultValue="select-designation"
-          >
-            <Option value="select-designation">Select Designation</Option>
-            <Option value="admin">Admin</Option>
-            <Option value="staff">Staff</Option>
-            <Option value="lead-teacher">Lead Teacher</Option>
-          </Select>
-        </div>
-        {selectedStaffs.length >= 1 && (
-          <div>
-            <Button
-              variant="link"
-              style={{ backgroundColor: "#b1afe919", border: "none" }}
-              className="rounded custom-clear-button d-flex align-items-center gap-1"
-              onClick={handleSelectAll}
-            >
-              <span className="clear-text">Clear</span>
-              <img
-                src="/classroom_icons/png/close.png"
-                alt="Close icon"
-                style={{ width: "8.3px", height: "8.3px" }}
-              />
-            </Button>
+            <LoaderComponent isLoading={isLoading} />
           </div>
-        )}
-      </div>
+        ) : (
+          <>
+            {isFloatingCardVisible && renderRFloatingRightCard()}
+            <div className="d-flex align-items-center my-3 justify-content-between">
+              <div>
+                <Input
+                  placeholder="Search staffs"
+                  prefix={<SearchOutlined />}
+                  style={{ width: 246, height: 40 }}
+                  className="light-font"
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="d-flex  align-items-center">
+              <div className="me-2">
+                <Checkbox
+                  onChange={handleSelectAll}
+                  checked={selectedStaffs.length === staffs.length}
+                  style={{
+                    marginBottom: 0,
+                  }} /* Remove margin to center-align */
+                >
+                  Select All
+                </Checkbox>
+              </div>
+              <div className="me-2">
+                <Select
+                  className="select-staff light-font"
+                  defaultValue="select-designation"
+                >
+                  <Option value="select-designation">Select Designation</Option>
+                  <Option value="admin">Admin</Option>
+                  <Option value="staff">Staff</Option>
+                  <Option value="lead-teacher">Lead Teacher</Option>
+                </Select>
+              </div>
+              {selectedStaffs.length >= 1 && (
+                <div>
+                  <Button
+                    variant="link"
+                    style={{ backgroundColor: "#b1afe919", border: "none" }}
+                    className="rounded custom-clear-button d-flex align-items-center gap-1"
+                    onClick={handleSelectAll}
+                  >
+                    <span className="clear-text">Clear</span>
+                    <img
+                      src="/classroom_icons/png/close.png"
+                      alt="Close icon"
+                      style={{ width: "8.3px", height: "8.3px" }}
+                    />
+                  </Button>
+                </div>
+              )}
+            </div>
 
-      <div className="row mt16">
-        {filteredstaffs.map((staff) => (
-          <div key={staff.id} className="col-6 col-sm-4 col-md-3 col-lg-2 mb-2">
-            <ActorBigCard
-              actor={staff}
-              selectedActors={selectedStaffs}
-              handleCheckboxChange={handleCheckboxChange}
-              module={"staff"}
-            />
-          </div>
-        ))}
+            <div className="row mt16">
+              {filteredstaffs.map((staff) => (
+                <div
+                  key={staff.id}
+                  className="col-6 col-sm-4 col-md-3 col-lg-2 mb-2"
+                >
+                  <ActorBigCard
+                    actor={staff}
+                    selectedActors={selectedStaffs}
+                    handleCheckboxChange={handleCheckboxChange}
+                    module={"staff"}
+                  />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
       {isCreateMessageModalOpen && (
         <CommonModalComponent

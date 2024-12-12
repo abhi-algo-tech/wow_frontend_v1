@@ -19,7 +19,12 @@ const { Title, Text } = Typography;
 function ClassroomProfile() {
   const location = useLocation();
   const navigate = useNavigate();
-
+  const {
+    data: classroomData,
+    isLoading,
+    isError,
+    error,
+  } = useGetAllClassrooms();
   // Extract `studentId` from state
   const classroomId = location.state?.classroomId;
   const classname = location.state?.name;
@@ -36,15 +41,8 @@ function ClassroomProfile() {
     }
   }, [classroomId, navigate]);
 
-  // useEffect(() => {
-  //   const { data: currentClassroomData } = useClassroomById(currentClassroomId);
-  //   setCurrentClassroomData(currentClassroomData);
-  // }, [currentClassroomId]);
-
   const handleMenuClick = (e) => {
     const { key } = e; // Extract the key from the event object
-    console.log("Clicked key:", key);
-
     let selected = null; // Variable to store the selected item
 
     // Loop through the items to find the matching key
@@ -54,18 +52,12 @@ function ClassroomProfile() {
         break; // Exit the loop once the match is found
       }
     }
-    console.log("selected:", selected);
     if (selected) {
       setSelectedAcademy(selected.label);
       setCurrentClassroomId(selected.key);
     }
   };
-  const {
-    data: classroomData,
-    isLoading,
-    isError,
-    error,
-  } = useGetAllClassrooms();
+
   // console.log("classroomData", classroomData);
   const academyMenu = {
     items: (classroomData?.data || []).map((classroom) => ({
@@ -74,6 +66,17 @@ function ClassroomProfile() {
     })),
     onClick: handleMenuClick,
   };
+
+  useEffect(() => {
+    if (currentClassroomId) {
+      const matchingClassroom = classroomData?.data?.find(
+        (item) => item.id === currentClassroomId
+      );
+      if (matchingClassroom) {
+        setSelectedAcademy(matchingClassroom.name);
+      }
+    }
+  }, [classroomData, currentClassroomId]);
 
   const MAX_TEXT_LENGTH = 11; // Define the max length of the displayed text
 

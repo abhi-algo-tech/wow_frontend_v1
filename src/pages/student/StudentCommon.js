@@ -150,6 +150,7 @@ export const generateStudentData = (apiData) => {
     birthdate: item.birthdate || formatDate(getRandomDate(2010, 2024)),
     movementDate: item.movementDate || formatDate(getMovementDate()),
     upcoming: generateRandomUpcoming(), // Default to false if no upcoming property is provided
-    status: generateRandomStatus(),
+    status: item?.status,
+    // status: generateRandomStatus(),
   }));
 };

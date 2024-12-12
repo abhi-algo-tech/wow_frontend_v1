@@ -149,7 +149,8 @@ export const generateClassroomData = (apiData) => {
     assignedStaff: Math.floor(Math.random() * 4) + 1, // Assuming this is staff-to-student ratio
     presentStaff: Math.floor(Math.random() * 3) + 1, // Assuming 80% staff presence as an example
     // status: item.status === "Active" ? "success" : "warning",
-    status: Number(item.staffRatio) >= 75 ? "success" : "warning",
+    status: item.status,
+    ratio: Number(item.staffRatio) >= 75 ? "success" : "warning",
   }));
 };
 
