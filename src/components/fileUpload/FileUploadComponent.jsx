@@ -1,33 +1,47 @@
-import React, { useState } from "react";
-import { UploadOutlined, CloseOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import {
+  UploadOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { Button, Upload } from "antd";
 import "./FileUploadStyles.css";
 import { CustomMessage } from "../../utils/CustomMessage";
 
-const FileUploadComponent = ({ defaultBlob, onFileBlob }) => {
-  const [file, setFile] = useState(defaultBlob); // Store the file object
+const FileUploadComponent = ({ defaultBlob, fileName, onFileBlob }) => {
+  const [file, setFile] = useState(defaultBlob); // Local file state
 
-  const handleFile = (file) => {
+  useEffect(() => {
+    if (defaultBlob) {
+      // Handle dynamic blob -> file conversion if `defaultBlob` exists
+      const fileFromBlob = new File([defaultBlob], fileName || "defaultFile", {
+        type: defaultBlob.type,
+      });
+      setFile(fileFromBlob);
+    }
+  }, [defaultBlob, fileName]);
+
+  const handleFile = async (file) => {
     try {
-      const blob = new Blob([file], { type: file.type });
-      setFile(file); // Save file object for rendering and future operations
-      onFileBlob(blob); // Notify parent component with the blob
+      const blobToFile = new File([file], file.name, { type: file.type }); // Convert blob explicitly
+      setFile(blobToFile);
+      onFileBlob(blobToFile); // Notify parent of change
       CustomMessage.success(`${file.name} is added`);
     } catch (error) {
       CustomMessage.error(`Failed to process ${file.name}`);
     }
-    return false; // Prevent default upload behavior
+    return false; // Prevent upload behavior
   };
 
   const handleDelete = () => {
-    setFile(null); // Clear the file
-    onFileBlob(null); // Notify parent component
+    setFile(null);
+    onFileBlob(null);
     CustomMessage.info("File removed successfully");
   };
 
   const uploadProps = {
-    beforeUpload: handleFile, // Handle file before upload
-    showUploadList: false, // Hide default Ant Design upload list
+    beforeUpload: handleFile,
+    showUploadList: false,
   };
 
   return (
@@ -44,7 +58,7 @@ const FileUploadComponent = ({ defaultBlob, onFileBlob }) => {
           <span className="file-name">{file.name}</span>
           <Button
             type="text"
-            icon={<CloseOutlined />}
+            icon={<DeleteOutlined />}
             onClick={handleDelete}
             className="delete-button"
           />

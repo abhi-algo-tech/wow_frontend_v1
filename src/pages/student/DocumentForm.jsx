@@ -4,8 +4,9 @@ import ButtonComponent from "../../components/ButtonComponent";
 import { useUpdateStudent } from "../../hooks/useStudent";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import FileUploadComponent from "../../components/fileUpload/FileUploadComponent";
-import { useCreateDocument } from "../../hooks/useDocument";
+import { useCreateDocument, useUpdateDocument } from "../../hooks/useDocument";
 import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Option } = Select;
 
@@ -18,12 +19,11 @@ function DocumentForm({ CardTitle, studentData, closeModal, studentId }) {
     error,
   } = useMasterLookupsByType("document");
   const createDocumentMutation = useCreateDocument();
-  const updateStudentMutation = useUpdateStudent();
+  const updateDocumentMutation = useUpdateDocument();
   const isEdit = Boolean(studentData);
 
   useEffect(() => {
     if (studentData) {
-      console.log("studentData:", studentData);
       form.setFieldsValue({
         documentName: studentData.name,
         documentType: studentData.docTypeId,
@@ -63,19 +63,26 @@ function DocumentForm({ CardTitle, studentData, closeModal, studentId }) {
     formData.append("docTypeId", values.documentType);
     formData.append("expiryDate", values.expiryDate);
     formData.append("contentType", "student");
-    formData.append("documentFile", form.getFieldValue);
+    const fileBlob = form.getFieldValue("uploadDocument");
+    if (fileBlob) {
+      formData.append("documentFile", fileBlob, fileBlob.name);
+    } else {
+      CustomMessage.error("Please upload a valid file!");
+      return;
+    }
+
     formData.append("studentId", studentId);
 
     if (isEdit) {
-      updateStudentMutation.mutate(
-        { studentId, studentData: formData },
+      updateDocumentMutation.mutate(
+        { documentId: studentData.documentId, documentData: formData },
         {
           onSuccess: () => {
-            // CustomMessage.success("Document updated successfully!");
+            CustomMessage.success("Document updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            // CustomMessage.error(`Failed to update document: ${error.message}`);
+            CustomMessage.error(`Failed to update document: ${error.message}`);
           },
         }
       );
@@ -165,11 +172,13 @@ function DocumentForm({ CardTitle, studentData, closeModal, studentId }) {
               {isEdit ? (
                 <FileUploadComponent
                   defaultBlob={form.getFieldValue}
+                  fileName={studentData.fileName}
                   onFileBlob={handleFileBlob}
                 />
               ) : (
                 <FileUploadComponent
                   defaultBlob={null}
+                  fileName={null}
                   onFileBlob={handleFileBlob}
                 />
               )}
