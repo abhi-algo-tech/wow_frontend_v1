@@ -141,6 +141,10 @@ const StudentAbout = ({ studentId }) => {
                 <>
                   Inactive <CloseCircleOutlined />
                 </>
+              ) : student?.status?.toLowerCase() === "upcoming" ? (
+                <>
+                  UpComing <CheckCircleOutlined />
+                </>
               ) : (
                 // For null or undefined status, show "Inactive" with red color and cross icon
                 <>

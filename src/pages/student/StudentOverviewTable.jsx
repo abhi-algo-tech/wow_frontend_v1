@@ -173,7 +173,7 @@ const StudentOverviewTable = () => {
             }}
           >
             <span className="label-14-500">{record.name}</span>
-            {record.upcoming && (
+            {record.upcoming === "UpComing" && (
               <Tag
                 style={{
                   backgroundColor: "#FEEBC8",
