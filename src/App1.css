@@ -132,10 +132,23 @@
   opacity: 1;
 }
 .classroom-create-toggle-btn .ant-switch {
-  background: linear-gradient(-260deg, #657af9, #4f46e5) !important;
+  border-radius: 12px;
+  background: var(
+    --Lavender-Lenear,
+    linear-gradient(90deg, #5978f7 0%, #9c84ff 100%)
+  );
+}
+.classroom-create-toggle-btn .ant-switch:hover {
+  border-radius: 12px;
+  background: var(
+    --Lavender-Lenear,
+    linear-gradient(90deg, #5978f7 0%, #9c84ff 100%)
+  );
 }
 .classroom-create-toggle-btn .ant-switch-checked {
-  background: linear-gradient(-260deg, #f965a0, #e54649) !important;
+  /* background: linear-gradient(-260deg, #f965a0, #e54649) !important; */
+  background: linear-gradient(90deg, #5978f7 0%, #9c84ff 100%) !important;
+  opacity: 0.4;
 }
 .classroom-show-inactive-toggle-btn .ant-switch {
   background: linear-gradient(90deg, #5978f7 0%, #9c84ff 100%) !important;

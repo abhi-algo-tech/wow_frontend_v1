@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "antd";
+import { Table, Empty } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 
 const TableComponent = ({
@@ -14,6 +14,8 @@ const TableComponent = ({
   showTotalProp = false,
   scrollY = false,
   scrollX = false,
+  headerAlign = "left", // Added prop for header alignment
+  emptyText = "No Data Available", // Added prop for custom empty state
 }) => {
   const [pagination, setPagination] = useState({
     current: 1,
@@ -40,16 +42,28 @@ const TableComponent = ({
       ? Math.min(pagination.current * pagination.pageSize, pagination.total)
       : 0;
 
+  // Adjust header alignment
+  const adjustedColumns = columns.map((col) => ({
+    ...col,
+    align: col.align || headerAlign, // Apply headerAlign if not explicitly set
+  }));
+
   return (
-    <div className={`bg-white border-radius rounded-lg ${className}`}>
+    <div className={` bg-white border-radius rounded-lg ${className}`}>
       <Table
-        columns={columns}
+        columns={adjustedColumns}
         dataSource={dataSource}
         loading={loading}
         rowKey={rowKey}
-        scroll={{ x: true }}
-        className="ant-table-sticky"
+        scroll={{
+          y: scrollY || "50vh", // Default to 60% viewport height
+          x: scrollX || "100%", // Default to 100% width
+        }}
+        className="ant-table-sticky responsive-table"
         size={tableSize}
+        locale={{
+          emptyText: <Empty description={emptyText} />, // Custom empty state
+        }}
         pagination={{
           showSizeChanger: sizeChanger,
           showTotal: showTotalProp
@@ -92,6 +106,27 @@ const TableComponent = ({
           },
         }}
       />
+      <style jsx>{`
+        .table-container {
+          padding: 16px;
+        }
+        @media (max-width: 768px) {
+          .responsive-table {
+            font-size: 12px;
+          }
+          .mr10 {
+            margin-right: 5px;
+          }
+          .ml10 {
+            margin-left: 5px;
+          }
+        }
+        @media (max-width: 480px) {
+          .responsive-table {
+            font-size: 10px;
+          }
+        }
+      `}</style>
     </div>
   );
 };

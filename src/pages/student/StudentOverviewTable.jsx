@@ -10,11 +10,10 @@ import {
   Form,
   Dropdown,
   Space,
-  message,
   Typography,
   Popover,
 } from "antd";
-import { SearchOutlined, EditOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import TableComponent from "../../components/TableComponent";
 import { getInitialsTitle } from "../../services/common";
 import { IoIosMore } from "react-icons/io";
@@ -27,6 +26,7 @@ import { generateStudentData } from "./StudentCommon";
 import CreateStudent from "./CreateStudent";
 import { CustomMessage } from "../../utils/CustomMessage";
 const { Text } = Typography;
+
 const StudentOverviewTable = () => {
   const [hoveredRow, setHoveredRow] = useState(null);
   const [isStudentTableFilterModalOpen, setStudentTableFilterModalOpen] =
@@ -42,8 +42,6 @@ const StudentOverviewTable = () => {
   const { data: students, isLoading, isError, error } = useGetAllStudents();
   const updateStudentMutation = useUpdateStudent();
 
-  console.log("students", students);
-
   useEffect(() => {
     if (students) {
       const formattedStudentData = generateStudentData(students.data);
@@ -55,17 +53,19 @@ const StudentOverviewTable = () => {
       CustomMessage.error(
         "Failed to load student details. Please try again later."
       );
-      console.error("Error fetching student details:", error);
     }
   }, [students, isError, error]);
 
   // Filter data when `showInactive` changes
   useEffect(() => {
     const filteredStudents = showInactive
-      ? filteredData?.filter((student) => student.status === "Active")
+      ? filteredData?.filter(
+          (student) => student.status.toLowerCase() === "inactive"
+        )
       : data;
     setFilteredData(filteredStudents);
-  }, [showInactive, students]);
+  }, [showInactive]);
+
   // Handle filter application
   const handleApplyFilters = (filters) => {
     setSelectedFilters(filters);
@@ -83,20 +83,6 @@ const StudentOverviewTable = () => {
     setSelectedFilters(updatedFilters);
   };
 
-  // Handle action click (Edit, Assign, Manage)
-  const onActionClick = (action, record) => {
-    if (action === "edit") {
-      // setCurrentClassroomId(record.key); // Set the selected classroom's ID
-      // setCreateClassroomModalOpen(true); // Open the modal
-    } else if (action === "delete") {
-      // const formData = new FormData();
-      // formData.append("isDeleted", true);
-      // const classroomId = record.key;
-      // updateClassroom({ classroomId, classroomData: formData });
-    } else {
-      console.log(action, record);
-    }
-  };
   const handleDeleteModal = (id, name) => {
     setSelectedRecord({ id, name }); // Store the clicked item's id and name
     setDeleteModalOpen(true); // Open the delete modal
@@ -135,12 +121,16 @@ const StudentOverviewTable = () => {
       key: "name",
       align: "start",
       width: 240,
-      className: "student-table-body-label", // Custom class
+      className: "student-table-body-label",
+      responsive: ["xs", "sm", "md", "lg"],
       render: (_, record) => (
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <div className="d-flex align-items-center gap-2">
           <Checkbox />
-          <div className="position-relative d-inline-block ">
-            <Avatar src={record.avatar} size={24} />
+          <div className="position-relative d-inline-block">
+            <Avatar
+              src={record.avatar}
+              size={window.innerWidth < 768 ? 20 : 24} // Smaller size for small screens
+            />
             <div
               className={`position-absolute top-0 end-0 translate-middle rounded-circle ${
                 record.status === "present" ? "active-green" : ""
@@ -164,15 +154,9 @@ const StudentOverviewTable = () => {
               studentId: record.key,
               name: record.name,
             }}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center", // Ensures content inside link is centered vertically
-              width: "100%",
-              textDecoration: "none", // Optional to remove underline
-            }}
+            className="d-flex justify-content-between align-items-center w-100 text-truncate"
           >
-            <span className="label-14-500">{record.name}</span>
+            <span className="label-14-500 text-truncate">{record.name}</span>
             {record.upcoming && (
               <Tag
                 style={{
@@ -187,43 +171,32 @@ const StudentOverviewTable = () => {
           </Link>
         </div>
       ),
-      sorter: (a, b) => a.name.localeCompare(b.name), // Sorting by name alphabetically
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: <span className="student-table-header-label">Classroom</span>,
       dataIndex: "classroom",
       key: "classroom",
-      className: "student-table-body-label", // Custom class
+      className: "student-table-body-label",
+      responsive: ["sm", "md", "lg"],
       render: (classroom) => (
-        <>
-          <div className="d-flex">
-            <div className="position-relative">
-              <Avatar
-                size={24}
-                style={{
-                  backgroundColor: "#1890ff", // Set background color for initials
-                  color: "#fff", // Set text color for initials
-                  fontSize: "20px", // Adjust font size if needed
-                }}
-                className="mr9"
-              >
-                {getInitialsTitle(classroom.name)}
-              </Avatar>
-            </div>
-            <Text className="classroom-inactive-label">{classroom.name}</Text>
-            {/* <Tag
-              style={{
-                backgroundColor: `${getColor(classroom.color, "light")}`,
-                color: `${getColor(classroom.color, "dark")}`,
-                border: "none",
-              }}
-            >
-              {classroom.name}
-            </Tag> */}
-          </div>
-        </>
+        <div className="d-flex align-items-center">
+          <Avatar
+            size={window.innerWidth < 768 ? 20 : 24}
+            style={{
+              backgroundColor: "#1890ff",
+              color: "#fff",
+            }}
+            className="mr9"
+          >
+            {getInitialsTitle(classroom.name)}
+          </Avatar>
+          <span className="classroom-inactive-label text-truncate">
+            {classroom.name}
+          </span>
+        </div>
       ),
-      sorter: (a, b) => a.classroom.name.localeCompare(b.classroom.name), // Sorting by classroom name
+      sorter: (a, b) => a.classroom.name.localeCompare(b.classroom.name),
     },
     {
       title: <span className="student-table-header-label">Tags</span>,
@@ -231,17 +204,9 @@ const StudentOverviewTable = () => {
       key: "tags",
       className: "student-table-body-label",
       width: 190,
-      render: (tags, record) => (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0px",
-            position: "relative",
-          }}
-          onMouseEnter={() => setHoveredRow(record.key)}
-          onMouseLeave={() => setHoveredRow(null)}
-        >
+      responsive: ["md", "lg"],
+      render: (tags) => (
+        <div className="d-flex align-items-center gap-1 flex-wrap">
           <Tag
             style={{
               backgroundColor: "#B1AFE94D",
@@ -261,67 +226,16 @@ const StudentOverviewTable = () => {
             {tags.type}
           </Tag>
           {tags.additional && (
-            <Popover
-              content={
-                <div
-                  style={{
-                    backgroundColor: "#f6ffed",
-                    border: "1px solid #b7eb8f",
-                    borderRadius: "6px",
-                    padding: "8px 0",
-                  }}
-                >
-                  {tags.additionalItems?.map((item, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        padding: "8px 16px",
-                        color: "#666",
-                        fontSize: "14px",
-                        cursor: "pointer",
-                        transition: "background-color 0.3s",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = "#d9f7be";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = "transparent";
-                      }}
-                    >
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              }
-              trigger="click"
-              placement="top"
-              overlayInnerStyle={{
-                padding: 0,
-                backgroundColor: "transparent",
+            <Tag
+              style={{
+                backgroundColor: "#D9FFCB66",
+                color: "#1B237E",
+                border: "none",
+                cursor: "pointer",
               }}
             >
-              <Tag
-                style={{
-                  backgroundColor: "#D9FFCB66",
-                  color: "#1B237E",
-                  border: "none",
-                  cursor: "pointer",
-                }}
-              >
-                +{tags.additional}
-              </Tag>
-            </Popover>
-          )}
-          {hoveredRow === record.key && (
-            <Tooltip title="Edit Tags" style={{ backgroundColor: "#41414ECC" }}>
-              <Avatar
-                size={20}
-                src={"/classroom_icons/png/edit-tag.png"}
-                style={{
-                  cursor: "pointer",
-                }}
-              />
-            </Tooltip>
+              +{tags.additional}
+            </Tag>
           )}
         </div>
       ),
@@ -330,9 +244,10 @@ const StudentOverviewTable = () => {
       title: <span className="student-table-header-label">Schedule</span>,
       dataIndex: "schedule",
       key: "schedule",
-      className: "student-table-body-label", // Custom class
+      width: 250,
+      responsive: ["lg"],
       render: (schedule) => (
-        <div style={{ display: "flex", alignItems: "center", gap: "0px" }}>
+        <div className="d-flex align-items-center gap-1 flex-wrap">
           {schedule.days.map((day) => (
             <Tag
               key={day}
@@ -351,27 +266,21 @@ const StudentOverviewTable = () => {
           ))}
         </div>
       ),
-      sorter: (a, b) => a.schedule.days.length - b.schedule.days.length, // Sorting by number of schedule days
+      sorter: (a, b) => a.schedule.days.length - b.schedule.days.length,
     },
     {
       title: <span className="student-table-header-label">Birthdate</span>,
       dataIndex: "birthdate",
       key: "birthdate",
-      className: "student-table-body-label", // Custom class
-      sorter: (a, b) => new Date(a.birthdate) - new Date(b.birthdate), // Sorting by birthdate
-    },
-    {
-      title: <span className="student-table-header-label">Movement Date</span>,
-      dataIndex: "movementDate",
-      key: "movementDate",
-      className: "student-table-body-label", // Custom class
-      sorter: (a, b) => new Date(a.movementDate) - new Date(b.movementDate), // Sorting by movement date
+      responsive: ["xs", "md", "lg"],
+      sorter: (a, b) => new Date(a.birthdate) - new Date(b.birthdate),
     },
     {
       title: <span className="student-table-header-label">Action</span>,
       key: "action",
-      className: "student-table-body-label", // Custom class
+      className: "student-table-body-label",
       align: "center",
+      responsive: ["xs", "md", "lg"],
       render: (_, record) => (
         <Dropdown
           menu={{
@@ -380,44 +289,20 @@ const StudentOverviewTable = () => {
                 key: "edit",
                 onClick: () => handleEditModal(record.key),
                 label: "Edit",
-                className: "student-table-action-label",
               },
               {
                 key: "delete",
                 onClick: () => handleDeleteModal(record.key, record.name),
                 label: "Delete",
-                className: "student-table-action-label",
               },
             ],
-            onClick: ({ key }) => {
-              if (key !== "delete") {
-                onActionClick(key, record); // call directly for non-delete actions
-              }
-            },
           }}
-          // trigger={["click"]}
         >
           <IoIosMore className="pointer" />
         </Dropdown>
       ),
     },
   ];
-
-  const getColor = (color, shade) => {
-    const colors = {
-      blue: { light: "#E6F6FF", dark: "#0086C9" },
-      yellow: { light: "#FFFBEB", dark: "#B7791F" },
-      orange: { light: "#FEEBCB", dark: "#C05621" },
-      pink: { light: "#FFF5F7", dark: "#B83280" },
-      purple: { light: "#FAF5FF", dark: "#6B46C1" },
-    };
-
-    // Return color if exists, otherwise fallback to light gray
-    if (colors[color]) {
-      return colors[color][shade] || colors[color].light;
-    }
-    return "#D3D3D3"; // Default fallback color
-  };
 
   return (
     <>

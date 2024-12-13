@@ -58,10 +58,13 @@ function ClassroomOverviewTable() {
   // Filter data when `showInactive` changes
   useEffect(() => {
     const filteredClassrooms = showInactive
-      ? filteredData?.filter((classroom) => classroom.status === "Active")
+      ? filteredData?.filter(
+          (classroom) => classroom.status.toLowerCase() === "inactive"
+        )
       : data;
     setFilteredData(filteredClassrooms);
   }, [showInactive, classroomData]);
+
   useEffect(() => {
     if (classroomData) {
       // Format data using generateClassroomData if needed
@@ -70,11 +73,6 @@ function ClassroomOverviewTable() {
       // Set formatted data or fallback to demo data for testing
       setData(formattedClassroomData || generateClassroomDemoData(15));
       setFilteredData(formattedClassroomData); // Initially show all classrooms
-    }
-
-    if (isError) {
-      CustomMessage.error("Failed to load classrooms. Please try again later.");
-      // console.error("Error fetching classrooms:", error);
     }
   }, [classroomData, isError, error]);
 
@@ -90,8 +88,6 @@ function ClassroomOverviewTable() {
       setFilteredData(filtered);
     }
   };
-  // console.log("filteredData", filteredData);
-  // console.log("showInactive", showInactive);
 
   // Handle action click (Edit, Assign, Manage)
   const onActionClick = (action, record) => {

@@ -19,7 +19,7 @@ function UserModalSmallCard({ selectedItems, setSelectedItems, data }) {
             : "white",
           borderColor: "#FFB74D",
         }}
-        bodyStyle={{ padding: "16px" }}
+        styles={{ body: { padding: 16 } }}
       >
         <div
           style={{

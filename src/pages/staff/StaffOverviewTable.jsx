@@ -146,6 +146,7 @@ const StaffOverviewTable = () => {
       ),
       dataIndex: "name",
       key: "name",
+      width: 250,
       className: "label-14-600",
       sorter: (a, b) => a.name.localeCompare(b.name), // Sorting by staff name alphabetically
       render: (text, record) => (
@@ -195,7 +196,7 @@ const StaffOverviewTable = () => {
       dataIndex: "primaryClass",
       key: "primaryClass",
       align: "start",
-      width: 180,
+      width: 200,
       className: "label-14-600",
       sorter: (a, b) => a.primaryClass.localeCompare(b.primaryClass), // Sorting by classroom name alphabetically
       render: (text, record) => (
@@ -267,6 +268,7 @@ const StaffOverviewTable = () => {
       key: "schedule",
       align: "start",
       className: "label-14-600",
+      width: 280,
       render: (schedule) =>
         ["Mon", "Tue", "Wed", "Thu", "Fri"].map((day) => (
           <Tooltip
@@ -290,12 +292,15 @@ const StaffOverviewTable = () => {
       dataIndex: "phone",
       key: "phone",
       align: "start",
+      width: 130,
       className: "label-14-600",
       render: (text) => <span className="label-14-500">{text}</span>,
     },
     {
       title: "Action",
       key: "action",
+      width: 70,
+      align: "center",
       className: "label-14-600",
       render: (_, record) => (
         <Dropdown

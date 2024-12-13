@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Select, Button, message } from "antd";
+import { Select, Button } from "antd";
 import { CustomMessage } from "../../utils/CustomMessage";
+import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
+import ButtonComponent from "../../components/ButtonComponent";
 
 const { Option } = Select;
 
@@ -11,13 +13,19 @@ function ApplyFilter({ CardTitle, closeModal, onApplyFilter }) {
     tag: null,
   });
 
+  // Fetch status and tags using custom hooks
+  const { data: status } = useMasterLookupsByType("status");
+  const { data: tags } = useMasterLookupsByType("tags");
+
   const handleSelectChange = (field, value) => {
     setFormValues((prev) => ({ ...prev, [field]: value }));
   };
 
+  console.log("status", status);
+  console.log("tags", tags);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Send only selected filters
     const appliedFilters = Object.fromEntries(
       Object.entries(formValues).filter(([, value]) => value)
     );
@@ -27,13 +35,12 @@ function ApplyFilter({ CardTitle, closeModal, onApplyFilter }) {
   };
 
   const handleClearAll = () => {
-    // Reset all fields locally
     setFormValues({
       classroom: null,
       status: null,
       tag: null,
     });
-    onApplyFilter({}); // Notify parent to clear all filters
+    onApplyFilter({});
     CustomMessage.success("Filters cleared successfully!");
   };
 
@@ -82,8 +89,11 @@ function ApplyFilter({ CardTitle, closeModal, onApplyFilter }) {
                 onChange={(value) => handleSelectChange("status", value)}
               >
                 <Option value={null}>Select</Option>
-                <Option value="Active">Active</Option>
-                <Option value="In-Active">In-Active</Option>
+                {status?.data?.map((item) => (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                ))}
               </Select>
             </div>
 
@@ -99,18 +109,25 @@ function ApplyFilter({ CardTitle, closeModal, onApplyFilter }) {
                 onChange={(value) => handleSelectChange("tag", value)}
               >
                 <Option value={null}>Select</Option>
-                <Option value="Full Day">Full Day</Option>
-                <Option value="Half Day">Half Day</Option>
+                {tags?.data?.map((item) => (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                ))}
               </Select>
             </div>
           </div>
 
           {/* Buttons */}
           <div className="text-center mt-4">
-            <Button type="primary" htmlType="submit" style={{ marginRight: 8 }}>
-              Apply Filter
-            </Button>
-            <Button onClick={handleClearAll}>Clear All</Button>
+            <ButtonComponent
+              text="Apply Filter"
+              type="primary"
+              htmlType="submit"
+              style={{ marginRight: 8 }}
+            />
+
+            {/* <Button onClick={handleClearAll}>Clear All</Button> */}
           </div>
         </form>
       </div>

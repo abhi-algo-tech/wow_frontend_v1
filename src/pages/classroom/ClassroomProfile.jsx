@@ -68,17 +68,12 @@ function ClassroomProfile() {
   };
 
   useEffect(() => {
-    if (currentClassroomId) {
-      const matchingClassroom = classroomData?.data?.find(
-        (item) => item.id === currentClassroomId
-      );
-      if (matchingClassroom) {
-        setSelectedAcademy(matchingClassroom.name);
-      }
+    if (currentClassroomData?.data?.id === Number(currentClassroomId)) {
+      setSelectedAcademy(currentClassroomData?.data?.name);
     }
-  }, [classroomData, currentClassroomId]);
+  }, [currentClassroomData?.data, currentClassroomId, academyMenu?.items]);
 
-  const MAX_TEXT_LENGTH = 11; // Define the max length of the displayed text
+  const MAX_TEXT_LENGTH = 9; // Define the max length of the displayed text
 
   const truncateText = (text, maxLength) => {
     return text.length > maxLength

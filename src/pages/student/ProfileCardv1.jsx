@@ -102,7 +102,7 @@ const ProfileCardv1 = ({ studentId, role = "student" }) => {
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
         textAlign: "center",
       }}
-      bodyStyle={{ padding: "24px 0px 0px 0" }}
+      styles={{ body: { padding: "24px 0px 0px 0" } }}
     >
       <div className={`position-relative d-inline-block mr8`}>
         <Avatar
