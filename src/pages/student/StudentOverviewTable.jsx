@@ -38,7 +38,8 @@ const StudentOverviewTable = () => {
   const [selectedFilters, setSelectedFilters] = useState({});
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [showInactive, setShowInactive] = useState(false);
+  // const [showInactive, setShowInactive] = useState(false);
+  const [showActive, setShowActive] = useState(true);
   const { data: students, isLoading, isError, error } = useGetAllStudents();
   const updateStudentMutation = useUpdateStudent();
 
@@ -56,15 +57,33 @@ const StudentOverviewTable = () => {
     }
   }, [students, isError, error]);
 
-  // Filter data when `showInactive` changes
+  // Function to get active data
+  const getActiveData = (data) => {
+    return (
+      data?.filter(
+        (student) =>
+          student.status?.toLowerCase() === "active" ||
+          student.status?.toLowerCase() === "upcoming"
+      ) || []
+    );
+  };
+
+  // Function to get inactive data
+  const getInactiveData = (data) => {
+    return (
+      data?.filter((student) => student.status?.toLowerCase() === "inactive") ||
+      []
+    );
+  };
+
+  // Update filtered data based on showActive
   useEffect(() => {
-    const filteredStudents = showInactive
-      ? filteredData?.filter(
-          (student) => student.status.toLowerCase() === "inactive"
-        )
-      : data;
-    setFilteredData(filteredStudents);
-  }, [showInactive]);
+    const filteredStudents = showActive
+      ? getActiveData(data)
+      : getInactiveData(data);
+
+    setFilteredData(filteredStudents || []);
+  }, [showActive, data]);
 
   // Handle filter application
   const handleApplyFilters = (filters) => {
@@ -352,8 +371,8 @@ const StudentOverviewTable = () => {
                 className="mb-0 me-2 classroom-show-inactive-toggle-btn"
               >
                 <Switch
-                  checked={showInactive}
-                  onChange={(checked) => setShowInactive(checked)}
+                  checked={!showActive}
+                  onChange={(checked) => setShowActive(!checked)}
                 />
               </Form.Item>
               <span className="classroom-inactive-label">Show Inactive</span>
