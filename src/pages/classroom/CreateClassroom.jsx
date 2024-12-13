@@ -257,7 +257,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                   <Form.Item name="minAgeYear" className="mb-0 classroom-label">
                     <InputNumber
                       min={0}
-                      max={7}
+                      max={6}
                       placeholder="Year"
                       className="w-100"
                     />
@@ -299,7 +299,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                   >
                     <InputNumber
                       min={0}
-                      max={7}
+                      max={6}
                       placeholder="Year"
                       className="w-100"
                     />

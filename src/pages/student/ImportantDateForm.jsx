@@ -26,11 +26,11 @@ function ImportantDateForm({ CardTitle, closeModal, studentData }) {
 
   const handleSubmit = (values) => {
     const formData = new FormData();
-    formData.append("registrationDate", values.enrollDate);
-    formData.append("startDate", values.schoolStartDate);
-    formData.append("roomStartDate", values.currentClassroomDate);
-    formData.append("expectedMoveDate", values.upcomingMoveDate);
-    formData.append("leavingDate", values.schoolLeavingDate);
+    formData.append("registrationDate", values.enrollDate || "empty");
+    formData.append("startDate", values.schoolStartDate || "empty");
+    formData.append("roomStartDate", values.currentClassroomDate || "empty");
+    formData.append("expectedMoveDate", values.upcomingMoveDate || "empty");
+    formData.append("leavingDate", values.schoolLeavingDate || "empty");
 
     if (isEdit) {
       updateStudentMutation.mutate(

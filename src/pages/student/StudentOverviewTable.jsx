@@ -156,8 +156,8 @@ const StudentOverviewTable = () => {
             }}
             className="d-flex justify-content-between align-items-center w-100 text-truncate"
           >
-            <span className="label-14-500 text-truncate">{record.name}</span>
-            {record.upcoming && (
+            <span className="label-14-500">{record.name}</span>
+            {record.upcoming === "UpComing" && (
               <Tag
                 style={{
                   backgroundColor: "#FEEBC8",
