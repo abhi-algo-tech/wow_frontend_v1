@@ -6,12 +6,14 @@ import {
   useStudentById,
   useUpdateStudent,
 } from "../../hooks/useStudent";
-import { useGetAllClassrooms } from "../../hooks/useClassroom";
+import { useGetClassroomsBySchool } from "../../hooks/useClassroom";
 import { CustomMessage } from "../../utils/CustomMessage";
+import { useSession } from "../../hooks/useSession";
 
 const { Option } = Select;
 
 function CreateStudent({ CardTitle, studentId, closeModal }) {
+  const { academyId } = useSession();
   const [form] = Form.useForm();
 
   const { data: studentData } = useStudentById(studentId);
@@ -21,7 +23,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
     isLoading,
     isError,
     error,
-  } = useGetAllClassrooms();
+  } = useGetClassroomsBySchool(academyId);
   const updateStudentMutation = useUpdateStudent();
   const isEdit = Boolean(studentId);
 

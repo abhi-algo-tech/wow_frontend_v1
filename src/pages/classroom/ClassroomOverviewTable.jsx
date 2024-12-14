@@ -21,15 +21,17 @@ import {
 import { Link } from "react-router-dom";
 
 import {
-  useGetAllClassrooms,
+  useGetClassroomsBySchool,
   useUpdateClassroom,
 } from "../../hooks/useClassroom";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import CreateClassroom from "./CreateClassroom";
 import DeletePopUp from "../../components/DeletePopUp";
 import { CustomMessage } from "../../utils/CustomMessage";
+import { useSession } from "../../hooks/useSession";
 
 function ClassroomOverviewTable() {
+  const { academyId } = useSession();
   const [selectedClassroom, setSelectedClassroom] = useState("all");
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -40,13 +42,13 @@ function ClassroomOverviewTable() {
   const [showInactive, setShowInactive] = useState(false);
   const [currentClassroomId, setCurrentClassroomId] = useState(null);
   // const [loading, setLoading] = useState(false);
+  const schoolId = academyId;
   const {
     data: classroomData,
     isLoading,
     isError,
     error,
-  } = useGetAllClassrooms();
-  // console.log("classroomData", classroomData);
+  } = useGetClassroomsBySchool(schoolId);
 
   const { mutate: updateClassroom } = useUpdateClassroom();
 
@@ -58,10 +60,12 @@ function ClassroomOverviewTable() {
   // Filter data when `showInactive` changes
   useEffect(() => {
     const filteredClassrooms = showInactive
-      ? filteredData?.filter(
+      ? data?.filter(
           (classroom) => classroom.status.toLowerCase() === "inactive"
         )
-      : data;
+      : data?.filter(
+          (classroom) => classroom.status.toLowerCase() === "active"
+        );
     setFilteredData(filteredClassrooms);
   }, [showInactive, classroomData]);
 
@@ -72,7 +76,11 @@ function ClassroomOverviewTable() {
 
       // Set formatted data or fallback to demo data for testing
       setData(formattedClassroomData || generateClassroomDemoData(15));
-      setFilteredData(formattedClassroomData); // Initially show all classrooms
+      setFilteredData(
+        formattedClassroomData?.filter(
+          (classroom) => classroom.status.toLowerCase() === "active"
+        )
+      ); // Initially show all classrooms
     }
   }, [classroomData, isError, error]);
 

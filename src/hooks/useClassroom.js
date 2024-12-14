@@ -2,18 +2,18 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ClassroomService from "../services/classroomService";
 import { classRoomKeys } from "../utils/queryKeys";
-import { message } from "antd";
 import { useState } from "react";
 
 // Fetch all classrooms
-export const useGetAllClassrooms = () => {
+export const useGetClassroomsBySchool = (schoolId) => {
   return useQuery({
-    queryKey: [classRoomKeys.classrooms],
-    queryFn: ClassroomService.getAllClassrooms,
+    queryKey: [classRoomKeys.classrooms, schoolId],
+    queryFn: () => ClassroomService.getClassroomsBySchool(schoolId),
+    enabled: Boolean(schoolId),
     refetchOnWindowFocus: false,
     retry: 3,
     onError: (error) => {
-      console.error("Error fetching classrooms:", error);
+      console.error(`Error fetching classroom with ID ${schoolId}:`, error);
     },
   });
 };

@@ -11,16 +11,18 @@ import FileUploadComponent from "../../components/fileUpload/FileUploadComponent
 import YesNoRadio from "../../components/radio/YesNoRadio";
 import MultiSelectWithTags from "../../components/select/MultiSelectWithTags";
 import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
-import { useGetAllClassrooms } from "../../hooks/useClassroom";
+import { useGetClassroomsBySchool } from "../../hooks/useClassroom";
 import { useGetAllCountries } from "../../hooks/useCountry";
 import { useGetAllStates } from "../../hooks/useState";
 import { useGetAllCities } from "../../hooks/useCity";
 import { formatDateToCustomStyle } from "../../services/common";
 import { CustomMessage } from "../../utils/CustomMessage";
+import { useSession } from "../../hooks/useSession";
 
 const { Option } = Select;
 
 function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
+  const { academyId } = useSession();
   const [form] = Form.useForm();
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -32,7 +34,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
   const { data: states } = useGetAllStates();
   const { data: cities } = useGetAllCities();
   const { data: tagData, isLoading } = useMasterLookupsByType("tags");
-  const { data: classroomData } = useGetAllClassrooms();
+  const { data: classroomData } = useGetClassroomsBySchool(academyId);
   const createStudentMutation = useCreateStudent();
   const updateStudentMutation = useUpdateStudent();
   const isEdit = Boolean(studentId);

@@ -11,7 +11,7 @@ export const useGetAllSchools = () => {
     refetchOnWindowFocus: false,
     retry: 3,
     onError: (error) => {
-      console.error("Error fetching schools:", error);
+      // console.error("Error fetching schools:", error);
       // CustomMessage.error("Error fetching schools!"); // Uncomment for error message
     },
   });

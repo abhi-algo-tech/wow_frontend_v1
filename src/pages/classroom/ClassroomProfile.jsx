@@ -11,12 +11,14 @@ import CommonModalComponent from "../../components/CommonModalComponent";
 import useNavigate from "../../hooks/useNavigate";
 import {
   useClassroomById,
-  useGetAllClassrooms,
+  useGetClassroomsBySchool,
 } from "../../hooks/useClassroom";
 import { useLocation } from "react-router-dom";
+import { useSession } from "../../hooks/useSession";
 
 const { Title, Text } = Typography;
 function ClassroomProfile() {
+  const { academyId } = useSession();
   const location = useLocation();
   const navigate = useNavigate();
   const {
@@ -24,7 +26,7 @@ function ClassroomProfile() {
     isLoading,
     isError,
     error,
-  } = useGetAllClassrooms();
+  } = useGetClassroomsBySchool(academyId);
   // Extract `studentId` from state
   const classroomId = location.state?.classroomId;
   const classname = location.state?.name;

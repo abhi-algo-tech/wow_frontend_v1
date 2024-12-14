@@ -9,10 +9,12 @@ import CommonModalComponent from "../../components/CommonModalComponent";
 import CreateClassroom from "./CreateClassroom";
 import DeletePopUp from "../../components/DeletePopUp";
 import { useSchoolById } from "../../hooks/useSchool";
+import { useSession } from "../../hooks/useSession";
 
 const { Title, Text } = Typography;
 
 export default function Classroom() {
+  const { academyId } = useSession();
   const [activeTab, setActiveTab] = useState("1");
   const [isCreateClassroomModalOpen, setCreateClassroomModalOpen] =
     useState(false);
@@ -25,10 +27,6 @@ export default function Classroom() {
   const onTabChange = (key) => {
     setActiveTab(key);
   };
-
-  const [academyId, setAcademyId] = useState(
-    sessionStorage.getItem("selectedAcademy") || null
-  );
 
   const {
     data: schools,

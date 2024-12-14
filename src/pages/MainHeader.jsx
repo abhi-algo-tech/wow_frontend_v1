@@ -3,6 +3,7 @@ import { SearchOutlined, CaretDownOutlined } from "@ant-design/icons";
 import { Layout, Input, Badge, Dropdown, Space, Avatar, Button } from "antd";
 import { AiOutlineMenuUnfold } from "react-icons/ai";
 import { useGetAllSchools } from "../hooks/useSchool";
+import { useSession } from "../hooks/useSession";
 
 const { Header } = Layout;
 
@@ -21,6 +22,7 @@ function MainHeader({
     }
   };
   const [searchValue, setSearchValue] = useState("");
+  const { setSessionData } = useSession();
 
   const { data: schools, isLoading, isError, error } = useGetAllSchools();
 
@@ -66,9 +68,10 @@ function MainHeader({
 
       setSelectedAcademy(defaultKey);
       setSelectedLabel(defaultLabel);
-
-      sessionStorage.setItem("selectedAcademy", defaultKey);
-      sessionStorage.setItem("selectedAcademyLabel", defaultLabel);
+      setSessionData("selectedAcademyID", defaultKey);
+      setSessionData("selectedAcademyLabel", defaultLabel);
+      // sessionStorage.setItem("selectedAcademy", defaultKey);
+      // sessionStorage.setItem("selectedAcademyLabel", defaultLabel);
     }
   }, [academyMenu.items]);
 
@@ -79,8 +82,10 @@ function MainHeader({
       setSelectedLabel(selectedItem.label);
 
       // Save to sessionStorage
-      sessionStorage.setItem("selectedAcademy", key);
-      sessionStorage.setItem("selectedAcademyLabel", selectedItem.label);
+      setSessionData("selectedAcademyID", key);
+      setSessionData("selectedAcademyLabel", selectedItem.label);
+      // sessionStorage.setItem("selectedAcademy", key);
+      // sessionStorage.setItem("selectedAcademyLabel", selectedItem.label);
     }
   };
 

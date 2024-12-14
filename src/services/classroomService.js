@@ -3,12 +3,16 @@ import axiosInstance from "../api/axiosInstance";
 import { API_ENDPOINTS } from "../api/endpoints";
 
 const ClassroomService = {
-  getAllClassrooms: async () => {
+  getClassroomsBySchool: async (schoolId) => {
+    console.log("schoolId", schoolId);
+
     try {
-      const response = await axiosInstance.get(API_ENDPOINTS.CLASSROOM.BASE);
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.CLASSROOM.BY_SCHOOL}/${schoolId}`
+      );
       return response.data;
     } catch (error) {
-      console.error("Error fetching classrooms:", error);
+      console.error(`Error fetching classroom with ID ${schoolId}:`, error);
       throw error;
     }
   },

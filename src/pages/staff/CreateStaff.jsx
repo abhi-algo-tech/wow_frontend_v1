@@ -2,17 +2,19 @@ import { Form, Input, Select, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
 import MultiSelectWithTags from "../../components/select/MultiSelectWithTags";
-import { useGetAllClassrooms } from "../../hooks/useClassroom";
+import { useGetClassroomsBySchool } from "../../hooks/useClassroom";
 import {
   useCreateStaff,
   useStaffById,
   useUpdateStaff,
 } from "../../hooks/useStaff";
 import { CustomMessage } from "../../utils/CustomMessage";
+import { useSession } from "../../hooks/useSession";
 
 const { Option } = Select;
 
 function CreateStaff({ CardTitle, staffId, closeModal }) {
+  const { academyId } = useSession();
   const [form] = Form.useForm();
   const [selectedAllowedClassrooms, setSelectedAllowedClassrooms] = useState(
     []
@@ -23,7 +25,7 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
     isLoading,
     isError,
     error,
-  } = useGetAllClassrooms();
+  } = useGetClassroomsBySchool(academyId);
   const { data: staffData } = useStaffById(staffId);
   const createStudentMutation = useCreateStaff();
   const updateStudentMutation = useUpdateStaff();
