@@ -1,20 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Tabs, Row, Col } from "antd";
 
 import ProfileCardv1 from "../student/ProfileCardv1";
 import StaffAbout from "./StaffAbout";
 import StaffDocument from "./StaffDocument";
 import StaffImportantDates from "./StaffImportantDates";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function StaffProfile() {
   const [activeTab, setActiveTab] = useState("1");
+  const location = useLocation();
+  const navigate = useNavigate();
+  // const [staff, setStaff] = useState();
+  const staffId = location.state?.staffId;
+  // const { data: staffData, isLoading, error } = useStaffById(studentId);
 
+  // useEffect(() => {
+  //   setStaff(staffData?.data || {});
+  // }, [staffData]);
+  // Handle missing `state` (e.g., direct URL access)
+  useEffect(() => {
+    if (!staffId) {
+      navigate("/"); // Redirect to home or error page
+    }
+  }, [staffId, navigate]);
   // Function to handle tab change
   const onTabChange = (key) => setActiveTab(key);
 
   // Tab content components
   const tabContentComponents = {
-    1: <StaffAbout />,
+    1: <StaffAbout staffId={staffId} />,
     2: <StaffImportantDates />,
     3: <StaffDocument />,
   };

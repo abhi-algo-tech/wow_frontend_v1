@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col, Tag, Typography, Tabs, Avatar, Badge } from "antd";
 import { MdOutlineModeEditOutline } from "react-icons/md";
+import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import StaffProfileForm from "./StaffProfileForm";
 import TimePickerComponent from "../../components/timePicker/TimePickerComponent";
 import StaffScheduleForm from "./StaffSchedulingForm";
+import { useStaffById } from "../../hooks/useStaff";
 const { Text } = Typography;
 
 const LabelCol = ({ children }) => (
@@ -15,9 +17,16 @@ const LabelCol = ({ children }) => (
 
 const ContentCol = ({ children }) => <Col span={19}>{children}</Col>;
 
-const StaffAbout = () => {
+const StaffAbout = ({ staffId }) => {
   const [isAboutModalOpen, setAboutModalOpen] = useState(false);
   const [isAboutScheduleModalOpen, setAboutScheduleModalOpen] = useState(false);
+  const [staff, setStaff] = useState();
+  const { data: staffData, isLoading, error } = useStaffById(staffId);
+
+  useEffect(() => {
+    console.log("staffData:", staffData);
+    setStaff(staffData?.data || {});
+  }, [staffData]);
   return (
     <>
       <div className="padding30 staff-about-container">
@@ -42,23 +51,62 @@ const StaffAbout = () => {
         <Row gutter={[0, 20]}>
           <LabelCol>Name</LabelCol>
           <ContentCol>
-            <Text className="student-about-tab-label-value">Lex Fenwick</Text>
+            <Text className="student-about-tab-label-value">
+              {staff?.firstName
+                ? staff.firstName.charAt(0).toUpperCase() +
+                  staff.firstName.slice(1)
+                : ""}{" "}
+              {staff?.lastName
+                ? staff.lastName.charAt(0).toUpperCase() +
+                  staff.lastName.slice(1)
+                : ""}
+            </Text>
           </ContentCol>
 
           <LabelCol>Status</LabelCol>
           <ContentCol>
-            <Tag
+            {/* <Tag
               className="no-border-tag"
               color="success"
               style={{ padding: "0 8px" }}
             >
               Active <Avatar size={16} src={"/wow_icons/png/active.png"} />
+            </Tag> */}
+            <Tag
+              color={
+                staff?.status?.toLowerCase() === "active" ? "success" : "error"
+              }
+              style={{ padding: "0 8px" }}
+            >
+              {staff?.status?.toLowerCase() === "active" ? (
+                <>
+                  Active <CheckCircleOutlined />
+                </>
+              ) : staff?.status?.toLowerCase() === "inactive" ? (
+                <>
+                  Inactive <CloseCircleOutlined />
+                </>
+              ) : staff?.status?.toLowerCase() === "upcoming" ? (
+                <>
+                  UpComing <CheckCircleOutlined />
+                </>
+              ) : (
+                // For null or undefined status, show "Inactive" with red color and cross icon
+                <>
+                  Inactive <CloseCircleOutlined />
+                </>
+              )}
             </Tag>
           </ContentCol>
 
           <LabelCol>Designation</LabelCol>
           <ContentCol>
-            <Text className="student-about-tab-label-value">Admin</Text>
+            <Text className="student-about-tab-label-value">
+              {staff?.designation
+                ? staff.designation.charAt(0).toUpperCase() +
+                  staff.designation.slice(1)
+                : ""}
+            </Text>
           </ContentCol>
 
           <LabelCol>Allowed Classrooms</LabelCol>
@@ -90,27 +138,34 @@ const StaffAbout = () => {
           <LabelCol>Email</LabelCol>
           <ContentCol>
             <Text className="student-about-tab-label-value">
-              aparna12345@wiseowl.academy
+              {staff?.email}
             </Text>
           </ContentCol>
 
           <LabelCol>Clock In-Out PIN</LabelCol>
           <ContentCol>
-            <Text className="student-about-tab-label-value">988768</Text>
+            <Text className="student-about-tab-label-value">
+              {staff?.clockInPin}
+            </Text>
           </ContentCol>
           <LabelCol>Phone Number</LabelCol>
           <ContentCol>
             <Text className="student-about-tab-label-value">
-              (986) 102-988768
+              {staff?.phoneNumber}
             </Text>
           </ContentCol>
 
           <LabelCol>Address</LabelCol>
           <ContentCol>
-            <Text className="student-about-tab-label-value">
-              50 Barrington Avenue Unit 503, Nashua, New Hampshire, United
-              States, 03062
-            </Text>
+            {staff?.street && (
+              <Text className="student-about-tab-label-value">
+                {`${staff.street}, ${staff?.city?.name || ""}, ${
+                  staff?.state?.name || ""
+                }, ${staff?.country?.name || ""}, ${staff?.zipCode || ""}`
+                  .replace(/,\s*(,|$)/g, ",")
+                  .replace(/,\s*$/, "")}
+              </Text>
+            )}
           </ContentCol>
 
           <LabelCol>Birth Date</LabelCol>
