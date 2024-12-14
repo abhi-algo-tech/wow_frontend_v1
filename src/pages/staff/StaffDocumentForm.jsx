@@ -1,81 +1,107 @@
 import { Form, Input, message, Select, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
-import {
-  useCreateStudent,
-  useStudentById,
-  useUpdateStudent,
-} from "../../hooks/useStudent";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import FileUploadComponent from "../../components/fileUpload/FileUploadComponent";
 import { CustomMessage } from "../../utils/CustomMessage";
+import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
+import { useCreateDocument, useUpdateDocument } from "../../hooks/useDocument";
 
 const { Option } = Select;
 
-function StaffDocumentForm({ CardTitle, studentId, closeModal }) {
-  const [form] = Form.useForm();
+function StaffDocumentForm({ CardTitle, staffId, closeModal, staffData }) {
+  console.log("staffData", staffData);
+  const [staffDocumentData, setStaffDocumentData] = useState(staffData);
 
-  const { data: parentData } = useStudentById(studentId);
-  const createStudentMutation = useCreateStudent();
-  const updateStudentMutation = useUpdateStudent();
-  const isEdit = Boolean(studentId);
+  const [form] = Form.useForm();
+  const {
+    data: documentDrpDwnData,
+    isLoading,
+    isError,
+    error,
+  } = useMasterLookupsByType("document");
+  const createDocumentMutation = useCreateDocument();
+  const updateDocumentMutation = useUpdateDocument();
+  const isEdit = Boolean(staffId);
+  console.log("staffDocumentData", staffDocumentData);
 
   useEffect(() => {
-    if (parentData) {
+    if (staffDocumentData) {
       form.setFieldsValue({
-        firstName: parentData.data.firstName,
-        lastName: parentData.data.lastName,
-        phoneNumber: parentData.data.phoneNumber,
-        relation: parentData.data.relation,
+        documentName: staffDocumentData.name,
+        documentType: staffDocumentData.docTypeid,
+        expiryDate: staffDocumentData.expiryDate,
+        uploadDocument: staffDocumentData.fileType,
       });
+
+      // Convert file URL to Blob and set it in the form
+      if (staffDocumentData.fileurl) {
+        fetch(staffDocumentData.fileurl)
+          .then((response) => response.blob())
+          .then((blob) => {
+            form.setFieldsValue({ documentFile: blob });
+          })
+          .catch((error) => {
+            console.error(
+              "Failed to fetch or convert file URL to Blob:",
+              error
+            );
+          });
+      }
     }
-  }, [parentData, form]);
+  }, [staffDocumentData, form]);
 
   const handleSubmit = (values) => {
-    const { firstName, lastName, relation, phoneNumber } = values;
-
-    if (!firstName || !lastName) {
-      CustomMessage.error("All fields are required!");
+    if (
+      !values.documentName ||
+      !values.documentType ||
+      !values.uploadDocument
+    ) {
+      CustomMessage.error("All required fields must be filled!");
       return;
     }
 
     const formData = new FormData();
-    formData.append("firstName", firstName);
-    formData.append("lastName", lastName);
-    formData.append("phoneNumber", phoneNumber);
-    formData.append("relation", relation);
+    formData.append("name", values.documentName);
+    formData.append("docTypeId", values.documentType);
+    formData.append("expiryDate", values.expiryDate);
+    formData.append("contentType", "staff");
+    const fileBlob = form.getFieldValue("uploadDocument");
+    if (fileBlob) {
+      formData.append("documentFile", fileBlob, fileBlob.name);
+    } else {
+      CustomMessage.error("Please upload a valid file!");
+      return;
+    }
+
+    formData.append("staffId", staffId || staffData?.id);
 
     if (isEdit) {
-      updateStudentMutation.mutate(
-        {
-          studentId,
-          parentData: formData,
-        },
+      updateDocumentMutation.mutate(
+        { documentId: staffDocumentData.documentId, documentData: formData },
         {
           onSuccess: () => {
-            CustomMessage.success("Student updated successfully!");
+            CustomMessage.success("Document updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            CustomMessage.error(`Failed to update student: ${error.message}`);
+            CustomMessage.error(`Failed to update document: ${error.message}`);
           },
         }
       );
     } else {
-      createStudentMutation.mutate(formData, {
+      createDocumentMutation.mutate(formData, {
         onSuccess: () => {
-          CustomMessage.success("Student created successfully!");
           closeModal();
         },
         onError: (error) => {
-          CustomMessage.error(`Failed to create student: ${error.message}`);
+          // CustomMessage.error(`Failed to create document: ${error.message}`);
         },
       });
     }
   };
   const handleFileBlob = (blob) => {
-    console.log("Received Blob:", blob);
-    // Handle the Blob file here (e.g., upload it, preview it, etc.)
+    form.setFieldsValue({ uploadDocument: blob });
   };
 
   return (
@@ -119,29 +145,40 @@ function StaffDocumentForm({ CardTitle, studentId, closeModal }) {
               ]}
             >
               <Select className="select-student-add-from" placeholder="Select">
-                <Option value="select">Select</Option>
-                <Option value="1">Father</Option>
-                <Option value="2">Mother</Option>
+                {documentDrpDwnData?.data?.map((doc) => (
+                  <Option key={doc.id} value={doc.id}>
+                    {doc.name}
+                  </Option>
+                ))}
               </Select>
             </Form.Item>
           </div>
           <div className=" items-center gap-1 student-label ">Expiry Date</div>
-
-          <CustomDatePicker
-            name="expiryDate"
-            // rules={[
-            //   { required: true, message: "Please select the Document Type!" },
-            // ]}
-          />
+          <Form.Item name="expiryDate">
+            <CustomDatePicker />
+          </Form.Item>
           <div className=" items-center gap-1 student-label ">
             Upload Document
             <span className="text-danger"> *</span>
           </div>
           <Form.Item
             name="uploadDocument"
-            rules={[{ required: true, message: "Please upload the Document!" }]}
+            valuePropName="file"
+            rules={[{ required: true, message: "Please upload the document!" }]}
           >
-            <FileUploadComponent onFileBlob={handleFileBlob} />
+            {isEdit ? (
+              <FileUploadComponent
+                defaultBlob={form.getFieldValue}
+                fileName={staffDocumentData.fileName}
+                onFileBlob={handleFileBlob}
+              />
+            ) : (
+              <FileUploadComponent
+                defaultBlob={null}
+                fileName={null}
+                onFileBlob={handleFileBlob}
+              />
+            )}
           </Form.Item>
 
           <div className="text-center ">

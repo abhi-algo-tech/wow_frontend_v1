@@ -6,14 +6,16 @@ import StaffAbout from "./StaffAbout";
 import StaffDocument from "./StaffDocument";
 import StaffImportantDates from "./StaffImportantDates";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useStaffById } from "../../hooks/useStaff";
 
 export default function StaffProfile() {
-  const [activeTab, setActiveTab] = useState("1");
   const location = useLocation();
   const navigate = useNavigate();
+  const [staffData, setStaffData] = useState();
+  const [activeTab, setActiveTab] = useState("1");
   // const [staff, setStaff] = useState();
   const staffId = location.state?.staffId;
-  // const { data: staffData, isLoading, error } = useStaffById(studentId);
+  const { data: staffDataArray, isLoading, error } = useStaffById(staffId);
 
   // useEffect(() => {
   //   setStaff(staffData?.data || {});
@@ -25,13 +27,23 @@ export default function StaffProfile() {
     }
   }, [staffId, navigate]);
   // Function to handle tab change
+  useEffect(() => {
+    setStaffData(staffDataArray?.data || {});
+  }, [staffDataArray]);
+  // Handle missing `state` (e.g., direct URL access)
+  useEffect(() => {
+    if (!staffId) {
+      navigate("/"); // Redirect to home or error page
+    }
+  }, [staffId, navigate]);
   const onTabChange = (key) => setActiveTab(key);
+  // console.log("staffData", staffData);
 
   // Tab content components
   const tabContentComponents = {
     1: <StaffAbout staffId={staffId} />,
-    2: <StaffImportantDates />,
-    3: <StaffDocument />,
+    2: <StaffImportantDates staffData={staffData} />,
+    3: <StaffDocument staffData={staffData} />,
   };
 
   // Tab items configuration

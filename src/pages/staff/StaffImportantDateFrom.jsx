@@ -1,81 +1,97 @@
-import { Form, Input, message, Select, Switch } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { Form } from "antd";
 import ButtonComponent from "../../components/ButtonComponent";
-import {
-  useCreateStudent,
-  useStudentById,
-  useUpdateStudent,
-} from "../../hooks/useStudent";
+import { useUpdateStaff } from "../../hooks/useStaff";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import { CustomMessage } from "../../utils/CustomMessage";
 
-const { Option } = Select;
-
-function StaffImportantDateForm({ CardTitle, studentId, closeModal }) {
+function StaffImportantDateForm({ CardTitle, staffId, closeModal, staffData }) {
   const [form] = Form.useForm();
 
-  const { data: parentData } = useStudentById(studentId);
-  const createStudentMutation = useCreateStudent();
-  const updateStudentMutation = useUpdateStudent();
-  const isEdit = Boolean(studentId);
+  const updateStaffMutation = useUpdateStaff();
+  const isEdit = Boolean(staffId);
+  console.log("staffId", staffId);
 
+  // Pre-fill form values when editing
   useEffect(() => {
-    if (parentData) {
+    if (staffData) {
       form.setFieldsValue({
-        hireDate: parentData.data.hireDate,
-        cdaExamination: parentData.data.cdaExamination,
-        firstAidCprExpirationDate: parentData.data.firstAidCprExpirationDate,
-        backgroundRecordCheckExpirationDate:
-          parentData.data.backgroundRecordCheckExpirationDate,
-        schoolLeavingDate: parentData.data.schoolLeavingDate,
+        hireDate: staffData?.hireDate,
+        cdaExpirationDate: staffData?.cdaExpirationDate,
+        aidExpirationDate: staffData?.aidExpirationDate,
+        bgExpirationDate: staffData?.bgExpirationDate,
       });
     }
-  }, [parentData, form]);
+  }, [staffData, form]);
 
+  // Handle form submission
   const handleSubmit = (values) => {
-    const { status, date } = values;
-
-    if (!status || !date) {
-      CustomMessage.error("All fields are required!");
-      return;
-    }
-
     const formData = new FormData();
-    formData.append("status", status);
-    formData.append("date", date);
+    formData.append("hireDate", values.hireDate || "empty");
+    formData.append("cdaExpirationDate", values.cdaExpirationDate || "empty");
+    formData.append("aidExpirationDate", values.aidExpirationDate || "empty");
+    formData.append("bgExpirationDate", values.bgExpirationDate || "empty");
 
     if (isEdit) {
-      updateStudentMutation.mutate(
+      updateStaffMutation.mutate(
         {
-          studentId,
-          parentData: formData,
+          staffId: staffId,
+          staffData: formData,
         },
         {
           onSuccess: () => {
-            CustomMessage.success("Student updated successfully!");
+            CustomMessage.success("Important date updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            CustomMessage.error(`Failed to update student: ${error.message}`);
+            CustomMessage.error(
+              `Failed to update Important date: ${error.message}`
+            );
           },
         }
       );
-    } else {
-      createStudentMutation.mutate(formData, {
-        onSuccess: () => {
-          CustomMessage.success("Student created successfully!");
-          closeModal();
-        },
-        onError: (error) => {
-          CustomMessage.error(`Failed to create student: ${error.message}`);
-        },
-      });
     }
+    // else {
+    //   createStudentMutation.mutate(formData, {
+    //     onSuccess: () => {
+    //       CustomMessage.success("Important date created successfully!");
+    //       closeModal();
+    //     },
+    //     onError: (error) => {
+    //       CustomMessage.error(
+    //         `Failed to create Important date: ${error.message}`
+    //       );
+    //     },
+    //   });
+    // }
   };
+
+  const dateFields = [
+    {
+      name: "hireDate",
+      label: "Hire Date",
+      message: "Hire Date is required!",
+    },
+    {
+      name: "cdaExpirationDate",
+      label: "CDA Examination Date",
+      message: "CDA Examination Date is required!",
+    },
+    {
+      name: "aidExpirationDate",
+      label: "First Aid/CPR Expiration Date",
+      message: "First Aid/CPR Expiration Date is required!",
+    },
+    {
+      name: "bgExpirationDate",
+      label: "Background Record Check Expiration Date",
+      message: "Background Record Check Expiration Date is required!",
+    },
+  ];
 
   return (
     <div className="card">
-      <span
+      <div
         style={{
           backgroundColor: "#eef1fe",
           fontWeight: "bold",
@@ -84,76 +100,30 @@ function StaffImportantDateForm({ CardTitle, studentId, closeModal }) {
         }}
       >
         {CardTitle}
-      </span>
+      </div>
       <div className="staff-imp-date-form">
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <div className="row">
-            <div className="col-6">
-              <div className=" items-center gap-1 student-label ">
-                Hire Date
+            {dateFields.map(({ name, label, message }) => (
+              <div className="col-6" key={name}>
+                <div className="items-center gap-1 student-label">{label}</div>
+                <Form.Item
+                  name={name}
+                  // rules={[{ required: true, message }]}
+                >
+                  <CustomDatePicker name={name} />
+                </Form.Item>
               </div>
-              <Form.Item
-                name="hireDate"
-                rules={[{ required: true, message: "hireDate is required!" }]}
-              >
-                <CustomDatePicker name="hireDate" />
-              </Form.Item>
-            </div>
-            <div className="col-6">
-              <div className=" items-center gap-1 student-label ">
-                CDA Examination Date
-              </div>
-              <Form.Item
-                name="cdaExamination"
-                rules={[
-                  { required: true, message: "cdaExamination is required!" },
-                ]}
-              >
-                <CustomDatePicker name="cdaExamination" />
-              </Form.Item>
-            </div>
-            <div className="col-6">
-              <div className=" items-center gap-1 student-label ">
-                First Aid/CPR Expiration Date
-              </div>
-              <Form.Item
-                name="firstAidCprExpirationDate"
-                rules={[
-                  {
-                    required: true,
-                    message: "First Aid/CPR Expiration Date is required!",
-                  },
-                ]}
-              >
-                <CustomDatePicker name="firstAidCprExpirationDate" />
-              </Form.Item>
-            </div>
-            <div className="col-6">
-              <div className=" items-center gap-1 student-label ">
-                Background Record Check Expiration date
-              </div>
-              <Form.Item
-                name="backgroundRecordCheckExpirationDate"
-                rules={[
-                  {
-                    required: true,
-                    message: "backgroundRecordCheckExpirationDate is required!",
-                  },
-                ]}
-              >
-                <CustomDatePicker name="backgroundRecordCheckExpirationDate" />
-              </Form.Item>
-            </div>
-
-            <div className="text-center ">
-              <Form.Item>
-                <ButtonComponent
-                  text={"Save"}
-                  padding="19.1px 65px"
-                  type="submit"
-                />
-              </Form.Item>
-            </div>
+            ))}
+          </div>
+          <div className="text-center mt-4">
+            <Form.Item>
+              <ButtonComponent
+                text="Save"
+                padding="19.1px 65px"
+                type="submit"
+              />
+            </Form.Item>
           </div>
         </Form>
       </div>

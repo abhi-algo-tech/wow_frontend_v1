@@ -14,7 +14,7 @@ const LabelCol = ({ children }) => (
 
 const ContentCol = ({ children }) => <Col span={15}>{children}</Col>;
 
-function StaffImportantDates() {
+function StaffImportantDates({ staffData }) {
   const [isCreateImportantDatesModalOpen, setCreateImportantDatesModalOpen] =
     useState(false);
   const menu = {
@@ -63,7 +63,7 @@ function StaffImportantDates() {
           <LabelCol>Hire Date</LabelCol>
           <ContentCol>
             <Text className="staff-important-dates-tab-label-value">
-              Dec 23, 2024
+              {staffData?.hireDate || `No Hire Date`}
             </Text>
           </ContentCol>
 
@@ -73,14 +73,15 @@ function StaffImportantDates() {
           </LabelCol>
           <ContentCol>
             <Text className="staff-important-dates-tab-label-value">
-              No CDA Examination Date
+              {staffData?.cdaExpirationDate || `No CDA Examination Date`}
             </Text>
           </ContentCol>
 
           <LabelCol>First Aid / CPR Expiration Date</LabelCol>
           <ContentCol>
             <Text className="staff-important-dates-tab-label-value">
-              First Aid / CPR Expiration Date
+              {staffData?.aidExpirationDate ||
+                `No First Aid / CPR Expiration Date`}
             </Text>
           </ContentCol>
 
@@ -92,7 +93,8 @@ function StaffImportantDates() {
           </LabelCol>
           <ContentCol>
             <Text className="staff-important-dates-tab-label-value">
-              Background Record Check Expiration Date
+              {staffData?.bgExpirationDate ||
+                `No Background Record Check Expiration Date`}
             </Text>
           </ContentCol>
 
@@ -179,8 +181,9 @@ function StaffImportantDates() {
         >
           <StaffImportantDateForm
             CardTitle={"Edit Important Dates"}
-            classroomId={null}
+            staffId={staffData?.id}
             closeModal={() => setCreateImportantDatesModalOpen(false)}
+            staffData={staffData}
           />
         </CommonModalComponent>
       )}

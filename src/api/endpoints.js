@@ -47,4 +47,8 @@ export const API_ENDPOINTS = {
     BASE: "/v1/documents",
     DELETE: "/v1/documents/soft-delete-by-student",
   },
+  StaffDOCUMENT: {
+    BASE: "/v1/documents",
+    DELETE: "/v1/documents/soft-delete-by-staff",
+  },
 };

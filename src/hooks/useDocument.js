@@ -100,3 +100,20 @@ export const useDeleteDocument = () => {
     },
   });
 };
+// Delete a Document
+export const useDeleteStaffDocument = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ staffId, documentId }) =>
+      DocumentService.deleteStaffDocument(staffId, documentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: documentKey.document });
+      CustomMessage.success("Document deleted successfully!"); // Success message
+    },
+    onError: (error) => {
+      CustomMessage.error("Error deleting Document!"); // Error message
+      console.error("Error deleting Document:", error);
+    },
+  });
+};
