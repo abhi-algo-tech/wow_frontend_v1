@@ -11,13 +11,11 @@ import { useStaffById } from "../../hooks/useStaff";
 export default function StaffProfile() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [staffData, setStadffData] = useState();
+  const [staffData, setStaffData] = useState();
   const [activeTab, setActiveTab] = useState("1");
-  const location = useLocation();
-  const navigate = useNavigate();
   // const [staff, setStaff] = useState();
   const staffId = location.state?.staffId;
-  // const { data: staffData, isLoading, error } = useStaffById(studentId);
+  const { data: staffDataArray, isLoading, error } = useStaffById(staffId);
 
   // useEffect(() => {
   //   setStaff(staffData?.data || {});
@@ -30,8 +28,8 @@ export default function StaffProfile() {
   }, [staffId, navigate]);
   // Function to handle tab change
   useEffect(() => {
-    setStadffData(staffDatas?.data || {});
-  }, [staffDatas]);
+    setStaffData(staffDataArray?.data || {});
+  }, [staffDataArray]);
   // Handle missing `state` (e.g., direct URL access)
   useEffect(() => {
     if (!staffId) {
@@ -39,7 +37,7 @@ export default function StaffProfile() {
     }
   }, [staffId, navigate]);
   const onTabChange = (key) => setActiveTab(key);
-  console.log("staffData", staffData);
+  // console.log("staffData", staffData);
 
   // Tab content components
   const tabContentComponents = {
