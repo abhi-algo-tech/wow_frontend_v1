@@ -186,7 +186,7 @@ const StaffOverviewTable = () => {
             )}
           </div>
           <Link
-            to={`/staff-profile/${record.key}`}
+            to="/staff-profile"
             state={{
               staffId: record.key,
               name: record.name,

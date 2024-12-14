@@ -45,7 +45,7 @@ function App() {
           <Route path="/student" element={<Student />} />
           <Route path="/student-profile" element={<StudentProfile />} />
           <Route path="/Staff" element={<Staff />} />
-          <Route path="/staff-profile/:id" element={<StaffProfile />} />
+          <Route path="/staff-profile" element={<StaffProfile />} />
           <Route path="/staff-attendance/:id" element={<StaffAttendance />} />
           <Route path="/schedule" element={<Schedule />} />
           {/* Redirect to default dashboard route */}

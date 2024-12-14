@@ -13,12 +13,21 @@ export default function StaffProfile() {
   const navigate = useNavigate();
   const [staffData, setStadffData] = useState();
   const [activeTab, setActiveTab] = useState("1");
-  // debugger;
+  const location = useLocation();
+  const navigate = useNavigate();
+  // const [staff, setStaff] = useState();
   const staffId = location.state?.staffId;
-  console.log("staffId", staffId);
+  // const { data: staffData, isLoading, error } = useStaffById(studentId);
 
-  // Extract `staffId` from state
-  const { data: staffDatas, isLoading, error } = useStaffById(staffId);
+  // useEffect(() => {
+  //   setStaff(staffData?.data || {});
+  // }, [staffData]);
+  // Handle missing `state` (e.g., direct URL access)
+  useEffect(() => {
+    if (!staffId) {
+      navigate("/"); // Redirect to home or error page
+    }
+  }, [staffId, navigate]);
   // Function to handle tab change
   useEffect(() => {
     setStadffData(staffDatas?.data || {});
@@ -34,7 +43,7 @@ export default function StaffProfile() {
 
   // Tab content components
   const tabContentComponents = {
-    1: <StaffAbout />,
+    1: <StaffAbout staffId={staffId} />,
     2: <StaffImportantDates staffData={staffData} />,
     3: <StaffDocument staffData={staffData} />,
   };
