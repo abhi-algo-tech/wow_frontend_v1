@@ -63,7 +63,7 @@ const Document = ({ studentId }) => {
       title: "Document Type",
       dataIndex: "docTypeName",
       key: "docTypeName",
-      align: "center",
+      align: "left",
       className: "label-14-600",
       render: (text) => <div className="label-14-500">{text}</div>,
     },
@@ -131,7 +131,7 @@ const Document = ({ studentId }) => {
   ];
 
   const handleEditAction = (record) => {
-    console.log("record", record);
+    // console.log("record", record);
     setEditDocumentModalOpen(true);
     setEditSelectedStudentData(record);
   };

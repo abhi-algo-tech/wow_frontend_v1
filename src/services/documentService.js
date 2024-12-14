@@ -58,10 +58,19 @@ const DocumentService = {
       );
       return response.data;
     } catch (error) {
-      console.error(
-        `Error deleting staff member with ID ${documentId}:`,
-        error
+      console.error(`Error deleting document with ID ${documentId}:`, error);
+      throw error;
+    }
+  },
+
+  deleteStaffDocument: async (staffId, documentId) => {
+    try {
+      const response = await axiosInstance.patch(
+        `${API_ENDPOINTS.StaffDOCUMENT.DELETE}?documentId=${documentId}&staffId=${staffId}`
       );
+      return response.data;
+    } catch (error) {
+      console.error(`Error deleting  with ID ${documentId}:`, error);
       throw error;
     }
   },

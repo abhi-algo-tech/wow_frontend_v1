@@ -185,7 +185,14 @@ const StaffOverviewTable = () => {
               />
             )}
           </div>
-          <Link to={`/staff-profile/${record.key}`} style={{ marginLeft: 8 }}>
+          <Link
+            to={`/staff-profile/${record.key}`}
+            state={{
+              staffId: record.key,
+              name: record.name,
+            }}
+            style={{ marginLeft: 8 }}
+          >
             <span className="label-14-500">{text}</span>
           </Link>
         </div>
