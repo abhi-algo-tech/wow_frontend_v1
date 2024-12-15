@@ -162,7 +162,9 @@ const ProfileCardv1 = ({ Id, role }) => {
       </div>
       <Text className={`-profile-name ${nameClass}`}>{title}</Text>
       {role !== "student" && (
-        <Text className={`-profile-role ${nameClass}`}>{role}</Text>
+        <Text className={`-profile-role ${nameClass}`}>
+          {staffData?.data?.designation}
+        </Text>
       )}
       <Text className={`-profile-class ${classroomClass}`}>{classInfo}</Text>
 
