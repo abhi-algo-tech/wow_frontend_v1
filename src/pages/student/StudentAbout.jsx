@@ -22,6 +22,7 @@ import StudentProfileForm from "./StudentProfileForm";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import { useStudentById } from "../../hooks/useStudent";
 import { getInitialsTitleWithColor } from "../../services/common";
+import { formatDate } from "../../utils/commonFormatDate";
 
 const { Text } = Typography;
 const { TabPane } = Tabs;
@@ -46,20 +47,6 @@ const StudentAbout = ({ studentId }) => {
   const date = { month: "Jan", day: 14 };
   const fromClassroom = "1-Blue-D";
   const toClassroom = "2-Green-D";
-
-  const formatDate = (dob) => {
-    const date = new Date(dob);
-    const options = { month: "long", day: "2-digit", year: "numeric" };
-    const formattedDate = date.toLocaleDateString("en-US", options);
-    const now = new Date();
-    let years = now.getFullYear() - date.getFullYear();
-    let months = now.getMonth() - date.getMonth();
-    if (months < 0) {
-      years -= 1;
-      months += 12;
-    }
-    return `${formattedDate} (${years} years ${months} months)`;
-  };
 
   const getRandomColor = () => {
     const colors = [

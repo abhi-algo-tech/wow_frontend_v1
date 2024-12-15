@@ -58,7 +58,7 @@ export default function StaffProfile() {
       <Row className="mt20" gutter={[20, 10]}>
         <Col span={17}>{tabContentComponents[key]}</Col>
         <Col span={7}>
-          <ProfileCardv1 role="staff" />
+          <ProfileCardv1 Id={staffId} role="staff" />
           <div className="mt18">{/* <Events /> */}</div>
         </Col>
       </Row>

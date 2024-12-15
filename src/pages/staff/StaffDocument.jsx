@@ -72,7 +72,7 @@ const StaffDocument = ({ staffData }) => {
       className: "label-14-600",
       render: (record) => (
         <>
-          {record.type === "image" ? (
+          {record.fileType === "image/jpeg" ? (
             <Avatar src="/wow_icons/png/image.png" size={24} />
           ) : (
             <Avatar src="/wow_icons/png/pdf.png" size={24} />

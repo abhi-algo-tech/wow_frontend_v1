@@ -43,6 +43,7 @@ export const API_ENDPOINTS = {
   PHYSICAL_TRACKER: {
     BASE: "/v1/physical-trackers",
     GET_BY_STUDENT: "/v1/physical-trackers/student",
+    GET_BY_STAFF: "/v1/physical-trackers/staff",
   },
   DOCUMENT: {
     BASE: "/v1/documents",

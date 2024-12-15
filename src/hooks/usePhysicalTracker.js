@@ -33,6 +33,22 @@ export const useGetAllPhysicalTrackersByStudent = (studentId) => {
   });
 };
 
+// Fetch all physical trackers by staff
+export const useGetAllPhysicalTrackersByStaff = (staffId) => {
+  return useQuery({
+    queryKey: [physicalTrackerKeys.trackers, "byStaff", staffId],
+    queryFn: () => PhysicalTrackerService.getPhysicalTrackersByStaff(staffId),
+    enabled: Boolean(staffId),
+    refetchOnWindowFocus: false,
+    retry: 3,
+    onError: (error) =>
+      console.error(
+        `Error fetching physical trackers for staff ID ${staffId}:`,
+        error
+      ),
+  });
+};
+
 // Fetch a single physical tracker by ID
 export const usePhysicalTrackerById = (trackerId) => {
   return useQuery({
