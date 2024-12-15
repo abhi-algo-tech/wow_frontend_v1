@@ -137,7 +137,7 @@ function StaffProfileForm({ CardTitle, staffData, closeModal }) {
       jobTag,
     } = values;
 
-    if (!firstName || !lastName || phoneNumber || email) {
+    if (!firstName || !lastName || !phoneNumber || !email) {
       CustomMessage.error("All fields are required!");
       return;
     }
