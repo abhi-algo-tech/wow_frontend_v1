@@ -95,7 +95,6 @@ const StudentOverviewTable = () => {
     setSelectedFilters({});
   };
 
-  console.log("filteredData", filteredData);
   // Clear a specific filter
   const handleClearSingleFilter = (key) => {
     const updatedFilters = { ...selectedFilters };

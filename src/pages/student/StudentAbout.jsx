@@ -116,6 +116,8 @@ const StudentAbout = ({ studentId }) => {
               color={
                 student?.status?.toLowerCase() === "active"
                   ? "success"
+                  : student?.status?.toLowerCase() === "upcoming"
+                  ? "yellow"
                   : "error"
               }
               style={{ padding: "0 8px" }}

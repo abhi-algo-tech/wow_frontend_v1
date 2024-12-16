@@ -154,7 +154,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
       }
     } catch (error) {
       console.error("Error while submitting classroom data:", error);
-      // CustomMessage.error("Something went wrong. Please try again.");
+      CustomMessage.error("Failed to create Classroom");
     }
   };
 

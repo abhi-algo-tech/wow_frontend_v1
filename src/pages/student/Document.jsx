@@ -92,7 +92,7 @@ const Document = ({ studentId }) => {
 
         return (
           <div onClick={handleDownload} style={{ cursor: "pointer" }}>
-            {record.fileType === "image/png" ? (
+            {record.fileType === "image/jpeg" ? (
               <Avatar src="/wow_icons/png/image.png" size={24} />
             ) : (
               <Avatar src="/wow_icons/png/pdf.png" size={24} />
