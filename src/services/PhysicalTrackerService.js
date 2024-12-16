@@ -44,6 +44,21 @@ const PhysicalTrackerService = {
     }
   },
 
+  getPhysicalTrackersByStaff: async (staffId) => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.PHYSICAL_TRACKER.GET_BY_STAFF}/${staffId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        `Error fetching physical trackers for staff ID ${staffId}:`,
+        error
+      );
+      throw error;
+    }
+  },
+
   createPhysicalTracker: async (trackerData) => {
     try {
       const response = await axiosInstance.post(

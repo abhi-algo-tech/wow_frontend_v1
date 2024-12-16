@@ -10,6 +10,7 @@ import {
 } from "../../hooks/useStaff";
 import { CustomMessage } from "../../utils/CustomMessage";
 import { useSession } from "../../hooks/useSession";
+import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 
 const { Option } = Select;
 
@@ -29,7 +30,22 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
   const { data: staffData } = useStaffById(staffId);
   const createStudentMutation = useCreateStaff();
   const updateStudentMutation = useUpdateStaff();
+  const { data: statusData } = useMasterLookupsByType("status");
+  const { data: designationData } = useMasterLookupsByType("designation");
   const isEdit = Boolean(staffId);
+
+  const statusOptions = {
+    items: statusData?.data?.map((status) => ({
+      key: status.id, // Convert id to string as keys are typically strings
+      label: status.name, // Use the name property for the label
+    })),
+  };
+  const designationOptions = {
+    items: designationData?.data?.map((designation) => ({
+      key: designation.id, // Convert id to string as keys are typically strings
+      label: designation.name, // Use the name property for the label
+    })),
+  };
 
   useEffect(() => {
     if (staffData) {
@@ -42,12 +58,12 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
         lastName: staffData.data.lastName,
         email: staffData.data.email,
         phoneNumber: staffData.data.phoneNumber,
-        designation: staffData.data.designation,
+        designation: staffData.data.designationId,
         allowedClassrooms: staffData.data.classrooms.map(
           (classroom) => classroom.id
         ),
         primaryClassroom: primaryClassroom ? primaryClassroom.id : undefined,
-        status: staffData.data.status,
+        status: staffData.data.statusId,
       });
       setSelectedAllowedClassrooms(
         staffData.data.classrooms.map((classroom) => classroom.id)
@@ -77,9 +93,10 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
     formData.append("lastName", lastName);
     formData.append("email", email);
     formData.append("phoneNumber", phoneNumber);
-    formData.append("designation", designation);
+    formData.append("designationId", designation);
     formData.append("primaryRoomId", primaryClassroom);
-    formData.append("status", status);
+    formData.append("statusId", status);
+    formData.append("schoolId", academyId);
 
     // Add allowedClassrooms as classroomIds[]
     allowedClassrooms.forEach((classroomId, index) => {
@@ -233,9 +250,11 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
                   className="select-student-add-from"
                   placeholder="Select"
                 >
-                  <Option value="select">Select</Option>
-                  <Option value="Admin">Admin</Option>
-                  <Option value="Staff">Staff</Option>
+                  {designationOptions?.items?.map((designation) => (
+                    <Option key={designation.key} value={designation.key}>
+                      {designation.label}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>
@@ -329,9 +348,11 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
                   className="select-student-add-from"
                   placeholder="Select"
                 >
-                  <Option value="select">Select</Option>
-                  <Option value="Active">Active</Option>
-                  <Option value="Deactive">Deactive</Option>
+                  {statusOptions?.items?.map((status) => (
+                    <Option key={status.key} value={status.key}>
+                      {status.label}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>

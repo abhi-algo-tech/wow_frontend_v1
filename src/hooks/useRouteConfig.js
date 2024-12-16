@@ -6,6 +6,7 @@ const routesConfig = {
   "/staff": "Staffs",
   "/classroom-profile": "Classroom  > Overview ",
   "/student-profile": "Student",
+  "/staff-profile": "Staff > Overview",
   "/student": "Students",
   "/students/create": "Create Student",
   "/students/profile": "View Profile",

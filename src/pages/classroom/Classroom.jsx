@@ -40,7 +40,7 @@ export default function Classroom() {
   useEffect(() => {
     const handleStorageChange = () => {
       const updatedAcademyId = sessionStorage.getItem("selectedAcademy");
-      setAcademyId(updatedAcademyId);
+      // setAcademyId(updatedAcademyId);
     };
 
     window.addEventListener("storage", handleStorageChange);

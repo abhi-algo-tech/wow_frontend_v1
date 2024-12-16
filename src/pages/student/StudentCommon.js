@@ -147,7 +147,8 @@ export const generateStudentData = (apiData) => {
     //   days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
     //   active: ["Mon", "Wed", "Fri"],
     // },
-    birthdate: item.birthdate || formatDate(getRandomDate(2010, 2024)),
+    // birthdate: item.birthdate || formatDate(getRandomDate(2010, 2024)),
+    birthdate: item.dateOfBirth,
     movementDate: item.movementDate || formatDate(getMovementDate()),
     upcoming: item?.status.toLowerCase() === "upcoming" ? item?.status : "", // Default to false if no upcoming property is provided
     // upcoming: generateRandomUpcoming(), // Default to false if no upcoming property is provided

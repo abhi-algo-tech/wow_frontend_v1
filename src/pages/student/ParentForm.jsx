@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
 import { useCreateGuardian, useUpdateGuardian } from "../../hooks/useStudent";
 import { CustomMessage } from "../../utils/CustomMessage";
+import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 
 const { Option } = Select;
 
@@ -15,8 +16,16 @@ function ParentForm({
   const [form] = Form.useForm();
   const createGaurdianMutation = useCreateGuardian();
   const updateGaurdianMutation = useUpdateGuardian();
+  const { data: relationData } = useMasterLookupsByType("parent");
   const [emergencyContact, setEmergencyContact] = useState(false);
   const isEdit = Boolean(selectedGaurdianData?.gurdianId);
+
+  const relationOptions = {
+    items: relationData?.data?.map((relation) => ({
+      key: relation.id, // Convert id to string as keys are typically strings
+      label: relation.name, // Use the name property for the label
+    })),
+  };
 
   useEffect(() => {
     if (selectedGaurdianData) {
@@ -25,7 +34,7 @@ function ParentForm({
         lastName: selectedGaurdianData?.gurdianLastName,
         email: selectedGaurdianData?.email,
         phoneNumber: selectedGaurdianData?.phoneNumber,
-        relation: selectedGaurdianData?.relation,
+        relation: selectedGaurdianData?.relationId,
         isEmergencyContact: selectedGaurdianData?.isEmergencyContact,
       });
     }
@@ -51,7 +60,7 @@ function ParentForm({
     formData.append("email", email);
     formData.append("phoneNumber", phoneNumber);
     formData.append("inviteFlag", "true");
-    formData.append("relation", relation);
+    formData.append("relationId", relation);
     formData.append("isEmergency", emergencyContact);
     if (isEdit) {
       updateGaurdianMutation.mutate(
@@ -114,7 +123,20 @@ function ParentForm({
               <Form.Item
                 name="firstName"
                 rules={[
-                  { required: true, message: "Please input the first name!" },
+                  { required: true, message: "Please input the first name!" }, // Required field rule
+                  {
+                    pattern: /^[A-Za-z\s]*$/, // Regex to allow only alphabets and spaces
+                    message:
+                      "First name can only contain alphabets and spaces!",
+                  },
+                  {
+                    validator: (_, value) =>
+                      value && value.trim().length < 3
+                        ? Promise.reject(
+                            "First name must be at least 3 characters!"
+                          )
+                        : Promise.resolve(),
+                  },
                 ]}
               >
                 <Input
@@ -131,7 +153,19 @@ function ParentForm({
               <Form.Item
                 name="lastName"
                 rules={[
-                  { required: true, message: "Please input the last name!" },
+                  { required: true, message: "Please input the Last name!" }, // Required field rule
+                  {
+                    pattern: /^[A-Za-z\s]*$/, // Regex to allow only alphabets and spaces
+                    message: "Last name can only contain alphabets and spaces!",
+                  },
+                  {
+                    validator: (_, value) =>
+                      value && value.trim().length < 3
+                        ? Promise.reject(
+                            "Last name must be at least 3 characters!"
+                          )
+                        : Promise.resolve(),
+                  },
                 ]}
               >
                 <Input
@@ -195,12 +229,11 @@ function ParentForm({
                   className="select-student-add-from"
                   placeholder="Select"
                 >
-                  <Option value="select">Select</Option>
-                  <Option value="Father">Father</Option>
-                  <Option value="Mother">Mother</Option>
-                  <Option value="Grandfather">Grandfather</Option>
-                  <Option value="Grandmother">Grandmother</Option>
-                  <Option value="Other">Other</Option>
+                  {relationOptions?.items?.map((custody) => (
+                    <Option key={custody.key} value={custody.key}>
+                      {custody.label}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>

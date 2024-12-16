@@ -9,29 +9,109 @@ import {
 import CustomDatePicker from "../../components/CustomDatePicker";
 import MultiSelectComponent from "../../components/multiSelect/MultiSelectComponent";
 import { CustomMessage } from "../../utils/CustomMessage";
+import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
+import { useGetClassroomsBySchool } from "../../hooks/useClassroom";
+import { useSession } from "../../hooks/useSession";
+import MultiSelectWithTags from "../../components/select/MultiSelectWithTags";
+import { useGetAllCountries } from "../../hooks/useCountry";
+import { useGetAllStates } from "../../hooks/useState";
+import { useGetAllCities } from "../../hooks/useCity";
+import { useCreateStaff, useUpdateStaff } from "../../hooks/useStaff";
 
 const { Option } = Select;
 
-function StaffProfileForm({ CardTitle, studentId, closeModal }) {
+function StaffProfileForm({ CardTitle, staffData, closeModal }) {
+  const { academyId } = useSession();
   const [form] = Form.useForm();
   const [selectedTags, setSelectedTags] = useState([]);
-  const [selectedClassrooms, setSelectedClassrooms] = useState([]);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedAllowedClassrooms, setSelectedAllowedClassrooms] = useState(
+    []
+  );
 
-  const { data: parentData } = useStudentById(studentId);
-  const createStudentMutation = useCreateStudent();
-  const updateStudentMutation = useUpdateStudent();
-  const isEdit = Boolean(studentId);
+  const {
+    data: classroomData,
+    isLoading,
+    isError,
+    error,
+  } = useGetClassroomsBySchool(academyId);
+  const { data: statusData } = useMasterLookupsByType("status");
+  const { data: designationData } = useMasterLookupsByType("designation");
+  const { data: jobTagData } = useMasterLookupsByType("job_tag");
+  const { data: countries } = useGetAllCountries();
+  const { data: states } = useGetAllStates();
+  const { data: cities } = useGetAllCities();
+  const createStaffMutation = useCreateStaff();
+  const updateStaffMutation = useUpdateStaff();
+  const isEdit = Boolean(staffData.id);
+
+  const statusOptions = {
+    items: statusData?.data?.map((status) => ({
+      key: status.id, // Convert id to string as keys are typically strings
+      label: status.name, // Use the name property for the label
+    })),
+  };
+  const designationOptions = {
+    items: designationData?.data?.map((designation) => ({
+      key: designation.id, // Convert id to string as keys are typically strings
+      label: designation.name, // Use the name property for the label
+    })),
+  };
+  const jobTagOptions = {
+    items: jobTagData?.data?.map((jobTag) => ({
+      key: jobTag.id, // Convert id to string as keys are typically strings
+      label: jobTag.name, // Use the name property for the label
+    })),
+  };
+  const counntryOptions = {
+    items: countries?.data?.map((country) => ({
+      key: country.id, // Convert id to string as keys are typically strings
+      label: country.name, // Use the name property for the label
+    })),
+  };
+  const stateOptions = {
+    items: states?.data?.map((state) => ({
+      key: state.id, // Convert id to string as keys are typically strings
+      label: state.name, // Use the name property for the label
+    })),
+  };
+  const cityOptions = {
+    items: cities?.data?.map((city) => ({
+      key: city.id, // Convert id to string as keys are typically strings
+      label: city.name, // Use the name property for the label
+    })),
+  };
 
   useEffect(() => {
-    if (parentData) {
+    if (staffData) {
+      const primaryClassroom = staffData?.classrooms.find(
+        (classroom) => classroom.id === staffData?.primaryRoomId
+      );
+      setSelectedDate(staffData?.dateOfBirth);
       form.setFieldsValue({
-        firstName: parentData.data.firstName,
-        lastName: parentData.data.lastName,
-        phoneNumber: parentData.data.phoneNumber,
-        relation: parentData.data.relation,
+        firstName: staffData?.firstName,
+        lastName: staffData?.lastName,
+        status: staffData?.statusId,
+        phoneNumber: staffData?.phoneNumber,
+        designation: staffData?.designationId,
+        birthDate: staffData?.dateOfBirth,
+        email: staffData?.email,
+        street: staffData?.street,
+        allowedClassrooms: staffData?.classrooms?.map(
+          (classroom) => classroom.id
+        ),
+        primaryClassroom: primaryClassroom ? primaryClassroom.id : undefined,
+        city: staffData?.city?.id,
+        state: staffData?.state?.id,
+        country: staffData?.country?.id,
+        zipCode: staffData?.zipCode,
+        jobTag: staffData?.jobTag?.id,
       });
+      setSelectedAllowedClassrooms(
+        staffData?.classrooms?.map((classroom) => classroom.id)
+      );
     }
-  }, [parentData, form]);
+  }, [staffData, form]);
 
   const handleTagChange = (value) => {
     setSelectedTags(value);
@@ -39,9 +119,25 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
   //   console.log("selectedClassrooms", selectedClassrooms);
 
   const handleSubmit = (values) => {
-    const { firstName, lastName, relation, phoneNumber } = values;
+    const {
+      firstName,
+      lastName,
+      phoneNumber,
+      designation,
+      primaryClassroom,
+      status,
+      email,
+      allowedClassrooms,
+      birthDate,
+      street,
+      city,
+      state,
+      country,
+      zipCode,
+      jobTag,
+    } = values;
 
-    if (!firstName || !lastName) {
+    if (!firstName || !lastName || !phoneNumber || !email) {
       CustomMessage.error("All fields are required!");
       return;
     }
@@ -50,32 +146,46 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
     formData.append("phoneNumber", phoneNumber);
-    formData.append("relation", relation);
+    formData.append("designationId", designation);
+    formData.append("primaryRoomId", primaryClassroom);
+    formData.append("statusId", status);
+    formData.append("dateOfBirth", birthDate);
+    formData.append("email", email);
+    formData.append("street", street);
+    // Add allowedClassrooms as classroomIds[]
+    allowedClassrooms.forEach((classroomId, index) => {
+      formData.append(`classroomIds[]`, classroomId);
+    });
+    formData.append("cityId", city);
+    formData.append("stateId", state);
+    formData.append("countryId", country);
+    formData.append("zipCode", zipCode);
+    formData.append("jobTagId", jobTag);
 
     if (isEdit) {
-      updateStudentMutation.mutate(
+      updateStaffMutation.mutate(
         {
-          studentId,
-          parentData: formData,
+          staffId: staffData.id, // Use staffId instead of studentId
+          staffData: formData,
         },
         {
           onSuccess: () => {
-            CustomMessage.success("Student updated successfully!");
+            CustomMessage.success("Staff updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            CustomMessage.error(`Failed to update student: ${error.message}`);
+            CustomMessage.error(`Failed to update staff: ${error.message}`);
           },
         }
       );
     } else {
-      createStudentMutation.mutate(formData, {
+      createStaffMutation.mutate(formData, {
         onSuccess: () => {
-          CustomMessage.success("Student created successfully!");
+          CustomMessage.success("Staff created successfully!");
           closeModal();
         },
         onError: (error) => {
-          CustomMessage.error(`Failed to create student: ${error.message}`);
+          CustomMessage.error(`Failed to create staff: ${error.message}`);
         },
       });
     }
@@ -147,9 +257,11 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
                   className="select-student-add-from"
                   placeholder="Select"
                 >
-                  <Option value="select">Select</Option>
-                  <Option value="1">Active</Option>
-                  <Option value="2">Inactive</Option>
+                  {statusOptions?.items?.map((status) => (
+                    <Option key={status.key} value={status.key}>
+                      {status.label}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>
@@ -163,10 +275,11 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
                   placeholder="Select"
                   defaultActiveFirstOption={1}
                 >
-                  <Option value="select">Select</Option>
-                  <Option value="1">Admin</Option>
-                  <Option value="2">Lead Teacher</Option>
-                  <Option value="2">Staff</Option>
+                  {designationOptions?.items?.map((designation) => (
+                    <Option key={designation.key} value={designation.key}>
+                      {designation.label}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>
@@ -175,7 +288,7 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
                 Allowed Classrooms<span className="text-danger"> *</span>
               </div>
               <Form.Item
-                name="allowedClassroom"
+                name="allowedClassrooms"
                 rules={[
                   {
                     required: true,
@@ -183,8 +296,21 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
                   },
                 ]}
               >
-                <MultiSelectComponent
-                  setSelectedClassrooms={setSelectedClassrooms}
+                <MultiSelectWithTags
+                  value={selectedAllowedClassrooms}
+                  onChange={handleTagChange}
+                  name="allowedClassrooms"
+                  options={
+                    !isLoading &&
+                    classroomData?.data
+                      ?.sort((a, b) => a.name.localeCompare(b.name)) // Sort classrooms by name in ascending order
+                      .map((classroom) => ({
+                        label: classroom.name,
+                        value: classroom.id,
+                      }))
+                  }
+                  loading={isLoading}
+                  placeholder="Select"
                 />
               </Form.Item>
             </div>
@@ -202,16 +328,28 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
                 ]}
               >
                 <Select
-                  className="select-student-add-form"
+                  className="select-student-add-from"
                   placeholder="Select"
-                  defaultActiveFirstOption={true} // Correct usage
+                  disabled={selectedAllowedClassrooms.length === 0} // Disable until at least one Allowed Classroom is selected
                 >
-                  <Option value="select">Select</Option>
-                  {selectedClassrooms.map((classroom, i) => (
-                    <Option key={i} value={classroom.id}>
-                      {classroom.label}
-                    </Option>
-                  ))}
+                  {selectedAllowedClassrooms
+                    .sort((a, b) =>
+                      classroomData?.data
+                        ?.find((c) => c.id === a)
+                        ?.name.localeCompare(
+                          classroomData?.data?.find((c) => c.id === b)?.name
+                        )
+                    ) // Sort based on classroom names
+                    .map((id) => {
+                      const classroom = classroomData?.data?.find(
+                        (c) => c.id === id
+                      );
+                      return (
+                        <Option key={id} value={id}>
+                          {classroom?.name}
+                        </Option>
+                      );
+                    })}
                 </Select>
               </Form.Item>
             </div>
@@ -220,7 +358,17 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
                 Birthdate
               </div>
 
-              <CustomDatePicker name="birthDate" />
+              <Form.Item
+                name="birthDate"
+                rules={[{ required: true, message: "Please select birthDate" }]}
+              >
+                <CustomDatePicker
+                  name="birthDate"
+                  value={selectedDate}
+                  onChange={setSelectedDate}
+                  required
+                />
+              </Form.Item>
             </div>
             <div className="col-6">
               <div className=" items-center gap-1 student-label ">
@@ -233,11 +381,16 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
                     required: true,
                     message: "Please input the Email!",
                   },
+                  {
+                    type: "email",
+                    message: "The input is not a valid email!",
+                  },
                 ]}
               >
                 <Input
                   placeholder="e.g. Jessica@wowcare.com"
                   className="w-100 student-form-input"
+                  type="email"
                 />
               </Form.Item>
             </div>
@@ -246,7 +399,7 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
                 Phone Number<span className="text-danger"> *</span>
               </div>
               <Form.Item
-                name="email"
+                name="phoneNumber"
                 rules={[
                   {
                     required: true,
@@ -254,9 +407,17 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
                   },
                 ]}
               >
-                <InputNumber
-                  placeholder="e.g. (986) 027-1627"
+                <Input
+                  placeholder="E.g. (000) 000-0000"
                   className="w-100 student-form-input"
+                  type="text"
+                  maxLength={10}
+                  minLength={10}
+                  onKeyPress={(event) => {
+                    if (!/^[0-9]$/.test(event.key)) {
+                      event.preventDefault(); // Prevent non-numeric characters
+                    }
+                  }}
                 />
               </Form.Item>
             </div>
@@ -296,10 +457,17 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
                   },
                 ]}
               >
-                <Input
-                  placeholder="e.g. Report Card"
-                  className="w-100 student-form-input"
-                />
+                <Select
+                  className="select-student-add-from"
+                  placeholder="Select"
+                  value={staffData?.city}
+                >
+                  {cityOptions.items?.map((city) => (
+                    <Option key={city.key} value={city.key}>
+                      {city.label}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
             </div>
 
@@ -321,9 +489,11 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
                   className="select-student-add-from"
                   placeholder="Select"
                 >
-                  <Option value="select">Select</Option>
-                  <Option value="1">test</Option>
-                  <Option value="2">demo</Option>
+                  {stateOptions.items?.map((state) => (
+                    <Option key={state.key} value={state.key}>
+                      {state.label}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>
@@ -346,9 +516,11 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
                   className="select-student-add-from"
                   placeholder="Select"
                 >
-                  <Option value="select">Select</Option>
-                  <Option value="1">India</Option>
-                  <Option value="2">USA</Option>
+                  {counntryOptions.items?.map((country) => (
+                    <Option key={country.key} value={country.key}>
+                      {country.label}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>
@@ -370,6 +542,14 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
                 <Input
                   placeholder="e.g. Report Card"
                   className="w-100 student-form-input"
+                  type="text"
+                  maxLength={5}
+                  minLength={5}
+                  onKeyPress={(event) => {
+                    if (!/^[0-9]$/.test(event.key)) {
+                      event.preventDefault(); // Prevent non-numeric characters
+                    }
+                  }}
                 />
               </Form.Item>
             </div>
@@ -377,13 +557,16 @@ function StaffProfileForm({ CardTitle, studentId, closeModal }) {
               <div className=" items-center gap-1 student-label ">Job Tag</div>
               <Form.Item name="jobTag">
                 <Select
-                  className="select-student-add-form"
+                  // className="select-student-add-form"
+                  className="select-student-add-from"
                   placeholder="Select"
-                  defaultActiveFirstOption={true} // Correct usage
+                  // defaultActiveFirstOption={true} // Correct usage
                 >
-                  <Option value="select">Select</Option>
-                  <Option value="1">Full Time</Option>
-                  <Option value="2">Half Day</Option>
+                  {jobTagOptions.items?.map((jobTag) => (
+                    <Option key={jobTag.key} value={jobTag.key}>
+                      {jobTag.label}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>

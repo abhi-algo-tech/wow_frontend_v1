@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useStudentById } from "../../hooks/useStudent";
 import { getInitialsTitleWithColor } from "../../services/common";
 import { formatStudentDataForCard } from "../classroom/ClassroomCommon";
+import { useStaffById } from "../../hooks/useStaff";
 
 const { Text } = Typography;
 const tooltipConfig = {
@@ -49,13 +50,15 @@ const tooltipConfig = {
 
 // const flagsConfig = ["Notes", "no-photo", "Dietary-Restrictions", "Allergies"];
 
-const ProfileCardv1 = ({ studentId, role = "student" }) => {
+const ProfileCardv1 = ({ Id, role }) => {
   const tooltipItems = tooltipConfig[role.toLowerCase()] || [];
   const [flagsConfig, setFlagsConfig] = useState([]);
+  const [room, setRoom] = useState();
 
   const flags = flagsConfig;
 
-  const { data: studentData, isLoading, error } = useStudentById(studentId);
+  const { data: studentData, isLoading, error } = useStudentById(Id);
+  const { data: staffData } = useStaffById(Id);
 
   useEffect(() => {
     if (studentData) {
@@ -64,6 +67,16 @@ const ProfileCardv1 = ({ studentId, role = "student" }) => {
       setFlagsConfig(formattedData);
     }
   }, [studentData]);
+
+  useEffect(() => {
+    const primaryRoom = staffData?.data?.classrooms?.find(
+      (classroom) => classroom.id === staffData?.data?.primaryRoomId
+    );
+
+    // Set the primary room, or null if not found
+    setRoom(primaryRoom || null);
+  }, [staffData]);
+
   const profileDetails = {
     student: {
       imgSrc: studentData?.data?.profileUrl,
@@ -84,9 +97,20 @@ const ProfileCardv1 = ({ studentId, role = "student" }) => {
       classroomClass: "mb10",
     },
     staff: {
-      imgSrc: "/wow_images/staff.png",
-      title: "Jessica Rhodes",
-      classInfo: "1-Blue-D",
+      imgSrc: staffData?.data?.profileUrl,
+      title: `${
+        staffData?.data?.firstName
+          ? staffData.data.firstName.charAt(0).toUpperCase() +
+            staffData.data.firstName.slice(1)
+          : ""
+      } ${
+        staffData?.data?.lastName
+          ? staffData.data.lastName.charAt(0).toUpperCase() +
+            staffData.data.lastName.slice(1)
+          : ""
+      }`.trim(),
+      classInfo: room?.name,
+      status: staffData?.data?.status?.toLowerCase(),
       nameClass: "mb6",
       classroomClass: "mb20",
     },
@@ -158,7 +182,9 @@ const ProfileCardv1 = ({ studentId, role = "student" }) => {
 
       <Text className={`-profile-name ${nameClass}`}>{title}</Text>
       {role !== "student" && (
-        <Text className={`-profile-role ${nameClass}`}>{role}</Text>
+        <Text className={`-profile-role ${nameClass}`}>
+          {staffData?.data?.designation}
+        </Text>
       )}
       <Text className={`-profile-class ${classroomClass}`}>{classInfo}</Text>
 

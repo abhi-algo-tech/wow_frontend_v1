@@ -12,6 +12,7 @@ const { Option } = Select;
 function StaffDocumentForm({ CardTitle, staffId, closeModal, staffData }) {
   console.log("staffData", staffData);
   const [staffDocumentData, setStaffDocumentData] = useState(staffData);
+  const [isUploaded, setUploaded] = useState(false);
 
   const [form] = Form.useForm();
   const {
@@ -66,14 +67,15 @@ function StaffDocumentForm({ CardTitle, staffId, closeModal, staffData }) {
     formData.append("docTypeId", values.documentType);
     formData.append("expiryDate", values.expiryDate);
     formData.append("contentType", "staff");
-    const fileBlob = form.getFieldValue("uploadDocument");
-    if (fileBlob) {
-      formData.append("documentFile", fileBlob, fileBlob.name);
-    } else {
-      CustomMessage.error("Please upload a valid file!");
-      return;
+    if (isUploaded) {
+      const fileBlob = form.getFieldValue("uploadDocument");
+      if (fileBlob) {
+        formData.append("documentFile", fileBlob, fileBlob.name);
+      } else {
+        CustomMessage.error("Please upload a valid file!");
+        return;
+      }
     }
-
     formData.append("staffId", staffId || staffData?.id);
 
     if (isEdit) {
@@ -102,6 +104,7 @@ function StaffDocumentForm({ CardTitle, staffId, closeModal, staffData }) {
   };
   const handleFileBlob = (blob) => {
     form.setFieldsValue({ uploadDocument: blob });
+    setUploaded(true);
   };
 
   return (

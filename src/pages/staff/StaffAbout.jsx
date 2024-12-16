@@ -7,6 +7,7 @@ import StaffProfileForm from "./StaffProfileForm";
 import TimePickerComponent from "../../components/timePicker/TimePickerComponent";
 import StaffScheduleForm from "./StaffSchedulingForm";
 import { useStaffById } from "../../hooks/useStaff";
+import { formatDate } from "../../utils/commonFormatDate";
 const { Text } = Typography;
 
 const LabelCol = ({ children }) => (
@@ -21,12 +22,36 @@ const StaffAbout = ({ staffId }) => {
   const [isAboutModalOpen, setAboutModalOpen] = useState(false);
   const [isAboutScheduleModalOpen, setAboutScheduleModalOpen] = useState(false);
   const [staff, setStaff] = useState();
+  const [room, setRoom] = useState();
   const { data: staffData, isLoading, error } = useStaffById(staffId);
 
+  // Array of colors for tags
+  const tagColors = [
+    "purple",
+    "cyan",
+    "green",
+    "blue",
+    "magenta",
+    "volcano",
+    "orange",
+    "gold",
+    "lime",
+  ];
+
+  // Function to get a random color
+  const getRandomColor = () =>
+    tagColors[Math.floor(Math.random() * tagColors.length)];
+
   useEffect(() => {
-    console.log("staffData:", staffData);
     setStaff(staffData?.data || {});
+    const primaryRoom = staffData?.data?.classrooms?.find(
+      (classroom) => classroom.id === staffData?.data?.primaryRoomId
+    );
+
+    // Set the primary room, or null if not found
+    setRoom(primaryRoom || null);
   }, [staffData]);
+
   return (
     <>
       <div className="padding30 staff-about-container">
@@ -74,7 +99,11 @@ const StaffAbout = ({ staffId }) => {
             </Tag> */}
             <Tag
               color={
-                staff?.status?.toLowerCase() === "active" ? "success" : "error"
+                staff?.status?.toLowerCase() === "active"
+                  ? "success"
+                  : staff?.status?.toLowerCase() === "upcoming"
+                  ? "yellow"
+                  : "error"
               }
               style={{ padding: "0 8px" }}
             >
@@ -111,27 +140,21 @@ const StaffAbout = ({ staffId }) => {
 
           <LabelCol>Allowed Classrooms</LabelCol>
           <ContentCol>
-            <Tag className="no-border-tag" color="purple">
-              Office
-            </Tag>
-            <Tag className="no-border-tag" color="cyan">
-              Blue
-            </Tag>
-            <Tag className="no-border-tag" color="green">
-              3-Orange-D
-            </Tag>
-            <Tag className="no-border-tag" color="purple">
-              5-Purpule-D
-            </Tag>
-            <Tag className="no-border-tag" color="blue">
-              6-Purpule-D
-            </Tag>
+            {staff?.classrooms?.map((classroom) => (
+              <Tag
+                key={classroom.id}
+                className="no-border-tag"
+                color={getRandomColor()}
+              >
+                {classroom.name}
+              </Tag>
+            ))}
           </ContentCol>
 
           <LabelCol>Primary Classroom</LabelCol>
           <ContentCol>
-            <Tag className="no-border-tag" color="purple">
-              Office
+            <Tag className="no-border-tag" color={getRandomColor()}>
+              {room?.name}
             </Tag>
           </ContentCol>
 
@@ -170,11 +193,15 @@ const StaffAbout = ({ staffId }) => {
 
           <LabelCol>Birth Date</LabelCol>
           <ContentCol>
-            <Text className="student-about-tab-label-value">Oct 14, 2020</Text>
+            <Text className="student-about-tab-label-value">
+              {staff?.dateOfBirth && formatDate(staff.dateOfBirth)}
+            </Text>
           </ContentCol>
           <LabelCol>Job Tag</LabelCol>
           <ContentCol>
-            <Text className="student-about-tab-label-value">Full Time</Text>
+            <Text className="student-about-tab-label-value">
+              {staff?.jobTag?.name}
+            </Text>
           </ContentCol>
         </Row>
         <Row className="mt22">
@@ -239,7 +266,7 @@ const StaffAbout = ({ staffId }) => {
         >
           <StaffProfileForm
             CardTitle={"Edit  Profile Details"}
-            classroomId={null}
+            staffData={staff}
             closeModal={() => setAboutModalOpen(false)}
           />
         </CommonModalComponent>

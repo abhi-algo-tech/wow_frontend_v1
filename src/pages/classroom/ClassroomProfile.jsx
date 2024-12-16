@@ -176,8 +176,8 @@ function ClassroomProfile() {
                     Capacity: {currentClassroomData?.data?.maxCapacity}
                   </Text>
                   <Text className="font-12-details">
-                    Required: {currentClassroomData?.data?.maxCapacity}:
-                    {currentClassroomData?.data?.staffRatio}{" "}
+                    Required:
+                    {currentClassroomData?.data?.staffRatio}: 1{" "}
                     <Avatar
                       src="/classroom_icons/png/thumb_up.png"
                       className="classroom-table-thumb"
