@@ -1,18 +1,27 @@
 import React from "react";
-import { Alert, Flex, Spin } from "antd";
-const contentStyle = {
-  padding: 50,
-  background: "rgba(0, 0, 0, 0.05)",
-  borderRadius: 4,
-};
-const content = <div style={contentStyle} />;
+import { Spin } from "antd";
+
 const LoaderComponent = ({ isLoading, size = "default" }) => {
-  // if (!isLoading) return null; // Render nothing if not loading
+  console.log("isLoading", isLoading);
+
+  if (!isLoading) return null; // Render nothing if not loading
 
   return (
-    <Flex gap="middle" direction="vertical" align="center" justify="center">
+    <div
+      style={{
+        position: "absolute", // Make sure the div takes full screen
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "auto", // Optional background
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center", // Center spinner both horizontally and vertically
+      }}
+    >
       <Spin tip="Loading..." size={size} />
-    </Flex>
+    </div>
   );
 };
 

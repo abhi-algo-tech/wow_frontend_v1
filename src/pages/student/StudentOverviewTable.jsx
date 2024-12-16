@@ -40,6 +40,7 @@ const StudentOverviewTable = () => {
   const [filteredData, setFilteredData] = useState([]);
   // const [showInactive, setShowInactive] = useState(false);
   const [showActive, setShowActive] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const { data: students, isLoading, isError, error } = useGetAllStudents();
   const updateStudentMutation = useUpdateStudent();
 
@@ -95,7 +96,7 @@ const StudentOverviewTable = () => {
     setSelectedFilters({});
   };
 
-  console.log("filteredData", filteredData);
+  // console.log("filteredData", filteredData);
   // Clear a specific filter
   const handleClearSingleFilter = (key) => {
     const updatedFilters = { ...selectedFilters };
@@ -127,6 +128,20 @@ const StudentOverviewTable = () => {
       CustomMessage.error(`Failed to delete student: ${error.message}`);
       setDeleteModalOpen(false);
     }
+  };
+
+  // Filter the data based on the search query
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    // Filter the data based on the query
+    const filtered = data.filter((student) =>
+      student.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // Update the filtered data
+    setFilteredData(filtered);
   };
 
   const columns = [
@@ -340,6 +355,7 @@ const StudentOverviewTable = () => {
                 placeholder="Search by Students/Parent"
                 prefix={<SearchOutlined style={{ color: "#a0aec0" }} />}
                 style={{ minWidth: "240px", height: 40 }}
+                onChange={handleSearchChange}
               />
               <Space>
                 <Avatar

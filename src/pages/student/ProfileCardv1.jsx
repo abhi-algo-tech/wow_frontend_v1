@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Card, Avatar, Typography, Space, Tooltip } from "antd";
+import { Card, Avatar, Typography, Space, Tooltip, Upload } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useStudentById } from "../../hooks/useStudent";
 import { getInitialsTitleWithColor } from "../../services/common";
@@ -93,7 +94,14 @@ const ProfileCardv1 = ({ studentId, role = "student" }) => {
 
   const { imgSrc, title, classInfo, nameClass, classroomClass, status } =
     profileDetails[role.toLowerCase()] || {};
-
+  // Handle file upload
+  const handleFileChange = (info) => {
+    if (info.file.status === "done") {
+      // Generate a URL for the uploaded file
+      const fileUrl = URL.createObjectURL(info.file.originFileObj);
+      setImage(fileUrl);
+    }
+  };
   return (
     <Card
       bordered={false}
@@ -104,7 +112,7 @@ const ProfileCardv1 = ({ studentId, role = "student" }) => {
       }}
       styles={{ body: { padding: "24px 0px 0px 0" } }}
     >
-      <div className={`position-relative d-inline-block mr8`}>
+      <div className="position-relative d-inline-block mr8 avatar-container">
         <Avatar
           size={100}
           src={imgSrc || undefined}
@@ -135,7 +143,19 @@ const ProfileCardv1 = ({ studentId, role = "student" }) => {
               : {}
           }
         />
+        {/* Pencil icon with Upload */}
+        <Upload
+          showUploadList={false}
+          accept="image/*"
+          beforeUpload={() => false} // Prevent automatic upload
+          onChange={handleFileChange}
+        >
+          <div className="edit-icon">
+            <img src="/wow_icons/png/edit-white.png" className="size-40" />
+          </div>
+        </Upload>
       </div>
+
       <Text className={`-profile-name ${nameClass}`}>{title}</Text>
       {role !== "student" && (
         <Text className={`-profile-role ${nameClass}`}>{role}</Text>

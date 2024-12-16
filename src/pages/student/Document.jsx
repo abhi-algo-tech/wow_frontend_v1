@@ -7,6 +7,7 @@ import DocumentForm from "./DocumentForm";
 import DeletePopUp from "../../components/DeletePopUp";
 import { useDeleteDocument } from "../../hooks/useDocument";
 import { useStudentById } from "../../hooks/useStudent";
+import FileDownload from "react-file-download";
 
 // const data = [
 //   {
@@ -81,18 +82,16 @@ const Document = ({ studentId }) => {
       align: "center",
       className: "label-14-600",
       render: (record) => {
-        const handleDownload = () => {
-          const link = document.createElement("a");
-          link.href = record.fileUrl; // URL of the file to be downloaded
-          link.download = record.name; // File name for the download
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+        const handleDownload = (e) => {
+          e.preventDefault(); // Prevent default behavior
+
+          // Trigger download using react-file-download
+          FileDownload(record.fileUrl, record.fileName);
         };
 
         return (
           <div onClick={handleDownload} style={{ cursor: "pointer" }}>
-            {record.fileType === "image/png" ? (
+            {record.fileType?.split("/")[0] === "image" ? (
               <Avatar src="/wow_icons/png/image.png" size={24} />
             ) : (
               <Avatar src="/wow_icons/png/pdf.png" size={24} />

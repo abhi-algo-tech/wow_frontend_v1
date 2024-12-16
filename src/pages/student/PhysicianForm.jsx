@@ -61,22 +61,22 @@ function PhysicianForm({ CardTitle, physicianId, studentId, closeModal }) {
         },
         {
           onSuccess: () => {
-            CustomMessage.success("physician updated successfully!");
+            CustomMessage.success("Physician updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            CustomMessage.error(`Failed to update physician: ${error.message}`);
+            CustomMessage.error(`Failed to update Physician: ${error.message}`);
           },
         }
       );
     } else {
       createPhysicianMutation.mutate(payload, {
         onSuccess: () => {
-          CustomMessage.success("physician created successfully!");
+          CustomMessage.success("Physician created successfully!");
           closeModal();
         },
         onError: (error) => {
-          CustomMessage.error(`Failed to create physician: ${error.message}`);
+          CustomMessage.error(`Failed to create Physician: ${error.message}`);
         },
       });
     }

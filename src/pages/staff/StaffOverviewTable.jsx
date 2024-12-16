@@ -43,6 +43,7 @@ const StaffOverviewTable = () => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [selectedStaffId, setSelectedStaffId] = useState(null);
   const [hoveredRow, setHoveredRow] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data: staff, isLoading, isError, error } = useGetAllStaff();
   const updateStaffMutation = useUpdateStaff();
@@ -334,6 +335,19 @@ const StaffOverviewTable = () => {
       ),
     },
   ];
+  // Filter the data based on the search query
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    // Filter the data based on the query
+    const filtered = data.filter((student) =>
+      student.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // Update the filtered data
+    setFilteredData(filtered);
+  };
   const renderAttendanceFloatingRightCard = () => (
     <Card
       className="staff-attendance-overflowborder"
@@ -430,6 +444,7 @@ const StaffOverviewTable = () => {
                   placeholder="Search by Staff"
                   prefix={<SearchOutlined />}
                   style={{ width: 240, height: 40 }}
+                  onChange={handleSearchChange}
                 />
                 <Avatar
                   src="/wow_icons/png/mdi_filter.png"

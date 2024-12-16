@@ -233,6 +233,7 @@ function ClassroomOverviewTable() {
     {
       title: "Students",
       className: "students-column label-14-600",
+      align: "center",
       children: [
         {
           title: "Active",
@@ -263,6 +264,7 @@ function ClassroomOverviewTable() {
     {
       title: "Staff",
       className: "staff-column label-14-600",
+      align: "center",
       children: [
         {
           align: "center",

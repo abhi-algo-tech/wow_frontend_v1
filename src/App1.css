@@ -1500,7 +1500,6 @@
   white-space: nowrap; /* Prevent wrapping */
   overflow: hidden; /* Hide the overflowing text */
   text-overflow: ellipsis; /* Add the ellipsis */
-  position: relative; /* Ensure hover content is positioned correctly */
 }
 
 .actorbig-card-text-ellipsis:hover::after {
@@ -1806,4 +1805,32 @@
   border: 1px solid rgba(22, 40, 49, 0.1);
   background: var(--White-colour, #fff);
   /* box-shadow: 0px 2px 20px 0px #5733531f; */
+}
+
+.avatar-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.edit-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.avatar-container:hover .edit-icon {
+  opacity: 1;
 }

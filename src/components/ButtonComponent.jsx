@@ -1,6 +1,11 @@
-import React from "react";
-import { Button } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { Button, Spin } from "antd";
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 
 const ButtonComponent = ({
   type = "primary",
@@ -10,12 +15,13 @@ const ButtonComponent = ({
   hoverColor = "#4f46e5",
   text = "Button Text",
   onClick,
-  gradient = true, // New prop for gradient background
+  gradient = true,
   padding = "auto",
   margin = "auto",
   removeIcon = false,
   fontWeight = "bold",
   borderRadius,
+  isLoading = false,
 }) => {
   // Set the icon based on the buttonActionType prop
   const getIcon = () => {
@@ -45,13 +51,19 @@ const ButtonComponent = ({
     ...borderRadiusStyle,
   };
 
+  // Handle button click
+  const handleClick = async () => {
+    if (isLoading || !onClick) return; // Prevent clicks while loading
+    await onClick(); // Execute the passed click handler
+  };
+
   return (
     <Button
       type={type}
       htmlType="submit"
       icon={getIcon()}
       size={size}
-      className={`rounded-xl shadow-sm `}
+      className="rounded-xl shadow-sm"
       style={{
         ...combinedStyle,
         ...(text.toLowerCase() === "cancel" && {
@@ -60,17 +72,21 @@ const ButtonComponent = ({
           color: "var(--color-primary)",
         }),
       }}
-      onClick={onClick}
+      onClick={handleClick}
+      disabled={isLoading} // Disable button while Loading
     >
-      <span
-        className={`${
-          text.toLowerCase() === "cancel"
-            ? "gradient-text common-button-component"
-            : "text-white common-button-component"
-        } ${fontWeight === "bold" ? "bold" : "light"}`}
-      >
-        {text}
-      </span>
+      {text}
+      {isLoading && (
+        <Spin
+          size="small"
+          indicator={<LoadingOutlined spin />}
+          style={{
+            color: "white",
+            marginRight: "8px",
+            verticalAlign: "middle",
+          }}
+        />
+      )}
     </Button>
   );
 };

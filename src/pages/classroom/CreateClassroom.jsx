@@ -25,9 +25,24 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
   const [form] = Form.useForm();
   const [profilePicture, setProfilePicture] = useState(null);
   const [isProfile, setIsProfile] = useState(false);
+  const [activeInactive, setActiveInactive] = useState(true);
   const [fileList, setFileList] = useState([]);
-  const { mutate: createClassroom } = useCreateClassroom();
-  const { mutate: updateClassroom } = useUpdateClassroom();
+  const {
+    mutate: createClassroom,
+    isLoading: isCreating,
+    isError: isCreateError,
+    error: createError,
+  } = useCreateClassroom();
+
+  const {
+    mutate: updateClassroom,
+    isLoading: isUpdating,
+    isError: isUpdateError,
+    error: updateError,
+  } = useUpdateClassroom();
+
+  console.log(isCreating, isCreateError, createError); // Debugging log
+
   const { data: classroomData } = useClassroomById(classroomId);
   const [classroomName, setClassroomName] = useState("");
   const {
@@ -126,7 +141,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
     );
     formData.append("maxCapacity", values.capacity);
     formData.append("staffRatio", values.ratio);
-    formData.append("status", values.active ? "Active" : "Inactive");
+    formData.append("status", activeInactive ? "Active" : "Inactive");
     formData.append("roomNumber", "A101");
     formData.append("schoolId", "1");
     formData.append("userType", "Teacher");
@@ -157,6 +172,9 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
       // CustomMessage.error("Something went wrong. Please try again.");
     }
   };
+  const handleActiveInactive = (e) => {
+    setActiveInactive(e);
+  };
 
   return (
     <div className="card">
@@ -174,15 +192,20 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <div className="row">
             <div className="col-6">
+              <div className="classroom-label mb12">
+                <span className="flex items-center gap-1">
+                  Classroom Name
+                  <span className="text-danger"> *</span>
+                </span>
+              </div>
               <Form.Item
                 name="classroomName"
-                className="classroom-label"
-                label={
-                  <span className="flex items-center gap-1">
-                    Classroom Name
-                    <span className="text-danger"> *</span>
-                  </span>
-                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the classroom name!",
+                  },
+                ]}
                 validateStatus={
                   error ? "error" : validationMessage ? "success" : ""
                 }
@@ -213,16 +236,15 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
 
           <div className="row">
             <div className="col-6">
+              <div className="mb12 classroom-label">
+                <span className="flex items-center gap-1">
+                  Capacity
+                  <span className="text-danger"> *</span>
+                </span>
+              </div>
               <Form.Item
                 name="capacity"
-                className="classroom-label"
-                label={
-                  <span className="flex items-center gap-1">
-                    Capacity
-                    <span className="text-danger"> *</span>
-                  </span>
-                }
-                // rules={[{ required: true, message: "Please input capacity!" }]}
+                rules={[{ required: true, message: "Please input capacity!" }]}
               >
                 <InputNumber
                   min={1}
@@ -254,7 +276,16 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
               <span className="d-block mb-2 classroom-label">Min Age</span>
               <div className="row">
                 <div className="col-6">
-                  <Form.Item name="minAgeYear" className="mb-0 classroom-label">
+                  <Form.Item
+                    name="minAgeYear"
+                    className="mb-0 classroom-label"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input the min age!",
+                      },
+                    ]}
+                  >
                     <InputNumber
                       min={0}
                       max={6}
@@ -343,7 +374,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                   valuePropName="checked"
                   className="mb-0 me-2 classroom-create-toggle-btn"
                 >
-                  <Switch />
+                  <Switch onChange={handleActiveInactive} />
                 </Form.Item>
                 <span className="text-muted">Inactive</span>
               </div>
@@ -351,7 +382,11 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
           </div>
 
           <div className="mt-4 text-center">
-            <ButtonComponent text={isEdit ? "Save" : "Add"} />
+            <ButtonComponent
+              text={isEdit ? "Save" : "Add"}
+              onClick={() => form.submit()}
+              isLoading={isCreating}
+            />
           </div>
         </Form>
       </div>

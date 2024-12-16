@@ -32,7 +32,6 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
   const isEdit = Boolean(staffId);
 
   useEffect(() => {
-    console.log("staffData:", staffData);
     if (staffData) {
       const primaryClassroom = staffData.data.classrooms.find(
         (classroom) => classroom.id === staffData.data.primaryRoomId

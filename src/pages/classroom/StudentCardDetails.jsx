@@ -15,6 +15,7 @@ import AssignConfirm from "./AssignConfirm";
 import { useStudentByClassroom } from "../../hooks/useStudent";
 import { formatStudentData } from "./ClassroomCommon";
 import LoaderComponent from "../../components/loader/LoaderComponent";
+import EmptyRecord from "../../components/emptyFile/EmptyRecord";
 const { Option } = Select;
 
 // Sample student data
@@ -235,88 +236,91 @@ export default function StudentCardDetails({ classroomId }) {
     <div className="container my-3">
       <div>
         {isLoading ? (
-          <div
-            className="d-flex align-items-center justify-content-center"
-            style={{ height: "100vh" }}
-          >
-            <LoaderComponent isLoading={isLoading} />
-          </div>
+          <LoaderComponent isLoading={isLoading} />
         ) : (
           <>
-            {/* {renderLFloatingRightCard()} */}
-            {isFloatingCardVisible && renderRFloatingRightCard()}
-            <div className="d-flex align-items-center my-3 justify-content-between">
-              <div>
-                <Input
-                  placeholder="Search Students"
-                  prefix={<SearchOutlined />}
-                  style={{ width: 246, height: 40 }}
-                  className="light-font"
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <StudentActivityDetails />
-            </div>
-            <div className="d-flex align-items-center">
-              <div className="me-2">
-                <Checkbox
-                  onChange={handleSelectAll}
-                  checked={selectedStudents.length === students.length}
-                  style={{ marginBottom: 0 }}
-                >
-                  Select All
-                </Checkbox>
-              </div>
-              <div className="me-2">
-                <Select
-                  style={{ width: 164, height: 33 }}
-                  className="select-student light-font"
-                  defaultValue="select-student"
-                >
-                  <Option value="select-student">Select Tag</Option>
-                </Select>
-              </div>
-              <div className="me-2">
-                <Select
-                  style={{ width: 164, height: 33 }}
-                  className="select-student light-font"
-                  defaultValue="select-student"
-                >
-                  <Option value="select-student">Select Status</Option>
-                </Select>
-              </div>
-              {selectedStudents.length >= 1 && (
-                <div>
-                  <Button
-                    variant="link"
-                    onClick={handleSelectAll}
-                    style={{ backgroundColor: "#b1afe919", border: "none" }}
-                    className="rounded custom-clear-button d-flex align-items-center gap-1"
-                  >
-                    <span className="clear-text">Clear</span>
-                    <img
-                      src="/classroom_icons/png/close.png"
-                      alt="Close icon"
-                      style={{ width: "8.3px", height: "8.3px" }}
+            {filteredStudents.length > 0 ? (
+              <>
+                {/* {renderLFloatingRightCard()} */}
+                {isFloatingCardVisible && renderRFloatingRightCard()}
+                <div className="d-flex align-items-center my-3 justify-content-between">
+                  <div>
+                    <Input
+                      placeholder="Search Students"
+                      prefix={<SearchOutlined />}
+                      style={{ width: 246, height: 40 }}
+                      className="light-font"
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                  </Button>
+                  </div>
+                  <StudentActivityDetails />
                 </div>
-              )}
-            </div>
-            <div className="row mt16">
-              {filteredStudents.map((student) => (
-                <div
-                  key={student.id}
-                  className="col-6 col-sm-4 col-md-3 col-lg-2 mb-2"
-                >
-                  <ActorBigCard
-                    actor={student}
-                    selectedActors={selectedStudents}
-                    handleCheckboxChange={handleCheckboxChange}
-                  />
+                <div className="d-flex align-items-center">
+                  <div className="me-2">
+                    <Checkbox
+                      onChange={handleSelectAll}
+                      checked={selectedStudents.length === students.length}
+                      style={{ marginBottom: 0 }}
+                    >
+                      Select All
+                    </Checkbox>
+                  </div>
+                  <div className="me-2">
+                    <Select
+                      style={{ width: 164, height: 33 }}
+                      className="select-student light-font"
+                      defaultValue="select-student"
+                    >
+                      <Option value="select-student">Select Tag</Option>
+                    </Select>
+                  </div>
+                  <div className="me-2">
+                    <Select
+                      style={{ width: 164, height: 33 }}
+                      className="select-student light-font"
+                      defaultValue="select-student"
+                    >
+                      <Option value="select-student">Select Status</Option>
+                    </Select>
+                  </div>
+                  {selectedStudents.length >= 1 && (
+                    <div>
+                      <Button
+                        variant="link"
+                        onClick={handleSelectAll}
+                        style={{ backgroundColor: "#b1afe919", border: "none" }}
+                        className="rounded custom-clear-button d-flex align-items-center gap-1"
+                      >
+                        <span className="clear-text">Clear</span>
+                        <img
+                          src="/classroom_icons/png/close.png"
+                          alt="Close icon"
+                          style={{ width: "8.3px", height: "8.3px" }}
+                        />
+                      </Button>
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
+                <div className="row mt16">
+                  {filteredStudents.map((student) => (
+                    <div
+                      key={student.id}
+                      className="col-6 col-sm-4 col-md-3 col-lg-2 mb-2"
+                    >
+                      <ActorBigCard
+                        actor={student}
+                        selectedActors={selectedStudents}
+                        handleCheckboxChange={handleCheckboxChange}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <EmptyRecord btnLabel="Add Student" />
+              </>
+            )}
           </>
         )}
       </div>

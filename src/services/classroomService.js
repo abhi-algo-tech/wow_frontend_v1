@@ -4,8 +4,6 @@ import { API_ENDPOINTS } from "../api/endpoints";
 
 const ClassroomService = {
   getClassroomsBySchool: async (schoolId) => {
-    console.log("schoolId", schoolId);
-
     try {
       const response = await axiosInstance.get(
         `${API_ENDPOINTS.CLASSROOM.BY_SCHOOL}/${schoolId}`
