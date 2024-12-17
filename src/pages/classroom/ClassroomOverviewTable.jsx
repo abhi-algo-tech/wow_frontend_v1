@@ -89,7 +89,14 @@ function ClassroomOverviewTable() {
     setSelectedClassroom(value);
 
     if (value === "all") {
-      setFilteredData(data); // Show all data
+      const filteredClassrooms = showInactive
+        ? data?.filter(
+            (classroom) => classroom.status.toLowerCase() === "inactive"
+          )
+        : data?.filter(
+            (classroom) => classroom.status.toLowerCase() === "active"
+          );
+      setFilteredData(filteredClassrooms); // Show all data
     } else {
       // Filter the data by the selected classroom
       const filtered = data.filter((item) => item.name === value);
@@ -140,10 +147,25 @@ function ClassroomOverviewTable() {
   const uniqueClassrooms = [
     { value: "all", label: "All Classrooms" },
     ...Array.from(
-      new Set(data.map((item) => item.name)) // Ensure uniqueness based on name
+      new Set(
+        (showInactive
+          ? data?.filter(
+              (classroom) => classroom.status.toLowerCase() === "inactive"
+            )
+          : data?.filter(
+              (classroom) => classroom.status.toLowerCase() === "active"
+            )
+        ).map((item) => item.name)
+      )
     )
       .map((name) => {
-        return data.find((item) => item.name === name); // Find unique items based on the name
+        return data.find(
+          (item) =>
+            item.name === name &&
+            (showInactive
+              ? item.status.toLowerCase() === "inactive"
+              : item.status.toLowerCase() === "active")
+        );
       })
       .map((item) => ({
         value: item.name,
@@ -370,7 +392,10 @@ function ClassroomOverviewTable() {
             >
               <Switch
                 checked={showInactive}
-                onChange={(checked) => setShowInactive(checked)}
+                onChange={(checked) => {
+                  setShowInactive(checked);
+                  setSelectedClassroom("all");
+                }}
               />
               <span className="classroom-inactive-label ml20">
                 Show Inactive

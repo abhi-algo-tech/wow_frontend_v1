@@ -18,6 +18,7 @@ import { useGetAllCities } from "../../hooks/useCity";
 import { formatDateToCustomStyle } from "../../services/common";
 import { CustomMessage } from "../../utils/CustomMessage";
 import { useSession } from "../../hooks/useSession";
+import MultiSelectWithoutColor from "../../components/select/MultiSelectWithoutColor";
 
 const { Option } = Select;
 
@@ -26,6 +27,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
   const [form] = Form.useForm();
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedValues, setSelectedValues] = useState(null);
 
   // const { data: parentData } = useStudentById(studentId);
   const { data: statusData } = useMasterLookupsByType("status");
@@ -578,3 +580,26 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
 }
 
 export default StudentProfileForm;
+
+//  <div className="col-6">
+//    <div className="flex items-center gap-1 student-label">
+//      Sibling
+//      {/* <span className="text-danger"> *</span> */}
+//    </div>
+//    <Form.Item
+//      name="sibling"
+//      // rules={[
+//      //   {
+//      //     required: true,
+//      //     message: "Please input the Zip Code!",
+//      //   },
+//      // ]}
+//    >
+//      <MultiSelectWithoutColor
+//        name="sibling"
+//        options={options}
+//        value={selectedValues}
+//        onChange={setSelectedValues}
+//      />
+//    </Form.Item>
+//  </div>;

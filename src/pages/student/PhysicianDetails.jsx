@@ -64,10 +64,10 @@ function PhysicianDetails({ studentId }) {
       },
       {
         onSuccess: () => {
-          CustomMessage.success("physician deleted successfully!");
+          CustomMessage.success("Physician deleted successfully!");
         },
         onError: (error) => {
-          CustomMessage.error(`Failed to deleted physician: ${error.message}`);
+          CustomMessage.error(`Failed to deleted Physician: ${error.message}`);
         },
       }
     );

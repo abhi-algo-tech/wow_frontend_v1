@@ -30,12 +30,12 @@ function PhysicalExaminationForm({ CardTitle, studentId, closeModal }) {
     };
     createPhysicalTrackerMutation.mutate(payload, {
       onSuccess: () => {
-        CustomMessage.success("Physical Tracker created successfully!");
+        CustomMessage.success("Physical Examination created successfully!");
         closeModal();
       },
       onError: (error) => {
         CustomMessage.error(
-          `Failed to create Physical Tracker: ${error.message}`
+          `Failed to create Physical Examination: ${error.message}`
         );
       },
     });
