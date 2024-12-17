@@ -485,6 +485,7 @@ const StaffOverviewTable = () => {
                 onChange: setSelectedRowKeys,
               }}
               tableSize="small"
+              showTotalProp={true}
             />
           </Card>
         </div>

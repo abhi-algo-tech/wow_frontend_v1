@@ -406,6 +406,7 @@ const StudentOverviewTable = () => {
             loading={isLoading}
             rowKey="key"
             sizeChanger={false}
+            showTotalProp={true}
           />
         </Card>
       </div>
