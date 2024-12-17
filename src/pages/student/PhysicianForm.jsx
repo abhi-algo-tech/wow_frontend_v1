@@ -105,7 +105,20 @@ function PhysicianForm({ CardTitle, physicianId, studentId, closeModal }) {
               <Form.Item
                 name="firstName"
                 rules={[
-                  { required: true, message: "Please input the first name!" },
+                  { required: true, message: "Please input the first name!" }, // Required field rule
+                  {
+                    pattern: /^[A-Za-z\s]*$/, // Regex to allow only alphabets and spaces
+                    message:
+                      "First name can only contain alphabets and spaces!",
+                  },
+                  {
+                    validator: (_, value) =>
+                      value && value.trim().length <= 2
+                        ? Promise.reject(
+                            "First name must be at least 3 characters!"
+                          )
+                        : Promise.resolve(),
+                  },
                 ]}
               >
                 <Input
@@ -122,7 +135,19 @@ function PhysicianForm({ CardTitle, physicianId, studentId, closeModal }) {
               <Form.Item
                 name="lastName"
                 rules={[
-                  { required: true, message: "Please input the last name!" },
+                  { required: true, message: "Please input the Last name!" }, // Required field rule
+                  {
+                    pattern: /^[A-Za-z\s]*$/, // Regex to allow only alphabets and spaces
+                    message: "Last name can only contain alphabets and spaces!",
+                  },
+                  {
+                    validator: (_, value) =>
+                      value && value.trim().length <= 2
+                        ? Promise.reject(
+                            "Last name must be at least 3 characters!"
+                          )
+                        : Promise.resolve(),
+                  },
                 ]}
               >
                 <Input

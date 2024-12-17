@@ -157,7 +157,7 @@ function Family({ studentId }) {
                       </Col>
                       <Col span={16} className="text-end">
                         <Text className="student-about-tab-label-value">
-                          {guardian?.relation}
+                          {guardian?.parentName}
                         </Text>
                       </Col>
                     </Row>

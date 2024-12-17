@@ -209,9 +209,19 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
               <Form.Item
                 name="firstName"
                 rules={[
+                  { required: true, message: "Please input the first name!" }, // Required field rule
                   {
-                    required: true,
-                    message: "Please input the First Name!",
+                    pattern: /^[A-Za-z\s]*$/, // Regex to allow only alphabets and spaces
+                    message:
+                      "First name can only contain alphabets and spaces!",
+                  },
+                  {
+                    validator: (_, value) =>
+                      value && value.trim().length <= 2
+                        ? Promise.reject(
+                            "First name must be at least 3 characters!"
+                          )
+                        : Promise.resolve(),
                   },
                 ]}
               >
@@ -229,9 +239,18 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
               <Form.Item
                 name="lastName"
                 rules={[
+                  { required: true, message: "Please input the Last name!" }, // Required field rule
                   {
-                    required: true,
-                    message: "Please input the Last Name!",
+                    pattern: /^[A-Za-z\s]*$/, // Regex to allow only alphabets and spaces
+                    message: "Last name can only contain alphabets and spaces!",
+                  },
+                  {
+                    validator: (_, value) =>
+                      value && value.trim().length <= 2
+                        ? Promise.reject(
+                            "Last name must be at least 3 characters!"
+                          )
+                        : Promise.resolve(),
                   },
                 ]}
               >
@@ -532,6 +551,13 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 <Input
                   placeholder="e.g. Report Card"
                   className="w-100 student-form-input"
+                  maxLength={5}
+                  minLength={5}
+                  onKeyPress={(event) => {
+                    if (!/^[0-9]$/.test(event.key)) {
+                      event.preventDefault(); // Prevent non-numeric characters
+                    }
+                  }}
                 />
               </Form.Item>
             </div>

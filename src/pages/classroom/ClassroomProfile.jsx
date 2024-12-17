@@ -37,6 +37,9 @@ function ClassroomProfile() {
 
   const { data: currentClassroomData } = useClassroomById(currentClassroomId);
 
+  console.log("classroomData:", classroomData);
+  console.log("currentClassroomData:", currentClassroomData);
+
   useEffect(() => {
     if (!classroomId) {
       navigate("/"); // Redirect to home or error page

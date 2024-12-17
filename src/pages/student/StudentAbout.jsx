@@ -183,7 +183,7 @@ const StudentAbout = ({ studentId }) => {
           <LabelCol>State Subsidy</LabelCol>
           <ContentCol>
             <Text className="student-about-tab-label-value">
-              {student?.isStateSubsidy ? "State Subsidy" : "No State Subsidy"}
+              {student?.isStateSubsidy ? "Yes" : "No"}
             </Text>
           </ContentCol>
 

@@ -34,7 +34,7 @@ function ParentForm({
         lastName: selectedGaurdianData?.gurdianLastName,
         email: selectedGaurdianData?.email,
         phoneNumber: selectedGaurdianData?.phoneNumber,
-        relation: selectedGaurdianData?.relationId,
+        relation: selectedGaurdianData?.parentId,
         isEmergencyContact: selectedGaurdianData?.isEmergencyContact,
       });
     }
@@ -60,7 +60,7 @@ function ParentForm({
     formData.append("email", email);
     formData.append("phoneNumber", phoneNumber);
     formData.append("inviteFlag", "true");
-    formData.append("relationId", relation);
+    formData.append("parentId", relation);
     formData.append("isEmergency", emergencyContact);
     if (isEdit) {
       updateGaurdianMutation.mutate(
@@ -131,7 +131,7 @@ function ParentForm({
                   },
                   {
                     validator: (_, value) =>
-                      value && value.trim().length < 3
+                      value && value.trim().length <= 2
                         ? Promise.reject(
                             "First name must be at least 3 characters!"
                           )
@@ -160,7 +160,7 @@ function ParentForm({
                   },
                   {
                     validator: (_, value) =>
-                      value && value.trim().length < 3
+                      value && value.trim().length <= 2
                         ? Promise.reject(
                             "Last name must be at least 3 characters!"
                           )
