@@ -93,7 +93,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
         isStateSubsidy: studentData.isStateSubsidy ? "yes" : "no",
         tags: mappedTags,
         notes: studentData.note,
-        childCustody: studentData.childCustody,
+        childCustody: studentData.childCustodyId,
         address: studentData.addressLine,
         city: studentData?.city?.id,
         state: studentData?.state?.id,
@@ -141,7 +141,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
     }
     formData.append("isStateSubsidy", selectedOption === "yes");
     formData.append("note", notes);
-    formData.append("childCustody", childCustody);
+    formData.append("childCustodyId", childCustody);
     formData.append("addressLine", address);
     formData.append("cityId", city);
     formData.append("stateId", state);
@@ -213,17 +213,9 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 rules={[
                   { required: true, message: "Please input the first name!" }, // Required field rule
                   {
-                    pattern: /^[A-Za-z\s]*$/, // Regex to allow only alphabets and spaces
+                    pattern: /^[A-Za-z`]*$/, // Regex to allow alphabets and backtick
                     message:
-                      "First name can only contain alphabets and spaces!",
-                  },
-                  {
-                    validator: (_, value) =>
-                      value && value.trim().length <= 2
-                        ? Promise.reject(
-                            "First name must be at least 3 characters!"
-                          )
-                        : Promise.resolve(),
+                      "First name can only contain alphabets and a backtick!",
                   },
                 ]}
               >
@@ -241,18 +233,11 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
               <Form.Item
                 name="lastName"
                 rules={[
-                  { required: true, message: "Please input the Last name!" }, // Required field rule
+                  { required: true, message: "Please input the last name!" }, // Required field rule
                   {
-                    pattern: /^[A-Za-z\s]*$/, // Regex to allow only alphabets and spaces
-                    message: "Last name can only contain alphabets and spaces!",
-                  },
-                  {
-                    validator: (_, value) =>
-                      value && value.trim().length <= 2
-                        ? Promise.reject(
-                            "Last name must be at least 3 characters!"
-                          )
-                        : Promise.resolve(),
+                    pattern: /^[A-Za-z`]*$/, // Regex to allow alphabets and backtick
+                    message:
+                      "Last name can only contain alphabets and a backtick",
                   },
                 ]}
               >

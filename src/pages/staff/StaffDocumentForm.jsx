@@ -20,7 +20,7 @@ function StaffDocumentForm({ CardTitle, staffId, closeModal, staffData }) {
     isLoading,
     isError,
     error,
-  } = useMasterLookupsByType("document");
+  } = useMasterLookupsByType("staff_document");
   const createDocumentMutation = useCreateDocument();
   const updateDocumentMutation = useUpdateDocument();
   const isEdit = Boolean(staffId);
