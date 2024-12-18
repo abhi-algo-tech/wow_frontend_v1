@@ -137,7 +137,7 @@ function Pickup({ studentId }) {
                   </Col>
                   <Col span={16} className="text-end">
                     <Text className="student-about-tab-label-value">
-                      {pickup?.relation || "N/A"}
+                      {pickup?.parentName || "N/A"}
                     </Text>
                   </Col>
                 </Row>

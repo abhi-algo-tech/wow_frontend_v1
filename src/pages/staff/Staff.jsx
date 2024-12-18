@@ -30,15 +30,15 @@ const Staff = () => {
                     </span>
                   </Col>
                   <Col span={12}>
-                    <span className="m-0 staff-overview-card-number">104</span>
+                    <span className="m-0 staff-overview-card-number">10</span>
                   </Col>
                 </Row>
               </Col>
               <Col span={12}>
                 <ProgressBarClassroomOverview
-                  activeStudents={100}
-                  upcomingStudents={4}
-                  totalStudents={120}
+                  activeStudents={8}
+                  upcomingStudents={2}
+                  totalStudents={10}
                   strokeLinecap="round"
                 />
               </Col>

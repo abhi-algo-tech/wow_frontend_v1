@@ -37,11 +37,11 @@ function PhysicianExamination({ studentId }) {
       },
       {
         onSuccess: () => {
-          CustomMessage.success("Physical Tracker updated successfully!");
+          CustomMessage.success("Physical Examination updated successfully!");
         },
         onError: (error) => {
           CustomMessage.error(
-            `Failed to update Physical Tracker: ${error.message}`
+            `Failed to update Physical Examination: ${error.message}`
           );
         },
       }

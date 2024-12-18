@@ -6,6 +6,7 @@ import CommonModalComponent from "../../components/CommonModalComponent";
 import ButtonComponent from "../../components/ButtonComponent";
 import { useDeleteStaffDocument } from "../../hooks/useDocument";
 import DeletePopUp from "../../components/DeletePopUp";
+import { saveAs } from "file-saver";
 const { Text } = Typography;
 
 const data = [
@@ -40,6 +41,37 @@ const StaffDocument = ({ staffData }) => {
   const [selectedStaffData, setEditSelectedStaffData] = useState(null);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
+
+  const handleDownload = async (e, record) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(record.fileUrl, {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch the file: ${response.statusText}`);
+      }
+
+      // Convert the response to blob for dynamic download
+      const blob = await response.blob();
+
+      // Dynamically infer the correct file name and MIME type for saving
+      const contentType = blob.type;
+      let fileName = record.name || "downloaded-file";
+      if (record.fileType === "application/pdf") {
+        if (!fileName.endsWith(".pdf")) {
+          fileName = `${fileName}.pdf`;
+        }
+      }
+
+      // Use FileSaver to download the file
+      saveAs(blob, fileName);
+    } catch (error) {
+      console.error("Error downloading the file:", error);
+    }
+  };
   const columns = [
     {
       title: "Document Name",
@@ -71,13 +103,16 @@ const StaffDocument = ({ staffData }) => {
       align: "center",
       className: "label-14-600",
       render: (record) => (
-        <>
+        <div
+          onClick={(e) => handleDownload(e, record)}
+          style={{ cursor: "pointer" }}
+        >
           {record.fileType === "image/jpeg" ? (
             <Avatar src="/wow_icons/png/image.png" size={24} />
           ) : (
             <Avatar src="/wow_icons/png/pdf.png" size={24} />
           )}
-        </>
+        </div>
       ),
     },
     {
@@ -151,7 +186,9 @@ const StaffDocument = ({ staffData }) => {
       </div>
       <Table
         columns={columns}
-        dataSource={staffData?.document}
+        dataSource={staffData?.document
+          ?.slice()
+          .sort((a, b) => a.name.localeCompare(b.name))} // Sorting logic
         pagination={false}
         size="small"
       />

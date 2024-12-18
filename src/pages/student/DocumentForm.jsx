@@ -12,6 +12,7 @@ const { Option } = Select;
 
 function DocumentForm({ CardTitle, studentData, closeModal, studentId }) {
   const [form] = Form.useForm();
+  const [isUploaded, setUploaded] = useState(false);
   const {
     data: documentDrpDwnData,
     isLoading,
@@ -20,6 +21,7 @@ function DocumentForm({ CardTitle, studentData, closeModal, studentId }) {
   } = useMasterLookupsByType("document");
   const createDocumentMutation = useCreateDocument();
   const updateDocumentMutation = useUpdateDocument();
+
   const isEdit = Boolean(studentData);
 
   useEffect(() => {
@@ -63,12 +65,14 @@ function DocumentForm({ CardTitle, studentData, closeModal, studentId }) {
     formData.append("docTypeId", values.documentType);
     formData.append("expiryDate", values.expiryDate);
     formData.append("contentType", "student");
-    const fileBlob = form.getFieldValue("uploadDocument");
-    if (fileBlob) {
-      formData.append("documentFile", fileBlob, fileBlob.name);
-    } else {
-      CustomMessage.error("Please upload a valid file!");
-      return;
+    if (isUploaded) {
+      const fileBlob = form.getFieldValue("uploadDocument");
+      if (fileBlob) {
+        formData.append("documentFile", fileBlob, fileBlob.name);
+      } else {
+        CustomMessage.error("Please upload a valid file!");
+        return;
+      }
     }
 
     formData.append("studentId", studentId);
@@ -100,6 +104,7 @@ function DocumentForm({ CardTitle, studentData, closeModal, studentId }) {
   };
   const handleFileBlob = (blob) => {
     form.setFieldsValue({ uploadDocument: blob });
+    setUploaded(true);
   };
 
   return (

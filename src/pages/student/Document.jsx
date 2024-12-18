@@ -7,7 +7,7 @@ import DocumentForm from "./DocumentForm";
 import DeletePopUp from "../../components/DeletePopUp";
 import { useDeleteDocument } from "../../hooks/useDocument";
 import { useStudentById } from "../../hooks/useStudent";
-import FileDownload from "react-file-download";
+import { saveAs } from "file-saver";
 
 // const data = [
 //   {
@@ -51,6 +51,37 @@ const Document = ({ studentId }) => {
     setStudentData(student?.data || {});
   }, [student]);
 
+  const handleDownload = async (e, record) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(record.fileUrl, {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch the file: ${response.statusText}`);
+      }
+
+      // Convert the response to blob for dynamic download
+      const blob = await response.blob();
+
+      // Dynamically infer the correct file name and MIME type for saving
+      const contentType = blob.type;
+      let fileName = record.name || "downloaded-file";
+      if (record.fileType === "application/pdf") {
+        if (!fileName.endsWith(".pdf")) {
+          fileName = `${fileName}.pdf`;
+        }
+      }
+
+      // Use FileSaver to download the file
+      saveAs(blob, fileName);
+    } catch (error) {
+      console.error("Error downloading the file:", error);
+    }
+  };
+
   const columns = [
     {
       title: "Document Name",
@@ -81,24 +112,18 @@ const Document = ({ studentId }) => {
       key: "document",
       align: "center",
       className: "label-14-600",
-      render: (record) => {
-        const handleDownload = (e) => {
-          e.preventDefault(); // Prevent default behavior
-
-          // Trigger download using react-file-download
-          FileDownload(record.fileUrl, record.fileName);
-        };
-
-        return (
-          <div onClick={handleDownload} style={{ cursor: "pointer" }}>
-            {record.fileType?.split("/")[0] === "image" ? (
-              <Avatar src="/wow_icons/png/image.png" size={24} />
-            ) : (
-              <Avatar src="/wow_icons/png/pdf.png" size={24} />
-            )}
-          </div>
-        );
-      },
+      render: (record) => (
+        <div
+          onClick={(e) => handleDownload(e, record)}
+          style={{ cursor: "pointer" }}
+        >
+          {record.fileType?.split("/")[0] === "image" ? (
+            <Avatar src="/wow_icons/png/image.png" size={24} />
+          ) : (
+            <Avatar src="/wow_icons/png/pdf.png" size={24} />
+          )}
+        </div>
+      ),
     },
     {
       title: "Action",
@@ -186,7 +211,9 @@ const Document = ({ studentId }) => {
         </div>
         <Table
           columns={columns}
-          dataSource={studentData?.document}
+          dataSource={studentData?.document
+            ?.slice()
+            .sort((a, b) => a.name.localeCompare(b.name))} // Sorting logic
           pagination={false}
           size="small"
         />

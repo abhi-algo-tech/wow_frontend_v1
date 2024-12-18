@@ -161,12 +161,13 @@ function StaffImportantDates({ staffData }) {
                   <Card
                     bordered={false}
                     style={{ padding: 0 }}
-                    className="d-flex flex-column w-100 mb16 card-border"
+                    className="d-flex flex-column w-100"
                   >
                     <Row className="mb-2">
                       <Col span={12}>
                         <Tag
                           color={statusColors[tracker?.statusName] || "gray"}
+                          className="no-border-tag"
                         >
                           {tracker?.statusName}
                         </Tag>
@@ -179,12 +180,12 @@ function StaffImportantDates({ staffData }) {
                     </Row>
                     <Row>
                       <Col span={12}>
-                        <Text className="student-about-tab-label">
+                        <Text className="staff-important-dates-checkup-card-key">
                           Checkup Dates
                         </Text>
                       </Col>
                       <Col span={12} style={{ textAlign: "right" }}>
-                        <Text className="student-about-tab-label-value">
+                        <Text className="staff-important-dates-tab-label-value">
                           {tracker?.physicalDate
                             ? formatDateToCustomStyle(tracker.physicalDate)
                             : "N/A"}
