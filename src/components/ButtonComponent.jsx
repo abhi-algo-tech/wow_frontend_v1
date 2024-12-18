@@ -75,7 +75,15 @@ const ButtonComponent = ({
       onClick={handleClick}
       disabled={isLoading} // Disable button while Loading
     >
-      {text}
+      <span
+        className={`${
+          text.toLowerCase() === "cancel"
+            ? "gradient-text common-button-component"
+            : "text-white common-button-component"
+        } ${fontWeight === "bold" ? "bold" : "light"}`}
+      >
+        {text}
+      </span>
       {isLoading && (
         <Spin
           size="small"

@@ -141,7 +141,8 @@ export const generateStudentData = (apiData) => {
         ? item.classroomProfileUrl
         : generateColorForStudentClassroom(item.classroomName),
     },
-    tags: generateRandomTag(), // { days: 3, type: "Full Day", additional: "+3" },
+    tags: item?.tags, // { days: 3, type: "Full Day", additional: "+3" },
+    // tags: generateRandomTag(), // { days: 3, type: "Full Day", additional: "+3" },
     schedule: generateSchedule(),
     // schedule: {
     //   days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
