@@ -28,14 +28,14 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
   const [activeInactive, setActiveInactive] = useState(true);
   const [fileList, setFileList] = useState([]);
   const {
-    mutate: createClassroom,
+    mutateAsync: createClassroomMutation,
     isLoading: isCreating,
     isError: isCreateError,
     error: createError,
   } = useCreateClassroom();
 
   const {
-    mutate: updateClassroom,
+    mutateAsync: updateClassroom,
     isLoading: isUpdating,
     isError: isUpdateError,
     error: updateError,
@@ -152,18 +152,17 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
 
     try {
       if (isEdit) {
-        await new Promise((resolve, reject) => {
-          updateClassroom(
-            { classroomId, classroomData: formData },
-            { onSuccess: resolve, onError: reject }
-          );
+        // Use mutateAsync for updateClassroom
+        await updateClassroom.mutateAsync({
+          classroomId,
+          classroomData: formData,
         });
         CustomMessage.success("Classroom updated successfully!");
         closeModal();
       } else {
-        await new Promise((resolve, reject) => {
-          createClassroom(formData, { onSuccess: resolve, onError: reject });
-        });
+        console.log("createClassroomMutation:", createClassroomMutation);
+        // Use mutateAsync for createClassroom
+        await createClassroomMutation(formData);
         CustomMessage.success("Classroom created successfully!");
         closeModal();
       }

@@ -237,42 +237,76 @@ const StudentOverviewTable = () => {
       dataIndex: "tags",
       key: "tags",
       className: "student-table-body-label",
-      width: 190,
+      width: 195,
       responsive: ["md", "lg"],
-      render: (tags) => (
-        <div className="d-flex align-items-center gap-1 flex-wrap">
-          <Tag
-            style={{
-              backgroundColor: "#B1AFE94D",
-              color: "#1B237E",
-              border: "none",
-            }}
+      render: (tags, record) => {
+        const visibleTags = tags.slice(0, 2); // Show first 2 tags
+        const remainingTags = tags.slice(2); // Remaining tags
+
+        const content = (
+          <div>
+            {remainingTags.map((tag, index) => (
+              <div key={index} className="label-12-400">
+                {tag.tagName}
+              </div>
+            ))}
+          </div>
+        );
+
+        return (
+          <div
+            onMouseEnter={() => setHoveredRow(record.key)} // Track hovered row globally
+            onMouseLeave={() => setHoveredRow(null)} // Reset hover state
+            className="d-flex align-items-center gap-1 flex-wrap"
           >
-            {tags.days} Days
-          </Tag>
-          <Tag
-            style={{
-              backgroundColor: "#CBF6FF66",
-              color: "#1B237E",
-              border: "none",
-            }}
-          >
-            {tags.type}
-          </Tag>
-          {tags.additional && (
-            <Tag
-              style={{
-                backgroundColor: "#D9FFCB66",
-                color: "#1B237E",
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              +{tags.additional}
-            </Tag>
-          )}
-        </div>
-      ),
+            {/* Render visible tags */}
+            {visibleTags.map((tag, index) => (
+              <Tag
+                key={index}
+                style={{
+                  backgroundColor: tag.backgroundColor || "#B1AFE94D",
+                  color: "#1B237E",
+                  border: "none",
+                }}
+              >
+                {tag.tagName}
+              </Tag>
+            ))}
+
+            {/* Popover for remaining tags */}
+            {remainingTags.length > 0 && (
+              <Popover color="#F0FFEA" content={content}>
+                <Tag
+                  style={{
+                    backgroundColor: "#D9FFCB66",
+                    color: "#1B237E",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  +{remainingTags.length}
+                </Tag>
+              </Popover>
+            )}
+
+            {/* Render edit icon for all rows if hoveredRow matches */}
+            {hoveredRow === record.key && (
+              <Tooltip
+                title="Edit Tags"
+                style={{ backgroundColor: "#41414ECC" }}
+              >
+                <Avatar
+                  size={20}
+                  src={"/classroom_icons/png/edit-tag.png"}
+                  style={{
+                    cursor: "pointer",
+                  }}
+                />
+              </Tooltip>
+            )}
+          </div>
+        );
+      },
     },
     {
       title: <span className="student-table-header-label">Schedule</span>,
@@ -300,7 +334,7 @@ const StudentOverviewTable = () => {
           ))}
         </div>
       ),
-      sorter: (a, b) => a.schedule.days.length - b.schedule.days.length,
+      // sorter: (a, b) => a.schedule.days.length - b.schedule.days.length,
     },
     {
       title: <span className="student-table-header-label">Birthdate</span>,

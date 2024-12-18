@@ -74,7 +74,7 @@ export default function ShiftForm({ cardTitle, shiftId, closeModal }) {
         }}
         style={{ padding: "26px 46px" }}
       >
-        <div className="row ">
+        <div className="row mb10">
           <div className="col-md-4">
             <Form.Item
               label={
@@ -145,7 +145,7 @@ export default function ShiftForm({ cardTitle, shiftId, closeModal }) {
           </div>
         </div>
 
-        <div className="row ">
+        <div className="row mb10">
           <div className="col-md-3">
             <div className=" label-12-400 mb12">
               Shift Start
@@ -242,7 +242,7 @@ export default function ShiftForm({ cardTitle, shiftId, closeModal }) {
           </div>
         </div>
 
-        <div className="row">
+        <div className="row mb10">
           <div className="d-flex align-items-center">
             <span className="label-12-400">Repeat On</span>
             <Button
@@ -280,7 +280,7 @@ export default function ShiftForm({ cardTitle, shiftId, closeModal }) {
           </Form.Item>
         </div>
 
-        <div className="row ">
+        <div className="row mb10 ">
           <div className="col-md-4">
             <Form.Item
               label={
@@ -315,7 +315,7 @@ export default function ShiftForm({ cardTitle, shiftId, closeModal }) {
           </div>
         </div>
 
-        <div className="text-center">
+        <div className="text-center mt20">
           <ButtonComponent
             text="Cancel"
             gradient={false}
@@ -323,7 +323,8 @@ export default function ShiftForm({ cardTitle, shiftId, closeModal }) {
             margin="0 16px 0 0"
             onClick={handleCancelClick}
           />
-          <ButtonComponent text={"Create"} padding="14px 45px" type="submit" />
+          <ButtonComponent text={"Confirm"} padding="14px 45px" type="submit" />
+          <ButtonComponent text={"Next"} padding="14px 45px" type="submit" />
         </div>
       </Form>
     </div>
