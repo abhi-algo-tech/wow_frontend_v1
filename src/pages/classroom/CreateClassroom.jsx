@@ -95,6 +95,8 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
       const [minAgeYear, minAgeMonth] = minAge.split(".");
       const [maxAgeYear, maxAgeMonth] = maxAge.split(".");
 
+      const isActive = classroomData.data.status.toLowerCase() === "active";
+
       form.setFieldsValue({
         classroomName: classroomData.data.name,
         capacity: classroomData.data.maxCapacity,
@@ -103,7 +105,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
         minAgeMonth: parseInt(minAgeMonth, 10),
         maxAgeYear: parseInt(maxAgeYear, 10),
         maxAgeMonth: parseInt(maxAgeMonth, 10),
-        active: classroomData.data.status === "active",
+        active: !isActive, // Boolean value for Switch
       });
 
       if (classroomData.data.profileUrl) {

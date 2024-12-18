@@ -2,18 +2,38 @@ import { Form, Input, message, Select, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
 import CustomDatePicker from "../../components/CustomDatePicker";
-import { useCreatePhysicalTracker } from "../../hooks/usePhysicalTracker";
+import {
+  useCreatePhysicalTracker,
+  useUpdatePhysicalTracker,
+} from "../../hooks/usePhysicalTracker";
 import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 import { CustomMessage } from "../../utils/CustomMessage";
 
 const { Option } = Select;
 
-function PhysicalExaminationForm({ CardTitle, studentId, closeModal }) {
+function PhysicalExaminationForm({
+  CardTitle,
+  studentId,
+  trackerData,
+  closeModal,
+}) {
   const [form] = Form.useForm();
 
   const createPhysicalTrackerMutation = useCreatePhysicalTracker();
+  const updatePhysicalTrackerMutation = useUpdatePhysicalTracker();
 
   const { data: statusData } = useMasterLookupsByType("physical_status");
+
+  const isEdit = Boolean(trackerData?.id);
+
+  useEffect(() => {
+    if (trackerData) {
+      form.setFieldsValue({
+        status: trackerData?.statusId,
+        physicalCheckupDate: trackerData?.physicalDate,
+      });
+    }
+  }, [trackerData, form]);
 
   const handleSubmit = (values) => {
     const { status, physicalCheckupDate } = values;
@@ -28,17 +48,37 @@ function PhysicalExaminationForm({ CardTitle, studentId, closeModal }) {
       physicalDate: physicalCheckupDate,
       studentId: studentId,
     };
-    createPhysicalTrackerMutation.mutate(payload, {
-      onSuccess: () => {
-        CustomMessage.success("Physical Examination created successfully!");
-        closeModal();
-      },
-      onError: (error) => {
-        CustomMessage.error(
-          `Failed to create Physical Examination: ${error.message}`
-        );
-      },
-    });
+    if (isEdit) {
+      updatePhysicalTrackerMutation.mutate(
+        {
+          trackerId: trackerData?.id,
+          trackerData: payload,
+        },
+        {
+          onSuccess: () => {
+            CustomMessage.success("Physical Examination updated successfully!");
+            closeModal();
+          },
+          onError: (error) => {
+            CustomMessage.error(
+              `Failed to update Physical Examination: ${error.message}`
+            );
+          },
+        }
+      );
+    } else {
+      createPhysicalTrackerMutation.mutate(payload, {
+        onSuccess: () => {
+          CustomMessage.success("Physical Examination created successfully!");
+          closeModal();
+        },
+        onError: (error) => {
+          CustomMessage.error(
+            `Failed to create Physical Examination: ${error.message}`
+          );
+        },
+      });
+    }
   };
 
   return (

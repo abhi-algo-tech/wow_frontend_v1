@@ -40,6 +40,18 @@ const StudentService = {
     }
   },
 
+  getStudentBySchool: async (schoolId) => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.STUDENT.BY_SCHOOL}/${schoolId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching student with schoolId ${schoolId}:`, error);
+      throw error;
+    }
+  },
+
   createStudent: async (studentData) => {
     try {
       const response = await axiosInstance.post(

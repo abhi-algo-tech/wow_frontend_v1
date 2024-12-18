@@ -407,6 +407,7 @@ function ClassroomOverviewTable() {
           <TableComponent
             columns={columns}
             dataSource={filteredData}
+            moduleName="Classrooms"
             loading={isLoading}
             showTotalProp={true}
           />
@@ -423,7 +424,10 @@ function ClassroomOverviewTable() {
           <CreateClassroom
             CardTitle={"Edit Classroom"}
             classroomId={currentClassroomId}
-            closeModal={() => setCreateClassroomModalOpen(false)} // Passing the close function
+            closeModal={() => {
+              setCreateClassroomModalOpen(false);
+              setShowInactive(false);
+            }} // Passing the close function
           />
         </CommonModalComponent>
       )}

@@ -28,7 +28,6 @@ const MultiSelectWithoutColor = ({
 
   const dropdownRender = (menu) => (
     <div>
-      {/* Select All Checkbox logic in the dropdown */}
       <div
         style={{
           display: "flex",
@@ -82,19 +81,10 @@ const MultiSelectWithoutColor = ({
         dropdownRender={dropdownRender}
         options={options.map((opt) => ({
           value: opt.value,
-
-          label: (
-            <>
-              {/* Wrap each menu item with a checkbox */}
-              <Checkbox checked={value.includes(opt.value)} />
-              <span style={{ marginLeft: 8 }}>{opt.label}</span>
-            </>
-          ),
+          label: opt.label,
         }))}
         filterOption={(inputValue, option) =>
-          option.label.props.children[1]
-            .toLowerCase()
-            .includes(inputValue.toLowerCase())
+          option.label.toLowerCase().includes(inputValue.toLowerCase())
         }
         {...props}
       />

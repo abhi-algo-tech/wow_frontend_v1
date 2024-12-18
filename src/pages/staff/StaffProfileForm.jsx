@@ -115,6 +115,12 @@ function StaffProfileForm({ CardTitle, staffData, closeModal }) {
 
   const handleTagChange = (value) => {
     setSelectedTags(value);
+    const shouldResetPrimaryClassroom = !value.some((classroomId) => {
+      return staffData?.primaryRoomId === classroomId;
+    });
+    if (shouldResetPrimaryClassroom) {
+      form.setFieldValue("primaryClassroom", null); // Reset primaryClassroom
+    }
   };
   //   console.log("selectedClassrooms", selectedClassrooms);
 

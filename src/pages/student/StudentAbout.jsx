@@ -248,9 +248,9 @@ const StudentAbout = ({ studentId }) => {
                     : ""}{" "}
                   <span>
                     (
-                    {sibling?.siblingGender?.toLowerCase() === "male"
-                      ? "Brother"
-                      : "Sister"}
+                    {sibling?.siblingGender?.toLowerCase() === "female"
+                      ? "Sister"
+                      : "Brother"}
                     )
                   </span>
                 </Text>
@@ -283,13 +283,26 @@ const StudentAbout = ({ studentId }) => {
                   </Col>
                 )
               )}
-              <MdOutlineModeEdit
+              {/* <MdOutlineModeEdit
                 style={{
                   width: 15,
                   height: 15,
                   cursor: "pointer",
                 }}
-              />
+              /> */}
+            </Row>
+            <Row justify="end">
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  zIndex: 10,
+                }}
+                className="pointer"
+                onClick={() => setAboutScheduleModalOpen(true)}
+              >
+                <Avatar size={20} src="/wow_icons/png/edit-grey.png" />
+              </div>
             </Row>
           </ContentCol>
 

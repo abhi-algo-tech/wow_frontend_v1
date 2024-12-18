@@ -134,6 +134,13 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
 
   const handleTagChange = (value) => {
     setSelectedAllowedClassrooms(value);
+    // Check if value does not meet certain criteria
+    const shouldResetPrimaryClassroom = !value.some((classroomId) => {
+      return staffData?.data?.primaryRoomId === classroomId;
+    });
+    if (shouldResetPrimaryClassroom) {
+      form.setFieldValue("primaryClassroom", null); // Reset primaryClassroom
+    }
   };
 
   return (
