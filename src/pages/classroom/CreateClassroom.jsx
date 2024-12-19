@@ -130,7 +130,6 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
     );
     formData.append("maxCapacity", values.capacity);
     formData.append("staffRatio", values.ratio);
-    console.log("activeInactive:", activeInactive);
     formData.append("status", activeInactive ? "Active" : "Inactive");
     formData.append("roomNumber", "A101");
     formData.append("schoolId", "1");
