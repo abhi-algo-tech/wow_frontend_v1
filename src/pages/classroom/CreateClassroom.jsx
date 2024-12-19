@@ -27,21 +27,8 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
   const [isProfile, setIsProfile] = useState(false);
   const [activeInactive, setActiveInactive] = useState(true);
   const [fileList, setFileList] = useState([]);
-  const {
-    mutateAsync: createClassroomMutation,
-    isLoading: isCreating,
-    isError: isCreateError,
-    error: createError,
-  } = useCreateClassroom();
-
-  const {
-    mutateAsync: updateClassroom,
-    isLoading: isUpdating,
-    isError: isUpdateError,
-    error: updateError,
-  } = useUpdateClassroom();
-
-  console.log(isCreating, isCreateError, createError); // Debugging log
+  const createClassroomMutation = useCreateClassroom();
+  const updateClassroomMutation = useUpdateClassroom();
 
   const { data: classroomData } = useClassroomById(classroomId);
   const [classroomName, setClassroomName] = useState("");
@@ -108,6 +95,8 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
       const [minAgeYear, minAgeMonth] = minAge.split(".");
       const [maxAgeYear, maxAgeMonth] = maxAge.split(".");
 
+      const isActive = classroomData.data.status.toLowerCase() === "active";
+
       form.setFieldsValue({
         classroomName: classroomData.data.name,
         capacity: classroomData.data.maxCapacity,
@@ -116,7 +105,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
         minAgeMonth: parseInt(minAgeMonth, 10),
         maxAgeYear: parseInt(maxAgeYear, 10),
         maxAgeMonth: parseInt(maxAgeMonth, 10),
-        active: classroomData.data.status === "Active",
+        active: !isActive, // Boolean value for Switch
       });
 
       if (classroomData.data.profileUrl) {
@@ -141,6 +130,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
     );
     formData.append("maxCapacity", values.capacity);
     formData.append("staffRatio", values.ratio);
+    console.log("activeInactive:", activeInactive);
     formData.append("status", activeInactive ? "Active" : "Inactive");
     formData.append("roomNumber", "A101");
     formData.append("schoolId", "1");
@@ -152,19 +142,33 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
 
     try {
       if (isEdit) {
-        // Use mutateAsync for updateClassroom
-        await updateClassroom.mutateAsync({
-          classroomId,
-          classroomData: formData,
-        });
-        CustomMessage.success("Classroom updated successfully!");
-        closeModal();
+        // await new Promise((resolve, reject) => {
+        //   updateClassroom(
+        //     { classroomId, classroomData: formData },
+        //     { onSuccess: resolve, onError: reject }
+        //   );
+        // });
+        // CustomMessage.success("Classroom updated successfully!");
+        // closeModal();
+        updateClassroomMutation.mutate(
+          {
+            classroomId, // Use staffId instead of studentId
+            classroomData: formData,
+          },
+          {
+            onSuccess: () => {
+              CustomMessage.success("Classroom updated successfully!");
+              closeModal();
+            },
+          }
+        );
       } else {
-        console.log("createClassroomMutation:", createClassroomMutation);
-        // Use mutateAsync for createClassroom
-        await createClassroomMutation(formData);
-        CustomMessage.success("Classroom created successfully!");
-        closeModal();
+        createClassroomMutation.mutate(formData, {
+          onSuccess: () => {
+            CustomMessage.success("Classroom created successfully!");
+            closeModal();
+          },
+        });
       }
     } catch (error) {
       console.error("Error while submitting classroom data:", error);
@@ -172,7 +176,12 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
     }
   };
   const handleActiveInactive = (e) => {
-    setActiveInactive(e);
+    console.log("e", e);
+    if (e) {
+      setActiveInactive(false);
+    } else {
+      setActiveInactive(true);
+    }
   };
 
   return (
@@ -320,12 +329,12 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                   <Form.Item
                     name="maxAgeYear"
                     className="mb-0"
-                    rules={[
-                      {
-                        validator: (_, value) =>
-                          validateMinMaxAge(_, value, form),
-                      },
-                    ]}
+                    // rules={[
+                    //   {
+                    //     validator: (_, value) =>
+                    //       validateMinMaxAge(_, value, form),
+                    //   },
+                    // ]}
                   >
                     <InputNumber
                       min={0}
@@ -346,6 +355,10 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                       {
                         validator: (_, value) =>
                           validateMinMaxAge(_, value, form),
+                      },
+                      {
+                        required: true,
+                        message: "Please input the max age!",
                       },
                     ]}
                   >
@@ -384,7 +397,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
             <ButtonComponent
               text={isEdit ? "Save" : "Add"}
               onClick={() => form.submit()}
-              isLoading={isCreating}
+              // isLoading={true}
             />
           </div>
         </Form>

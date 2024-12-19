@@ -50,6 +50,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
     formData.append("lastName", lastName);
     formData.append("statusId", 4);
     formData.append("classroomId", classroom);
+    formData.append("schoolId", academyId);
 
     if (isEdit) {
       updateStudentMutation.mutate(

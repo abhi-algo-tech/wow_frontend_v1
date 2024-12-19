@@ -2,11 +2,12 @@ export const API_ENDPOINTS = {
   CLASSROOM: {
     BASE: "/v1/classrooms", // Base endpoint for classroom-related operations
     VALIDATE_NAME: "/v1/classrooms/validate-name", // Endpoint to validate classroom name
-    BY_SCHOOL: "/v1/classrooms/schoolId", // Endpoint to validate classroom name
+    BY_SCHOOL: "/v1/classrooms/schoolId", // Endpoint student by school
   },
   STUDENT: {
     BASE: "/v1/students",
     BY_CLASSROOM: "/v1/students/classroom",
+    BY_SCHOOL: "/v1/students/school",
   },
   STAFF: {
     BASE: "/v1/staff",

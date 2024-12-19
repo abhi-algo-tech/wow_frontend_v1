@@ -438,6 +438,7 @@ const StudentOverviewTable = () => {
             dataSource={filteredData}
             tableSize={"small"}
             loading={isLoading}
+            moduleName="Students"
             rowKey="key"
             sizeChanger={false}
             showTotalProp={true}

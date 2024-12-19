@@ -480,6 +480,7 @@ const StaffOverviewTable = () => {
               columns={columns}
               dataSource={filteredData}
               loading={isLoading}
+              moduleName="Staff"
               rowSelection={{
                 selectedRowKeys,
                 onChange: setSelectedRowKeys,

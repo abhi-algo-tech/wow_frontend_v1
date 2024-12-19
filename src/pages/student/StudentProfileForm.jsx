@@ -4,6 +4,7 @@ import ButtonComponent from "../../components/ButtonComponent";
 import {
   useCreateStudent,
   useStudentById,
+  useStudentBySchool,
   useUpdateStudent,
 } from "../../hooks/useStudent";
 import CustomDatePicker from "../../components/CustomDatePicker";
@@ -26,6 +27,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
   const { academyId } = useSession();
   const [form] = Form.useForm();
   const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedSiblings, setSelectedSiblings] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
   const [selectedValues, setSelectedValues] = useState(null);
 
@@ -37,6 +39,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
   const { data: cities } = useGetAllCities();
   const { data: tagData, isLoading } = useMasterLookupsByType("tags");
   const { data: classroomData } = useGetClassroomsBySchool(academyId);
+  const { data: siblingsData } = useStudentBySchool(academyId);
   const createStudentMutation = useCreateStudent();
   const updateStudentMutation = useUpdateStudent();
   const isEdit = Boolean(studentId);
@@ -54,6 +57,13 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
       label: classroom.name, // Use the name property for the label
     })),
   };
+  const siblingsOptions = {
+    items: siblingsData?.data?.map((sibling) => ({
+      key: sibling.id, // Convert id to string as keys are typically strings
+      label: `${sibling.firstName} ${sibling.lastName} (${sibling.classroomName})`, // Use the name property for the label
+    })),
+  };
+  console.log("siblingsOptions:", siblingsOptions);
   const custodyOptions = {
     items: custodyData?.data?.map((custody) => ({
       key: custody.id, // Convert id to string as keys are typically strings
@@ -84,6 +94,9 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
       setSelectedOption(studentData.isStateSubsidy ? "yes" : "no");
       setSelectedDate(studentData.dateOfBirth);
       const mappedTags = studentData.tags.map((tag) => tag.tagId);
+      const mappedSiblings = studentData.siblings.map(
+        (sibling) => sibling.siblingId
+      );
       form.setFieldsValue({
         firstName: studentData.firstName,
         lastName: studentData.lastName,
@@ -93,14 +106,16 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
         isStateSubsidy: studentData.isStateSubsidy ? "yes" : "no",
         tags: mappedTags,
         notes: studentData.note,
-        childCustody: studentData.childCustody,
+        childCustody: studentData.childCustodyId,
         address: studentData.addressLine,
         city: studentData?.city?.id,
         state: studentData?.state?.id,
         country: studentData?.country?.id,
-        zipCode: studentData.zipCode,
+        zipCode: studentData?.zipCode,
+        sibling: mappedSiblings,
       });
       setSelectedTags(mappedTags);
+      setSelectedSiblings(mappedSiblings);
     }
   }, [studentData, form]);
 
@@ -123,6 +138,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
       state,
       country,
       zipCode,
+      sibling,
     } = values;
 
     if (!firstName || !lastName) {
@@ -141,7 +157,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
     }
     formData.append("isStateSubsidy", selectedOption === "yes");
     formData.append("note", notes);
-    formData.append("childCustody", childCustody);
+    formData.append("childCustodyId", childCustody);
     formData.append("addressLine", address);
     formData.append("cityId", city);
     formData.append("stateId", state);
@@ -149,6 +165,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
     formData.append("zipCode", zipCode);
 
     tags.forEach((tagId) => formData.append("studentTags[]", tagId));
+    sibling.forEach((siblingId) => formData.append("siblingId[]", siblingId));
 
     if (isEdit) {
       updateStudentMutation.mutate(
@@ -213,17 +230,9 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 rules={[
                   { required: true, message: "Please input the first name!" }, // Required field rule
                   {
-                    pattern: /^[A-Za-z\s]*$/, // Regex to allow only alphabets and spaces
+                    pattern: /^[A-Za-z`]*$/, // Regex to allow alphabets and backtick
                     message:
-                      "First name can only contain alphabets and spaces!",
-                  },
-                  {
-                    validator: (_, value) =>
-                      value && value.trim().length <= 2
-                        ? Promise.reject(
-                            "First name must be at least 3 characters!"
-                          )
-                        : Promise.resolve(),
+                      "First name can only contain alphabets and a backtick!",
                   },
                 ]}
               >
@@ -241,18 +250,11 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
               <Form.Item
                 name="lastName"
                 rules={[
-                  { required: true, message: "Please input the Last name!" }, // Required field rule
+                  { required: true, message: "Please input the last name!" }, // Required field rule
                   {
-                    pattern: /^[A-Za-z\s]*$/, // Regex to allow only alphabets and spaces
-                    message: "Last name can only contain alphabets and spaces!",
-                  },
-                  {
-                    validator: (_, value) =>
-                      value && value.trim().length <= 2
-                        ? Promise.reject(
-                            "Last name must be at least 3 characters!"
-                          )
-                        : Promise.resolve(),
+                    pattern: /^[A-Za-z`]*$/, // Regex to allow alphabets and backtick
+                    message:
+                      "Last name can only contain alphabets and a backtick",
                   },
                 ]}
               >
@@ -357,12 +359,10 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 onChange={handleChange}
               />
             </div>
-
             <div className=" items-center gap-1 student-label ">
               Select Tags
               <span className="text-danger"> *</span>
             </div>
-
             <Form.Item
               name="tags"
               rules={[
@@ -406,7 +406,6 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 />
               </Form.Item>
             </div>
-
             <div className="col-6">
               <div className=" items-center gap-1 student-label ">
                 Child Custody
@@ -433,7 +432,6 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 </Select>
               </Form.Item>
             </div>
-
             <div className="col-6">
               <div className="flex items-center gap-1 student-label">
                 Address Line
@@ -481,7 +479,6 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 </Select>
               </Form.Item>
             </div>
-
             <div className="col-6">
               <div className=" items-center gap-1 student-label ">
                 State
@@ -508,7 +505,6 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 </Select>
               </Form.Item>
             </div>
-
             <div className="col-6">
               <div className=" items-center gap-1 student-label ">
                 Country
@@ -535,7 +531,6 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 </Select>
               </Form.Item>
             </div>
-
             <div className="col-6">
               <div className="flex items-center gap-1 student-label">
                 Zip Code
@@ -563,6 +558,33 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 />
               </Form.Item>
             </div>
+            <div className="col-6">
+              <div className="flex items-center gap-1 student-label">
+                Sibling
+                {/* <span className="text-danger"> *</span> */}
+              </div>
+              <Form.Item name="sibling">
+                <MultiSelectWithoutColor
+                  name="sibling"
+                  placeholder="Select"
+                  options={
+                    !isLoading
+                      ? Array.isArray(siblingsOptions?.items)
+                        ? siblingsOptions.items
+                            .sort((a, b) => a.label.localeCompare(b.label))
+                            .map((sibling) => ({
+                              label: sibling.label,
+                              value: sibling.key,
+                            }))
+                        : []
+                      : []
+                  }
+                  value={selectedSiblings}
+                  onChange={setSelectedValues}
+                />
+              </Form.Item>
+            </div>
+            ;
           </div>
           <div className="text-center ">
             <Form.Item>
@@ -580,26 +602,3 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
 }
 
 export default StudentProfileForm;
-
-//  <div className="col-6">
-//    <div className="flex items-center gap-1 student-label">
-//      Sibling
-//      {/* <span className="text-danger"> *</span> */}
-//    </div>
-//    <Form.Item
-//      name="sibling"
-//      // rules={[
-//      //   {
-//      //     required: true,
-//      //     message: "Please input the Zip Code!",
-//      //   },
-//      // ]}
-//    >
-//      <MultiSelectWithoutColor
-//        name="sibling"
-//        options={options}
-//        value={selectedValues}
-//        onChange={setSelectedValues}
-//      />
-//    </Form.Item>
-//  </div>;

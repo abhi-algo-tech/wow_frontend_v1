@@ -50,6 +50,18 @@ export const useStudentByClassroom = (classroomId) => {
   });
 };
 
+// Fetch a student by school
+export const useStudentBySchool = (schoolId) => {
+  return useQuery({
+    queryKey: [studentKeys.students, schoolId],
+    queryFn: () => StudentService.getStudentBySchool(schoolId),
+    enabled: Boolean(schoolId), // Enable query only if schoolId is defined
+    onError: (error) => {
+      console.error(`Error fetching student with schoolId ${schoolId}:`, error);
+    },
+  });
+};
+
 // Create a new student
 export const useCreateStudent = () => {
   const queryClient = useQueryClient();

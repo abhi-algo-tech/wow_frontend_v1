@@ -7,6 +7,7 @@ const TableComponent = ({
   dataSource = [],
   loading = false,
   className = "",
+  moduleName = "",
   rowKey = "key",
   paginationSize = 10,
   tableSize = "middle",
@@ -75,7 +76,7 @@ const TableComponent = ({
                     fontSize: "14px",
                   }}
                 >
-                  {`Showing ${startRecord}-${endRecord} of ${total} Classrooms`}
+                  {`Showing ${startRecord}-${endRecord} of ${total} ${moduleName}`}
                 </span>
               )
             : false,

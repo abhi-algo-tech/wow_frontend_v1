@@ -115,6 +115,12 @@ function StaffProfileForm({ CardTitle, staffData, closeModal }) {
 
   const handleTagChange = (value) => {
     setSelectedTags(value);
+    const shouldResetPrimaryClassroom = !value.some((classroomId) => {
+      return staffData?.primaryRoomId === classroomId;
+    });
+    if (shouldResetPrimaryClassroom) {
+      form.setFieldValue("primaryClassroom", null); // Reset primaryClassroom
+    }
   };
   //   console.log("selectedClassrooms", selectedClassrooms);
 
@@ -218,9 +224,11 @@ function StaffProfileForm({ CardTitle, staffData, closeModal }) {
               <Form.Item
                 name="firstName"
                 rules={[
+                  { required: true, message: "Please input the first name!" }, // Required field rule
                   {
-                    required: true,
-                    message: "Please input the First Name!",
+                    pattern: /^[A-Za-z`]*$/, // Regex to allow alphabets and backtick
+                    message:
+                      "First name can only contain alphabets and a backtick!",
                   },
                 ]}
               >
@@ -238,9 +246,11 @@ function StaffProfileForm({ CardTitle, staffData, closeModal }) {
               <Form.Item
                 name="lastName"
                 rules={[
+                  { required: true, message: "Please input the last name!" }, // Required field rule
                   {
-                    required: true,
-                    message: "Please input the Last Name!",
+                    pattern: /^[A-Za-z`]*$/, // Regex to allow alphabets and backtick
+                    message:
+                      "Last name can only contain alphabets and a backtick",
                   },
                 ]}
               >
