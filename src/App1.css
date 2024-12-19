@@ -1210,6 +1210,13 @@
   font-weight: 500;
   line-height: normal;
 }
+.label-16-600 {
+  color: #573353;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
 .label-12-400 {
   color: var(--font-colour, #573353);
   font-size: 12px;

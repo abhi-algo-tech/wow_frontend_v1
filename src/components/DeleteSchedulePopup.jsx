@@ -54,7 +54,7 @@ function DeleteSchedulePopUp({
           />
 
           <ButtonComponent
-            text="Next"
+            text="Delete"
             gradient={true}
             padding={"16px 62.6px"}
             onClick={handleDeleteClick}

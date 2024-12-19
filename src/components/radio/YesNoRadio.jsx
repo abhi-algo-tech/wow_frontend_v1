@@ -10,6 +10,7 @@ const YesNoRadio = ({
   defaultValue,
   onChange,
   style,
+  mb,
 }) => {
   return (
     <div className="yes-no-radio-container">
@@ -20,7 +21,7 @@ const YesNoRadio = ({
         style={style}
       >
         {options.map((option) => (
-          <Radio key={option.value} value={option.value}>
+          <Radio key={option.value} value={option.value} className={`mb${mb}`}>
             {option.label}
           </Radio>
         ))}
