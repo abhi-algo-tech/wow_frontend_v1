@@ -22,6 +22,7 @@ const ButtonComponent = ({
   fontWeight = "bold",
   borderRadius,
   isLoading = false,
+  disabled,
 }) => {
   // Set the icon based on the buttonActionType prop
   const getIcon = () => {
@@ -66,18 +67,20 @@ const ButtonComponent = ({
       className="rounded-xl shadow-sm"
       style={{
         ...combinedStyle,
-        ...(text.toLowerCase() === "cancel" && {
-          border: "solid 1px var(--color-primary)",
-          backgroundColor: "var(--color-white)",
-          color: "var(--color-primary)",
-        }),
+        ...(text.toLowerCase() === "cancel" || text.toLowerCase() === "go back"
+          ? {
+              border: "solid 1px var(--color-primary)",
+              backgroundColor: "var(--color-white)",
+              color: "var(--color-primary)",
+            }
+          : {}),
       }}
       onClick={handleClick}
-      disabled={isLoading} // Disable button while Loading
+      disabled={disabled || isLoading} // Disable button while Loading
     >
       <span
         className={`${
-          text.toLowerCase() === "cancel"
+          text.toLowerCase() === "cancel" || text.toLowerCase() === "go back"
             ? "gradient-text common-button-component"
             : "text-white common-button-component"
         } ${fontWeight === "bold" ? "bold" : "light"}`}

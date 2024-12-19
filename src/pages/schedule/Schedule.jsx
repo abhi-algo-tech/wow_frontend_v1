@@ -7,6 +7,8 @@ import dayjs from "dayjs";
 import CopyShiftForm from "./CopyShiftForm";
 import WeekDatePicker from "../../components/datepicker/WeekDatePicker";
 import DeleteSchedulePopUp from "../../components/DeleteSchedulePopup";
+import DeleteShift from "./DeleteShift";
+import PublishShift from "./PublishShift";
 
 const { Text } = Typography;
 const Schedule = () => {
@@ -14,6 +16,9 @@ const Schedule = () => {
   const [isCopyShiftModalOpen, setCopyShiftModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(false);
+  const [isDeleteShiftModalOpen, setDeleteShiftModalOpen] = useState(false);
+  const [isPublishedShiftModalOpen, setPublishedShiftModalOpen] =
+    useState(false);
   const [startDate, setStartDate] = useState(
     dayjs().startOf("week").add(1, "day")
   ); // Start from Monday
@@ -31,6 +36,8 @@ const Schedule = () => {
     { key: "1", label: "Next Month" },
     { key: "2", label: "All Shifts" },
   ];
+  console.log("isAddShiftModalOpen", isAddShiftModalOpen);
+
   return (
     <>
       <div className="d-flex align-items-center justify-content-between mb-4">
@@ -71,21 +78,19 @@ const Schedule = () => {
       <ScheduleTable startDate={startDate} />
 
       <Button onClick={() => handleDeleteModal(1, "24-09-24")}> Delete</Button>
+      <Button onClick={() => setDeleteShiftModalOpen(true)}>
+        Delete Shift
+      </Button>
+      <Button onClick={() => setPublishedShiftModalOpen(true)}>
+        Published Shift
+      </Button>
 
       {isAddShiftModalOpen && (
-        <CommonModalComponent
-          open={isAddShiftModalOpen}
-          setOpen={setAddShiftModalOpen}
-          modalWidthSize={796}
-          modalHeightSize={544}
-          isClosable={true}
-        >
-          <ShiftForm
-            cardTitle={"Add Shift"}
-            classroomId={null}
-            closeModal={() => setAddShiftModalOpen(false)}
-          />
-        </CommonModalComponent>
+        <ShiftForm
+          cardTitle={"Add Shift"}
+          classroomId={null}
+          setCloseModal={setAddShiftModalOpen}
+        />
       )}
       {isCopyShiftModalOpen && (
         <CommonModalComponent
@@ -112,8 +117,41 @@ const Schedule = () => {
             setCancel={setDeleteModalOpen}
             deleteData={selectedRecord}
             // CardTitle="Delete Classroom"
-            handleDelete={handleDelete} // Pass the updated handleDelete function
+            handleDelete={handleDelete}
             module="Selected Shift"
+          />
+        </CommonModalComponent>
+      )}
+      {isDeleteShiftModalOpen && (
+        <CommonModalComponent
+          open={isDeleteShiftModalOpen}
+          setOpen={setDeleteShiftModalOpen}
+          modalWidthSize={531}
+          modalHeightSize={371}
+          isClosable={true}
+        >
+          <DeleteShift
+            setCancel={setDeleteShiftModalOpen}
+            deleteData={selectedRecord}
+            CardTitle="Delete Shift"
+            handleDelete={handleDelete}
+            module="Selected Shift"
+          />
+        </CommonModalComponent>
+      )}
+      {isPublishedShiftModalOpen && (
+        <CommonModalComponent
+          open={isPublishedShiftModalOpen}
+          setOpen={setPublishedShiftModalOpen}
+          modalWidthSize={418}
+          modalHeightSize={300}
+          isClosable={true}
+        >
+          <PublishShift
+            setCancel={setPublishedShiftModalOpen}
+            deleteData={selectedRecord}
+            CardTitle="Publish Shifts"
+            handleDelete={handleDelete}
           />
         </CommonModalComponent>
       )}

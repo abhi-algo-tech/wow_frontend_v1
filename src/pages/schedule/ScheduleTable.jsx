@@ -488,7 +488,7 @@ export default function ScheduleTable({ startDate }) {
           <ShiftForm
             cardTitle={"Add Shift"}
             classroomId={null}
-            closeModal={() => setAddShiftModalOpen(false)}
+            setCloseModal={setAddShiftModalOpen(false)}
           />
           {/* <CreateStudent
             CardTitle={"Add Student"}
