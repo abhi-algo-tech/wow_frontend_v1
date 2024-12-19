@@ -14,6 +14,7 @@ function ParentForm({
   closeModal,
 }) {
   const [form] = Form.useForm();
+  const [isButton, setIsButton] = useState(false);
   const createGaurdianMutation = useCreateGuardian();
   const updateGaurdianMutation = useUpdateGuardian();
   const { data: relationData } = useMasterLookupsByType("parent");
@@ -41,6 +42,7 @@ function ParentForm({
   }, [selectedGaurdianData, form]);
 
   const handleSubmit = (values) => {
+    setIsButton(true);
     const { firstName, lastName, relation, email, phoneNumber } = values;
 
     if (!firstName || !lastName || relation === "select") {
@@ -244,6 +246,7 @@ function ParentForm({
                   text={isEdit ? "Save" : "Add"}
                   padding="19.1px 115px"
                   type="submit"
+                  isLoading={isButton}
                 />
               </Form.Item>
             </div>

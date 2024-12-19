@@ -23,6 +23,7 @@ const { Option } = Select;
 function StaffProfileForm({ CardTitle, staffData, closeModal }) {
   const { academyId } = useSession();
   const [form] = Form.useForm();
+  const [isButton, setIsButton] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedAllowedClassrooms, setSelectedAllowedClassrooms] = useState(
@@ -114,6 +115,7 @@ function StaffProfileForm({ CardTitle, staffData, closeModal }) {
   }, [staffData, form]);
 
   const handleTagChange = (value) => {
+    setIsButton(true);
     setSelectedTags(value);
     const shouldResetPrimaryClassroom = !value.some((classroomId) => {
       return staffData?.primaryRoomId === classroomId;
@@ -587,6 +589,7 @@ function StaffProfileForm({ CardTitle, staffData, closeModal }) {
                 text={"Save"}
                 padding="16.1px 60px"
                 type="submit"
+                isLoading={isButton}
               />
             </Form.Item>
           </div>

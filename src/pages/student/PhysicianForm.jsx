@@ -18,7 +18,7 @@ const { Option } = Select;
 
 function PhysicianForm({ CardTitle, physicianId, studentId, closeModal }) {
   const [form] = Form.useForm();
-
+  const [isButton, setIsButton] = useState(false);
   const { data: parentData } = usePhysicianById(physicianId);
   const createPhysicianMutation = useCreatePhysician();
   const updatePhysicianMutation = useUpdatePhysician();
@@ -37,6 +37,7 @@ function PhysicianForm({ CardTitle, physicianId, studentId, closeModal }) {
   }, [parentData, form]);
 
   const handleSubmit = (values) => {
+    setIsButton(true);
     const { firstName, lastName, email, phoneNumber, address } = values;
 
     if (!firstName || !lastName) {
@@ -199,6 +200,7 @@ function PhysicianForm({ CardTitle, physicianId, studentId, closeModal }) {
                   text={isEdit ? "Save" : "Add"}
                   padding="19.1px 115px"
                   type="submit"
+                  isLoading={isButton}
                 />
               </Form.Item>
             </div>

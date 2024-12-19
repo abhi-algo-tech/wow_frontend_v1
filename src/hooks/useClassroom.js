@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ClassroomService from "../services/classroomService";
 import { classRoomKeys } from "../utils/queryKeys";
 import { useState } from "react";
+import { CustomMessage } from "../utils/CustomMessage";
 
 // Fetch all classrooms
 export const useGetClassroomsBySchool = (schoolId) => {

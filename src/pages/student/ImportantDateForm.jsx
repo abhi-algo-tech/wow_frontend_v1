@@ -7,7 +7,7 @@ import { CustomMessage } from "../../utils/CustomMessage";
 
 function ImportantDateForm({ CardTitle, closeModal, studentData }) {
   const [form] = Form.useForm();
-
+  const [isButton, setIsButton] = useState(false);
   const createStudentMutation = useCreateStudent();
   const updateStudentMutation = useUpdateStudent();
   const isEdit = Boolean(studentData?.id);
@@ -25,6 +25,7 @@ function ImportantDateForm({ CardTitle, closeModal, studentData }) {
   }, [studentData, form]);
 
   const handleSubmit = (values) => {
+    setIsButton(true);
     const formData = new FormData();
     formData.append("registrationDate", values.enrollDate || "empty");
     formData.append("startDate", values.schoolStartDate || "empty");
@@ -105,6 +106,7 @@ function ImportantDateForm({ CardTitle, closeModal, studentData }) {
                   text={isEdit ? "Save" : "Add"}
                   padding="19.1px 115px"
                   type="submit"
+                  isLoading={isButton}
                 />
               </Form.Item>
             </div>

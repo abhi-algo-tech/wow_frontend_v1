@@ -14,6 +14,7 @@ const { Option } = Select;
 
 function CreateStudent({ CardTitle, studentId, closeModal }) {
   const { academyId } = useSession();
+  const [isButton, setIsButton] = useState(false);
   const [form] = Form.useForm();
 
   const { data: studentData } = useStudentById(studentId);
@@ -38,6 +39,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
   }, [studentData, form]);
 
   const handleSubmit = (values) => {
+    setIsButton(true);
     const { firstName, lastName, classroom } = values;
 
     if (!firstName || !lastName || classroom === "select") {
@@ -178,6 +180,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
                   text={isEdit ? "Save" : "Add"}
                   padding="19.1px 115px"
                   type="submit"
+                  isLoading={isButton}
                 />
               </Form.Item>
             </div>

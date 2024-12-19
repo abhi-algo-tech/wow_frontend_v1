@@ -11,7 +11,7 @@ import { CustomMessage } from "../../utils/CustomMessage";
 
 function HealthDetailsForm({ CardTitle, studentData, studentId, closeModal }) {
   const [form] = Form.useForm();
-  console.log("studentData:", studentData);
+  const [isButton, setIsButton] = useState(false);
   const createStudentMutation = useCreateStudent();
   const updateStudentMutation = useUpdateStudent();
   const isEdit = Boolean(studentId);
@@ -28,6 +28,7 @@ function HealthDetailsForm({ CardTitle, studentData, studentId, closeModal }) {
   }, [studentData, form]);
 
   const handleSubmit = (values) => {
+    setIsButton(true);
     const { allergies, medications, dietRestriction } = values;
 
     const formData = new FormData();
@@ -141,6 +142,7 @@ function HealthDetailsForm({ CardTitle, studentData, studentId, closeModal }) {
                   text={isEdit ? "Save" : "Add"}
                   padding="19.1px 115px"
                   type="submit"
+                  isLoading={isButton}
                 />
               </Form.Item>
             </div>

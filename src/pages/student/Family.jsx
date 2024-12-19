@@ -7,6 +7,7 @@ import CommonModalComponent from "../../components/CommonModalComponent";
 import { useDeleteGuardian, useStudentById } from "../../hooks/useStudent";
 import DeletePopUp from "../../components/DeletePopUp";
 import { CustomMessage } from "../../utils/CustomMessage";
+import { getInitialsTitleWithColor } from "../../services/common";
 
 const { Text } = Typography;
 
@@ -135,7 +136,26 @@ function Family({ studentId }) {
                 >
                   <div className="d-flex justify-content-between align-items-center mb10">
                     <Space>
-                      <Avatar src={guardian.photoUrl} size={52} />
+                      <Avatar
+                        size={52}
+                        src={guardian?.photoUrl || undefined}
+                        className="mb8"
+                        style={{
+                          backgroundColor: guardian?.photoUrl
+                            ? undefined
+                            : getInitialsTitleWithColor(
+                                `${guardian?.gurdianFirstName} ${guardian.gurdianLastName}`
+                              ).backgroundColor,
+                          color: "#fff",
+                        }}
+                      >
+                        {!guardian?.photoUrl &&
+                          getInitialsTitleWithColor(
+                            `${guardian?.gurdianFirstName} ${guardian.gurdianLastName}`
+                          ).initials}
+                      </Avatar>
+
+                      {/* <Avatar src={guardian.photoUrl} size={52} /> */}
                       <Text className="student-about-tab-label-value">
                         {guardian?.gurdianFirstName} {guardian.gurdianLastName}
                       </Text>

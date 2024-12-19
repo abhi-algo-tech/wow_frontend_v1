@@ -56,13 +56,13 @@ function ActorBigCard({
         className="label-14-500 actorbig-card-text-ellipsis "
         data-full-text={actor.name}
       >
-        {actor.name}
+        {actor?.name?.split(" ")[0]}
       </div>
       {actor?.designation && (
         <div className="label-11-400 mt6">{actor.designation}</div>
       )}
       <Space size={4} className="d-flex justify-content-center mt10">
-        {actor.flags.map((flag, index) => (
+        {actor?.flags?.map((flag, index) => (
           <img
             key={index}
             className="student-activity-type-icons"

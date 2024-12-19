@@ -26,6 +26,7 @@ const { Option } = Select;
 function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
   const { academyId } = useSession();
   const [form] = Form.useForm();
+  const [isButton, setIsButton] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedSiblings, setSelectedSiblings] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -123,6 +124,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
     setSelectedTags(value);
   };
   const handleSubmit = (values) => {
+    setIsButton(true);
     const {
       firstName,
       lastName,
@@ -592,6 +594,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 text={isEdit ? "Save" : "Add"}
                 padding="19.1px 115px"
                 type="submit"
+                isLoading={isButton}
               />
             </Form.Item>
           </div>

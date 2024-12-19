@@ -9,6 +9,7 @@ import { useStaffByClassroom } from "../../hooks/useStaff";
 import { formatStaffData } from "./ClassroomCommon";
 import LoaderComponent from "../../components/loader/LoaderComponent";
 import EmptyRecord from "../../components/emptyFile/EmptyRecord";
+import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 const { Option } = Select;
 
 // Sample student data
@@ -65,6 +66,7 @@ export default function StaffCardDetails({ classroomId }) {
   const [isFloatingCardVisible, setFloatingCardVisible] = useState();
   const [isCreateMessageModalOpen, setCreateMessageModalOpen] = useState(false);
   const [staffs, setStaffs] = useState([]);
+  const [filterStaffs, setFilterStaffs] = useState([]);
 
   const {
     data: staffData,
@@ -72,15 +74,38 @@ export default function StaffCardDetails({ classroomId }) {
     isError,
     error,
   } = useStaffByClassroom(classroomId);
+  const { data: designationData } = useMasterLookupsByType("designation");
 
   useEffect(() => {
     if (staffData) {
       const formattedData = formatStaffData(staffData);
       setStaffs(formattedData);
+      setFilterStaffs(formattedData);
     }
   }, [staffData]);
 
-  if (isError) return <p>Error: {error.message}</p>;
+  const designationOptions = {
+    items: designationData?.data?.map((designation) => ({
+      key: designation.id, // Convert id to string as keys are typically strings
+      label: designation.name, // Use the name property for the label
+    })),
+  };
+
+  const handleDesignation = (selectedDesignation) => {
+    if (selectedDesignation === "all") {
+      setFilterStaffs(staffs);
+    } else {
+      const selectedDesignationLabel = designationOptions.items.find(
+        (status) => status.key === selectedDesignation
+      )?.label;
+      console.log("selectedDesignationLabel:", selectedDesignationLabel);
+      const filtered = staffs.filter(
+        (staff) => staff.designation === selectedDesignationLabel
+      );
+      setFilterStaffs(filtered);
+    }
+  };
+  // if (isError) return <p>Error: {error.message}</p>;
   // Function to handle "Select All" functionality
   const handleSelectAll = (e) => {
     if (selectedStaffs?.length >= 1) {
@@ -89,7 +114,7 @@ export default function StaffCardDetails({ classroomId }) {
       setFloatingCardVisible(true);
     }
     if (e.target.checked) {
-      setSelectedStaffs(staffs.map((staff) => staff.id));
+      setSelectedStaffs(filterStaffs.map((staff) => staff.id));
     } else {
       setSelectedStaffs([]);
     }
@@ -109,7 +134,7 @@ export default function StaffCardDetails({ classroomId }) {
     );
   };
 
-  const filteredstaffs = staffs.filter((staff) =>
+  const filteredstaffs = filterStaffs.filter((staff) =>
     staff.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -187,7 +212,7 @@ export default function StaffCardDetails({ classroomId }) {
           <LoaderComponent isLoading={isLoading} />
         ) : (
           <>
-            {filteredstaffs.length > 0 ? (
+            {staffs.length > 0 ? (
               <>
                 {isFloatingCardVisible && renderRFloatingRightCard()}
                 <div className="d-flex align-items-center my-3 justify-content-between">
@@ -205,7 +230,7 @@ export default function StaffCardDetails({ classroomId }) {
                   <div className="me-2">
                     <Checkbox
                       onChange={handleSelectAll}
-                      checked={selectedStaffs.length === staffs.length}
+                      checked={selectedStaffs.length === filterStaffs.length}
                       style={{
                         marginBottom: 0,
                       }} /* Remove margin to center-align */
@@ -216,14 +241,15 @@ export default function StaffCardDetails({ classroomId }) {
                   <div className="me-2">
                     <Select
                       className="select-staff light-font"
-                      defaultValue="select-designation"
+                      placeholder="Select Designation"
+                      onChange={handleDesignation}
                     >
-                      <Option value="select-designation">
-                        Select Designation
-                      </Option>
-                      <Option value="admin">Admin</Option>
-                      <Option value="staff">Staff</Option>
-                      <Option value="lead-teacher">Lead Teacher</Option>
+                      <Option value="all">All</Option>
+                      {designationOptions?.items?.map((designation) => (
+                        <Option key={designation.key} value={designation.key}>
+                          {designation.label}
+                        </Option>
+                      ))}
                     </Select>
                   </div>
                   {selectedStaffs.length >= 1 && (
@@ -244,21 +270,28 @@ export default function StaffCardDetails({ classroomId }) {
                     </div>
                   )}
                 </div>
-
-                <div className="row mt16">
-                  {filteredstaffs.map((staff) => (
-                    <div
-                      key={staff.id}
-                      className="col-6 col-sm-4 col-md-3 col-lg-2 mb-2"
-                    >
-                      <ActorBigCard
-                        actor={staff}
-                        selectedActors={selectedStaffs}
-                        handleCheckboxChange={handleCheckboxChange}
-                        module={"staff"}
-                      />
-                    </div>
-                  ))}
+                <div
+                  style={{
+                    height: "393px",
+                    overflowY: "auto",
+                    overflowX: "hidden",
+                  }}
+                >
+                  <div className="row mt16">
+                    {filteredstaffs.map((staff) => (
+                      <div
+                        key={staff.id}
+                        className="col-6 col-sm-4 col-md-3 col-lg-2 mb-2"
+                      >
+                        <ActorBigCard
+                          actor={staff}
+                          selectedActors={selectedStaffs}
+                          handleCheckboxChange={handleCheckboxChange}
+                          module={"staff"}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </>
             ) : (

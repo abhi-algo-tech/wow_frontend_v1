@@ -225,8 +225,10 @@ const StudentOverviewTable = () => {
           >
             {getInitialsTitle(classroom.name)}
           </Avatar>
-          <span className="classroom-inactive-label text-truncate">
-            {classroom.name}
+          <span className="classroom-inactive-label">
+            {classroom.name.length > 10
+              ? classroom.name.slice(0, 10) + "..."
+              : classroom.name}
           </span>
         </div>
       ),
