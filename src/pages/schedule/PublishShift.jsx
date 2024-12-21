@@ -65,7 +65,7 @@ function PublishShift({ setCancel, deleteData, CardTitle, handleDelete }) {
           </Form.Item>
 
           {/* Action Buttons */}
-          <div className="d-flex text-center">
+          <div className="text-center">
             <ButtonComponent
               text={"Cancel"}
               padding="14px 45px"

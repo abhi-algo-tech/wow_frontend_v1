@@ -6,6 +6,7 @@ import { useState } from "react";
 import { MdOutlineExpandMore, MdOutlineExpandLess } from "react-icons/md";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import ShiftForm from "./ShiftForm";
+import { Link } from "react-router-dom";
 
 const data = [
   {
@@ -213,7 +214,9 @@ export default function ScheduleTable({ startDate }) {
           </div>
         </div>
         <div className="text-end">
-          <span className="label-10-500 pointer">Show More</span>
+          <Link to={"/schedule/classroomview"}>
+            <span className="label-10-500 pointer">Show More</span>
+          </Link>
         </div>
       </>
     );
