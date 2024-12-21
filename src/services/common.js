@@ -159,3 +159,10 @@ export function formatDateToCustomStyle(dateStr) {
   const options = { month: "short", day: "2-digit", year: "numeric" };
   return date.toLocaleDateString("en-US", options);
 }
+
+export function formatTime(time) {
+  const [hour, minute] = time.split(":");
+  const date = new Date();
+  date.setHours(hour, minute);
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}

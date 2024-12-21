@@ -159,7 +159,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
     }
     formData.append("isStateSubsidy", selectedOption === "yes");
     formData.append("note", notes);
-    formData.append("childCustodyId", childCustody);
+    if (childCustody) formData.append("childCustodyId", childCustody);
     formData.append("addressLine", address);
     formData.append("cityId", city);
     formData.append("stateId", state);
@@ -182,6 +182,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
           },
           onError: (error) => {
             CustomMessage.error(`Failed to update student: ${error.message}`);
+            setIsButton(false);
           },
         }
       );
@@ -193,6 +194,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
         },
         onError: (error) => {
           CustomMessage.error(`Failed to create student: ${error.message}`);
+          setIsButton(false);
         },
       });
     }
@@ -586,7 +588,6 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 />
               </Form.Item>
             </div>
-            ;
           </div>
           <div className="text-center ">
             <Form.Item>

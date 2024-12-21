@@ -170,6 +170,19 @@ const StudentService = {
       throw error;
     }
   },
+
+  validateName: async (studentData) => {
+    try {
+      const response = await axiosInstance.post(
+        API_ENDPOINTS.STUDENT.VALIDATE_NAME,
+        studentData
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error to validate student:`, error);
+      throw error;
+    }
+  },
 };
 
 export default StudentService;
