@@ -21,6 +21,8 @@ import Staff from "./pages/staff/Staff";
 import StaffProfile from "./pages/staff/StaffProfile";
 import StaffAttendance from "./pages/staff/StaffAttendance";
 import Schedule from "./pages/schedule/Schedule";
+import ClassroomView from "./pages/schedule/ClassroomView";
+import StaffOverview from "./pages/schedule/staff/StaffOverview";
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
@@ -48,6 +50,8 @@ function App() {
           <Route path="/staff-profile" element={<StaffProfile />} />
           <Route path="/staff-attendance/:id" element={<StaffAttendance />} />
           <Route path="/schedule" element={<Schedule />} />
+          <Route path="/schedule/classroomview" element={<ClassroomView />} />
+          <Route path="/staff-schedule-overview" element={<StaffOverview />} />
           {/* Redirect to default dashboard route */}
           <Route path="/*" element={<Navigate to="/dashboard" />} />
           <Route path="/" element={<Navigate to="/dashboard" />} />

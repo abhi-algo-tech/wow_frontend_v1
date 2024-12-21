@@ -1217,6 +1217,15 @@
   font-weight: 600;
   line-height: normal;
 }
+.label-20-600 {
+  color: var(--font-colour, #573353);
+  font-family: Manrope;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 120% */
+  letter-spacing: -0.6px;
+}
 .label-12-400 {
   color: var(--font-colour, #573353);
   font-size: 12px;
@@ -1840,4 +1849,44 @@
 
 .avatar-container:hover .edit-icon {
   opacity: 1;
+}
+
+.schedule-actor-card .ant-collapse-content-box {
+  padding: 12px 10px !important;
+}
+.schedule-actor-card {
+  border: none !important;
+}
+.schedule-actor-card .ant-collapse-expand-icon {
+  display: none !important;
+}
+
+.staff-scheduling-overview .status-indicator {
+  width: 16px;
+  height: 16px;
+}
+
+.staff-scheduling-overview .metrics-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.staff-scheduling-overview .metrics-card .bg-secondary-subtle {
+  background: #fbb28f;
+}
+
+.staff-scheduling-overview .text-primary {
+  color: #573353 !important;
+}
+
+.staff-scheduling-overview .text-muted {
+  color: #573353;
+}
+.label-32-600 {
+  color: #573353;
+  font-family: Manrope;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
 }

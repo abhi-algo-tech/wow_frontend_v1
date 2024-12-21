@@ -26,4 +26,7 @@
   .height#{$i} {
     height: #{$i}px !important;
   }
+  .width#{$i} {
+    width: #{$i}px !important;
+  }
 }

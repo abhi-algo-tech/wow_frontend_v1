@@ -1,4 +1,4 @@
-import { Avatar, Button, Dropdown, Typography } from "antd";
+import { Avatar, Button, Divider, Dropdown, Typography } from "antd";
 import React, { useState } from "react";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import ScheduleTable from "./ScheduleTable";
@@ -9,6 +9,9 @@ import WeekDatePicker from "../../components/datepicker/WeekDatePicker";
 import DeleteSchedulePopUp from "../../components/DeleteSchedulePopup";
 import DeleteShift from "./DeleteShift";
 import PublishShift from "./PublishShift";
+import OverviewTable from "./OverviewTable";
+import ScheduleView from "./ScheduleView";
+import { Link } from "react-router-dom";
 
 const { Text } = Typography;
 const Schedule = () => {
@@ -77,6 +80,7 @@ const Schedule = () => {
       </div>
       <ScheduleTable startDate={startDate} />
 
+      <Divider />
       <Button onClick={() => handleDeleteModal(1, "24-09-24")}> Delete</Button>
       <Button onClick={() => setDeleteShiftModalOpen(true)}>
         Delete Shift
@@ -84,7 +88,8 @@ const Schedule = () => {
       <Button onClick={() => setPublishedShiftModalOpen(true)}>
         Published Shift
       </Button>
-
+      <Divider />
+      <Link to={"/staff-schedule-overview"}>Staff Overview</Link>
       {isAddShiftModalOpen && (
         <ShiftForm
           cardTitle={"Add Shift"}
