@@ -5,12 +5,15 @@ import StaffImportantDateForm from "./StaffImportantDateFrom";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import { useState } from "react";
 import {
+  useDeletePhysicalTracker,
   useGetAllPhysicalTrackersByStaff,
   useUpdatePhysicalTracker,
 } from "../../hooks/usePhysicalTracker";
 import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 import { formatDateToCustomStyle } from "../../services/common";
 import { CustomMessage } from "../../utils/CustomMessage";
+import PhysicalExaminationForm from "../student/PhysicalExaminationForm";
+import DeletePopUp from "../../components/DeletePopUp";
 const { Text } = Typography;
 
 const LabelCol = ({ children }) => (
@@ -27,43 +30,60 @@ function StaffImportantDates({ staffData }) {
     isLoading,
     isError,
   } = useGetAllPhysicalTrackersByStaff(staffData?.id);
-  console.log("PhysicalTrackers:", PhysicalTrackers, staffData?.id);
+  const deletePhysicalTrackerMutation = useDeletePhysicalTracker();
+  const [
+    isCreatePhysicianExaminationModalOpen,
+    setCreatePhysicianExaminationModalOpen,
+  ] = useState(false);
   const updatePhysicalTrackerMutation = useUpdatePhysicalTracker();
   const { data: status } = useMasterLookupsByType("physical_status");
   const [isCreateImportantDatesModalOpen, setCreateImportantDatesModalOpen] =
     useState(false);
 
-  const handleMenuClick = ({ key, trackerId }) => {
-    const payload = {
-      statusId: key,
-    };
-    updatePhysicalTrackerMutation.mutate(
-      {
-        trackerId: trackerId,
-        trackerData: payload,
-      },
-      {
-        onSuccess: () => {
-          CustomMessage.success("Physical checkup updated successfully!");
-        },
-        onError: (error) => {
-          CustomMessage.error(
-            `Failed to update Physical checkup: ${error.message}`
-          );
-        },
-      }
-    );
-  };
-  const menu = (trackerId) => ({
-    items:
-      status?.data?.map((item) => ({
-        key: item?.id,
-        label: <span className="student-table-action-label">{item?.name}</span>,
-        trackerId: trackerId, // Pass the trackerId to the menu's click handler
-      })) || [],
-    onClick: (e) => handleMenuClick({ key: e.key, trackerId }),
-  });
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedTracker, setSelectedTracker] = useState(null);
 
+  // const handleMenuClick = ({ key, trackerId }) => {
+  //   const payload = {
+  //     statusId: key,
+  //   };
+  //   updatePhysicalTrackerMutation.mutate(
+  //     {
+  //       trackerId: trackerId,
+  //       trackerData: payload,
+  //     },
+  //     {
+  //       onSuccess: () => {
+  //         CustomMessage.success("Physical checkup updated successfully!");
+  //       },
+  //       onError: (error) => {
+  //         CustomMessage.error(
+  //           `Failed to update Physical checkup: ${error.message}`
+  //         );
+  //       },
+  //     }
+  //   );
+  // };
+  // const menu = (trackerId) => ({
+  //   items:
+  //     status?.data?.map((item) => ({
+  //       key: item?.id,
+  //       label: <span className="student-table-action-label">{item?.name}</span>,
+  //       trackerId: trackerId, // Pass the trackerId to the menu's click handler
+  //     })) || [],
+  //   onClick: (e) => handleMenuClick({ key: e.key, trackerId }),
+  // });
+
+  const handleMenuClick = ({ key, tracker }) => {
+    if (key === "edit") {
+      setSelectedTracker(tracker);
+      setEditModalOpen(true);
+    } else if (key === "delete") {
+      setSelectedTracker(tracker);
+      setDeleteModalOpen(true);
+    }
+  };
   const statusColors = {
     Completed: "green",
     Overdue: "red",
@@ -91,6 +111,21 @@ function StaffImportantDates({ staffData }) {
   //   ],
   //   // onClick: handleMenuClick,
   // };
+
+  const handleDelete = async (id) => {
+    try {
+      deletePhysicalTrackerMutation.mutate({
+        trackerId: id,
+      });
+
+      CustomMessage.success(`Successfully deleted Physical CheckUp: ${id}`);
+      setDeleteModalOpen(false); // Close the modal after operation
+    } catch (error) {
+      CustomMessage.error(
+        `Failed to delete Physical CheckUp: ${error.message}`
+      );
+    }
+  };
   return (
     <>
       <div className="padding30 staff-about-container">
@@ -151,114 +186,91 @@ function StaffImportantDates({ staffData }) {
             </Text>
           </ContentCol>
 
-          <Col span={8} className="staff-important-dates-tab-label-key">
+          <Col
+            span={8}
+            className="staff-important-dates-tab-label-key"
+            style={{ position: "relative" }} // Added relative positioning to the Col for proper placement of absolute children
+          >
             Physical checkup
+            <div
+              style={{
+                position: "absolute",
+                top: "0px",
+                right: "100px",
+              }}
+            >
+              <Badge className="pointer about-floating-edit-div">
+                <Avatar
+                  shape="square"
+                  icon={<MdOutlineModeEditOutline />}
+                  onClick={() => setCreatePhysicianExaminationModalOpen(true)}
+                />
+              </Badge>
+            </div>
           </Col>
+
           <Col span={16}>
             <Row gutter={[20, 0]}>
-              {PhysicalTrackers?.data?.map((tracker) => (
-                <Col span={12}>
-                  <Card
-                    bordered={false}
-                    style={{ padding: 0 }}
-                    className="d-flex flex-column w-100"
-                  >
-                    <Row className="mb-2">
-                      <Col span={12}>
-                        <Tag
-                          color={statusColors[tracker?.statusName] || "gray"}
-                          className="no-border-tag"
-                        >
-                          {tracker?.statusName}
-                        </Tag>
-                      </Col>
-                      <Col span={12} style={{ textAlign: "right" }}>
-                        <Dropdown menu={menu(tracker?.id)} trigger={["click"]}>
-                          <EllipsisOutlined className="pointer" />
-                        </Dropdown>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col span={12}>
-                        <Text className="staff-important-dates-checkup-card-key">
-                          Checkup Dates
-                        </Text>
-                      </Col>
-                      <Col span={12} style={{ textAlign: "right" }}>
-                        <Text className="staff-important-dates-tab-label-value">
-                          {tracker?.physicalDate
-                            ? formatDateToCustomStyle(tracker.physicalDate)
-                            : "N/A"}
-                        </Text>
-                      </Col>
-                    </Row>
-                  </Card>
-                </Col>
-              ))}
-              {/* <Col span={12}>
-                <Card
-                  bordered={false}
-                  styles={{ body: { padding: 16 } }}
-                  className="d-flex flex-column w-100"
-                >
-                  <Row className="mb-2">
-                    <Col span={12}>
-                      <Tag color="green" className="no-border-tag">
-                        Completed
-                      </Tag>
-                    </Col>
-                    <Col span={12} style={{ textAlign: "right" }}>
-                      <Dropdown menu={menu} trigger={["click"]}>
-                        <EllipsisOutlined className="pointer" />
-                      </Dropdown>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={12}>
-                      <Text className="staff-important-dates-checkup-card-key">
-                        Checkup Dates
-                      </Text>
-                    </Col>
-                    <Col span={12} style={{ textAlign: "right" }}>
-                      <Text className="staff-important-dates-tab-label-value">
-                        Nov 09 ,2024
-                      </Text>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col> */}
-              {/* <Col span={12}>
-                <Card
-                  bordered={false}
-                  styles={{ body: { padding: 16 } }}
-                  className="d-flex flex-column w-100"
-                >
-                  <Row className="mb-2">
-                    <Col span={12}>
-                      <Tag color="yellow" className="no-border-tag">
-                        Due
-                      </Tag>
-                    </Col>
-                    <Col span={12} style={{ textAlign: "right" }}>
-                      <Dropdown menu={menu} trigger={["click"]}>
-                        <EllipsisOutlined className="pointer" />
-                      </Dropdown>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={12}>
-                      <Text className="staff-important-dates-checkup-card-key">
-                        Checkup Dates
-                      </Text>
-                    </Col>
-                    <Col span={12} style={{ textAlign: "right" }}>
-                      <Text className="staff-important-dates-tab-label-value">
-                        Nov 09 ,2024
-                      </Text>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col> */}
+              {PhysicalTrackers?.data?.map((tracker) => {
+                const menu = {
+                  items: [
+                    {
+                      key: "edit",
+                      label: (
+                        <span className="student-table-action-label">Edit</span>
+                      ),
+                    },
+                    {
+                      key: "delete",
+                      label: (
+                        <span className="student-table-action-label">
+                          Delete
+                        </span>
+                      ),
+                    },
+                  ],
+                  onClick: ({ key }) => handleMenuClick({ key, tracker }),
+                };
+
+                return (
+                  <Col span={12} key={tracker.id}>
+                    <Card
+                      bordered={false}
+                      style={{ padding: 0 }}
+                      className="d-flex flex-column w-100"
+                    >
+                      <Row className="mb-2">
+                        <Col span={12}>
+                          <Tag
+                            color={statusColors[tracker?.statusName] || "gray"}
+                          >
+                            {tracker?.statusName}
+                          </Tag>
+                        </Col>
+                        <Col span={12} style={{ textAlign: "right" }}>
+                          <Dropdown menu={menu} trigger={["click"]}>
+                            <EllipsisOutlined className="pointer" />
+                          </Dropdown>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col span={12}>
+                          <Text className="staff-important-dates-checkup-card-key">
+                            Checkup Dates
+                          </Text>
+                        </Col>
+                        <Col span={12} style={{ textAlign: "right" }}>
+                          <Text className="staff-important-dates-tab-label-value">
+                            {tracker?.physicalDate
+                              ? formatDateToCustomStyle(tracker.physicalDate)
+                              : "N/A"}
+                          </Text>
+                        </Col>
+                      </Row>
+                    </Card>
+                  </Col>
+                );
+              })}
             </Row>
           </Col>
         </Row>
@@ -276,6 +288,54 @@ function StaffImportantDates({ staffData }) {
             staffId={staffData?.id}
             closeModal={() => setCreateImportantDatesModalOpen(false)}
             staffData={staffData}
+          />
+        </CommonModalComponent>
+      )}
+      {isCreatePhysicianExaminationModalOpen && (
+        <CommonModalComponent
+          open={isCreatePhysicianExaminationModalOpen}
+          setOpen={setCreatePhysicianExaminationModalOpen}
+          modalWidthSize={418}
+          isClosable={true}
+        >
+          <PhysicalExaminationForm
+            CardTitle={"Add Physical CheckUp Details"}
+            studentId={staffData?.id}
+            closeModal={() => setCreatePhysicianExaminationModalOpen(false)}
+            module="staff"
+          />
+        </CommonModalComponent>
+      )}
+      {isEditModalOpen && selectedTracker && (
+        <CommonModalComponent
+          open={isEditModalOpen}
+          setOpen={setEditModalOpen}
+          modalWidthSize={418}
+          isClosable={true}
+        >
+          <PhysicalExaminationForm
+            CardTitle={"Edit Physical CheckUp Details"}
+            studentId={staffData?.id}
+            trackerData={selectedTracker}
+            closeModal={() => setEditModalOpen(false)}
+            module="staff"
+          />
+        </CommonModalComponent>
+      )}
+
+      {isDeleteModalOpen && selectedTracker && (
+        <CommonModalComponent
+          open={isDeleteModalOpen}
+          setOpen={setDeleteModalOpen}
+          modalWidthSize={493}
+          modalHeightSize={280}
+          isClosable={false}
+        >
+          <DeletePopUp
+            setCancel={setDeleteModalOpen}
+            deleteData={selectedTracker}
+            handleDelete={() => handleDelete(selectedTracker.id)}
+            module="Physical Examination"
           />
         </CommonModalComponent>
       )}

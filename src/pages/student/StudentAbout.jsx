@@ -263,26 +263,28 @@ const StudentAbout = ({ studentId }) => {
           <LabelCol>Schedule</LabelCol>
           <ContentCol>
             <Row gutter={[8, 8]}>
-              {student?.weekSchedules?.map((schedule) => (
-                <Col key={schedule.id}>
-                  <Tag
-                    color="purple"
-                    bordered={false}
-                    className="d-flex flex-column align-items-center p-1 px-2 m-0"
-                  >
-                    <div className="student-about-tab-schedule-value">
-                      {schedule.dayOfWeek.charAt(0) +
-                        schedule.dayOfWeek.slice(1).toLowerCase()}
-                    </div>
-                  </Tag>
-                  <Tag className="w-100 text-center bg-white">
-                    <div style={{ fontSize: "8.5px" }}>
-                      {formatTime(schedule.startTime)} -{" "}
-                      {formatTime(schedule.endTime)}
-                    </div>
-                  </Tag>
-                </Col>
-              ))}
+              {student?.weekSchedules
+                ?.filter((schedule) => schedule?.startTime !== "00:00:00")
+                .map((schedule) => (
+                  <Col key={schedule.id}>
+                    <Tag
+                      color="purple"
+                      bordered={false}
+                      className="d-flex flex-column align-items-center p-1 px-2 m-0"
+                    >
+                      <div className="student-about-tab-schedule-value">
+                        {schedule.dayOfWeek.charAt(0) +
+                          schedule.dayOfWeek.slice(1).toLowerCase()}
+                      </div>
+                    </Tag>
+                    <Tag className="w-100 text-center bg-white">
+                      <div style={{ fontSize: "8.5px" }}>
+                        {formatTime(schedule.startTime)} -{" "}
+                        {formatTime(schedule.endTime)}
+                      </div>
+                    </Tag>
+                  </Col>
+                ))}
             </Row>
 
             <Row justify="end">

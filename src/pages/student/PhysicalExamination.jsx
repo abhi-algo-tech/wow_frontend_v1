@@ -191,11 +191,11 @@ function PhysicianExamination({ studentId }) {
         trackerId: id,
       });
 
-      CustomMessage.success(`Successfully deleted Physical Tracker: ${id}`);
+      CustomMessage.success(`Successfully deleted Physical Examination: ${id}`);
       setDeleteModalOpen(false); // Close the modal after operation
     } catch (error) {
       CustomMessage.error(
-        `Failed to delete Physical Tracker: ${error.message}`
+        `Failed to delete Physical Examination: ${error.message}`
       );
     }
   };
@@ -282,6 +282,7 @@ function PhysicianExamination({ studentId }) {
             CardTitle={"Add Physical Examination Details"}
             studentId={studentId}
             closeModal={() => setCreatePhysicianExaminationModalOpen(false)}
+            module="student"
           />
         </CommonModalComponent>
       )}
@@ -298,6 +299,7 @@ function PhysicianExamination({ studentId }) {
             studentId={studentId}
             trackerData={selectedTracker}
             closeModal={() => setEditModalOpen(false)}
+            module="student"
           />
         </CommonModalComponent>
       )}

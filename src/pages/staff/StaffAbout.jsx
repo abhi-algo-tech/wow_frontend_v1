@@ -8,6 +8,7 @@ import TimePickerComponent from "../../components/timePicker/TimePickerComponent
 import StaffScheduleForm from "./StaffSchedulingForm";
 import { useStaffById } from "../../hooks/useStaff";
 import { formatDate } from "../../utils/commonFormatDate";
+import { formatTime } from "../../services/common";
 const { Text } = Typography;
 
 const LabelCol = ({ children }) => (
@@ -217,41 +218,39 @@ const StaffAbout = ({ staffId }) => {
             <Avatar size={20} src="/wow_icons/png/edit-grey.png" />
           </div>
           <Col span={5}>
-            <div className="student-about-tab-label mb8">Availbility</div>
+            <div className="student-about-tab-label mb8">Availability</div>
             <div className="student-about-tab-label mb8">Work Time</div>
             <div className="student-about-tab-label">Break Time</div>
           </Col>
           <Col span={19}>
             <Row gutter={[10, 15]}>
-              {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map(
-                (day) => (
-                  <Col style={{ width: 115 }} key={day}>
+              {staff?.weekSchedules
+                ?.filter((schedule) => schedule?.startTime !== "00:00:00") // Filter out invalid schedules
+                .map((schedule) => (
+                  <Col style={{ width: 115 }} key={schedule?.id}>
                     <Tag
                       color="purple"
                       bordered={false}
                       className="d-flex flex-column align-items-center p-1 px-2 m-0"
                     >
                       <div className="student-about-tab-schedule-value">
-                        {day}
+                        {schedule?.dayOfWeek}
                       </div>
                     </Tag>
-                    {day && (
-                      <Tag className="w-100 text-center bg-white">
-                        <div style={{ fontSize: "10px" }}>
-                          07:00AM - 05:30PM
-                        </div>
-                      </Tag>
-                    )}
-                    {day && (
-                      <Tag className="w-100 text-center bg-white">
-                        <div style={{ fontSize: "10px" }}>
-                          07:00AM - 05:30PM
-                        </div>
-                      </Tag>
-                    )}
+                    <Tag className="w-100 text-center bg-white">
+                      <div style={{ fontSize: "10px" }}>
+                        {formatTime(schedule?.startTime)} -{" "}
+                        {formatTime(schedule?.endTime)}
+                      </div>
+                    </Tag>
+                    <Tag className="w-100 text-center bg-white">
+                      <div style={{ fontSize: "10px" }}>
+                        {formatTime(schedule?.breakStartTime)} -{" "}
+                        {formatTime(schedule?.breakEndTime)}
+                      </div>
+                    </Tag>
                   </Col>
-                )
-              )}
+                ))}
             </Row>
           </Col>
         </Row>
@@ -281,7 +280,9 @@ const StaffAbout = ({ staffId }) => {
         >
           <StaffScheduleForm
             CardTitle={"Edit Schedule"}
-            classroomId={null}
+            data={staff?.weekSchedules}
+            Id={staffId}
+            module="staff"
             closeModal={() => setAboutScheduleModalOpen(false)}
           />
         </CommonModalComponent>
