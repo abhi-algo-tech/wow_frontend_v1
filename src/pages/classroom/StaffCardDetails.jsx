@@ -98,7 +98,7 @@ export default function StaffCardDetails({ classroomId }) {
       const selectedDesignationLabel = designationOptions.items.find(
         (status) => status.key === selectedDesignation
       )?.label;
-      console.log("selectedDesignationLabel:", selectedDesignationLabel);
+      // console.log("selectedDesignationLabel:", selectedDesignationLabel);
       const filtered = staffs.filter(
         (staff) => staff.designation === selectedDesignationLabel
       );

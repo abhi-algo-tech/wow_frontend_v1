@@ -5,6 +5,7 @@ import AssignConfirm from "./AssignConfirm";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import ButtonComponent from "../../components/ButtonComponent";
 import { SearchOutlined } from "@ant-design/icons";
+import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 
 const ClassroomList = styled.div`
   max-height: 272px;
@@ -148,9 +149,10 @@ const students = [
   },
 ];
 
-export default function AssignStudent({ setCancel, setAssignConfirm }) {
+export default function AssignStaff({ setCancel, classroomId }) {
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [selectedClassroom, setSelectedClassroom] = useState("1-Yellow-C");
+  const { data: designationData } = useMasterLookupsByType("designation");
 
   const handleSelectAll = (checked) => {
     if (checked) {
@@ -185,6 +187,12 @@ export default function AssignStudent({ setCancel, setAssignConfirm }) {
     // Update the filtered data
     // setFilteredData(filtered);
   };
+  const designationOptions = {
+    items: designationData?.data?.map((designation) => ({
+      key: designation.id, // Convert id to string as keys are typically strings
+      label: designation.name, // Use the name property for the label
+    })),
+  };
   const classroomList = [
     { id: 1, name: "1-Blue-D" },
     { id: 2, name: "2-Red-B" },
@@ -192,22 +200,16 @@ export default function AssignStudent({ setCancel, setAssignConfirm }) {
   ];
 
   const tagList = [
-    { id: 1, name: "Active" },
-    { id: 2, name: "Inactive" },
+    { id: 1, name: "Admin" },
+    { id: 2, name: "Staff" },
     { id: 3, name: "Pending" },
-  ];
-
-  const statusList = [
-    { id: 1, name: "Present" },
-    { id: 2, name: "Absent" },
-    { id: 3, name: "On Leave" },
   ];
 
   return (
     <>
       <div className="card d-flex modal-card-padding">
         <span className="label-16-600">Assign to 1-Blue-D</span>
-        <div className="label-14-600 ml10">Select Students</div>
+        <div className="label-14-600 ml10">Select Staff</div>
         <div className="d-flex align-items-center gap16">
           <Input
             placeholder="Search Student"
@@ -218,7 +220,7 @@ export default function AssignStudent({ setCancel, setAssignConfirm }) {
           <Select
             className="select-student-add-from"
             placeholder="Select Classroom"
-            style={{ width: 150 }}
+            style={{ width: 170 }}
           >
             {classroomList?.map((classroom) => (
               <Select.Option key={classroom.id} value={classroom.id}>
@@ -229,25 +231,14 @@ export default function AssignStudent({ setCancel, setAssignConfirm }) {
 
           <Select
             className="select-student-add-from"
-            placeholder="Select Tag"
-            style={{ width: 150 }}
+            placeholder="Select Designation"
+            style={{ width: 170 }}
           >
-            {tagList?.map((tag) => (
-              <Select.Option key={tag.id} value={tag.id}>
-                {tag.name}
-              </Select.Option>
-            ))}
-          </Select>
-
-          <Select
-            className="select-student-add-from"
-            placeholder="Select Status"
-            style={{ width: 150 }}
-          >
-            {statusList?.map((status) => (
-              <Select.Option key={status.id} value={status.id}>
-                {status.name}
-              </Select.Option>
+            <Option value="all">All</Option>
+            {designationOptions?.items?.map((designation) => (
+              <Option key={designation.key} value={designation.key}>
+                {designation.label}
+              </Option>
             ))}
           </Select>
         </div>

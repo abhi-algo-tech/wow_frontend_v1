@@ -459,7 +459,7 @@
 /* modal card label name */
 .modal-card-padding {
   gap: 20px;
-  padding: 24px 20px;
+  padding: 20px;
 }
 .modal-card-label-name {
   font-size: 16px;
@@ -1889,4 +1889,8 @@
   font-style: normal;
   font-weight: 600;
   line-height: normal;
+}
+
+.rc-virtual-list-scrollbar-thumb {
+  background: rgba(224, 94, 94, 0.5);
 }
