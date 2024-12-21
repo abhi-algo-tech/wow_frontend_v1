@@ -46,3 +46,6 @@ export const physicalTrackerKeys = {
 export const documentKey = {
   document: "document",
 };
+export const scheduleKeys = {
+  schedule: "schedule",
+};

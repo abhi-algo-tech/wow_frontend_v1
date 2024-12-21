@@ -62,6 +62,39 @@ export const useStudentBySchool = (schoolId) => {
   });
 };
 
+export const useValidateStudent = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [validationMessage, setValidationMessage] = useState(null);
+
+  const validate = async (firstName, lastName, classroomId, id) => {
+    setIsLoading(true);
+    setError(null);
+    setValidationMessage(null);
+
+    try {
+      const result = await StudentService.validateName({
+        firstName: firstName,
+        lastName: lastName,
+        classroomId: classroomId,
+        id: id,
+      });
+      setValidationMessage(result.message); // Success message from backend
+    } catch (err) {
+      setError(err.message); // Error message from backend
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    isLoading,
+    error,
+    validationMessage, // Updated variable name
+    validate,
+  };
+};
+
 // Create a new student
 export const useCreateStudent = () => {
   const queryClient = useQueryClient();

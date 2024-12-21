@@ -7,7 +7,7 @@ import { CustomMessage } from "../../utils/CustomMessage";
 
 function StaffImportantDateForm({ CardTitle, staffId, closeModal, staffData }) {
   const [form] = Form.useForm();
-
+  const [isButton, setIsButton] = useState(false);
   const updateStaffMutation = useUpdateStaff();
   const isEdit = Boolean(staffId);
   console.log("staffId", staffId);
@@ -26,6 +26,7 @@ function StaffImportantDateForm({ CardTitle, staffId, closeModal, staffData }) {
 
   // Handle form submission
   const handleSubmit = (values) => {
+    setIsButton(true);
     const formData = new FormData();
     formData.append("hireDate", values.hireDate || "empty");
     formData.append("cdaExpirationDate", values.cdaExpirationDate || "empty");
@@ -122,6 +123,7 @@ function StaffImportantDateForm({ CardTitle, staffId, closeModal, staffData }) {
                 text="Save"
                 padding="19.1px 65px"
                 type="submit"
+                isLoading={isButton}
               />
             </Form.Item>
           </div>

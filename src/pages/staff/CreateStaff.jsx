@@ -17,6 +17,7 @@ const { Option } = Select;
 function CreateStaff({ CardTitle, staffId, closeModal }) {
   const { academyId } = useSession();
   const [form] = Form.useForm();
+  const [isButton, setIsButton] = useState(false);
   const [selectedAllowedClassrooms, setSelectedAllowedClassrooms] = useState(
     []
   );
@@ -72,6 +73,7 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
   }, [staffData, form]);
 
   const handleSubmit = (values) => {
+    setIsButton(true);
     const {
       firstName,
       lastName,
@@ -380,6 +382,7 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
                   text={isEdit ? "Save" : "Add"}
                   padding="19.1px 115px"
                   type="submit"
+                  isLoading={isButton}
                 />
               </Form.Item>
             </div>

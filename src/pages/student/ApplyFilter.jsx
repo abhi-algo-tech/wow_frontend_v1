@@ -21,9 +21,6 @@ function ApplyFilter({ CardTitle, closeModal, onApplyFilter }) {
     setFormValues((prev) => ({ ...prev, [field]: value }));
   };
 
-  console.log("status", status);
-  console.log("tags", tags);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const appliedFilters = Object.fromEntries(

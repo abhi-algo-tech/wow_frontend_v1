@@ -18,7 +18,7 @@ function PhysicalExaminationForm({
   closeModal,
 }) {
   const [form] = Form.useForm();
-
+  const [isButton, setIsButton] = useState(false);
   const createPhysicalTrackerMutation = useCreatePhysicalTracker();
   const updatePhysicalTrackerMutation = useUpdatePhysicalTracker();
 
@@ -36,6 +36,7 @@ function PhysicalExaminationForm({
   }, [trackerData, form]);
 
   const handleSubmit = (values) => {
+    setIsButton(true);
     const { status, physicalCheckupDate } = values;
 
     if (!status || !physicalCheckupDate) {
@@ -138,6 +139,7 @@ function PhysicalExaminationForm({
                   text={"Add"}
                   padding="19.1px 115px"
                   type="submit"
+                  isLoading={isButton}
                 />
               </Form.Item>
             </div>

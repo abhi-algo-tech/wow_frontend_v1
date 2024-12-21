@@ -16,6 +16,7 @@ import { useStudentByClassroom } from "../../hooks/useStudent";
 import { formatStudentData } from "./ClassroomCommon";
 import LoaderComponent from "../../components/loader/LoaderComponent";
 import EmptyRecord from "../../components/emptyFile/EmptyRecord";
+import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 const { Option } = Select;
 
 // Sample student data
@@ -66,6 +67,7 @@ const rightRenderData = [
 ];
 export default function StudentCardDetails({ classroomId }) {
   const [students, setStudents] = useState([]);
+  const [filterStudents, setFilterStudents] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isFloatingCardVisible, setFloatingCardVisible] = useState();
@@ -80,6 +82,16 @@ export default function StudentCardDetails({ classroomId }) {
   const [isCreateMessageModalOpen, setCreateMessageModalOpen] = useState(false);
   const [isAssignConfirmModalOpen, setAssignConfirmModalOpen] = useState(false);
 
+  const { data: statusData } = useMasterLookupsByType("status");
+  const { data: tags } = useMasterLookupsByType("tags");
+
+  const statusOptions = {
+    items: statusData?.data?.map((status) => ({
+      key: status.id, // Convert id to string as keys are typically strings
+      label: status.name, // Use the name property for the label
+    })),
+  };
+
   const {
     data: studentData,
     isLoading,
@@ -92,6 +104,7 @@ export default function StudentCardDetails({ classroomId }) {
       const formattedData = formatStudentData(studentData);
       // console.log("formattedData:", formattedData);
       setStudents(formattedData);
+      setFilterStudents(formattedData);
     }
   }, [studentData]);
 
@@ -101,7 +114,7 @@ export default function StudentCardDetails({ classroomId }) {
   const handleSelectAll = (e) => {
     if (e.target.checked) {
       // Select all student IDs
-      setSelectedStudents(students.map((student) => student.id));
+      setSelectedStudents(filterStudents.map((student) => student.id));
     } else {
       // Deselect all
       setSelectedStudents([]);
@@ -131,7 +144,22 @@ export default function StudentCardDetails({ classroomId }) {
     );
   };
 
-  const filteredStudents = students.filter((student) =>
+  const handleStatus = (selectedStatus) => {
+    if (selectedStatus === "all") {
+      setFilterStudents(students);
+    } else {
+      const selectedStatusLabel = statusOptions.items.find(
+        (status) => status.key === selectedStatus
+      )?.label;
+
+      const filtered = students.filter(
+        (student) => student.status === selectedStatusLabel
+      );
+      setFilterStudents(filtered);
+    }
+  };
+
+  const filteredStudents = filterStudents.filter((student) =>
     student.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -239,7 +267,7 @@ export default function StudentCardDetails({ classroomId }) {
           <LoaderComponent isLoading={isLoading} />
         ) : (
           <>
-            {filteredStudents.length > 0 ? (
+            {students.length > 0 ? (
               <>
                 {/* {renderLFloatingRightCard()} */}
                 {isFloatingCardVisible && renderRFloatingRightCard()}
@@ -259,7 +287,9 @@ export default function StudentCardDetails({ classroomId }) {
                   <div className="me-2">
                     <Checkbox
                       onChange={handleSelectAll}
-                      checked={selectedStudents.length === students.length}
+                      checked={
+                        selectedStudents.length === filterStudents.length
+                      }
                       style={{ marginBottom: 0 }}
                     >
                       Select All
@@ -269,18 +299,29 @@ export default function StudentCardDetails({ classroomId }) {
                     <Select
                       style={{ width: 164, height: 33 }}
                       className="select-student light-font"
-                      defaultValue="select-student"
+                      placeholder="Select Tag"
                     >
-                      <Option value="select-student">Select Tag</Option>
+                      {/* <Option value="select-student">Select Tag</Option> */}
+                      {tags?.data?.map((item) => (
+                        <Option key={item.id} value={item.id}>
+                          {item.name}
+                        </Option>
+                      ))}
                     </Select>
                   </div>
                   <div className="me-2">
                     <Select
                       style={{ width: 164, height: 33 }}
                       className="select-student light-font"
-                      defaultValue="select-student"
+                      placeholder="Select Status"
+                      onChange={handleStatus}
                     >
-                      <Option value="select-student">Select Status</Option>
+                      <Option value="all">All</Option>
+                      {statusOptions?.items?.map((status) => (
+                        <Option key={status.key} value={status.key}>
+                          {status.label}
+                        </Option>
+                      ))}
                     </Select>
                   </div>
                   {selectedStudents.length >= 1 && (
@@ -301,19 +342,27 @@ export default function StudentCardDetails({ classroomId }) {
                     </div>
                   )}
                 </div>
-                <div className="row mt16">
-                  {filteredStudents.map((student) => (
-                    <div
-                      key={student.id}
-                      className="col-6 col-sm-4 col-md-3 col-lg-2 mb-2"
-                    >
-                      <ActorBigCard
-                        actor={student}
-                        selectedActors={selectedStudents}
-                        handleCheckboxChange={handleCheckboxChange}
-                      />
-                    </div>
-                  ))}
+                <div
+                  style={{
+                    height: "393px",
+                    overflowY: "auto",
+                    overflowX: "hidden",
+                  }}
+                >
+                  <div className="row mt16">
+                    {filteredStudents.map((student) => (
+                      <div
+                        key={student.id}
+                        className="col-6 col-sm-4 col-md-3 col-lg-2 mb-2"
+                      >
+                        <ActorBigCard
+                          actor={student}
+                          selectedActors={selectedStudents}
+                          handleCheckboxChange={handleCheckboxChange}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </>
             ) : (

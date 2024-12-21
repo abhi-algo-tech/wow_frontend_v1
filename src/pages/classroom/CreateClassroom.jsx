@@ -25,6 +25,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
   const [form] = Form.useForm();
   const [profilePicture, setProfilePicture] = useState(null);
   const [isProfile, setIsProfile] = useState(false);
+  const [isButton, setIsButton] = useState(false);
   const [activeInactive, setActiveInactive] = useState(true);
   const [fileList, setFileList] = useState([]);
   const createClassroomMutation = useCreateClassroom();
@@ -122,6 +123,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
   }, [classroomData, form]);
 
   const handleSubmit = async (values) => {
+    setIsButton(true);
     const formData = new FormData();
     formData.append("name", values.classroomName);
     formData.append(
@@ -130,7 +132,6 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
     );
     formData.append("maxCapacity", values.capacity);
     formData.append("staffRatio", values.ratio);
-    console.log("activeInactive:", activeInactive);
     formData.append("status", activeInactive ? "Active" : "Inactive");
     formData.append("roomNumber", "A101");
     formData.append("schoolId", "1");
@@ -142,37 +143,19 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
 
     try {
       if (isEdit) {
-        // await new Promise((resolve, reject) => {
-        //   updateClassroom(
-        //     { classroomId, classroomData: formData },
-        //     { onSuccess: resolve, onError: reject }
-        //   );
-        // });
-        // CustomMessage.success("Classroom updated successfully!");
-        // closeModal();
-        updateClassroomMutation.mutate(
-          {
-            classroomId, // Use staffId instead of studentId
-            classroomData: formData,
-          },
-          {
-            onSuccess: () => {
-              CustomMessage.success("Classroom updated successfully!");
-              closeModal();
-            },
-          }
-        );
-      } else {
-        createClassroomMutation.mutate(formData, {
-          onSuccess: () => {
-            CustomMessage.success("Classroom created successfully!");
-            closeModal();
-          },
+        await updateClassroomMutation.mutateAsync({
+          classroomId,
+          classroomData: formData,
         });
+        CustomMessage.success("Classroom updated successfully!");
+      } else {
+        await createClassroomMutation.mutateAsync(formData);
+        CustomMessage.success("Classroom created successfully!");
       }
+      closeModal();
     } catch (error) {
       console.error("Error while submitting classroom data:", error);
-      CustomMessage.error("Failed to create Classroom");
+      CustomMessage.error("Failed to submit Classroom data");
     }
   };
   const handleActiveInactive = (e) => {
@@ -329,12 +312,16 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                   <Form.Item
                     name="maxAgeYear"
                     className="mb-0"
-                    // rules={[
-                    //   {
-                    //     validator: (_, value) =>
-                    //       validateMinMaxAge(_, value, form),
-                    //   },
-                    // ]}
+                    rules={[
+                      // {
+                      //   validator: (_, value) =>
+                      //     validateMinMaxAge(_, value, form),
+                      // },
+                      {
+                        required: true,
+                        message: "Please input the max age!",
+                      },
+                    ]}
                   >
                     <InputNumber
                       min={0}
@@ -396,8 +383,8 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
           <div className="mt-4 text-center">
             <ButtonComponent
               text={isEdit ? "Save" : "Add"}
-              onClick={() => form.submit()}
-              // isLoading={true}
+              type="submit"
+              isLoading={isButton}
             />
           </div>
         </Form>

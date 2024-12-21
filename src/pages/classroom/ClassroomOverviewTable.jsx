@@ -228,7 +228,7 @@ function ClassroomOverviewTable() {
                   name: record.name,
                 }}
               >
-                <span className="label-14-500">{text}</span>
+                <span className="label-14-500 truncate-text">{text}</span>
               </Link>
             </Space>
           ),

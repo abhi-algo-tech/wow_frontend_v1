@@ -26,6 +26,7 @@ const { Option } = Select;
 function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
   const { academyId } = useSession();
   const [form] = Form.useForm();
+  const [isButton, setIsButton] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedSiblings, setSelectedSiblings] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -123,6 +124,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
     setSelectedTags(value);
   };
   const handleSubmit = (values) => {
+    setIsButton(true);
     const {
       firstName,
       lastName,
@@ -157,7 +159,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
     }
     formData.append("isStateSubsidy", selectedOption === "yes");
     formData.append("note", notes);
-    formData.append("childCustodyId", childCustody);
+    if (childCustody) formData.append("childCustodyId", childCustody);
     formData.append("addressLine", address);
     formData.append("cityId", city);
     formData.append("stateId", state);
@@ -180,6 +182,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
           },
           onError: (error) => {
             CustomMessage.error(`Failed to update student: ${error.message}`);
+            setIsButton(false);
           },
         }
       );
@@ -191,6 +194,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
         },
         onError: (error) => {
           CustomMessage.error(`Failed to create student: ${error.message}`);
+          setIsButton(false);
         },
       });
     }
@@ -584,7 +588,6 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 />
               </Form.Item>
             </div>
-            ;
           </div>
           <div className="text-center ">
             <Form.Item>
@@ -592,6 +595,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                 text={isEdit ? "Save" : "Add"}
                 padding="19.1px 115px"
                 type="submit"
+                isLoading={isButton}
               />
             </Form.Item>
           </div>

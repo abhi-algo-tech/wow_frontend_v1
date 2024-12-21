@@ -8,10 +8,12 @@ export const API_ENDPOINTS = {
     BASE: "/v1/students",
     BY_CLASSROOM: "/v1/students/classroom",
     BY_SCHOOL: "/v1/students/school",
+    VALIDATE_NAME: "/v1/students/validate-name",
   },
   STAFF: {
     BASE: "/v1/staff",
     BY_CLASSROOM: "/v1/staff/classroom",
+    VALIDATE_NAME: "/v1/staff/validate-name",
   },
   SCHOOL: {
     BASE: "/v1/school",
@@ -53,5 +55,8 @@ export const API_ENDPOINTS = {
   StaffDOCUMENT: {
     BASE: "/v1/documents",
     DELETE: "/v1/documents/soft-delete-by-staff",
+  },
+  WEEK_SCHEDULE: {
+    BASE: "/v1/week-schedules",
   },
 };

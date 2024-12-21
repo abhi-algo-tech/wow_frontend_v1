@@ -5,15 +5,18 @@ import {
   useCreateStudent,
   useStudentById,
   useUpdateStudent,
+  useValidateStudent,
 } from "../../hooks/useStudent";
 import { useGetClassroomsBySchool } from "../../hooks/useClassroom";
 import { CustomMessage } from "../../utils/CustomMessage";
 import { useSession } from "../../hooks/useSession";
+import { debounce } from "lodash";
 
 const { Option } = Select;
 
 function CreateStudent({ CardTitle, studentId, closeModal }) {
   const { academyId } = useSession();
+  const [isButton, setIsButton] = useState(false);
   const [form] = Form.useForm();
 
   const { data: studentData } = useStudentById(studentId);
@@ -25,6 +28,12 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
     error,
   } = useGetClassroomsBySchool(academyId);
   const updateStudentMutation = useUpdateStudent();
+  const {
+    isLoading: isValidating,
+    error: validationError,
+    validationMessage,
+    validate,
+  } = useValidateStudent();
   const isEdit = Boolean(studentId);
 
   useEffect(() => {
@@ -37,7 +46,33 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
     }
   }, [studentData, form]);
 
+  const debouncedValidateLastName = debounce(
+    (firstName, lastName, classroomId, studentId) => {
+      if (!firstName || !lastName || !classroomId) {
+        return;
+      }
+      validate(firstName, lastName, classroomId, studentId); // Validate using the studentId as id
+    },
+    2000
+  ); // Delay of 2000ms
+
+  const validateThroughClassroom = (
+    firstName,
+    lastName,
+    classroomId,
+    studentId
+  ) => {
+    // Stop execution if any required field is empty
+    if (!firstName || !lastName || !classroomId) {
+      return;
+    }
+
+    // Proceed with validation if all fields are provided
+    validate(firstName, lastName, classroomId, studentId);
+  };
+
   const handleSubmit = (values) => {
+    setIsButton(true);
     const { firstName, lastName, classroom } = values;
 
     if (!firstName || !lastName || classroom === "select") {
@@ -115,6 +150,14 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
                 <Input
                   placeholder="E.g. John"
                   className="w-100 student-form-input"
+                  onKeyUp={() =>
+                    debouncedValidateLastName(
+                      form.getFieldValue("firstName"),
+                      form.getFieldValue("lastName"),
+                      form.getFieldValue("classroom"),
+                      studentId
+                    )
+                  }
                 />
               </Form.Item>
             </div>
@@ -137,16 +180,36 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
                 <Input
                   placeholder="E.g. Smith"
                   className="w-100 student-form-input"
+                  onKeyUp={() =>
+                    debouncedValidateLastName(
+                      form.getFieldValue("firstName"),
+                      form.getFieldValue("lastName"),
+                      form.getFieldValue("classroom"),
+                      studentId
+                    )
+                  }
                 />
               </Form.Item>
             </div>
 
+            {/* <div className="col-12">
+              <Form.Item
+                validateStatus={
+                  validationMessage || validationError ? "error" : ""
+                }
+                help={validationMessage || validationError}
+              />
+            </div> */}
             <div className="flex items-center gap-1 student-label ">
               Select Classroom
               <span className="text-danger"> *</span>
             </div>
             <Form.Item
               name="classroom"
+              validateStatus={
+                validationMessage ? "success" : validationError ? "error" : ""
+              }
+              help={validationMessage || validationError}
               rules={[
                 { required: true, message: "Please select a classroom!" },
               ]}
@@ -155,6 +218,14 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
                 className="select-student-add-from"
                 placeholder="Select Classroom"
                 loading={isLoading}
+                onChange={() =>
+                  validateThroughClassroom(
+                    form.getFieldValue("firstName"),
+                    form.getFieldValue("lastName"),
+                    form.getFieldValue("classroom"),
+                    studentId
+                  )
+                }
                 notFoundContent={
                   isError
                     ? `Error: ${error?.message}`
@@ -178,6 +249,7 @@ function CreateStudent({ CardTitle, studentId, closeModal }) {
                   text={isEdit ? "Save" : "Add"}
                   padding="19.1px 115px"
                   type="submit"
+                  isLoading={isButton}
                 />
               </Form.Item>
             </div>

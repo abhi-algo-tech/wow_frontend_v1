@@ -13,6 +13,7 @@ const { Option } = Select;
 function DocumentForm({ CardTitle, studentData, closeModal, studentId }) {
   const [form] = Form.useForm();
   const [isUploaded, setUploaded] = useState(false);
+  const [isButton, setIsButton] = useState(false);
   const {
     data: documentDrpDwnData,
     isLoading,
@@ -51,6 +52,7 @@ function DocumentForm({ CardTitle, studentData, closeModal, studentId }) {
   }, [studentData, form]);
 
   const handleSubmit = (values) => {
+    setIsButton(true);
     if (
       !values.documentName ||
       !values.documentType ||
@@ -196,6 +198,7 @@ function DocumentForm({ CardTitle, studentData, closeModal, studentId }) {
                 text={isEdit ? "Save" : "Add"}
                 padding="19.1px 115px"
                 type="submit"
+                isLoading={isButton}
               />
             </Form.Item>
           </div>

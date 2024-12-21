@@ -21,8 +21,9 @@ import { MdOutlineModeEdit, MdOutlineModeEditOutline } from "react-icons/md";
 import StudentProfileForm from "./StudentProfileForm";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import { useStudentById } from "../../hooks/useStudent";
-import { getInitialsTitleWithColor } from "../../services/common";
+import { formatTime, getInitialsTitleWithColor } from "../../services/common";
 import { formatDate } from "../../utils/commonFormatDate";
+import StudentScheduleForm from "./StudentScheduleForm";
 
 const { Text } = Typography;
 const { TabPane } = Tabs;
@@ -38,6 +39,7 @@ const status = "present";
 const StudentAbout = ({ studentId }) => {
   const [isCreateStudentAboutModalOpen, setCreateStudentAboutModalOpen] =
     useState(false);
+  const [isAboutScheduleModalOpen, setAboutScheduleModalOpen] = useState(false);
   const { data: studentData, isLoading, error } = useStudentById(studentId);
 
   if (isLoading) return <Text>Loading...</Text>;
@@ -261,36 +263,28 @@ const StudentAbout = ({ studentId }) => {
           <LabelCol>Schedule</LabelCol>
           <ContentCol>
             <Row gutter={[8, 8]}>
-              {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map(
-                (day) => (
-                  <Col key={day}>
-                    <Tag
-                      color="purple"
-                      bordered={false}
-                      className="d-flex flex-column align-items-center p-1 px-2 m-0"
-                    >
-                      <div className="student-about-tab-schedule-value">
-                        {day}
-                      </div>
-                    </Tag>
-                    {day !== "Monday" && (
-                      <Tag className="w-100 text-center bg-white">
-                        <div style={{ fontSize: "10px" }}>
-                          07:00AM - 05:30PM
-                        </div>
-                      </Tag>
-                    )}
-                  </Col>
-                )
-              )}
-              {/* <MdOutlineModeEdit
-                style={{
-                  width: 15,
-                  height: 15,
-                  cursor: "pointer",
-                }}
-              /> */}
+              {student?.weekSchedules?.map((schedule) => (
+                <Col key={schedule.id}>
+                  <Tag
+                    color="purple"
+                    bordered={false}
+                    className="d-flex flex-column align-items-center p-1 px-2 m-0"
+                  >
+                    <div className="student-about-tab-schedule-value">
+                      {schedule.dayOfWeek.charAt(0) +
+                        schedule.dayOfWeek.slice(1).toLowerCase()}
+                    </div>
+                  </Tag>
+                  <Tag className="w-100 text-center bg-white">
+                    <div style={{ fontSize: "8.5px" }}>
+                      {formatTime(schedule.startTime)} -{" "}
+                      {formatTime(schedule.endTime)}
+                    </div>
+                  </Tag>
+                </Col>
+              ))}
             </Row>
+
             <Row justify="end">
               <div
                 style={{
@@ -364,6 +358,23 @@ const StudentAbout = ({ studentId }) => {
             studentId={studentId}
             studentData={student}
             closeModal={() => setCreateStudentAboutModalOpen(false)}
+          />
+        </CommonModalComponent>
+      )}
+      {isAboutScheduleModalOpen && (
+        <CommonModalComponent
+          open={isAboutScheduleModalOpen}
+          setOpen={setAboutScheduleModalOpen}
+          modalWidthSize={737}
+          modalHeightSize={649}
+          isClosable={true}
+        >
+          <StudentScheduleForm
+            CardTitle={"Edit Schedule"}
+            data={student?.weekSchedules}
+            Id={studentId}
+            module="student"
+            closeModal={() => setAboutScheduleModalOpen(false)}
           />
         </CommonModalComponent>
       )}

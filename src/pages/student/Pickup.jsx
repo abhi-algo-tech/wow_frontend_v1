@@ -7,6 +7,7 @@ import AddPickup from "./AddPickup";
 import { useDeletePickup, useStudentById } from "../../hooks/useStudent";
 import { CustomMessage } from "../../utils/CustomMessage";
 import DeletePopUp from "../../components/DeletePopUp";
+import { getInitialsTitleWithColor } from "../../services/common";
 
 const { Text } = Typography;
 
@@ -94,7 +95,25 @@ function Pickup({ studentId }) {
             >
               <div className="d-flex justify-content-between align-items-center mb10">
                 <Space>
-                  <Avatar src="/wow_images/Andrew-Fenwick.png" size={52} />
+                  <Avatar
+                    size={52}
+                    src={pickup?.photoUrl || undefined}
+                    className="mb8"
+                    style={{
+                      backgroundColor: pickup?.photoUrl
+                        ? undefined
+                        : getInitialsTitleWithColor(
+                            `${pickup?.firstName} ${pickup.lastName}`
+                          ).backgroundColor,
+                      color: "#fff",
+                    }}
+                  >
+                    {!pickup?.photoUrl &&
+                      getInitialsTitleWithColor(
+                        `${pickup?.firstName} ${pickup.lastName}`
+                      ).initials}
+                  </Avatar>
+                  {/* <Avatar src="/wow_images/Andrew-Fenwick.png" size={52} /> */}
                   <Text className="student-about-tab-label-value">
                     {`${pickup?.firstName} ${pickup?.lastName}`}
                   </Text>

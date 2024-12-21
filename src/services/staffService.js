@@ -77,6 +77,19 @@ const StaffService = {
       throw error;
     }
   },
+
+  validateName: async (staffData) => {
+    try {
+      const response = await axiosInstance.post(
+        API_ENDPOINTS.STAFF.VALIDATE_NAME,
+        staffData
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error to validate staff:`, error);
+      throw error;
+    }
+  },
 };
 
 export default StaffService;

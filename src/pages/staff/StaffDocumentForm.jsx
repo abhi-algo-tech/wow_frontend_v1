@@ -13,6 +13,7 @@ function StaffDocumentForm({ CardTitle, staffId, closeModal, staffData }) {
   console.log("staffData", staffData);
   const [staffDocumentData, setStaffDocumentData] = useState(staffData);
   const [isUploaded, setUploaded] = useState(false);
+  const [isButton, setIsButton] = useState(false);
 
   const [form] = Form.useForm();
   const {
@@ -53,6 +54,7 @@ function StaffDocumentForm({ CardTitle, staffId, closeModal, staffData }) {
   }, [staffDocumentData, form]);
 
   const handleSubmit = (values) => {
+    setIsButton(true);
     if (
       !values.documentName ||
       !values.documentType ||
@@ -190,6 +192,7 @@ function StaffDocumentForm({ CardTitle, staffId, closeModal, staffData }) {
                 text={isEdit ? "Save" : "Add"}
                 padding="15px 65px"
                 type="submit"
+                isLoading={isButton}
               />
             </Form.Item>
           </div>
