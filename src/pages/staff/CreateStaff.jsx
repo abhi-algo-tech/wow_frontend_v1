@@ -7,10 +7,12 @@ import {
   useCreateStaff,
   useStaffById,
   useUpdateStaff,
+  useValidateStaff,
 } from "../../hooks/useStaff";
 import { CustomMessage } from "../../utils/CustomMessage";
 import { useSession } from "../../hooks/useSession";
 import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
+import { debounce } from "lodash";
 
 const { Option } = Select;
 
@@ -28,12 +30,25 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
     isError,
     error,
   } = useGetClassroomsBySchool(academyId);
+  const {
+    isLoading: isValidating,
+    error: validationError,
+    validationMessage,
+    validate,
+  } = useValidateStaff();
   const { data: staffData } = useStaffById(staffId);
   const createStudentMutation = useCreateStaff();
   const updateStudentMutation = useUpdateStaff();
   const { data: statusData } = useMasterLookupsByType("status");
   const { data: designationData } = useMasterLookupsByType("designation");
   const isEdit = Boolean(staffId);
+
+  const debouncedValidateLastName = debounce((firstName, lastName, staffId) => {
+    if (!firstName || !lastName) {
+      return;
+    }
+    validate(firstName, lastName, staffId); // Validate using the studentId as id
+  }, 2000); // Delay of 2000ms
 
   const statusOptions = {
     items: statusData?.data?.map((status) => ({
@@ -167,6 +182,10 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
               </div>
               <Form.Item
                 name="firstName"
+                validateStatus={
+                  validationMessage ? "success" : validationError ? "error" : ""
+                }
+                help={validationMessage || validationError}
                 rules={[
                   { required: true, message: "Please input the first name!" }, // Required field rule
                   {
@@ -179,6 +198,13 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
                 <Input
                   placeholder="E.g. John"
                   className="w-100 student-form-input"
+                  onKeyUp={() =>
+                    debouncedValidateLastName(
+                      form.getFieldValue("firstName"),
+                      form.getFieldValue("lastName"),
+                      staffId
+                    )
+                  }
                 />
               </Form.Item>
             </div>
@@ -201,6 +227,13 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
                 <Input
                   placeholder="E.g. Smith"
                   className="w-100 student-form-input"
+                  onKeyUp={() =>
+                    debouncedValidateLastName(
+                      form.getFieldValue("firstName"),
+                      form.getFieldValue("lastName"),
+                      staffId
+                    )
+                  }
                 />
               </Form.Item>
             </div>

@@ -180,6 +180,8 @@ function PhysicianForm({ CardTitle, physicianId, studentId, closeModal }) {
               <Input
                 placeholder="E.g. (000) 000-0000"
                 className="w-100 student-form-input"
+                maxLength={10}
+                minLength={10}
               />
             </Form.Item>
 

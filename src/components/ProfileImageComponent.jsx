@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Image, Upload } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { CustomMessage } from "../utils/CustomMessage";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -50,6 +51,14 @@ const ProfileImageComponent = ({
     setIsProfile(true);
   };
 
+  const beforeUpload = (file) => {
+    const isValidSize = file.size / 1024 / 1024 < 0.5; // 512 KB = 0.5 MB
+    if (!isValidSize) {
+      CustomMessage.error("File must be smaller than 512KB");
+    }
+    return isValidSize;
+  };
+
   return (
     <>
       <Upload
@@ -58,7 +67,7 @@ const ProfileImageComponent = ({
         onPreview={handlePreview}
         onChange={handleChange}
         onRemove={handleRemove}
-        beforeUpload={() => false} // Disable automatic upload
+        beforeUpload={beforeUpload}
         showUploadList={{
           showPreviewIcon: false, // Disable the preview icon
           showRemoveIcon: true,

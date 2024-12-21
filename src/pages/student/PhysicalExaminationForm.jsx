@@ -16,6 +16,7 @@ function PhysicalExaminationForm({
   studentId,
   trackerData,
   closeModal,
+  module,
 }) {
   const [form] = Form.useForm();
   const [isButton, setIsButton] = useState(false);
@@ -47,8 +48,9 @@ function PhysicalExaminationForm({
     const payload = {
       statusId: status,
       physicalDate: physicalCheckupDate,
-      studentId: studentId,
+      ...(module === "student" ? { studentId } : { staffId: studentId }),
     };
+
     if (isEdit) {
       updatePhysicalTrackerMutation.mutate(
         {
@@ -57,12 +59,26 @@ function PhysicalExaminationForm({
         },
         {
           onSuccess: () => {
-            CustomMessage.success("Physical Examination updated successfully!");
+            if (module === "student") {
+              CustomMessage.success(
+                `Physical ${
+                  module === "student" ? "Examination" : "Checkup"
+                } updated successfully!`
+              );
+            } else {
+              CustomMessage.success(
+                `Physical ${
+                  module === "student" ? "Examination" : "Checkup"
+                } updated successfully!`
+              );
+            }
             closeModal();
           },
           onError: (error) => {
             CustomMessage.error(
-              `Failed to update Physical Examination: ${error.message}`
+              `Failed to update Physical ${
+                module === "student" ? "Examination" : "Checkup"
+              }: ${error.message}`
             );
           },
         }
@@ -70,12 +86,18 @@ function PhysicalExaminationForm({
     } else {
       createPhysicalTrackerMutation.mutate(payload, {
         onSuccess: () => {
-          CustomMessage.success("Physical Examination created successfully!");
+          CustomMessage.success(
+            `Physical ${
+              module === "student" ? "Examination" : "Checkup"
+            } created successfully!`
+          );
           closeModal();
         },
         onError: (error) => {
           CustomMessage.error(
-            `Failed to create Physical Examination: ${error.message}`
+            `Failed to create Physical ${
+              module === "student" ? "Examination" : "Checkup"
+            }: ${error.message}`
           );
         },
       });
