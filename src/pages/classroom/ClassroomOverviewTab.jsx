@@ -21,12 +21,14 @@ import StaffCardDetails from "./StaffCardDetails";
 import ActivitySubMenu from "./ActivitySubMenu";
 import ClassroomNotes from "./ClassroomNotes";
 import AssignStudent from "./AssignStudent";
+import AssignStaff from "./AssignStaff";
 
 const { TabPane } = Tabs;
 
 function ClassroomOverviewTab({ classroomId }) {
   const [activeTab, setActiveTab] = useState("1");
   const [isAssignStudentModalOpen, setAssignStudent] = useState(false);
+  const [isAssignStaffModalOpen, setAssignStaff] = useState(false);
 
   const onTabChange = (key) => {
     setActiveTab(key);
@@ -50,7 +52,7 @@ function ClassroomOverviewTab({ classroomId }) {
     } else if (Number(activeTab) === 2) {
       return (
         <div
-          onClick={() => setAssignStudent(true)}
+          onClick={() => setAssignStaff(true)}
           className={"right-tab-active"}
         >
           <img
@@ -143,7 +145,8 @@ function ClassroomOverviewTab({ classroomId }) {
         <CommonModalComponent
           open={isAssignStudentModalOpen}
           setOpen={setAssignStudent}
-          modalWidthSize={900}
+          modalWidthSize={817}
+          isClosable={true}
         >
           <AssignStudent setCancel={setAssignStudent} />
           {/* <SignIn setCancel={setAssignStudent} /> */}
@@ -151,6 +154,17 @@ function ClassroomOverviewTab({ classroomId }) {
           {/* <Transfer setCancel={setAssignStudent} /> */}
           {/* <MarkAbsent setCancel={setAssignStudent} /> */}
           {/* <ActivitySubMenu setCancel={setAssignStudent} /> */}
+        </CommonModalComponent>
+      )}
+      {isAssignStaffModalOpen && (
+        <CommonModalComponent
+          open={isAssignStaffModalOpen}
+          setOpen={setAssignStaff}
+          modalWidthSize={817}
+          // modalHeightSize={564}
+          isClosable={true}
+        >
+          <AssignStaff setCancel={setAssignStaff} classroomId={classroomId} />
         </CommonModalComponent>
       )}
     </>
