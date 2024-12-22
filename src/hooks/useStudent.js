@@ -135,6 +135,28 @@ export const useUpdateStudent = () => {
     //   },
   });
 };
+export const useBatchUpdateStudent = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ studentData }) =>
+      StudentService.updateBatchStudents(studentData), // Pass the studentData to the batch update service
+
+    onSuccess: (data) => {
+      // Invalidate the relevant queries after successful mutation
+      queryClient.invalidateQueries(studentKeys.students); // Refetch all students to reflect updates
+
+      // Show a success message
+      CustomMessage.success("Students updated successfully!");
+    },
+
+    onError: (error) => {
+      // Handle error scenarios with an appropriate message
+      CustomMessage.error("Error updating students. Please try again.");
+      console.error("Error updating students:", error);
+    },
+  });
+};
 
 // Delete a student
 export const useDeleteStudent = () => {

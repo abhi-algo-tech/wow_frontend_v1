@@ -66,6 +66,19 @@ const StaffService = {
     }
   },
 
+  updateBatchStaff: async (staffData) => {
+    try {
+      const response = await axiosInstance.put(
+        `${API_ENDPOINTS.STAFF.BASE}`, // Assuming batch update endpoint is `/batch`
+        staffData
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating batch of staff:", error);
+      throw error;
+    }
+  },
+
   deleteStaff: async (staffId) => {
     try {
       const response = await axiosInstance.delete(

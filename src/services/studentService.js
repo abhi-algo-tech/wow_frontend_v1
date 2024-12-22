@@ -78,6 +78,19 @@ const StudentService = {
     }
   },
 
+  updateBatchStudents: async (studentDataList) => {
+    try {
+      const response = await axiosInstance.put(
+        `${API_ENDPOINTS.STUDENT.BASE}`, // Assuming batch update endpoint is `/batch`
+        studentDataList
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating batch of students:", error);
+      throw error;
+    }
+  },
+
   deleteStudent: async (studentId) => {
     try {
       const response = await axiosInstance.delete(

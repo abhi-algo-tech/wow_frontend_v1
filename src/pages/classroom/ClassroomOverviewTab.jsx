@@ -25,7 +25,7 @@ import AssignStaff from "./AssignStaff";
 
 const { TabPane } = Tabs;
 
-function ClassroomOverviewTab({ classroomId }) {
+function ClassroomOverviewTab({ classroomId, classroomData }) {
   const [activeTab, setActiveTab] = useState("1");
   const [isAssignStudentModalOpen, setAssignStudent] = useState(false);
   const [isAssignStaffModalOpen, setAssignStaff] = useState(false);
@@ -148,7 +148,10 @@ function ClassroomOverviewTab({ classroomId }) {
           modalWidthSize={817}
           isClosable={true}
         >
-          <AssignStudent setCancel={setAssignStudent} />
+          <AssignStudent
+            setCancel={setAssignStudent}
+            classroomData={classroomData}
+          />
           {/* <SignIn setCancel={setAssignStudent} /> */}
           {/* <SignOut setCancel={setAssignStudent} /> */}
           {/* <Transfer setCancel={setAssignStudent} /> */}
@@ -164,7 +167,10 @@ function ClassroomOverviewTab({ classroomId }) {
           // modalHeightSize={564}
           isClosable={true}
         >
-          <AssignStaff setCancel={setAssignStaff} classroomId={classroomId} />
+          <AssignStaff
+            setCancel={setAssignStaff}
+            classroomData={classroomData}
+          />
         </CommonModalComponent>
       )}
     </>

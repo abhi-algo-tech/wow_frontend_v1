@@ -84,6 +84,28 @@ export const useUpdateStaff = () => {
   });
 };
 
+export const useBatchUpdateStaff = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload) => StaffService.updateBatchStaff(payload), // Use the service method for batch update
+    onSuccess: (data, { staffIds, classroomId }) => {
+      // Invalidate the relevant queries to refetch the data
+      queryClient.invalidateQueries(staffKeys.staff); // Refetch all staff
+      // queryClient.invalidateQueries({
+      //   queryKey: [staffKeys.staff, ...staffIds], // Refetch specific staff based on their ids
+      // });
+      CustomMessage.success(
+        `Classroom updated for staff ${staffIds.join(", ")} successfully!`
+      ); // Optional success message
+    },
+    onError: (error) => {
+      CustomMessage.error("Error updating batch of staff!"); // Optional error message
+      console.error("Error updating batch of staff:", error);
+    },
+  });
+};
+
 // Delete a staff member
 export const useDeleteStaff = () => {
   const queryClient = useQueryClient();

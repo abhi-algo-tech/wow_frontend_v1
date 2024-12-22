@@ -116,6 +116,7 @@ function StaffProfileForm({ CardTitle, staffData, closeModal }) {
 
   const handleTagChange = (value) => {
     setIsButton(true);
+    setSelectedAllowedClassrooms(value);
     setSelectedTags(value);
     const shouldResetPrimaryClassroom = !value.some((classroomId) => {
       return staffData?.primaryRoomId === classroomId;
