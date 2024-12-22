@@ -78,8 +78,8 @@ function ClassroomProfile() {
   const MAX_TEXT_LENGTH = 9; // Define the max length of the displayed text
 
   const truncateText = (text, maxLength) => {
-    return text.length > maxLength
-      ? `${text.substring(0, maxLength)}...`
+    return text?.length > maxLength
+      ? `${text?.substring(0, maxLength)}...`
       : text;
   };
 
