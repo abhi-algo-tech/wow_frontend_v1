@@ -65,8 +65,8 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
 
   useEffect(() => {
     if (staffData) {
-      const primaryClassroom = staffData.data.classrooms.find(
-        (classroom) => classroom.id === staffData.data.primaryRoomId
+      const primaryClassroom = staffData?.data?.classrooms.find(
+        (classroom) => classroom?.id === staffData?.data?.primaryRoomId
       );
 
       form.setFieldsValue({

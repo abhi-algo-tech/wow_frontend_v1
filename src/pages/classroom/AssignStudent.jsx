@@ -1,10 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Checkbox, Row, Col, Avatar, Input, Select } from "antd";
 import styled from "styled-components";
 import AssignConfirm from "./AssignConfirm";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import ButtonComponent from "../../components/ButtonComponent";
 import { SearchOutlined } from "@ant-design/icons";
+import { useSession } from "../../hooks/useSession";
+import { useGetClassroomsBySchool } from "../../hooks/useClassroom";
+import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
+import {
+  useBatchUpdateStudent,
+  useGetAllStudents,
+  useStudentByClassroom,
+} from "../../hooks/useStudent";
+import { getInitialsTitleWithColor } from "../../services/common";
 
 const ClassroomList = styled.div`
   max-height: 272px;
@@ -68,89 +77,104 @@ const StudentCard = styled.div`
     background-color: ${(props) => (props.isSelected ? "#F9F5FA" : "#f5f5ff")};
   }
 `;
-const classrooms = [
-  { id: "1", name: "1-Yellow-C", color: "#FFD700" },
-  { id: "2", name: "2-Orange-D", color: "#FFA500" },
-  { id: "3", name: "3-Pink-C", color: "#FFC0CB" },
-  { id: "4", name: "4-Purple-D", color: "#800080" },
-  { id: "5", name: "1-Orange-D", color: "#FFA500" },
-  { id: "6", name: "2-Yellow-C", color: "#FFD700" },
-  { id: "7", name: "3-Orange-D", color: "#FFA500" },
-  { id: "8", name: "8-Yellow-C", color: "#FFD700" },
-  { id: "9", name: "9-Orange-D", color: "#FFA500" },
-  { id: "10", name: "10-Pink-C", color: "#FFC0CB" },
-  { id: "11", name: "11-Purple-D", color: "#800080" },
-  { id: "12", name: "1-Orange-D", color: "#FFA500" },
-  { id: "13", name: "2-Yellow-C", color: "#FFD700" },
-  { id: "14", name: "3-Orange-D", color: "#FFA500" },
-];
 
-const students = [
-  {
-    id: "1",
-    name: "Garry Nolan",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: "2",
-    name: "Greg matt",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: "3",
-    name: "Robin Tsonga",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: "4",
-    name: "Erica Jones",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: "5",
-    name: "Amber Rose",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: "6",
-    name: "Jessica Lima",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: "7",
-    name: "Maria Dixon",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: "8",
-    name: "Nick Adams",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: "9",
-    name: "Lena Jung",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: "4",
-    name: "Erica Jones",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: "5",
-    name: "Amber Rose",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: "6",
-    name: "Jessica Lima",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-];
-
-export default function AssignStudent({ setCancel, setAssignConfirm }) {
+export default function AssignStudent({ setCancel, classroomData }) {
+  const { academyId } = useSession();
   const [selectedStudents, setSelectedStudents] = useState([]);
-  const [selectedClassroom, setSelectedClassroom] = useState("1-Yellow-C");
+  const [students, setStudents] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
+  const [selectedClassroom, setSelectedClassroom] = useState("All");
+  const [selectedTag, setSelectedTag] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("All");
+
+  const {
+    data: classroomNames,
+    isLoading,
+    isError,
+    error,
+  } = useGetClassroomsBySchool(academyId);
+  const { data: studentsList } = useGetAllStudents();
+  const { data: statusData } = useMasterLookupsByType("status");
+  const { data: tagsData } = useMasterLookupsByType("tags");
+  const { data: assignedStudentData } = useStudentByClassroom(
+    classroomData?.data?.id
+  );
+
+  const { mutate: batchUpdateStudents } = useBatchUpdateStudent();
+
+  useEffect(() => {
+    if (assignedStudentData && studentsList) {
+      const findUnassignedStudents = (assignedStudentData, studentsList) => {
+        const assignedIds = new Set(
+          assignedStudentData.data.map((student) => student.id)
+        );
+        const unassigned = studentsList.data.filter(
+          (student) => !assignedIds.has(student.id)
+        );
+        return unassigned;
+      };
+
+      const result = findUnassignedStudents(assignedStudentData, studentsList);
+      setStudents(result);
+    }
+  }, [assignedStudentData, studentsList]); // Dependencies: triggers when these change
+
+  const applyFilters = () => {
+    if (!students) return; // Ensure students are available before applying filters
+
+    let filtered = [...students];
+
+    if (selectedClassroom !== "All") {
+      filtered = filtered.filter(
+        (student) => student?.classroomId === selectedClassroom
+      );
+    }
+
+    if (selectedTag !== "All") {
+      filtered = filtered.filter((student) =>
+        student?.tags?.some((tag) => tag?.tagId === selectedTag)
+      );
+    }
+    if (selectedStatus !== "All") {
+      filtered = filtered.filter(
+        (student) => student?.statusId === selectedStatus
+      );
+    }
+
+    setFilteredStudents(filtered); // Update the filtered students list
+  };
+
+  useEffect(() => {
+    applyFilters();
+  }, [students, selectedClassroom, selectedTag, selectedStatus]);
+
+  const classroomOptions = {
+    items: [
+      { key: "All", label: "All" },
+      ...classroomNames?.data?.map((relation) => ({
+        key: relation.id,
+        label: relation.name,
+      })),
+    ],
+  };
+  const statusOptions = {
+    items: [
+      { key: "All", label: "All" },
+      ...statusData?.data?.map((relation) => ({
+        key: relation.id,
+        label: relation.name,
+      })),
+    ],
+  };
+  const tagsOptions = {
+    items: [
+      { key: "All", label: "All" },
+      ...tagsData?.data?.map((relation) => ({
+        key: relation.id,
+        label: relation.name,
+      })),
+    ],
+  };
 
   const handleSelectAll = (checked) => {
     if (checked) {
@@ -168,10 +192,19 @@ export default function AssignStudent({ setCancel, setAssignConfirm }) {
     );
   };
   const handleSubmit = () => {
-    console.log("Handle Submit triggered"); // Check if this log appears
-    setAssignConfirm(true);
+    // Prepare the data for batch update with selected students and classroomId
+    const studentData = selectedStudents.map((studentId) => ({
+      id: studentId, // Student ID
+      classroomId: classroomData?.data?.id, // Selected classroom ID for each student
+    }));
+
+    // Call the batch update mutation with the prepared data
+    batchUpdateStudents({ studentData });
+
+    // Optionally close the modal after submission
     setCancel(false);
   };
+
   // Filter the data based on the search query
   const handleSearchChange = (e) => {
     const query = e.target.value;
@@ -185,45 +218,41 @@ export default function AssignStudent({ setCancel, setAssignConfirm }) {
     // Update the filtered data
     // setFilteredData(filtered);
   };
-  const classroomList = [
-    { id: 1, name: "1-Blue-D" },
-    { id: 2, name: "2-Red-B" },
-    { id: 3, name: "3-Green-C" },
-  ];
-
-  const tagList = [
-    { id: 1, name: "Active" },
-    { id: 2, name: "Inactive" },
-    { id: 3, name: "Pending" },
-  ];
-
-  const statusList = [
-    { id: 1, name: "Present" },
-    { id: 2, name: "Absent" },
-    { id: 3, name: "On Leave" },
-  ];
 
   return (
     <>
       <div className="card d-flex modal-card-padding">
-        <span className="label-16-600">Assign to 1-Blue-D</span>
+        <span className="label-16-600">
+          Assign to {classroomData?.data?.name}
+        </span>
         <div className="label-14-600 ml10">Select Students</div>
         <div className="d-flex align-items-center gap16">
           <Input
             placeholder="Search Student"
             prefix={<SearchOutlined />}
             style={{ width: 240, height: 40 }}
-            onChange={handleSearchChange}
+            onChange={(e) =>
+              setFilteredStudents(
+                staff.filter((staffMember) =>
+                  `${staffMember.firstName} ${staffMember.lastName}`
+                    .toLowerCase()
+                    .includes(e.target.value.toLowerCase())
+                )
+              )
+            }
           />
+
           <Select
             className="select-student-add-from"
             placeholder="Select Classroom"
             style={{ width: 150 }}
+            value={selectedClassroom}
+            onChange={(value) => setSelectedClassroom(value)}
           >
-            {classroomList?.map((classroom) => (
-              <Select.Option key={classroom.id} value={classroom.id}>
-                {classroom.name}
-              </Select.Option>
+            {classroomOptions?.items?.map((option) => (
+              <Option key={option.key} value={option.key}>
+                {option.label}
+              </Option>
             ))}
           </Select>
 
@@ -231,11 +260,13 @@ export default function AssignStudent({ setCancel, setAssignConfirm }) {
             className="select-student-add-from"
             placeholder="Select Tag"
             style={{ width: 150 }}
+            value={selectedTag}
+            onChange={(value) => setSelectedTag(value)}
           >
-            {tagList?.map((tag) => (
-              <Select.Option key={tag.id} value={tag.id}>
-                {tag.name}
-              </Select.Option>
+            {tagsOptions?.items?.map((option) => (
+              <Option key={option.key} value={option.key}>
+                {option.label}
+              </Option>
             ))}
           </Select>
 
@@ -243,11 +274,13 @@ export default function AssignStudent({ setCancel, setAssignConfirm }) {
             className="select-student-add-from"
             placeholder="Select Status"
             style={{ width: 150 }}
+            value={selectedStatus}
+            onChange={(value) => setSelectedStatus(value)}
           >
-            {statusList?.map((status) => (
-              <Select.Option key={status.id} value={status.id}>
-                {status.name}
-              </Select.Option>
+            {statusOptions?.items?.map((option) => (
+              <Option key={option.key} value={option.key}>
+                {option.label}
+              </Option>
             ))}
           </Select>
         </div>
@@ -264,10 +297,10 @@ export default function AssignStudent({ setCancel, setAssignConfirm }) {
             >
               <Checkbox
                 onChange={(e) => handleSelectAll(e.target.checked)}
-                checked={selectedStudents.length === students.length}
+                checked={selectedStudents.length === filteredStudents.length}
                 indeterminate={
                   selectedStudents.length > 0 &&
-                  selectedStudents.length < students.length
+                  selectedStudents.length < filteredStudents.length
                 }
               >
                 Select All
@@ -276,7 +309,7 @@ export default function AssignStudent({ setCancel, setAssignConfirm }) {
             </div>
             <ClassroomList>
               <Row gutter={[16, 8]}>
-                {students.map((student) => {
+                {filteredStudents?.map((student) => {
                   const isSelected = selectedStudents.includes(student.id);
                   return (
                     <Col span={8} key={student.id}>
@@ -284,8 +317,28 @@ export default function AssignStudent({ setCancel, setAssignConfirm }) {
                         isSelected={isSelected}
                         onClick={() => handleStudentSelect(student.id)}
                       >
-                        <Avatar src={student.avatar} size={24} />
-                        <span className="label-14-500">{student.name}</span>
+                        {/* <Avatar src={student.profileUrl} size={24} /> */}
+                        <Avatar
+                          size={24}
+                          src={student?.profileUrl || undefined}
+                          // className="mb8"
+                          style={{
+                            backgroundColor: student?.profileUrl
+                              ? undefined
+                              : getInitialsTitleWithColor(
+                                  `${student?.firstName} ${student?.lastName}`
+                                ).backgroundColor,
+                            color: "#fff",
+                          }}
+                        >
+                          {!student?.photoUrl &&
+                            getInitialsTitleWithColor(
+                              `${student?.firstName} ${student?.lastName}`
+                            ).initials}
+                        </Avatar>
+                        <span className="label-14-500">
+                          {student?.firstName} {student?.lastName}
+                        </span>
                         <Checkbox
                           style={{ marginLeft: "auto" }}
                           checked={isSelected}

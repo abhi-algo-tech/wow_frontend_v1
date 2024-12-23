@@ -203,7 +203,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                 help={error || validationMessage}
               >
                 <Input
-                  placeholder="Blue-D"
+                  placeholder="Classroom Name"
                   onChange={(e) => setClassroomName(e.target.value)}
                 />
               </Form.Item>
@@ -235,14 +235,21 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
               </div>
               <Form.Item
                 name="capacity"
-                rules={[{ required: true, message: "Please input capacity!" }]}
+                rules={[
+                  { required: true, message: "Please input capacity!" },
+                  {
+                    validator: (_, value) => {
+                      if (value < 1 || value > 30) {
+                        return Promise.reject(
+                          new Error("Capacity must be between 1 and 30!")
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
               >
-                <InputNumber
-                  min={1}
-                  max={30}
-                  placeholder="13"
-                  className="w-100"
-                />
+                <InputNumber placeholder="0" className="w-100" />
               </Form.Item>
             </div>
             <div className="col-6">
@@ -250,13 +257,21 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                 name="ratio"
                 className="classroom-label"
                 label="Student : Teacher Ratio"
+                rules={[
+                  // { required: true, message: "Please input the ratio!" },
+                  {
+                    validator: (_, value) => {
+                      if (value < 1 || value > 5) {
+                        return Promise.reject(
+                          new Error("ratio must be between 1 and 5!")
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
               >
-                <InputNumber
-                  min={1}
-                  max={5}
-                  placeholder="4"
-                  className="w-100"
-                />
+                <InputNumber placeholder="4" className="w-100" />
               </Form.Item>
             </div>
           </div>
@@ -273,29 +288,48 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                     rules={[
                       {
                         required: true,
-                        message: "Please input the min age!",
+                        message: "Please input the min Year!",
+                      },
+                      {
+                        validator: (_, value) => {
+                          if (value < 0 || value > 6) {
+                            return Promise.reject(
+                              new Error("Year must be less than 6!")
+                            );
+                          }
+                          return Promise.resolve();
+                        },
                       },
                     ]}
                   >
-                    <InputNumber
-                      min={0}
-                      max={6}
-                      placeholder="Year"
-                      className="w-100"
-                    />
+                    <InputNumber placeholder="Year" className="w-100" />
                   </Form.Item>
                   <div className="text-center">
                     <span className="classroom-label-light">Year</span>
                   </div>
                 </div>
                 <div className="col-6">
-                  <Form.Item name="minAgeMonth" className="mb-0">
-                    <InputNumber
-                      min={0}
-                      max={11}
-                      placeholder="Month"
-                      className="w-100"
-                    />
+                  <Form.Item
+                    name="minAgeMonth"
+                    className="mb-0"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input the min month!",
+                      },
+                      {
+                        validator: (_, value) => {
+                          if (value < 0 || value > 11) {
+                            return Promise.reject(
+                              new Error("month must be less than 6!")
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                  >
+                    <InputNumber placeholder="Month" className="w-100" />
                   </Form.Item>
                   <div className="text-center">
                     <span className="classroom-label-light">Month</span>
@@ -313,22 +347,23 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                     name="maxAgeYear"
                     className="mb-0"
                     rules={[
-                      // {
-                      //   validator: (_, value) =>
-                      //     validateMinMaxAge(_, value, form),
-                      // },
                       {
                         required: true,
-                        message: "Please input the max age!",
+                        message: "Please input the min Year!",
+                      },
+                      {
+                        validator: (_, value) => {
+                          if (value < 0 || value > 6) {
+                            return Promise.reject(
+                              new Error("Year must be less than 6!")
+                            );
+                          }
+                          return Promise.resolve();
+                        },
                       },
                     ]}
                   >
-                    <InputNumber
-                      min={0}
-                      max={6}
-                      placeholder="Year"
-                      className="w-100"
-                    />
+                    <InputNumber placeholder="Year" className="w-100" />
                   </Form.Item>
                   <div className="text-center">
                     <span className="classroom-label-light">Year</span>
@@ -345,7 +380,17 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                       },
                       {
                         required: true,
-                        message: "Please input the max age!",
+                        message: "Please input the max Month!",
+                      },
+                      {
+                        validator: (_, value) => {
+                          if (value < 0 || value > 11) {
+                            return Promise.reject(
+                              new Error("Month must be less than 6!")
+                            );
+                          }
+                          return Promise.resolve();
+                        },
                       },
                     ]}
                   >

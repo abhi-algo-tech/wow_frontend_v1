@@ -78,8 +78,8 @@ function ClassroomProfile() {
   const MAX_TEXT_LENGTH = 9; // Define the max length of the displayed text
 
   const truncateText = (text, maxLength) => {
-    return text.length > maxLength
-      ? `${text.substring(0, maxLength)}...`
+    return text?.length > maxLength
+      ? `${text?.substring(0, maxLength)}...`
       : text;
   };
 
@@ -295,7 +295,10 @@ function ClassroomProfile() {
       </Row>
       <Row gutter={[16, 0]} className="mt21">
         <Col span={17}>
-          <ClassroomOverviewTab classroomId={currentClassroomId} />
+          <ClassroomOverviewTab
+            classroomId={currentClassroomId}
+            classroomData={currentClassroomData}
+          />
         </Col>
         <Col span={7}>
           <div className="mb13">
