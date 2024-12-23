@@ -233,8 +233,8 @@ export default function AssignStudent({ setCancel, classroomData }) {
             style={{ width: 240, height: 40 }}
             onChange={(e) =>
               setFilteredStudents(
-                staff.filter((staffMember) =>
-                  `${staffMember.firstName} ${staffMember.lastName}`
+                students.filter((data) =>
+                  `${data.firstName} ${data.lastName}`
                     .toLowerCase()
                     .includes(e.target.value.toLowerCase())
                 )
