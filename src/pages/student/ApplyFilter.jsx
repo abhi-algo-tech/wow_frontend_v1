@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Select, Button } from "antd";
 import { CustomMessage } from "../../utils/CustomMessage";
 import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
@@ -6,7 +6,7 @@ import ButtonComponent from "../../components/ButtonComponent";
 
 const { Option } = Select;
 
-function ApplyFilter({ CardTitle, closeModal, onApplyFilter }) {
+function ApplyFilter({ CardTitle, closeModal, onApplyFilter, classrooms }) {
   const [formValues, setFormValues] = useState({
     classroom: null,
     status: null,
@@ -69,8 +69,11 @@ function ApplyFilter({ CardTitle, closeModal, onApplyFilter }) {
                 onChange={(value) => handleSelectChange("classroom", value)}
               >
                 <Option value={null}>Select</Option>
-                <Option value="1-Blue-D">1-Blue-D</Option>
-                <Option value="6-Yellow-R">6-Yellow-R</Option>
+                {classrooms?.map((item) => (
+                  <Option key={item.id} value={item.name}>
+                    {item.name}
+                  </Option>
+                ))}
               </Select>
             </div>
 
@@ -87,7 +90,7 @@ function ApplyFilter({ CardTitle, closeModal, onApplyFilter }) {
               >
                 <Option value={null}>Select</Option>
                 {status?.data?.map((item) => (
-                  <Option key={item.id} value={item.id}>
+                  <Option key={item.id} value={item.name}>
                     {item.name}
                   </Option>
                 ))}
@@ -107,7 +110,7 @@ function ApplyFilter({ CardTitle, closeModal, onApplyFilter }) {
               >
                 <Option value={null}>Select</Option>
                 {tags?.data?.map((item) => (
-                  <Option key={item.id} value={item.id}>
+                  <Option key={item.id} value={item.name}>
                     {item.name}
                   </Option>
                 ))}

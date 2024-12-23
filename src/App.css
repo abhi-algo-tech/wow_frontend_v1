@@ -262,12 +262,6 @@ img.logo {
   transition: all 0.3s ease; /* Smooth transition when collapsing */
 }
 
-/* .ant-menu {
-  background-color: var(--background-color) !important;
-} */
-/* .ant-menu-item-selected {
-  background-color: var(--active-nav) !important;
-} */
 .sidebar-content .ant-menu-item a {
   text-decoration: none;
 }
@@ -970,4 +964,3 @@ img.logo {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-

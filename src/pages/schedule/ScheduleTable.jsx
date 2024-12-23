@@ -530,7 +530,7 @@ const data = [
     },
   },
 ];
-export default function ScheduleTable({ startDate }) {
+export default function ScheduleTable({ startDate, classRoomList = [] }) {
   const [expandedRows, setExpandedRows] = useState([]);
   const [isAddShiftModalOpen, setAddShiftModalOpen] = useState(false);
   const [isEditShiftModalOpen, setEditShiftModalOpen] = useState(false);
@@ -578,7 +578,7 @@ export default function ScheduleTable({ startDate }) {
                       </div>
                       <div className="teacher-more-time">
                         <img
-                          className="size-20"
+                          className="width20 height18"
                           src={"/wow_icons/png/more_time.png"}
                         />
                         <div className="label-12-500 mr8">
@@ -750,6 +750,17 @@ export default function ScheduleTable({ startDate }) {
         <div className="d-flex align-items-center justify-content-between mb16">
           <div className="mb-6">
             <Select
+              className="select-student-add-from"
+              placeholder="Select Classroom"
+              style={{ width: 185 }}
+            >
+              {classRoomList?.map((classroom) => (
+                <Select.Option key={classroom.id} value={classroom.id}>
+                  {classroom.name}
+                </Select.Option>
+              ))}
+            </Select>
+            {/* <Select
               placeholder="Select Classroom"
               style={{
                 width: 185,
@@ -763,7 +774,7 @@ export default function ScheduleTable({ startDate }) {
                 { value: "2-Green-D", label: "2-Green-D" },
                 { value: "3-Purple-D", label: "3-Purple-D" },
               ]}
-            />
+            /> */}
           </div>
           <div className="d-flex align-items-center gap16 mb6 text-sm">
             <div className="d-flex align-items-center gap10">
@@ -775,7 +786,10 @@ export default function ScheduleTable({ startDate }) {
             </div>
 
             <div className="d-flex align-items-center gap10">
-              <img className="size-15" src={"wow_icons/png/more_time.png"} />
+              <img
+                className="width15 height13"
+                src={"wow_icons/png/more_time.png"}
+              />
               <span className="label-12-500">Scheduled</span>
             </div>
 

@@ -15,7 +15,7 @@ import AssignConfirm from "./AssignConfirm";
 import { useStudentByClassroom } from "../../hooks/useStudent";
 import { formatStudentData } from "./ClassroomCommon";
 import LoaderComponent from "../../components/loader/LoaderComponent";
-import EmptyRecord from "../../components/emptyFile/EmptyRecord";
+import EmptyRecordWithCreate from "../../components/emptyFile/EmptyRecordWithCreate";
 import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 const { Option } = Select;
 
@@ -367,7 +367,7 @@ export default function StudentCardDetails({ classroomId }) {
               </>
             ) : (
               <>
-                <EmptyRecord btnLabel="Add Student" />
+                <EmptyRecordWithCreate btnLabel="Add Student" />
               </>
             )}
           </>

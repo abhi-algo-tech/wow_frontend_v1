@@ -60,8 +60,8 @@ function DeleteShift({
                   options={[
                     { label: "This Shift", value: "shift" },
                     {
-                      label: "This Shift & All future units",
-                      value: "This Shift& All future units",
+                      label: "This Shift & All future shifts",
+                      value: "This Shift & All future shifts",
                     },
                   ]}
                   defaultValue="shift" // Ensure the default selection is "This Shift"

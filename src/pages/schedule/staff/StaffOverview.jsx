@@ -3,10 +3,16 @@ import React, { useState } from "react";
 import dayjs from "dayjs";
 import WeekDatePicker from "../../../components/datepicker/WeekDatePicker";
 import OverviewTable from "../OverviewTable";
+import CommonModalComponent from "../../../components/CommonModalComponent";
+import PublishShift from "../PublishShift";
+import ShiftForm from "../ShiftForm";
 
 const { Text } = Typography;
 const StaffOverview = () => {
+  const [selectedRecord, setSelectedRecord] = useState(false);
   const [isAddShiftModalOpen, setAddShiftModalOpen] = useState(false);
+  const [isPublishedShiftModalOpen, setPublishedShiftModalOpen] =
+    useState(false);
 
   const [startDate, setStartDate] = useState(
     dayjs().startOf("week").add(1, "day")
@@ -14,10 +20,21 @@ const StaffOverview = () => {
   const handleRangeChange = (start, end) => {
     setStartDate(start);
   };
-
+  const handlePublish = async (id) => {};
+  // Define menu items with onClick handlers
   const publishItems = [
-    { key: "1", label: "Next Month" },
-    { key: "2", label: "All Shifts" },
+    {
+      key: "1",
+      label: (
+        <div onClick={() => setPublishedShiftModalOpen(true)}>Next Month</div>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <div onClick={() => setPublishedShiftModalOpen(true)}>All Shifts</div>
+      ),
+    },
   ];
   const staffList = [
     { id: 1, name: "Jessica Rhodes" },
@@ -46,15 +63,14 @@ const StaffOverview = () => {
         <div className="d-flex align-items-center gap-3">
           <Button
             onClick={() => setAddShiftModalOpen(true)}
-            className="schedule-add-shift-btn"
+            className="schedule-add-shift-btn d-flex align-items-center justify-content-center"
           >
-            <span className="gradient-text">
-              {" "}
+            <span className="gradient-text d-flex align-items-center">
               <Avatar
-                size={13}
+                size={14}
                 src={"/wow_icons/png/add.png"}
-                className="mr10"
-              />{" "}
+                className="mr8"
+              />
               Add Shift
             </span>
           </Button>
@@ -62,6 +78,7 @@ const StaffOverview = () => {
             menu={{ items: publishItems }}
             placement="bottomRight"
             className="schedule-publish-drp"
+            trigger={["click"]}
           >
             <Button className="schedule-publish-drp-btn">
               <span className="schedule-publish-drp-btn-text">Publish </span>
@@ -150,7 +167,10 @@ const StaffOverview = () => {
             >
               {/* Avatar Section */}
               <div className="me-3 ">
-                <img src={"/wow_icons/png/more_time.png"} className="size-36" />
+                <img
+                  src={"/wow_icons/png/more_time.png"}
+                  className="width36 height34"
+                />
               </div>
 
               {/* Text Section */}
@@ -186,6 +206,31 @@ const StaffOverview = () => {
       </div>
 
       <OverviewTable />
+
+      {isAddShiftModalOpen && (
+        <ShiftForm
+          cardTitle={"Add Shift"}
+          classroomId={null}
+          setCloseModal={setAddShiftModalOpen}
+        />
+      )}
+
+      {isPublishedShiftModalOpen && (
+        <CommonModalComponent
+          open={isPublishedShiftModalOpen}
+          setOpen={setPublishedShiftModalOpen}
+          modalWidthSize={418}
+          modalHeightSize={300}
+          isClosable={true}
+        >
+          <PublishShift
+            setCancel={setPublishedShiftModalOpen}
+            deleteData={selectedRecord}
+            CardTitle="Publish Shifts"
+            handlePublish={handlePublish}
+          />
+        </CommonModalComponent>
+      )}
     </>
   );
 };

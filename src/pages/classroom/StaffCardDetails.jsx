@@ -8,7 +8,7 @@ import CreateMessage from "../../components/message/CreateMessage";
 import { useStaffByClassroom } from "../../hooks/useStaff";
 import { formatStaffData } from "./ClassroomCommon";
 import LoaderComponent from "../../components/loader/LoaderComponent";
-import EmptyRecord from "../../components/emptyFile/EmptyRecord";
+import EmptyRecordWithCreate from "../../components/emptyFile/EmptyRecordWithCreate";
 import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 const { Option } = Select;
 
@@ -296,7 +296,7 @@ export default function StaffCardDetails({ classroomId }) {
               </>
             ) : (
               <>
-                <EmptyRecord btnLabel="Add Staff" />
+                <EmptyRecordWithCreate btnLabel="Add Staff" />
               </>
             )}
           </>

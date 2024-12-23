@@ -51,7 +51,10 @@ function App() {
           <Route path="/staff-attendance/:id" element={<StaffAttendance />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/schedule/classroomview" element={<ClassroomView />} />
-          <Route path="/staff-schedule-overview" element={<StaffOverview />} />
+          <Route
+            path="/scheduling/staff-schedule-overview"
+            element={<StaffOverview />}
+          />
           {/* Redirect to default dashboard route */}
           <Route path="/*" element={<Navigate to="/dashboard" />} />
           <Route path="/" element={<Navigate to="/dashboard" />} />
