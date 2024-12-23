@@ -1,5 +1,3 @@
-"use client";
-
 import { Avatar, Card, Select, Table, Tooltip } from "antd";
 import { CheckCircleFilled, WarningFilled } from "@ant-design/icons";
 import { useState } from "react";
@@ -7,43 +5,89 @@ import { MdOutlineExpandMore, MdOutlineExpandLess } from "react-icons/md";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import ShiftForm from "./ShiftForm";
 import { Link } from "react-router-dom";
-
+import DeleteSchedulePopUp from "../../components/DeleteSchedulePopup";
+import DeleteShift from "./DeleteShift";
+const images = [
+  "/classroom_icons/png/Aadhira.png",
+  "/classroom_icons/png/Aarav.png",
+  "/classroom_icons/png/Aarjav.png",
+];
 const data = [
   {
-    key: "1-Blue-D",
+    key: 1,
     name: "1-Blue-D",
 
     teachers: [
       {
         id: "1",
         name: "Ana Biwalkar",
-        avatar: "/placeholder.svg",
+        avatar: "/classroom_icons/png/Aadhira.png",
         duration: {
           first: 45,
           second: 55,
         },
         schedule: [
-          { day: "mon", time: "07:00 AM - 12:00 PM", status: "published" },
-          { day: "tue", time: "07:00 AM - 05:00 PM", status: "unpublised" },
-          { day: "wed", time: "", status: "published" },
-          { day: "thu", time: "07:00 AM - 05:00 PM", status: "published" },
-          { day: "fri", time: "07:00 AM - 05:00 PM", status: "published" },
+          {
+            id: 1,
+            day: "mon",
+            time: "07:00 AM - 12:00 PM",
+            status: "published",
+          },
+          {
+            id: 2,
+            day: "tue",
+            time: "07:00 AM - 05:00 PM",
+            status: "unpublised",
+          },
+          { id: 3, day: "wed", time: "", status: "published" },
+          {
+            id: 4,
+            day: "thu",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 5,
+            day: "fri",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
         ],
       },
       {
         id: "2",
         name: "Lana Rhodes",
-        avatar: "/placeholder.svg",
+        avatar: "/classroom_icons/png/Aarav.png",
         duration: {
           first: 55,
           second: 45,
         },
         schedule: [
-          { day: "mon", time: "02:00 AM - 05:00 PM", status: "published" },
-          { day: "tue", time: "07:00 AM - 05:00 PM", status: "unpublised" },
-          { day: "wed", time: "", status: "published" },
-          { day: "thu", time: "07:00 AM - 05:00 PM", status: "published" },
-          { day: "fri", time: "07:00 AM - 05:00 PM", status: "published" },
+          {
+            id: 1,
+            day: "mon",
+            time: "02:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 2,
+            day: "tue",
+            time: "07:00 AM - 05:00 PM",
+            status: "unpublised",
+          },
+          { id: 3, day: "wed", time: "", status: "published" },
+          {
+            id: 4,
+            day: "thu",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 5,
+            day: "fri",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
         ],
       },
     ],
@@ -56,40 +100,424 @@ const data = [
     },
   },
   {
-    key: "2-Yellow-C",
+    key: 2,
     name: "2-Yellow-C",
 
     teachers: [
       {
         id: "3",
         name: "Chaitanya Desai",
-        avatar: "/placeholder.svg",
+        avatar: "/classroom_icons/png/Aadhira.png",
         duration: {
           first: 45,
           second: 55,
         },
         schedule: [
-          { day: "mon", time: "07:00 AM - 05:00 PM", status: "published" },
-          { day: "tue", time: "07:00 AM - 05:00 PM", status: "unpublised" },
-          { day: "wed", time: "", status: "published" },
-          { day: "thu", time: "07:00 AM - 05:00 PM", status: "published" },
-          { day: "fri", time: "07:00 AM - 05:00 PM", status: "published" },
+          {
+            id: 1,
+            day: "mon",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 2,
+            day: "tue",
+            time: "07:00 AM - 05:00 PM",
+            status: "unpublised",
+          },
+          { id: 3, day: "wed", time: "", status: "published" },
+          {
+            id: 4,
+            day: "thu",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 5,
+            day: "fri",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
         ],
       },
       {
         id: "4",
         name: "Spandana Shah",
-        avatar: "/placeholder.svg",
+        avatar: "/classroom_icons/png/Aadhira.png",
         duration: {
           first: 45,
           second: 55,
         },
         schedule: [
-          { day: "mon", time: "07:00 AM - 05:00 PM", status: "published" },
-          { day: "tue", time: "07:00 AM - 05:00 PM", status: "unpublised" },
-          { day: "wed", time: "", status: "published" },
-          { day: "thu", time: "07:00 AM - 05:00 PM", status: "published" },
-          { day: "fri", time: "07:00 AM - 05:00 PM", status: "published" },
+          {
+            id: 1,
+            day: "mon",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 2,
+            day: "tue",
+            time: "07:00 AM - 05:00 PM",
+            status: "unpublised",
+          },
+          { id: 3, day: "wed", time: "", status: "published" },
+          {
+            id: 4,
+            day: "thu",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 5,
+            day: "fri",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+        ],
+      },
+    ],
+    schedule: {
+      mon: true,
+      tue: false,
+      wed: true,
+      thu: true,
+      fri: false,
+    },
+  },
+  {
+    key: 3,
+    name: "2-Purple",
+
+    teachers: [
+      {
+        id: "3",
+        name: "Chaitanya Desai",
+        avatar: "/classroom_icons/png/Aadhira.png",
+        duration: {
+          first: 45,
+          second: 55,
+        },
+        schedule: [
+          {
+            id: 1,
+            day: "mon",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 2,
+            day: "tue",
+            time: "07:00 AM - 05:00 PM",
+            status: "unpublised",
+          },
+          { id: 3, day: "wed", time: "", status: "published" },
+          {
+            id: 4,
+            day: "thu",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 5,
+            day: "fri",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+        ],
+      },
+      {
+        id: "4",
+        name: "Spandana Shah",
+        avatar: "/classroom_icons/png/Aarav.png",
+        duration: {
+          first: 45,
+          second: 55,
+        },
+        schedule: [
+          {
+            id: 1,
+            day: "mon",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 2,
+            day: "tue",
+            time: "07:00 AM - 05:00 PM",
+            status: "unpublised",
+          },
+          { id: 3, day: "wed", time: "", status: "published" },
+          {
+            id: 4,
+            day: "thu",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 5,
+            day: "fri",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+        ],
+      },
+    ],
+    schedule: {
+      mon: true,
+      tue: false,
+      wed: true,
+      thu: true,
+      fri: false,
+    },
+  },
+  {
+    key: 4,
+    name: "R-Yellow",
+
+    teachers: [
+      {
+        id: "3",
+        name: "Chaitanya Desai",
+        avatar: "/classroom_icons/png/Aarav.png",
+        duration: {
+          first: 45,
+          second: 55,
+        },
+        schedule: [
+          {
+            id: 1,
+            day: "mon",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 2,
+            day: "tue",
+            time: "07:00 AM - 05:00 PM",
+            status: "unpublised",
+          },
+          { id: 3, day: "wed", time: "", status: "published" },
+          {
+            id: 4,
+            day: "thu",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 5,
+            day: "fri",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+        ],
+      },
+      {
+        id: "4",
+        name: "Spandana Shah",
+        avatar: "/classroom_icons/png/Aarav.png",
+        duration: {
+          first: 45,
+          second: 55,
+        },
+        schedule: [
+          {
+            id: 1,
+            day: "mon",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 2,
+            day: "tue",
+            time: "07:00 AM - 05:00 PM",
+            status: "unpublised",
+          },
+          { id: 3, day: "wed", time: "", status: "published" },
+          {
+            id: 4,
+            day: "thu",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 5,
+            day: "fri",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+        ],
+      },
+    ],
+    schedule: {
+      mon: true,
+      tue: false,
+      wed: true,
+      thu: true,
+      fri: false,
+    },
+  },
+  {
+    key: 5,
+    name: "6-Yellow-C",
+
+    teachers: [
+      {
+        id: "3",
+        name: "Chaitanya Desai",
+        avatar: "/classroom_icons/png/Aarav.png",
+        duration: {
+          first: 45,
+          second: 55,
+        },
+        schedule: [
+          {
+            id: 1,
+            day: "mon",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 2,
+            day: "tue",
+            time: "07:00 AM - 05:00 PM",
+            status: "unpublised",
+          },
+          { id: 3, day: "wed", time: "", status: "published" },
+          {
+            id: 4,
+            day: "thu",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 5,
+            day: "fri",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+        ],
+      },
+      {
+        id: "4",
+        name: "Spandana Shah",
+        avatar: "/classroom_icons/png/Aarav.png",
+        duration: {
+          first: 45,
+          second: 55,
+        },
+        schedule: [
+          {
+            id: 1,
+            day: "mon",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 2,
+            day: "tue",
+            time: "07:00 AM - 05:00 PM",
+            status: "unpublised",
+          },
+          { id: 3, day: "wed", time: "", status: "published" },
+          {
+            id: 4,
+            day: "thu",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 5,
+            day: "fri",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+        ],
+      },
+    ],
+    schedule: {
+      mon: true,
+      tue: false,
+      wed: true,
+      thu: true,
+      fri: false,
+    },
+  },
+  {
+    key: 6,
+    name: "2-Red-C",
+
+    teachers: [
+      {
+        id: "3",
+        name: "Chaitanya Desai",
+        avatar: "/classroom_icons/png/Aarav.png",
+        duration: {
+          first: 45,
+          second: 55,
+        },
+        schedule: [
+          {
+            id: 1,
+            day: "mon",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 2,
+            day: "tue",
+            time: "07:00 AM - 05:00 PM",
+            status: "unpublised",
+          },
+          { id: 3, day: "wed", time: "", status: "published" },
+          {
+            id: 4,
+            day: "thu",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 5,
+            day: "fri",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+        ],
+      },
+      {
+        id: "4",
+        name: "Spandana Shah",
+        avatar: "/classroom_icons/png/Aarav.png",
+        duration: {
+          first: 45,
+          second: 55,
+        },
+        schedule: [
+          {
+            id: 1,
+            day: "mon",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 2,
+            day: "tue",
+            time: "07:00 AM - 05:00 PM",
+            status: "unpublised",
+          },
+          { id: 3, day: "wed", time: "", status: "published" },
+          {
+            id: 4,
+            day: "thu",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
+          {
+            id: 5,
+            day: "fri",
+            time: "07:00 AM - 05:00 PM",
+            status: "published",
+          },
         ],
       },
     ],
@@ -105,7 +533,25 @@ const data = [
 export default function ScheduleTable({ startDate }) {
   const [expandedRows, setExpandedRows] = useState([]);
   const [isAddShiftModalOpen, setAddShiftModalOpen] = useState(false);
+  const [isEditShiftModalOpen, setEditShiftModalOpen] = useState(false);
+  const [hoverIndex, setHoverIndex] = useState(null);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isConfirmDeleteShiftModalOpen, setConfirmDeleteShiftModalOpen] =
+    useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(false);
 
+  const handleDeleteConfirmModal = (id, name) => {
+    setSelectedRecord({ id, name });
+    setEditShiftModalOpen(false);
+    setConfirmDeleteShiftModalOpen(true);
+  };
+  const handleDeleteBtnConfirmModal = (id, name) => {
+    setSelectedRecord({ id, name });
+    setEditShiftModalOpen(false);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {};
   const TeacherSchedule = ({ record }) => (
     <div className="child-table">
       <table className="w-full table-auto border-collapse">
@@ -131,8 +577,8 @@ export default function ScheduleTable({ startDate }) {
                         </div>
                       </div>
                       <div className="teacher-more-time">
-                        <Avatar
-                          size={20}
+                        <img
+                          className="size-20"
                           src={"/wow_icons/png/more_time.png"}
                         />
                         <div className="label-12-500 mr8">
@@ -151,6 +597,8 @@ export default function ScheduleTable({ startDate }) {
                     slot.status ? "bg-blue-50" : "bg-gray-50"
                   }`}
                   style={{ width: "16%" }}
+                  onMouseEnter={() => !slot.time && setHoverIndex(teacher.id)}
+                  onMouseLeave={() => setHoverIndex(null)}
                 >
                   {slot.time && (
                     <div
@@ -158,17 +606,18 @@ export default function ScheduleTable({ startDate }) {
                         slot.status === "published"
                           ? "teacher-schedule-time-card"
                           : "teacher-unpublished-time-card"
-                      }`}
+                      } pointer`}
+                      onClick={() => setEditShiftModalOpen(true)}
                     >
                       <span className="label-12-500">{slot.time}</span>
                     </div>
                   )}
-                  {!slot.time && (
+                  {!slot.time && hoverIndex === teacher.id && (
                     <div
                       className="pointer"
                       onClick={() => setAddShiftModalOpen(true)}
                     >
-                      <Avatar src={"/wow_icons/png/add.png"} size={24} />
+                      <Avatar src={"/wow_icons/png/add.png"} size={13} />
                     </div>
                   )}
                 </td>
@@ -195,19 +644,19 @@ export default function ScheduleTable({ startDate }) {
             </div>
           </div>
           <div className="d-flex justify-content-between mb6 align-items-center gap-2">
-            <div className="label-10-400">07:30 AM-08:00 AM </div>
+            <div className="label-10-400">12:30 AM-01:00 PM </div>
             <div className="scheduling-tag-status">
               <span className="label-10-400 text-white">Under ratio</span>
             </div>
           </div>
           <div className="d-flex justify-content-between mb6 align-items-center gap-2">
-            <div className="label-10-400">07:30 AM-08:00 AM </div>
+            <div className="label-10-400">02:30 AM-03:00 PM </div>
             <div className="scheduling-tag-status">
               <span className="label-10-400 text-white">Under ratio</span>
             </div>
           </div>
           <div className="d-flex justify-content-between mb6 align-items-center gap-2">
-            <div className="label-10-400">07:30 AM-08:00 AM </div>
+            <div className="label-10-400">05:00 AM-05:30 AM </div>
             <div className="scheduling-tag-status">
               <span className="label-10-400 text-white">Under ratio</span>
             </div>
@@ -221,110 +670,7 @@ export default function ScheduleTable({ startDate }) {
       </>
     );
   };
-  // const columns = [
-  //   {
-  //     title: expandedRows.length > 0 ? "Collapse All" : "Expand All",
-  //     dataIndex: "name",
-  //     key: "name",
-  //     width: "20%",
 
-  //     align: "start",
-  //     className: "label-14-600 pointer",
-  //     render: (text, record) => {
-  //       const isExpanded = expandedRows.includes(record.key);
-  //       return (
-  //         <div
-  //           className="d-flex align-items-center gap12 pointer"
-  //           onClick={() =>
-  //             setExpandedRows((prevExpanded) =>
-  //               prevExpanded.includes(record.key)
-  //                 ? prevExpanded.filter((key) => key !== record.key)
-  //                 : [...prevExpanded, record.key]
-  //             )
-  //           }
-  //         >
-  //           <span>{text}</span>
-  //           {isExpanded ? (
-  //             <MdOutlineExpandLess className="text-lg text-gray-500" />
-  //           ) : (
-  //             <MdOutlineExpandMore className="text-lg text-gray-500" />
-  //           )}
-  //         </div>
-  //       );
-  //     },
-  //   },
-  //   {
-  //     title: "Mon 27",
-  //     dataIndex: ["schedule", "mon"],
-  //     key: "mon",
-  //     align: "center",
-  //     width: "16%",
-  //     className: "label-14-600",
-  //     render: (value) =>
-  //       value ? (
-  //         <Avatar src={"/wow_icons/png/check_circle.png"} size={28} />
-  //       ) : (
-  //         <img src={"/wow_icons/png/Alert_triangle.png"} className="size-28" />
-  //       ),
-  //   },
-  //   {
-  //     title: "Tue 28",
-  //     dataIndex: ["schedule", "tue"],
-  //     key: "tue",
-  //     align: "center",
-  //     width: "16%",
-  //     className: "label-14-600",
-  //     render: (value) =>
-  //       value ? (
-  //         <Avatar src={"/wow_icons/png/check_circle.png"} size={28} />
-  //       ) : (
-  //         <img src={"/wow_icons/png/Alert_triangle.png"} className="size-28" />
-  //       ),
-  //   },
-  //   {
-  //     title: "Wed 29",
-  //     dataIndex: ["schedule", "wed"],
-  //     key: "wed",
-  //     align: "center",
-  //     width: "16%",
-  //     className: "label-14-600",
-  //     render: (value) =>
-  //       value ? (
-  //         <Avatar src={"/wow_icons/png/check_circle.png"} size={28} />
-  //       ) : (
-  //         <img src={"/wow_icons/png/Alert_triangle.png"} className="size-28" />
-  //       ),
-  //   },
-  //   {
-  //     title: "Thu 30",
-  //     dataIndex: ["schedule", "thu"],
-  //     key: "thu",
-  //     align: "center",
-  //     width: "16%",
-  //     className: "label-14-600",
-  //     render: (value) =>
-  //       value ? (
-  //         <Avatar src={"/wow_icons/png/check_circle.png"} size={28} />
-  //       ) : (
-  //         <img src={"/wow_icons/png/Alert_triangle.png"} className="size-28" />
-  //       ),
-  //   },
-  //   {
-  //     title: "Fri 31",
-  //     dataIndex: ["schedule", "fri"],
-  //     key: "fri",
-  //     align: "center",
-  //     width: "16%",
-  //     className: "label-14-600",
-  //     render: (value) =>
-  //       value ? (
-  //         <Avatar src={"/wow_icons/png/check_circle.png"} size={28} />
-  //       ) : (
-  //         <img src={"/wow_icons/png/Alert_triangle.png"} className="size-28" />
-  //       ),
-  //   },
-  // ];
-  // Generate column titles dynamically
   const generateColumns = () => {
     const weekDays = Array.from(
       { length: 5 },
@@ -481,23 +827,54 @@ export default function ScheduleTable({ startDate }) {
       </Card>
 
       {isAddShiftModalOpen && (
+        <ShiftForm
+          cardTitle={"Add Shift"}
+          classroomId={null}
+          setCloseModal={setAddShiftModalOpen}
+        />
+      )}
+      {isEditShiftModalOpen && (
+        <ShiftForm
+          cardTitle={"Edit Shift"}
+          classroomId={null}
+          setCloseModal={setEditShiftModalOpen}
+          handleDeleteConfirmModal={handleDeleteConfirmModal}
+        />
+      )}
+
+      {isDeleteModalOpen && (
         <CommonModalComponent
-          open={isAddShiftModalOpen}
-          setOpen={setAddShiftModalOpen}
-          modalWidthSize={796}
-          modalHeightSize={544}
+          open={isDeleteModalOpen}
+          setOpen={setDeleteModalOpen}
+          modalWidthSize={560}
           isClosable={true}
         >
-          <ShiftForm
-            cardTitle={"Add Shift"}
-            classroomId={null}
-            setCloseModal={setAddShiftModalOpen(false)}
+          <DeleteSchedulePopUp
+            setCancel={setDeleteModalOpen}
+            deleteData={selectedRecord}
+            // CardTitle="Delete Classroom"
+            handleDelete={handleDelete}
+            module="Selected Shift"
           />
-          {/* <CreateStudent
-            CardTitle={"Add Student"}
-            classroomId={null}
-            closeModal={() => setAddShiftModalOpen(false)}
-          /> */}
+        </CommonModalComponent>
+      )}
+      {isConfirmDeleteShiftModalOpen && (
+        <CommonModalComponent
+          open={isConfirmDeleteShiftModalOpen}
+          setOpen={setConfirmDeleteShiftModalOpen}
+          modalWidthSize={531}
+          modalHeightSize={371}
+          isClosable={true}
+        >
+          <DeleteShift
+            setCancel={setConfirmDeleteShiftModalOpen}
+            deleteData={selectedRecord}
+            CardTitle="Delete Shift"
+            handleDelete={handleDelete}
+            module="Selected Shift"
+            handleBack={() => setEditShiftModalOpen(true)}
+            handleDeleteBtnConfirmModal={handleDeleteBtnConfirmModal}
+          />
         </CommonModalComponent>
       )}
     </>

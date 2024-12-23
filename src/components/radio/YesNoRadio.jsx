@@ -16,7 +16,7 @@ const YesNoRadio = ({
     <div className="yes-no-radio-container">
       <Radio.Group
         name={name}
-        value={value} // Controlled value directly from parent
+        value={value || defaultValue} // Controlled value directly from parent
         onChange={onChange}
         style={style}
       >

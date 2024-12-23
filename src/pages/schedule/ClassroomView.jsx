@@ -69,7 +69,7 @@ const ClassroomView = () => {
           >
             <span className="gradient-text">
               {" "}
-              <Avatar size={24} src={"/wow_icons/png/add.png"} /> Add Shift
+              <Avatar size={13} src={"/wow_icons/png/add.png"} /> Add Shift
             </span>
           </Button>
           <Dropdown

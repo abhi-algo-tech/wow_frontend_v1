@@ -1,7 +1,7 @@
 import React from "react";
 
 const CardGrid = ({ scheduleType = "teacherSchedule", scheduling = [] }) => {
-  const startTime = 6 * 60; // Start time: 6:00 AM (in minutes)
+  const startTime = 7 * 60; // Start time: 6:00 AM (in minutes)
   const endTime = 18 * 60; // End time: 6:00 PM (in minutes)
 
   const colorMapping = {
@@ -55,8 +55,8 @@ const CardGrid = ({ scheduleType = "teacherSchedule", scheduling = [] }) => {
         >
           <div
             style={{
-              width: "21px",
-              height: "20px",
+              width: "18px",
+              height: "19px",
               background: boxColor,
               borderRadius: "8px",
             }}

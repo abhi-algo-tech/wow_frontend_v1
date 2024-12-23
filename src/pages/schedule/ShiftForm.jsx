@@ -1,4 +1,12 @@
-import { Form, Select, TimePicker, Input, Checkbox, Button } from "antd";
+import {
+  Form,
+  Select,
+  TimePicker,
+  Input,
+  Checkbox,
+  Button,
+  Avatar,
+} from "antd";
 import { useState } from "react";
 import dayjs from "dayjs";
 import CustomDatePicker from "../../components/CustomDatePicker";
@@ -6,13 +14,24 @@ import { GoPlus } from "react-icons/go";
 import ButtonComponent from "../../components/ButtonComponent";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import YesNoRadio from "../../components/radio/YesNoRadio";
+import DeleteShift from "./DeleteShift";
+import DeleteSchedulePopUp from "../../components/DeleteSchedulePopup";
 
-export default function ShiftForm({ cardTitle, shiftId, setCloseModal }) {
+export default function ShiftForm({
+  cardTitle,
+  shiftId,
+  setCloseModal,
+  handleDeleteConfirmModal,
+}) {
   const [form] = Form.useForm();
   const [allDaysSelected, setAllDaysSelected] = useState(false);
   const [checkedDays, setCheckedDays] = useState([]);
   const [firstModal, setFirstModal] = useState(true);
   const [nextModal, setNextModal] = useState(false);
+  const [modalType, setModalType] = useState(
+    cardTitle?.toLowerCase() === "add shift" ? "add" : "edit"
+  );
+
   const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const handleSelectAll = () => {
     const newValue = !allDaysSelected;
@@ -57,7 +76,7 @@ export default function ShiftForm({ cardTitle, shiftId, setCloseModal }) {
         setOpen={setFirstModal}
         modalWidthSize={796}
         modalHeightSize={544}
-        isClosable={true}
+        // isClosable={true}
         onClick={() => setCloseModal(false)}
       >
         <div className="card">
@@ -307,7 +326,7 @@ export default function ShiftForm({ cardTitle, shiftId, setCloseModal }) {
                 </Form.Item>
               </div>
 
-              <div className="row mb10 ">
+              <div className="row mb10 d-flex align-items-center">
                 <div className="col-md-4">
                   <Form.Item
                     label={
@@ -340,6 +359,25 @@ export default function ShiftForm({ cardTitle, shiftId, setCloseModal }) {
                     </div>
                   </Form.Item>
                 </div>
+                {modalType === "edit" && (
+                  <div className="col-md-2 ">
+                    <button
+                      onClick={() => handleDeleteConfirmModal(1, "chandan")}
+                      className={`btn d-flex align-items-center justify-content-center rounded-circle p-0 `}
+                      style={{
+                        width: 50,
+                        height: 50,
+                        backgroundColor: "#FF3B30",
+                      }}
+                      aria-label="Delete"
+                    >
+                      <img
+                        src={"/wow_icons/png/delete.png"}
+                        className="h-50 w-50"
+                      />
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="text-center mt20">
@@ -350,12 +388,19 @@ export default function ShiftForm({ cardTitle, shiftId, setCloseModal }) {
                   margin="0 16px 0 0"
                   onClick={handleCancelClick}
                 />
-
-                <ButtonComponent
-                  text={"Next"}
-                  padding="14px 45px"
-                  onClick={handleNext}
-                />
+                {modalType === "add" ? (
+                  <ButtonComponent
+                    text={"Confirm"}
+                    padding="14px 45px"
+                    type="submit"
+                  />
+                ) : (
+                  <ButtonComponent
+                    text={"Next"}
+                    padding="14px 45px"
+                    onClick={handleNext}
+                  />
+                )}
               </div>
             </div>
           </Form>
