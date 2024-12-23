@@ -50,7 +50,12 @@ const StaffOverview = () => {
           >
             <span className="gradient-text">
               {" "}
-              <Avatar size={36} src={"/wow_icons/png/add.png"} /> Add Shift
+              <Avatar
+                size={13}
+                src={"/wow_icons/png/add.png"}
+                className="mr10"
+              />{" "}
+              Add Shift
             </span>
           </Button>
           <Dropdown
@@ -144,8 +149,8 @@ const StaffOverview = () => {
               }}
             >
               {/* Avatar Section */}
-              <div className="me-3">
-                <Avatar src={"/wow_icons/png/more_time.png"} size={36} />
+              <div className="me-3 ">
+                <img src={"/wow_icons/png/more_time.png"} className="size-36" />
               </div>
 
               {/* Text Section */}

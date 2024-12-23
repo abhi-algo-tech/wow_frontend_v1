@@ -6,20 +6,15 @@ import ShiftForm from "./ShiftForm";
 import dayjs from "dayjs";
 import CopyShiftForm from "./CopyShiftForm";
 import WeekDatePicker from "../../components/datepicker/WeekDatePicker";
-import DeleteSchedulePopUp from "../../components/DeleteSchedulePopup";
-import DeleteShift from "./DeleteShift";
 import PublishShift from "./PublishShift";
-import OverviewTable from "./OverviewTable";
-import ScheduleView from "./ScheduleView";
-import { Link } from "react-router-dom";
 
 const { Text } = Typography;
 const Schedule = () => {
   const [isAddShiftModalOpen, setAddShiftModalOpen] = useState(false);
   const [isCopyShiftModalOpen, setCopyShiftModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState(false);
   const [isDeleteShiftModalOpen, setDeleteShiftModalOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(false);
   const [isPublishedShiftModalOpen, setPublishedShiftModalOpen] =
     useState(false);
   const [startDate, setStartDate] = useState(
@@ -35,17 +30,27 @@ const Schedule = () => {
   };
   const handleDelete = async (id) => {};
 
+  // Define menu items with onClick handlers
   const publishItems = [
-    { key: "1", label: "Next Month" },
-    { key: "2", label: "All Shifts" },
+    {
+      key: "1",
+      label: (
+        <div onClick={() => setPublishedShiftModalOpen(true)}>Next Month</div>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <div onClick={() => setPublishedShiftModalOpen(true)}>All Shifts</div>
+      ),
+    },
   ];
-  console.log("isAddShiftModalOpen", isAddShiftModalOpen);
 
   return (
     <>
       <div className="d-flex align-items-center justify-content-between mb-4">
         <WeekDatePicker onRangeChange={handleRangeChange} gap={10} />
-        <div className="d-flex align-items-center gap-3">
+        <div className="d-flex  align-items-center gap-3">
           <Button
             size="small"
             className="schedule-copy-btn border-none"
@@ -56,17 +61,22 @@ const Schedule = () => {
           </Button>
           <Button
             onClick={() => setAddShiftModalOpen(true)}
-            className="schedule-add-shift-btn"
+            className="schedule-add-shift-btn align-items-center "
           >
             <span className="gradient-text">
-              {" "}
-              <Avatar size={24} src={"/wow_icons/png/add.png"} /> Add Shift
+              <Avatar
+                size={14}
+                src={"/wow_icons/png/add.png"}
+                className="mr10"
+              />
+              Add Shift
             </span>
           </Button>
           <Dropdown
             menu={{ items: publishItems }}
             placement="bottomRight"
             className="schedule-publish-drp"
+            trigger={["click"]}
           >
             <Button className="schedule-publish-drp-btn">
               <span className="schedule-publish-drp-btn-text">Publish </span>
@@ -80,16 +90,6 @@ const Schedule = () => {
       </div>
       <ScheduleTable startDate={startDate} />
 
-      <Divider />
-      <Button onClick={() => handleDeleteModal(1, "24-09-24")}> Delete</Button>
-      <Button onClick={() => setDeleteShiftModalOpen(true)}>
-        Delete Shift
-      </Button>
-      <Button onClick={() => setPublishedShiftModalOpen(true)}>
-        Published Shift
-      </Button>
-      <Divider />
-      <Link to={"/staff-schedule-overview"}>Staff Overview</Link>
       {isAddShiftModalOpen && (
         <ShiftForm
           cardTitle={"Add Shift"}
@@ -111,39 +111,7 @@ const Schedule = () => {
           />
         </CommonModalComponent>
       )}
-      {isDeleteModalOpen && (
-        <CommonModalComponent
-          open={isDeleteModalOpen}
-          setOpen={setDeleteModalOpen}
-          modalWidthSize={560}
-          isClosable={true}
-        >
-          <DeleteSchedulePopUp
-            setCancel={setDeleteModalOpen}
-            deleteData={selectedRecord}
-            // CardTitle="Delete Classroom"
-            handleDelete={handleDelete}
-            module="Selected Shift"
-          />
-        </CommonModalComponent>
-      )}
-      {isDeleteShiftModalOpen && (
-        <CommonModalComponent
-          open={isDeleteShiftModalOpen}
-          setOpen={setDeleteShiftModalOpen}
-          modalWidthSize={531}
-          modalHeightSize={371}
-          isClosable={true}
-        >
-          <DeleteShift
-            setCancel={setDeleteShiftModalOpen}
-            deleteData={selectedRecord}
-            CardTitle="Delete Shift"
-            handleDelete={handleDelete}
-            module="Selected Shift"
-          />
-        </CommonModalComponent>
-      )}
+
       {isPublishedShiftModalOpen && (
         <CommonModalComponent
           open={isPublishedShiftModalOpen}

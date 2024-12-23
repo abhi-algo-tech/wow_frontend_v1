@@ -7,8 +7,11 @@ import { getInitialsTitleWithColor } from "../../services/common";
 import CardGrid from "../../components/card/CardGrid";
 
 export default function ScheduleView() {
-  const scheduleType = "teacherSchedule";
-
+  const images = [
+    "/classroom_icons/png/Aadhira.png",
+    "/classroom_icons/png/Aarav.png",
+    "/classroom_icons/png/Aarjav.png",
+  ];
   const schedulingData = [
     {
       id: "1",
@@ -29,7 +32,7 @@ export default function ScheduleView() {
           name: "Jessica Rhodes",
           duration: { scheduled: 55, available: 43 },
           type: "staff",
-          avatar: "/placeholder.svg",
+          avatar: "/classroom_icons/png/Aadhira.png",
           scheduling: [
             { timeRange: "9:00 AM - 1:00 PM", typeOf: "inRatio" },
             { timeRange: "1:00 PM - 1:30 PM", typeOf: "underRatio" },
@@ -41,7 +44,7 @@ export default function ScheduleView() {
           name: "Ana Biwalkar",
           duration: { scheduled: 55, available: 43 },
           type: "staff",
-          avatar: "/placeholder.svg",
+          avatar: "/classroom_icons/png/Aarav.png",
           scheduling: [
             { timeRange: "11:00 AM - 1:00 PM", typeOf: "inRatio" },
             { timeRange: "1:00 PM - 2:30 PM", typeOf: "underRatio" },
@@ -69,7 +72,7 @@ export default function ScheduleView() {
           name: "Jessica Rhodes",
           duration: { scheduled: 55, available: 43 },
           type: "staff",
-          avatar: "/placeholder.svg",
+          avatar: "/classroom_icons/png/Aadhira.png",
           scheduling: [
             { timeRange: "8:00 AM - 1:00 PM", typeOf: "inRatio" },
             { timeRange: "1:00 PM - 3:00 PM", typeOf: "underRatio" },
@@ -81,7 +84,7 @@ export default function ScheduleView() {
           name: "Ana Biwalkar",
           duration: { scheduled: 55, available: 43 },
           type: "staff",
-          avatar: "/placeholder.svg",
+          avatar: "/classroom_icons/png/Aarav.png",
           scheduling: [
             { timeRange: "8:00 AM - 1:00 PM", typeOf: "inRatio" },
             { timeRange: "1:00 PM - 3:00 PM", typeOf: "underRatio" },
@@ -93,7 +96,7 @@ export default function ScheduleView() {
           name: "Lana Rhodes",
           duration: { scheduled: 55, available: 43 },
           type: "staff",
-          avatar: "/placeholder.svg",
+          avatar: "/classroom_icons/png/Aadhira.png",
           scheduling: [
             { timeRange: "8:00 AM - 1:00 PM", typeOf: "inRatio" },
             { timeRange: "1:00 PM - 2:00 PM", typeOf: "underRatio" },
@@ -197,10 +200,10 @@ export default function ScheduleView() {
           ></div>
         </div> */}
         <div>
-          <div className="d-flex gap16">
+          <div className="d-flex ">
             <div className="d-flex gap16 ">
               <div className="d-flex justify-content-between align-items-center gap12">
-                <div className=" d-flex teacher-name-container align-items-start width148">
+                <div className=" d-flex teacher-name-container align-items-start width152">
                   <div className="label-14-500 ">Class Schedule</div>
                 </div>
               </div>
@@ -227,7 +230,7 @@ export default function ScheduleView() {
         </div>
         {data?.staff?.map((staffdata) => (
           <div>
-            <div className="d-flex ">
+            <div className="d-flex  ">
               <div className="d-flex  ">
                 <div className="d-flex align-items-center gap16">
                   <Avatar
@@ -248,8 +251,8 @@ export default function ScheduleView() {
                         </div>
                       </div>
                       <div className="teacher-more-time">
-                        <Avatar
-                          size={20}
+                        <img
+                          className="size-20"
                           src={"/wow_icons/png/more_time.png"}
                         />
                         <div className="label-12-500 mr8">

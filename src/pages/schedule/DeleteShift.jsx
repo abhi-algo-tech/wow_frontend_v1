@@ -2,14 +2,17 @@ import { Form } from "antd";
 import ButtonComponent from "../../components/ButtonComponent";
 import YesNoRadio from "../../components/radio/YesNoRadio";
 
-function DeleteShift({ setCancel, deleteData, CardTitle, handleDelete }) {
+function DeleteShift({
+  setCancel,
+  deleteData,
+  CardTitle,
+  handleDelete,
+  handleBack,
+  handleDeleteBtnConfirmModal,
+}) {
   const [form] = Form.useForm();
   const handleCancelClick = () => {
     setCancel(false);
-  };
-  const handleBack = () => {
-    //    setNextModal(false);
-    //    setFirstModal(true);
   };
 
   const handleDeleteClick = () => {
@@ -57,11 +60,11 @@ function DeleteShift({ setCancel, deleteData, CardTitle, handleDelete }) {
                   options={[
                     { label: "This Shift", value: "shift" },
                     {
-                      label: "This Shift& All future units",
+                      label: "This Shift & All future units",
                       value: "This Shift& All future units",
                     },
                   ]}
-                  defaultValue="shift"
+                  defaultValue="shift" // Ensure the default selection is "This Shift"
                   style={{ display: "grid" }}
                   mb={20}
                 />
@@ -69,18 +72,23 @@ function DeleteShift({ setCancel, deleteData, CardTitle, handleDelete }) {
             </div>
           </div>
 
-          <div className="d-flex text-center ">
-            <ButtonComponent
-              text={"Go Back"}
-              padding="14px 45px"
-              gradient={false}
-              onClick={handleBack}
-            />
-            <ButtonComponent
-              text={"Confirm"}
-              padding="14px 45px"
-              type="submit"
-            />
+          <div className="d-flex justify-content-center align-items-center ">
+            <div className="mr9">
+              <ButtonComponent
+                text={"Go Back"}
+                padding="14px 45px"
+                gradient={false}
+                onClick={handleBack}
+              />
+            </div>
+            <div>
+              <ButtonComponent
+                text={"Confirm"}
+                padding="14px 45px"
+                type="submit"
+                onClick={handleDeleteBtnConfirmModal}
+              />
+            </div>
           </div>
         </div>
       </Form>

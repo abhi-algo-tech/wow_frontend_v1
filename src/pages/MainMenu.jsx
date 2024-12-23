@@ -140,7 +140,7 @@ function MainMenu() {
             />
           ),
 
-          label: <Link to="/schedule">Staff Schedule</Link>,
+          label: <Link to="/staff-schedule-overview">Staff Schedule</Link>,
         },
         {
           key: "classroom-schedule",
@@ -150,8 +150,7 @@ function MainMenu() {
               className="custom-submenu-icons"
             />
           ),
-
-          label: <Link to="/scheduling/classroom">Classroom Schedule</Link>,
+          label: <Link to="/schedule">Classroom Schedule</Link>,
         },
       ],
     },

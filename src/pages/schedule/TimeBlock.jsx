@@ -11,7 +11,7 @@ const containerStyle = {
   width: 198,
   height: 287,
   left: 126,
-  top: 97,
+  top: 89,
   position: "absolute",
   gap: 5,
   ...boxStyle,
