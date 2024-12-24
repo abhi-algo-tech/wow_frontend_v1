@@ -1,3 +1,4 @@
+import { Tooltip } from "antd";
 import React from "react";
 
 const CardGrid = ({ scheduleType = "teacherSchedule", scheduling = [] }) => {
@@ -33,7 +34,90 @@ const CardGrid = ({ scheduleType = "teacherSchedule", scheduling = [] }) => {
     }
     return acc;
   }, {});
-
+  const getTooltipContent = (day, schoolName) => {
+    return (
+      <>
+        <div
+          style={{
+            padding: "6px",
+          }}
+          className="gap6"
+        >
+          <div className="d-flex justify-content-between mb6 align-items-center gap-2">
+            <div className="label-12-500">{day}</div>
+            <div className="">
+              <span className="label-14-600">{schoolName}</span>
+            </div>
+          </div>
+          <div className="d-flex justify-content-between mb6 align-items-center gap-2">
+            <div className="label-10-400">12:30 AM-01:00 PM </div>
+            <div className="scheduling-tag-status">
+              <span className="label-10-400 text-white">Under ratio</span>
+            </div>
+          </div>
+          <div className="d-flex flex-column gap-2">
+            {[
+              {
+                color: "#9BE8FF",
+                label: "Expected Students",
+                backgroundColor: "rgba(154, 232, 255, 0.30)",
+                value: 12,
+              },
+              {
+                color: "#FDCD16",
+                label: "Required Staff",
+                backgroundColor: "rgba(253, 205, 22, 0.3)",
+                value: 3,
+              },
+              {
+                color: "#9C84FF",
+                label: "Scheduled Staff",
+                backgroundColor: "rgba(156, 132, 255, 0.30)",
+                value: 2,
+              },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="d-flex justify-content-between align-items-center"
+              >
+                <div className="d-flex align-items-center gap-2">
+                  <div
+                    style={{
+                      width: "9px",
+                      height: "9px",
+                      background: item.color,
+                      borderRadius: "50%",
+                    }}
+                  ></div>
+                  <div className="text-muted small font-weight-normal">
+                    {item.label}
+                  </div>
+                </div>
+                <div
+                  className="d-flex justify-content-center align-items-center rounded"
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    background: item.backgroundColor,
+                    borderBottom: "1px solid",
+                  }}
+                >
+                  <div className="text-dark small font-weight-medium">
+                    {item.value}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* <div className="text-end">
+          <Link to={"/schedule/classroomview"}>
+            <span className="label-10-500 pointer">Show More</span>
+          </Link>
+        </div> */}
+      </>
+    );
+  };
   const generateCards = () => {
     const cards = [];
     for (let time = startTime; time <= endTime; time += 15) {
@@ -53,15 +137,31 @@ const CardGrid = ({ scheduleType = "teacherSchedule", scheduling = [] }) => {
           className="d-flex flex-column align-items-center text-center mr2"
           style={{ position: "relative" }}
         >
-          <div
-            style={{
-              width: "18px",
-              height: "19px",
-              background: boxColor,
-              borderRadius: "8px",
+          <Tooltip
+            color="#fff"
+            key={"23 Dec"}
+            overlayStyle={{
+              borderRadius: 8,
+              border: "1px solid rgba(22, 40, 49, 0.10)",
+              background: "#FFF",
+              width: 210,
+              gap: 6,
+              alignItems: "flex-start",
             }}
-            title={schedule.typeOf || "No Type"} // Tooltip to display the type
-          ></div>
+            title={getTooltipContent("Mon,23 Dec", "1-Blue-D")}
+            className="no-border-tag pointer"
+          >
+            <div
+              style={{
+                width: "18px",
+                height: "19px",
+                background: boxColor,
+                borderRadius: "8px",
+              }}
+              title={schedule.typeOf || "No Type"} // Tooltip to display the type
+            ></div>
+          </Tooltip>
+
           {isHourStart && boxColor !== "#FFFFFF" && (
             <div
               className="label-11-400"

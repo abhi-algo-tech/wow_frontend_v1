@@ -252,7 +252,7 @@ export default function ScheduleView() {
                       </div>
                       <div className="teacher-more-time">
                         <img
-                          className="size-20"
+                          className="width20 height18"
                           src={"/wow_icons/png/more_time.png"}
                         />
                         <div className="label-12-500 mr8">

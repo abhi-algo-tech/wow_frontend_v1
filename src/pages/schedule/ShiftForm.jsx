@@ -440,8 +440,8 @@ export default function ShiftForm({
                     options={[
                       { label: "This Shift", value: "This Shift" },
                       {
-                        label: "This Shift& All future units",
-                        value: "This Shift& All future units",
+                        label: "This Shift & All future shifts",
+                        value: "This Shift & All future shifts",
                       },
                     ]}
                     defaultValue="classroom"

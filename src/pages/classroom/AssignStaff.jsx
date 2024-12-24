@@ -204,7 +204,7 @@ export default function AssignStaff({ setCancel, classroomData }) {
         <div className="label-14-600 ml10">Select Staff</div>
         <div className="d-flex align-items-center gap16">
           <Input
-            placeholder="Search Student"
+            placeholder="Search Staff"
             prefix={<SearchOutlined />}
             style={{ width: 240, height: 40 }}
             onChange={(e) =>

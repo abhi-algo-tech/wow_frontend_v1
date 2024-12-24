@@ -1894,3 +1894,7 @@
 .rc-virtual-list-scrollbar-thumb {
   background: rgba(222, 228, 253) !important ;
 }
+
+.ant-pagination-item-container > .ant-pagination-item-ellipsis {
+  display: flex !important;
+}

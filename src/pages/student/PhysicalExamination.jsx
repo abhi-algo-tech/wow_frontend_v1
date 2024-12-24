@@ -136,7 +136,7 @@
 // export default PhysicianExamination;
 
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Dropdown, Space, Tag, Typography } from "antd";
+import { Card, Row, Col, Dropdown, Space, Tag, Typography, Empty } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent";
 import CommonModalComponent from "../../components/CommonModalComponent";
@@ -210,65 +210,70 @@ function PhysicianExamination({ studentId }) {
             onClick={() => setCreatePhysicianExaminationModalOpen(true)}
           />
         </div>
+        {PhysicalTrackers?.data?.length > 0 ? (
+          <Row gutter={[20, 0]}>
+            {PhysicalTrackers?.data?.map((tracker, index) => {
+              // Dynamically create the menu for each tracker
+              const menu = {
+                items: [
+                  {
+                    key: "edit",
+                    label: (
+                      <span className="student-table-action-label">Edit</span>
+                    ),
+                  },
+                  {
+                    key: "delete",
+                    label: (
+                      <span className="student-table-action-label">Delete</span>
+                    ),
+                  },
+                ],
+                onClick: ({ key }) => handleMenuClick({ key, tracker }),
+              };
 
-        <Row gutter={[20, 0]}>
-          {PhysicalTrackers?.data?.map((tracker, index) => {
-            // Dynamically create the menu for each tracker
-            const menu = {
-              items: [
-                {
-                  key: "edit",
-                  label: (
-                    <span className="student-table-action-label">Edit</span>
-                  ),
-                },
-                {
-                  key: "delete",
-                  label: (
-                    <span className="student-table-action-label">Delete</span>
-                  ),
-                },
-              ],
-              onClick: ({ key }) => handleMenuClick({ key, tracker }),
-            };
-
-            return (
-              <Col span={12} key={index}>
-                <Card
-                  bordered={false}
-                  className="d-flex flex-column w-100 mb16 card-border"
-                >
-                  <Row className="mb-2">
-                    <Col span={12}>
-                      <Tag color={statusColors[tracker?.statusName] || "gray"}>
-                        {tracker?.statusName}
-                      </Tag>
-                    </Col>
-                    <Col span={12} style={{ textAlign: "right" }}>
-                      <Dropdown menu={menu} trigger={["click"]}>
-                        <EllipsisOutlined className="pointer" />
-                      </Dropdown>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={12}>
-                      <Text className="student-about-tab-label">
-                        Checkup Dates
-                      </Text>
-                    </Col>
-                    <Col span={12} style={{ textAlign: "right" }}>
-                      <Text className="student-about-tab-label-value">
-                        {tracker?.physicalDate
-                          ? formatDateToCustomStyle(tracker.physicalDate)
-                          : "N/A"}
-                      </Text>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
-            );
-          })}
-        </Row>
+              return (
+                <Col span={12} key={index}>
+                  <Card
+                    bordered={false}
+                    className="d-flex flex-column w-100 mb16 card-border"
+                  >
+                    <Row className="mb-2">
+                      <Col span={12}>
+                        <Tag
+                          color={statusColors[tracker?.statusName] || "gray"}
+                        >
+                          {tracker?.statusName}
+                        </Tag>
+                      </Col>
+                      <Col span={12} style={{ textAlign: "right" }}>
+                        <Dropdown menu={menu} trigger={["click"]}>
+                          <EllipsisOutlined className="pointer" />
+                        </Dropdown>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col span={12}>
+                        <Text className="student-about-tab-label">
+                          Checkup Dates
+                        </Text>
+                      </Col>
+                      <Col span={12} style={{ textAlign: "right" }}>
+                        <Text className="student-about-tab-label-value">
+                          {tracker?.physicalDate
+                            ? formatDateToCustomStyle(tracker.physicalDate)
+                            : "N/A"}
+                        </Text>
+                      </Col>
+                    </Row>
+                  </Card>
+                </Col>
+              );
+            })}
+          </Row>
+        ) : (
+          <Empty />
+        )}
       </div>
 
       {isCreatePhysicianExaminationModalOpen && (

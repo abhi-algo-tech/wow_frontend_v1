@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Input,
   Switch,
@@ -25,6 +25,7 @@ import { useGetAllStudents, useUpdateStudent } from "../../hooks/useStudent";
 import { generateStudentData } from "./StudentCommon";
 import CreateStudent from "./CreateStudent";
 import { CustomMessage } from "../../utils/CustomMessage";
+import dayjs from "dayjs";
 const { Text } = Typography;
 
 const StudentOverviewTable = () => {
@@ -41,6 +42,7 @@ const StudentOverviewTable = () => {
   // const [showInactive, setShowInactive] = useState(false);
   const [showActive, setShowActive] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [classrooms, setClassrooms] = useState([]);
   const { data: students, isLoading, isError, error } = useGetAllStudents();
   const updateStudentMutation = useUpdateStudent();
 
@@ -58,6 +60,7 @@ const StudentOverviewTable = () => {
       );
     }
   }, [students, isError, error]);
+  console.log("data", data);
 
   // Function to get active data
   const getActiveData = (data) => {
@@ -78,17 +81,41 @@ const StudentOverviewTable = () => {
     );
   };
 
+  const filteredStudents = useMemo(() => {
+    return showActive ? getActiveData(data || []) : getInactiveData(data || []);
+  }, [showActive, data]);
   // Update filtered data based on showActive
   useEffect(() => {
-    const filteredStudents = showActive
-      ? getActiveData(data)
-      : getInactiveData(data);
+    // Extract classroom name and key and push into state
+    const classroomData = filteredStudents.map((item) => ({
+      name: item.classroom.name,
+      id: item.key,
+    }));
 
+    // Set the state with the classroom data
+    setClassrooms(classroomData);
     setFilteredData(filteredStudents || []);
   }, [showActive, data]);
 
+  const filterFunnelData = useMemo(() => {
+    return data?.filter((student) => {
+      const hasClassroomMatch =
+        student.classroom?.name === selectedFilters.classroom;
+      const hasStatusMatch = student.status === selectedFilters.status;
+      const hasTagMatch = student.tags?.some(
+        (tag) => tag.tagName === selectedFilters.tag
+      );
+
+      return hasClassroomMatch && hasStatusMatch && hasTagMatch;
+    });
+  }, [data, selectedFilters]); // Include both data and selectedFilters in dependencies
+
+  console.log("filterFunnelData", filterFunnelData);
+
   // Handle filter application
   const handleApplyFilters = (filters) => {
+    console.log("filters", filters);
+    // Function to filter
     setSelectedFilters(filters);
   };
 
@@ -345,6 +372,8 @@ const StudentOverviewTable = () => {
       key: "birthdate",
       responsive: ["xs", "md", "lg"],
       sorter: (a, b) => new Date(a.birthdate) - new Date(b.birthdate),
+      render: (birthdate) =>
+        birthdate && <span>{dayjs(birthdate).format("MMM DD, YYYY")}</span>,
     },
     {
       title: <span className="student-table-header-label">Action</span>,
@@ -411,7 +440,11 @@ const StudentOverviewTable = () => {
                   </Tag>
                 ))}
                 {Object.keys(selectedFilters).length > 0 && (
-                  <Tag color="blue" onClick={handleClearAllFilters}>
+                  <Tag
+                    color="blue"
+                    className="pointer"
+                    onClick={handleClearAllFilters}
+                  >
                     Clear All
                   </Tag>
                 )}
@@ -458,9 +491,9 @@ const StudentOverviewTable = () => {
         >
           <ApplyFilter
             CardTitle={"Filter"}
-            classroomId={null}
             closeModal={() => setStudentTableFilterModalOpen(false)}
             onApplyFilter={handleApplyFilters}
+            classrooms={classrooms}
           />
         </CommonModalComponent>
       )}

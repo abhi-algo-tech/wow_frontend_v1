@@ -2,7 +2,7 @@ import React from "react";
 import { Empty } from "antd";
 import ButtonComponent from "../ButtonComponent";
 
-const EmptyRecord = ({
+const EmptyRecordWithCreate = ({
   btnLabel,
   gradient,
   buttonActionType = "create",
@@ -41,4 +41,4 @@ const EmptyRecord = ({
   </div>
 );
 
-export default EmptyRecord;
+export default EmptyRecordWithCreate;

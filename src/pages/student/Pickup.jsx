@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Card, Avatar, Typography, Row, Col, Space, Dropdown } from "antd";
+import {
+  Card,
+  Avatar,
+  Typography,
+  Row,
+  Col,
+  Space,
+  Dropdown,
+  Empty,
+} from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent";
 import CommonModalComponent from "../../components/CommonModalComponent";
@@ -82,112 +91,115 @@ function Pickup({ studentId }) {
           onClick={() => setCreatePickupModalOpen(true)}
         />
       </div>
-      <Row gutter={16}>
-        {data?.studentPickup?.map((pickup, index) => (
-          <Col xs={24} md={12} key={index}>
-            <Card
-              bordered={false}
-              className="mb16"
-              style={{
-                borderRadius: "16px",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <div className="d-flex justify-content-between align-items-center mb10">
-                <Space>
-                  <Avatar
-                    size={52}
-                    src={pickup?.photoUrl || undefined}
-                    className="mb8"
-                    style={{
-                      backgroundColor: pickup?.photoUrl
-                        ? undefined
-                        : getInitialsTitleWithColor(
-                            `${pickup?.firstName} ${pickup.lastName}`
-                          ).backgroundColor,
-                      color: "#fff",
+      {data?.studentPickup?.length > 0 ? (
+        <Row gutter={16}>
+          {data?.studentPickup?.map((pickup, index) => (
+            <Col xs={24} md={12} key={index}>
+              <Card
+                bordered={false}
+                className="mb16"
+                style={{
+                  borderRadius: "16px",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <div className="d-flex justify-content-between align-items-center mb10">
+                  <Space>
+                    <Avatar
+                      size={52}
+                      src={pickup?.photoUrl || undefined}
+                      className="mb8"
+                      style={{
+                        backgroundColor: pickup?.photoUrl
+                          ? undefined
+                          : getInitialsTitleWithColor(
+                              `${pickup?.firstName} ${pickup.lastName}`
+                            ).backgroundColor,
+                        color: "#fff",
+                      }}
+                    >
+                      {!pickup?.photoUrl &&
+                        getInitialsTitleWithColor(
+                          `${pickup?.firstName} ${pickup.lastName}`
+                        ).initials}
+                    </Avatar>
+                    {/* <Avatar src="/wow_images/Andrew-Fenwick.png" size={52} /> */}
+                    <Text className="student-about-tab-label-value">
+                      {`${pickup?.firstName} ${pickup?.lastName}`}
+                    </Text>
+                  </Space>
+                  <Dropdown
+                    menu={{
+                      items: [
+                        {
+                          key: "edit",
+                          label: (
+                            <span className="student-table-action-label">
+                              Edit
+                            </span>
+                          ),
+                        },
+                        {
+                          key: "delete",
+                          label: (
+                            <span className="student-table-action-label">
+                              Delete
+                            </span>
+                          ),
+                        },
+                      ],
+                      onClick: ({ key }) =>
+                        handleMenuClick({ key, pickup: pickup }),
                     }}
                   >
-                    {!pickup?.photoUrl &&
-                      getInitialsTitleWithColor(
-                        `${pickup?.firstName} ${pickup.lastName}`
-                      ).initials}
-                  </Avatar>
-                  {/* <Avatar src="/wow_images/Andrew-Fenwick.png" size={52} /> */}
-                  <Text className="student-about-tab-label-value">
-                    {`${pickup?.firstName} ${pickup?.lastName}`}
-                  </Text>
-                </Space>
-                <Dropdown
-                  menu={{
-                    items: [
-                      {
-                        key: "edit",
-                        label: (
-                          <span className="student-table-action-label">
-                            Edit
-                          </span>
-                        ),
-                      },
-                      {
-                        key: "delete",
-                        label: (
-                          <span className="student-table-action-label">
-                            Delete
-                          </span>
-                        ),
-                      },
-                    ],
-                    onClick: ({ key }) =>
-                      handleMenuClick({ key, pickup: pickup }),
-                  }}
+                    <EllipsisOutlined className="pointer" />
+                  </Dropdown>
+                </div>
+                <Space
+                  direction="vertical"
+                  size="small"
+                  style={{ width: "100%" }}
                 >
-                  <EllipsisOutlined className="pointer" />
-                </Dropdown>
-              </div>
-              <Space
-                direction="vertical"
-                size="small"
-                style={{ width: "100%" }}
-              >
-                <Row>
-                  <Col span={8}>
-                    <Text className="student-about-tab-label">Relation</Text>
-                  </Col>
-                  <Col span={16} className="text-end">
-                    <Text className="student-about-tab-label-value">
-                      {pickup?.parentName || "N/A"}
-                    </Text>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <Text className="student-about-tab-label">Email</Text>
-                  </Col>
-                  <Col span={16} className="text-end">
-                    <Text className="student-about-tab-label-value">
-                      {pickup?.email || "N/A"}
-                    </Text>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={8}>
-                    <Text className="student-about-tab-label">
-                      Phone Number
-                    </Text>
-                  </Col>
-                  <Col span={16} className="text-end">
-                    <Text className="student-about-tab-label-value">
-                      {pickup?.phoneNumber || "N/A"}
-                    </Text>
-                  </Col>
-                </Row>
-              </Space>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-
+                  <Row>
+                    <Col span={8}>
+                      <Text className="student-about-tab-label">Relation</Text>
+                    </Col>
+                    <Col span={16} className="text-end">
+                      <Text className="student-about-tab-label-value">
+                        {pickup?.parentName || "N/A"}
+                      </Text>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={8}>
+                      <Text className="student-about-tab-label">Email</Text>
+                    </Col>
+                    <Col span={16} className="text-end">
+                      <Text className="student-about-tab-label-value">
+                        {pickup?.email || "N/A"}
+                      </Text>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={8}>
+                      <Text className="student-about-tab-label">
+                        Phone Number
+                      </Text>
+                    </Col>
+                    <Col span={16} className="text-end">
+                      <Text className="student-about-tab-label-value">
+                        {pickup?.phoneNumber || "N/A"}
+                      </Text>
+                    </Col>
+                  </Row>
+                </Space>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      ) : (
+        <Empty />
+      )}
       {isCreatePickupModalOpen && (
         <CommonModalComponent
           open={isCreatePickupModalOpen}

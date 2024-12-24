@@ -1,30 +1,44 @@
 import { Avatar, Button, Dropdown, Select, Typography } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CommonModalComponent from "../../components/CommonModalComponent";
-import ScheduleTable from "./ScheduleTable";
 import ShiftForm from "./ShiftForm";
 import dayjs from "dayjs";
-import CopyShiftForm from "./CopyShiftForm";
-import WeekDatePicker from "../../components/datepicker/WeekDatePicker";
-import DeleteSchedulePopUp from "../../components/DeleteSchedulePopup";
-import DeleteShift from "./DeleteShift";
 import PublishShift from "./PublishShift";
-import OverviewTable from "./OverviewTable";
 import ScheduleView from "./ScheduleView";
 import SingleDatePicker from "../../components/datepicker/SingleDatePicker";
+import { useGetClassroomsBySchool } from "../../hooks/useClassroom";
+import { useSession } from "../../hooks/useSession";
 
 const { Text } = Typography;
 const ClassroomView = () => {
+  const { academyId } = useSession();
   const [isAddShiftModalOpen, setAddShiftModalOpen] = useState(false);
-  const [isCopyShiftModalOpen, setCopyShiftModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(false);
   const [isDeleteShiftModalOpen, setDeleteShiftModalOpen] = useState(false);
   const [isPublishedShiftModalOpen, setPublishedShiftModalOpen] =
     useState(false);
+  const [classRoomList, setClassRoomList] = useState([]);
   const [startDate, setStartDate] = useState(
     dayjs().startOf("week").add(1, "day")
   ); // Start from Monday
+
+  const schoolId = academyId;
+  const {
+    data: classroomData,
+    isLoading,
+    isError,
+    error,
+  } = useGetClassroomsBySchool(schoolId);
+
+  useEffect(() => {
+    setClassRoomList(
+      classroomData?.data?.filter(
+        (classroom) => classroom.status.toLowerCase() === "active"
+      )
+    );
+  }, [classroomData]);
+
   const handleRangeChange = (start, end) => {
     setStartDate(start);
   };
@@ -33,17 +47,28 @@ const ClassroomView = () => {
     setSelectedRecord({ id, name }); // Store the clicked item's id and name
     setDeleteModalOpen(true); // Open the delete modal
   };
-  const handleDelete = async (id) => {};
+  const handlePublish = async (id) => {};
 
+  // Define menu items with onClick handlers
   const publishItems = [
-    { key: "1", label: "Next Month" },
-    { key: "2", label: "All Shifts" },
+    {
+      key: "1",
+      label: (
+        <div onClick={() => setPublishedShiftModalOpen(true)}>Next Month</div>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <div onClick={() => setPublishedShiftModalOpen(true)}>All Shifts</div>
+      ),
+    },
   ];
-  const classRoomList = [
-    { id: 1, name: "1-Blue-D" },
-    { id: 2, name: "Pink-Rose" },
-    { id: 3, name: "R-Red" },
-  ];
+  // const classRoomList = [
+  //   { id: 1, name: "1-Blue-D" },
+  //   { id: 2, name: "Pink-Rose" },
+  //   { id: 3, name: "R-Red" },
+  // ];
 
   return (
     <>
@@ -65,17 +90,22 @@ const ClassroomView = () => {
         <div className="d-flex align-items-center gap-3">
           <Button
             onClick={() => setAddShiftModalOpen(true)}
-            className="schedule-add-shift-btn"
+            className="schedule-add-shift-btn d-flex align-items-center justify-content-center"
           >
-            <span className="gradient-text">
-              {" "}
-              <Avatar size={13} src={"/wow_icons/png/add.png"} /> Add Shift
+            <span className="gradient-text d-flex align-items-center">
+              <Avatar
+                size={14}
+                src={"/wow_icons/png/add.png"}
+                className="mr8"
+              />
+              Add Shift
             </span>
           </Button>
           <Dropdown
             menu={{ items: publishItems }}
             placement="bottomRight"
             className="schedule-publish-drp"
+            trigger={["click"]}
           >
             <Button className="schedule-publish-drp-btn">
               <span className="schedule-publish-drp-btn-text">Publish </span>
@@ -89,6 +119,31 @@ const ClassroomView = () => {
       </div>
       {/* <OverviewTable /> */}
       <ScheduleView />
+
+      {isAddShiftModalOpen && (
+        <ShiftForm
+          cardTitle={"Add Shift"}
+          classroomId={null}
+          setCloseModal={setAddShiftModalOpen}
+        />
+      )}
+
+      {isPublishedShiftModalOpen && (
+        <CommonModalComponent
+          open={isPublishedShiftModalOpen}
+          setOpen={setPublishedShiftModalOpen}
+          modalWidthSize={418}
+          modalHeightSize={300}
+          isClosable={true}
+        >
+          <PublishShift
+            setCancel={setPublishedShiftModalOpen}
+            deleteData={selectedRecord}
+            CardTitle="Publish Shifts"
+            handlePublish={handlePublish}
+          />
+        </CommonModalComponent>
+      )}
     </>
   );
 };

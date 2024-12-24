@@ -1,0 +1,9 @@
+Parent Pickup -> useMasterLookupsByType("pickup")
+Designation -> useMasterLookupsByType("designation")
+Job Tag -> useMasterLookupsByType("job_tag") // Full time ,Part Time ...
+Parent Listing -> useMasterLookupsByType("parent")
+Staff Document -> useMasterLookupsByType("staff_document")
+Student Document -> useMasterLookupsByType("document")
+Tags -> useMasterLookupsByType("tags") //Photo permision ..
+Status -> useMasterLookupsByType("status") //Active ,Upcoming ...
+Physical Status -> useMasterLookupsByType("physical_status") //Due,Schedule...

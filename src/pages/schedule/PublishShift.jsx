@@ -1,20 +1,17 @@
 import React, { useState } from "react";
-import { Form, Radio, Button, DatePicker, Popover } from "antd";
-import { CalendarOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
+import { Form, Radio } from "antd";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import ButtonComponent from "../../components/ButtonComponent";
 
-function PublishShift({ setCancel, deleteData, CardTitle, handleDelete }) {
+function PublishShift({ setCancel, deleteData, CardTitle, handlePublish }) {
   const [publishType, setPublishType] = useState("until-date"); // Default to 'until-date'
-  const [date, setDate] = useState(null); // Store the selected date
 
   const handleCancelClick = () => {
     setCancel(false);
   };
 
-  const handleDeleteClick = () => {
-    handleDelete(deleteData?.id);
+  const handlePublishClick = () => {
+    handlePublish(deleteData?.id);
     setCancel(false);
   };
 
@@ -76,7 +73,7 @@ function PublishShift({ setCancel, deleteData, CardTitle, handleDelete }) {
               text={"Publish"}
               padding="14px 45px"
               type="submit"
-              onClick={handleDeleteClick}
+              onClick={handlePublishClick}
               disabled={publishType === "until-date" && !date}
             />
           </div>
