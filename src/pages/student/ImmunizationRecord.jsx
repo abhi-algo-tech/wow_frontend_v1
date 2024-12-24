@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Switch, Form, Space, Tag } from "antd";
 import ButtonComponent from "../../components/ButtonComponent";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import ReminderForm from "./ReminderForm";
 import ImmunizationDetailsForm from "./ImmunizationDetailsForm";
+import { useGetAllImmunizationsByStudent } from "../../hooks/useImmunizations";
+import { transformImmunizationData } from "./StudentCommon";
 
 const data = [
   {
@@ -59,6 +61,20 @@ const ImmunizationRecord = ({ studentId }) => {
   ] = useState(false);
   const [isDoseModalOpen, setDoseModalOpen] = useState(false); // For dose modal
   const [selectedDose, setSelectedDose] = useState(null); // Store selected dose data
+  const [formattedData, setFormattedData] = useState([]);
+
+  const {
+    data: immunizations,
+    isLoading,
+    isError,
+  } = useGetAllImmunizationsByStudent(studentId);
+
+  useEffect(() => {
+    if (immunizations) {
+      const transformed = transformImmunizationData(immunizations);
+      setFormattedData(transformed);
+    }
+  }, [immunizations]);
 
   const columns = [
     {
@@ -81,7 +97,9 @@ const ImmunizationRecord = ({ studentId }) => {
           <Space direction="vertical">
             <Tag
               color={dose.status === "Completed" ? "green" : "yellow"}
-              onClick={() => handleDoseClick(record.vaccine, i + 1, dose)} // Click handler
+              onClick={() =>
+                handleDoseClick(record.key, record.vaccine, i + 1, dose)
+              } // Click handler
               style={{ cursor: "pointer" }} // Add pointer cursor for interaction
             >
               {dose.status || "N/A"}
@@ -94,8 +112,8 @@ const ImmunizationRecord = ({ studentId }) => {
   ];
 
   // Handle dose click
-  const handleDoseClick = (vaccine, doseNumber, doseData) => {
-    setSelectedDose({ vaccine, doseNumber, doseData });
+  const handleDoseClick = (id, vaccine, doseId, data) => {
+    setSelectedDose({ id, vaccine, doseId, data });
     setDoseModalOpen(true); // Open dose modal
   };
 
@@ -128,7 +146,7 @@ const ImmunizationRecord = ({ studentId }) => {
         </div>
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={formattedData}
           pagination={false}
           size="small"
         />
@@ -160,8 +178,8 @@ const ImmunizationRecord = ({ studentId }) => {
           isClosable={true}
         >
           <ImmunizationDetailsForm
-            CardTitle={`${selectedDose.vaccine} - Dose ${selectedDose.doseNumber}`}
-            doseData={selectedDose.doseData}
+            CardTitle={`${selectedDose.vaccine} - Dose ${selectedDose.doseId}`}
+            doseData={selectedDose}
             studentId={studentId}
             closeModal={() => setDoseModalOpen(false)}
           />

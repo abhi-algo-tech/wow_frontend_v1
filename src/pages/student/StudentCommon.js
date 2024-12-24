@@ -183,3 +183,43 @@ export const generateStudentData = (apiData) => {
     // status: generateRandomStatus(),
   }));
 };
+
+export const transformImmunizationData = (immunizations) => {
+  return immunizations?.data?.map((item) => {
+    const doses = Array.from({ length: 8 }, (_, i) => {
+      const doseIndex = i + 1;
+      const physicalDate = item[`dose${doseIndex}PhysicalDate`];
+      const endDate = item[`dose${doseIndex}EndDate`];
+      const statusId = item.statusId;
+
+      // Exclude doses where both physicalDate and endDate are null
+      if (!physicalDate && !endDate) {
+        return null;
+      }
+
+      return {
+        status: item.status,
+        date: physicalDate
+          ? new Date(physicalDate).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "2-digit",
+            })
+          : new Date(endDate).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "2-digit",
+            }),
+        statusId,
+      };
+    })
+      .filter(Boolean) // Remove null doses
+      .filter((dose) => dose.status !== "Not Started"); // Exclude doses with status "Not Started"
+
+    return {
+      key: item.id,
+      vaccine: item.vaccineName,
+      ...Object.fromEntries(doses.map((dose, i) => [`dose${i + 1}`, dose])),
+    };
+  });
+};

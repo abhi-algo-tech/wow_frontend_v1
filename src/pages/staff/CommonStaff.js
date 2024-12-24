@@ -105,10 +105,10 @@ export const generateStaffData = (staffData) => {
           )
         : [],
       designation: staff.designation,
-      schedule: staff.schedule
-        ? formatSchedule(staff.schedule)
-        : staticSchedule, // If no schedule, use static data
-      // schedule: generateSchedule(staff?.weekSchedules),
+      // schedule: staff.weekSchedules
+      //   ? formatSchedule(staff.weekSchedules)
+      //   : staticSchedule, // If no schedule, use static data
+      schedule: generateSchedule(staff?.weekSchedules),
       email: staff.email,
       phone: staff.phoneNumber,
       isOnline: staff.isActive,

@@ -13,8 +13,8 @@ const { Option } = Select;
 
 function ImmunizationDetailsForm({
   CardTitle,
+  doseData,
   studentId,
-  trackerData,
   closeModal,
 }) {
   const [form] = Form.useForm();
@@ -24,16 +24,23 @@ function ImmunizationDetailsForm({
 
   const { data: statusData } = useMasterLookupsByType("physical_status");
 
-  const isEdit = Boolean(trackerData?.id);
+  const isEdit = Boolean(doseData?.id);
 
   useEffect(() => {
-    if (trackerData) {
+    if (doseData) {
+      const date = new Date(doseData?.data?.date);
+      const formattedDate =
+        date.getFullYear() +
+        "-" +
+        String(date.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(date.getDate()).padStart(2, "0");
       form.setFieldsValue({
-        status: trackerData?.statusId,
-        physicalCheckupDate: trackerData?.physicalDate,
+        status: doseData?.data?.statusId,
+        physicalCheckupDate: formattedDate,
       });
     }
-  }, [trackerData, form]);
+  }, [doseData, form]);
 
   const handleSubmit = (values) => {
     setIsButton(true);
@@ -53,17 +60,17 @@ function ImmunizationDetailsForm({
     if (isEdit) {
       updatePhysicalTrackerMutation.mutate(
         {
-          trackerId: trackerData?.id,
-          trackerData: payload,
+          trackerId: doseData?.id,
+          doseData: payload,
         },
         {
           onSuccess: () => {
-            CustomMessage.success(`Physical Examination updated successfully!`);
+            CustomMessage.success(`Immunization updated successfully!`);
             closeModal();
           },
           onError: (error) => {
             CustomMessage.error(
-              `Failed to update Physical Examination: ${error.message}`
+              `Failed to update Immunization: ${error.message}`
             );
           },
         }
@@ -71,12 +78,12 @@ function ImmunizationDetailsForm({
     } else {
       createPhysicalTrackerMutation.mutate(payload, {
         onSuccess: () => {
-          CustomMessage.success(`Physical Examination created successfully!`);
+          CustomMessage.success(`Immunization created successfully!`);
           closeModal();
         },
         onError: (error) => {
           CustomMessage.error(
-            `Failed to create Physical Examination: ${error.message}`
+            `Failed to create Immunization: ${error.message}`
           );
         },
       });
