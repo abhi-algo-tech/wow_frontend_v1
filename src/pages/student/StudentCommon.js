@@ -108,12 +108,38 @@ function getRandomSubset(array, min, max) {
 }
 
 // Function to generate schedule
-export function generateSchedule() {
+// export function generateSchedule(daysData) {
+//   const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+//   const active = getRandomSubset(days, 3, 5); // Select between 3 and 5 active days
+//   return {
+//     days: days,
+//     active: active,
+//   };
+// }
+export function generateSchedule(daysData) {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-  const active = getRandomSubset(days, 3, 5); // Select between 3 and 5 active days
+
+  // Return all days as inactive if daysData is null or empty
+  if (!daysData || daysData.length === 0) {
+    return {
+      days: days,
+      active: [],
+    };
+  }
+
+  // Map dayOfWeek from daysData to active/inactive state
+  const activeDays = daysData
+    .filter((data) => data.startTime !== "00:00:00")
+    .map((data) => {
+      return days.find((day) =>
+        data.dayOfWeek.toUpperCase().startsWith(day.toUpperCase())
+      );
+    })
+    .filter((day) => day); // Remove undefined values in case of mismatch
+
   return {
     days: days,
-    active: active,
+    active: activeDays,
   };
 }
 function generateRandomStatus() {
@@ -143,7 +169,7 @@ export const generateStudentData = (apiData) => {
     },
     tags: item?.tags, // { days: 3, type: "Full Day", additional: "+3" },
     // tags: generateRandomTag(), // { days: 3, type: "Full Day", additional: "+3" },
-    schedule: generateSchedule(),
+    schedule: generateSchedule(item?.weekSchedules),
     // schedule: {
     //   days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
     //   active: ["Mon", "Wed", "Fri"],

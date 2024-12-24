@@ -92,7 +92,6 @@ export const useValidateClassroom = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [validationMessage, setValidationMessage] = useState(null);
-
   const validate = async (name, id) => {
     setIsLoading(true);
     setError(null);
@@ -103,7 +102,7 @@ export const useValidateClassroom = () => {
         name: name,
         id: id,
       });
-      setValidationMessage(result.message); // Success message from backend
+      setValidationMessage(result); // Success message from backend
     } catch (err) {
       setError(err.message); // Error message from backend
     } finally {

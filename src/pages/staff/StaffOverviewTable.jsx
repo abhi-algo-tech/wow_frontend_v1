@@ -51,6 +51,7 @@ const StaffOverviewTable = () => {
   useEffect(() => {
     if (staff) {
       const formattedStudentData = generateStaffData(staff.data);
+      console.log("formattedStudentData:", formattedStudentData);
       setData(formattedStudentData);
       setFilteredData(formattedStudentData);
     }

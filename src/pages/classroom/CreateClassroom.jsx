@@ -36,6 +36,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
   const {
     error,
     validationMessage,
+    flag,
     validate: validateClassroomName,
   } = useValidateClassroom({
     name: classroomName,
@@ -48,15 +49,20 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
 
   // Debounced validate function
   const debouncedValidate = useCallback(
-    debounce((name, id) => {
+    debounce(async (name, id) => {
       // Only hit the API if the name or ID is different
       if (
         lastValidatedName.current !== name ||
         lastValidatedId.current !== id
       ) {
-        validateClassroomName(name.trim(), id);
-        lastValidatedName.current = name; // Update the last validated name
-        lastValidatedId.current = id; // Update the last validated ID
+        try {
+          await validateClassroomName(name.trim(), id);
+          console.log("validationMessage:", validationMessage);
+          lastValidatedName.current = name; // Update the last validated name
+          lastValidatedId.current = id; // Update the last validated ID
+        } catch (error) {
+          console.error("Validation failed:", error);
+        }
       }
     }, 2000),
     [validateClassroomName]
@@ -66,7 +72,10 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
     if (classroomName.trim() !== "") {
       debouncedValidate(classroomName, classroomId);
     }
-    return () => debouncedValidate.cancel(); // Cleanup debounce
+
+    return () => {
+      debouncedValidate.cancel(); // Cleanup debounce
+    };
   }, [classroomName, classroomId, debouncedValidate]);
 
   // const handleFileChange = ({ fileList: newFileList }) => {
@@ -198,9 +207,26 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                   },
                 ]}
                 validateStatus={
-                  error ? "error" : validationMessage ? "success" : ""
+                  error
+                    ? "error"
+                    : validationMessage?.message
+                    ? validationMessage?.flag
+                      ? "success"
+                      : "error"
+                    : ""
                 }
-                help={error || validationMessage}
+                help={
+                  error ||
+                  (validationMessage?.message && (
+                    <span
+                      style={{
+                        color: validationMessage?.flag ? "green" : "red",
+                      }}
+                    >
+                      {validationMessage.message}
+                    </span>
+                  ))
+                }
               >
                 <Input
                   placeholder="Classroom Name"
@@ -430,6 +456,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
               text={isEdit ? "Save" : "Add"}
               type="submit"
               isLoading={isButton}
+              disabled={!validationMessage?.flag}
             />
           </div>
         </Form>

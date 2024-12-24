@@ -183,9 +183,28 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
               <Form.Item
                 name="firstName"
                 validateStatus={
-                  validationMessage ? "success" : validationError ? "error" : ""
+                  validationMessage?.message
+                    ? validationMessage?.flag
+                      ? "success"
+                      : "error"
+                    : validationError
+                    ? "error"
+                    : ""
                 }
-                help={validationMessage || validationError}
+                help={
+                  validationMessage?.message ? (
+                    <span
+                      style={{
+                        color: validationMessage?.flag ? "green" : "red",
+                      }}
+                    >
+                      {validationMessage?.flag ? "" : "Warning: "}{" "}
+                      {validationMessage.message}
+                    </span>
+                  ) : validationError ? (
+                    <span style={{ color: "red" }}>{validationError}</span>
+                  ) : null
+                }
                 rules={[
                   { required: true, message: "Please input the first name!" }, // Required field rule
                   {
@@ -215,6 +234,15 @@ function CreateStaff({ CardTitle, staffId, closeModal }) {
               </div>
               <Form.Item
                 name="lastName"
+                validateStatus={
+                  validationMessage?.message
+                    ? validationMessage?.flag
+                      ? "success"
+                      : "error"
+                    : validationError
+                    ? "error"
+                    : ""
+                }
                 rules={[
                   { required: true, message: "Please input the last name!" }, // Required field rule
                   {

@@ -47,6 +47,7 @@ const StudentOverviewTable = () => {
   useEffect(() => {
     if (students) {
       const formattedStudentData = generateStudentData(students.data);
+      console.log("formattedStudentData:", formattedStudentData);
       setData(formattedStudentData);
       setFilteredData(formattedStudentData);
     }

@@ -136,6 +136,7 @@ function ClassroomOverviewTable() {
         );
       });
       CustomMessage.success("Classroom deleted successfully!");
+      setSelectedClassroom("all");
     } catch (error) {
       CustomMessage.error(`Failed to delete classroom: ${error.message}`);
     } finally {
