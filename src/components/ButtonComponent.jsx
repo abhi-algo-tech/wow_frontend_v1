@@ -67,6 +67,7 @@ const ButtonComponent = ({
       className="rounded-xl shadow-sm"
       style={{
         ...combinedStyle,
+        opacity: disabled ? 0.5 : 1,
         ...(text.toLowerCase() === "cancel" || text.toLowerCase() === "go back"
           ? {
               border: "solid 1px var(--color-primary)",

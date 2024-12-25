@@ -33,12 +33,9 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
 
   const { data: classroomData } = useClassroomById(classroomId);
   const [classroomName, setClassroomName] = useState("");
-  const {
-    error,
-    validationMessage,
-    flag,
-    validate: validateClassroomName,
-  } = useValidateClassroom({
+  const [isButtonDisable, setIsButtonDisable] = useState(false);
+  const [validationMessage, setValidationMessage] = useState();
+  const { error, validate: validateClassroomName } = useValidateClassroom({
     name: classroomName,
     id: classroomId,
   });
@@ -56,8 +53,13 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
         lastValidatedId.current !== id
       ) {
         try {
-          await validateClassroomName(name.trim(), id);
-          console.log("validationMessage:", validationMessage);
+          const result = await validateClassroomName(name.trim(), id);
+          console.log("validationMessage", result);
+          if (result) {
+            setIsButtonDisable(!result.flag);
+            setValidationMessage(result);
+          }
+
           lastValidatedName.current = name; // Update the last validated name
           lastValidatedId.current = id; // Update the last validated ID
         } catch (error) {
@@ -456,7 +458,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
               text={isEdit ? "Save" : "Add"}
               type="submit"
               isLoading={isButton}
-              disabled={!validationMessage?.flag}
+              disabled={isButtonDisable}
               padding={"0px 60px"}
             />
           </div>

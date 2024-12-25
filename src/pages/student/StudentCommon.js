@@ -190,7 +190,8 @@ export const transformImmunizationData = (immunizations) => {
       const doseIndex = i + 1;
       const physicalDate = item[`dose${doseIndex}PhysicalDate`];
       const endDate = item[`dose${doseIndex}EndDate`];
-      const statusId = item.statusId;
+      const statusId = item[`dose${doseIndex}StatusId`];
+      const status = item[`dose${doseIndex}Status`];
 
       // Exclude doses where both physicalDate and endDate are null
       if (!physicalDate && !endDate) {
@@ -198,16 +199,16 @@ export const transformImmunizationData = (immunizations) => {
       }
 
       return {
-        status: item.status,
+        status: status,
         date: physicalDate
           ? new Date(physicalDate).toLocaleDateString("en-US", {
               year: "numeric",
-              month: "long",
+              month: "short",
               day: "2-digit",
             })
           : new Date(endDate).toLocaleDateString("en-US", {
               year: "numeric",
-              month: "long",
+              month: "short",
               day: "2-digit",
             }),
         statusId,
