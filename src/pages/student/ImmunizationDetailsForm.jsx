@@ -142,7 +142,7 @@ function ImmunizationDetailsForm({
               <Form.Item>
                 <ButtonComponent
                   text={"Add"}
-                  padding="19.1px 115px"
+                  padding="19.1px 65px"
                   type="submit"
                   isLoading={isButton}
                 />

@@ -244,7 +244,7 @@ function ParentForm({
               <Form.Item>
                 <ButtonComponent
                   text={isEdit ? "Save" : "Add"}
-                  padding="19.1px 115px"
+                  padding="0px 65px"
                   type="submit"
                   isLoading={isButton}
                 />

@@ -255,6 +255,7 @@ const StudentOverviewTable = () => {
               name: record.name,
             }}
             className="d-flex justify-content-between align-items-center w-100 text-truncate"
+            onClick={(e) => e.stopPropagation()} // Prevent row selection
           >
             <span className="label-14-500">{record.name}</span>
             {record.upcoming === "Upcoming" && (
@@ -273,6 +274,7 @@ const StudentOverviewTable = () => {
       ),
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
+
     {
       title: <span className="student-table-header-label">Classroom</span>,
       dataIndex: "classroom",

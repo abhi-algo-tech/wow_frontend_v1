@@ -31,15 +31,29 @@ function ApplyFilter({
     }
   };
 
-  const handleClearAll = () => {
-    setFormValues({
-      classroom: null,
-      status: null,
-      tag: null,
+  // const handleClearAll = () => {
+  //   setFormValues({
+  //     classroom: null,
+  //     status: null,
+  //     tag: null,
+  //   });
+  //   onApplyFilter({});
+  //   CustomMessage.success("Filters cleared successfully!");
+  // };
+  function getUniqueNameAndId(classrooms) {
+    const seen = new Set();
+    const uniqueItems = [];
+
+    classrooms.forEach((item) => {
+      if (!seen.has(item.name)) {
+        seen.add(item.name);
+        uniqueItems.push({ name: item.name, id: item.id });
+      }
     });
-    onApplyFilter({});
-    CustomMessage.success("Filters cleared successfully!");
-  };
+
+    return uniqueItems;
+  }
+  // console.log("getUniqueNames", getUniqueNames(classrooms));
 
   return (
     <div className="card">
@@ -69,8 +83,8 @@ function ApplyFilter({
                 onChange={(value) => handleSelectChange("classroom", value)}
               >
                 <Option value={null}>Select</Option>
-                {classrooms?.map((item) => (
-                  <Option key={item.id} value={item.name}>
+                {getUniqueNameAndId(classrooms)?.map((item, i) => (
+                  <Option key={i} value={item.name}>
                     {item.name}
                   </Option>
                 ))}
@@ -89,8 +103,8 @@ function ApplyFilter({
                 onChange={(value) => handleSelectChange("status", value)}
               >
                 <Option value={null}>Select</Option>
-                {status?.data?.map((item) => (
-                  <Option key={item.id} value={item.name}>
+                {status?.data?.map((item, i) => (
+                  <Option key={i} value={item.name}>
                     {item.name}
                   </Option>
                 ))}
@@ -109,8 +123,8 @@ function ApplyFilter({
                 onChange={(value) => handleSelectChange("tag", value)}
               >
                 <Option value={null}>Select</Option>
-                {tags?.data?.map((item) => (
-                  <Option key={item.id} value={item.name}>
+                {tags?.data?.map((item, i) => (
+                  <Option key={i} value={item.name}>
                     {item.name}
                   </Option>
                 ))}

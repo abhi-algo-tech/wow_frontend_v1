@@ -535,7 +535,9 @@ const StaffOverviewTable = () => {
       </div>
     </>
   );
-
+  useEffect(() => {
+    selectedRowKeys.length === 0 ? setShowAttendanceCard(false) : "";
+  }, [selectedRowKeys.length]);
   return (
     <>
       <div className="mt20">
@@ -545,6 +547,7 @@ const StaffOverviewTable = () => {
               <div
                 style={{ display: "flex", alignItems: "center", gap: "16px" }}
               >
+                {selectedRowKeys.length > 0 ? renderFloatingRightCard() : <></>}
                 <Input
                   placeholder="Search Staff"
                   prefix={<SearchOutlined style={{ color: "#a0aec0" }} />}

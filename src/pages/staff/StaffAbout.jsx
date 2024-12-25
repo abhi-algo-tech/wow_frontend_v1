@@ -250,19 +250,19 @@ const StaffAbout = ({ staffId }) => {
                       const startTimeDisplay =
                         schedule?.startTime !== "00:00:00"
                           ? formatTime(schedule?.startTime)
-                          : "-";
+                          : "";
                       const endTimeDisplay =
                         schedule?.startTime !== "00:00:00"
                           ? formatTime(schedule?.endTime)
-                          : "-";
+                          : "";
                       const breakStartTimeDisplay =
                         schedule?.startTime !== "00:00:00"
                           ? formatTime(schedule?.breakStartTime)
-                          : "-";
+                          : "";
                       const breakEndTimeDisplay =
                         schedule?.startTime !== "00:00:00"
                           ? formatTime(schedule?.breakEndTime)
-                          : "-";
+                          : "";
 
                       return (
                         <>
@@ -284,6 +284,16 @@ const StaffAbout = ({ staffId }) => {
                     }
                     return null;
                   })}
+                  {staff?.weekSchedules?.length === 0 && (
+                    <>
+                      <Tag className="w-100 text-center bg-white" key={index}>
+                        <div style={{ fontSize: "10px" }}>-</div>
+                      </Tag>
+                      <Tag className="w-100 text-center bg-white">
+                        <div style={{ fontSize: "10px" }}>-</div>
+                      </Tag>
+                    </>
+                  )}
                 </Col>
               ))}
             </Row>
