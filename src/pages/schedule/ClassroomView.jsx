@@ -8,6 +8,7 @@ import ScheduleView from "./ScheduleView";
 import SingleDatePicker from "../../components/datepicker/SingleDatePicker";
 import { useGetClassroomsBySchool } from "../../hooks/useClassroom";
 import { useSession } from "../../hooks/useSession";
+import ButtonComponent from "../../components/ButtonComponent";
 
 const { Text } = Typography;
 const ClassroomView = () => {
@@ -101,20 +102,10 @@ const ClassroomView = () => {
               Add Shift
             </span>
           </Button>
-          <Dropdown
-            menu={{ items: publishItems }}
-            placement="bottomRight"
-            className="schedule-publish-drp"
-            trigger={["click"]}
-          >
-            <Button className="schedule-publish-drp-btn">
-              <span className="schedule-publish-drp-btn-text">Publish </span>
-              <img
-                src={"/wow_icons/png/stat_minus_1.png"}
-                style={{ width: 12, height: 7 }}
-              />
-            </Button>
-          </Dropdown>
+          <ButtonComponent
+            onClick={() => setPublishedShiftModalOpen(true)}
+            text={"Publish"}
+          />
         </div>
       </div>
       {/* <OverviewTable /> */}

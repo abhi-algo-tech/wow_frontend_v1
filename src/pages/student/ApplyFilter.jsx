@@ -6,29 +6,29 @@ import ButtonComponent from "../../components/ButtonComponent";
 
 const { Option } = Select;
 
-function ApplyFilter({ CardTitle, closeModal, onApplyFilter, classrooms }) {
-  const [formValues, setFormValues] = useState({
-    classroom: null,
-    status: null,
-    tag: null,
-  });
-
+function ApplyFilter({
+  CardTitle,
+  closeModal,
+  onApplyFilter,
+  classrooms,
+  formValues,
+}) {
   // Fetch status and tags using custom hooks
   const { data: status } = useMasterLookupsByType("status");
   const { data: tags } = useMasterLookupsByType("tags");
-
-  const handleSelectChange = (field, value) => {
-    setFormValues((prev) => ({ ...prev, [field]: value }));
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const appliedFilters = Object.fromEntries(
       Object.entries(formValues).filter(([, value]) => value)
     );
-    onApplyFilter(appliedFilters);
-    closeModal();
-    CustomMessage.success("Filters applied successfully!");
+    if (Object.keys(appliedFilters).length > 0) {
+      onApplyFilter(appliedFilters);
+      closeModal();
+    } else {
+      CustomMessage.info("No filter applied! Select filter Or Close modal");
+      return searchFiltered;
+    }
   };
 
   const handleClearAll = () => {

@@ -6,6 +6,7 @@ import OverviewTable from "../OverviewTable";
 import CommonModalComponent from "../../../components/CommonModalComponent";
 import PublishShift from "../PublishShift";
 import ShiftForm from "../ShiftForm";
+import ButtonComponent from "../../../components/ButtonComponent";
 
 const { Text } = Typography;
 const StaffOverview = () => {
@@ -74,20 +75,10 @@ const StaffOverview = () => {
               Add Shift
             </span>
           </Button>
-          <Dropdown
-            menu={{ items: publishItems }}
-            placement="bottomRight"
-            className="schedule-publish-drp"
-            trigger={["click"]}
-          >
-            <Button className="schedule-publish-drp-btn">
-              <span className="schedule-publish-drp-btn-text">Publish </span>
-              <img
-                src={"/wow_icons/png/stat_minus_1.png"}
-                style={{ width: 12, height: 7 }}
-              />
-            </Button>
-          </Dropdown>
+          <ButtonComponent
+            onClick={() => setPublishedShiftModalOpen(true)}
+            text={"Publish"}
+          />
         </div>
       </div>
       <div

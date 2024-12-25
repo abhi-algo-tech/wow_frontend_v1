@@ -1898,3 +1898,7 @@
 .ant-pagination-item-container > .ant-pagination-item-ellipsis {
   display: flex !important;
 }
+
+.custom-ant-table .ant-table-wrapper .ant-table-thead > tr > th {
+  background: #f0f0f0 !important;
+}

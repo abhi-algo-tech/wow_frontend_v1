@@ -51,7 +51,7 @@ function PublishShift({ setCancel, deleteData, CardTitle, handlePublish }) {
                     name="untilDate"
                     // rules={[{ required: true, message }]}
                   >
-                    <CustomDatePicker name="untilDate" />
+                    <CustomDatePicker name="untilDate" autoSelectToday={true} />
                   </Form.Item>
                 </div>
               )}
@@ -74,7 +74,7 @@ function PublishShift({ setCancel, deleteData, CardTitle, handlePublish }) {
               padding="14px 45px"
               type="submit"
               onClick={handlePublishClick}
-              disabled={publishType === "until-date" && !date}
+              disabled={publishType === "until-date"}
             />
           </div>
         </Form>

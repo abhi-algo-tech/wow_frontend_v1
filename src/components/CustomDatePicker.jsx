@@ -12,9 +12,14 @@ const CustomDatePicker = ({
   value,
   onChange,
   placeholder = "Select a date",
+  autoSelectToday = false,
 }) => {
   // Parse the incoming value to a dayjs object or null if invalid
-  const parsedValue = value ? dayjs(value, "YYYY-MM-DD", true) : null;
+  const parsedValue = value
+    ? dayjs(value, "YYYY-MM-DD", true)
+    : autoSelectToday
+    ? dayjs() // Use today's date if autoSelectToday is true
+    : null;
   // Handle date changes and ensure the format
   const handleChange = (date) => {
     if (onChange) {

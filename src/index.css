@@ -343,6 +343,13 @@ a {
 .ant-menu .ant-menu-item .ant-menu-item-icon {
   vertical-align: middle !important;
 }
+:where(.css-dev-only-do-not-override-qnu6hi).ant-menu-light
+  .ant-menu-item-selected,
+:where(.css-dev-only-do-not-override-qnu6hi).ant-menu-light
+  > .ant-menu
+  .ant-menu-item-selected {
+  background: #465cb3 !important;
+}
 /*********************** Side Menu End *************/
 
 /*********************** Header Start **************/

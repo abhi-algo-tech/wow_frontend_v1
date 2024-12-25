@@ -1,27 +1,23 @@
 import { Card, Col, Row, Typography } from "antd";
 import React, { useState } from "react";
-
-import { MdOutlineMoving } from "react-icons/md";
 import ButtonComponent from "../../components/ButtonComponent";
-// import StudentOverviewTable from "./StudentOverviewTable";
 import CommonModalComponent from "../../components/CommonModalComponent";
-// import CreateStudent from "./CreateStudent";
 import ProgressBarClassroomOverview from "../classroom/ProgressBarClassroomOverview";
 import StaffOverviewTable from "./StaffOverviewTable";
+import CreateStaff from "./CreateStaff";
 
-const { Text } = Typography;
 const Staff = () => {
-  const [isCreateStudentModalOpen, setCreateStudentModalOpen] = useState(false);
+  const [isCreateStaffModalOpen, setCreateStaffModalOpen] = useState(false);
   return (
     <>
-      <Row align="middle">
+      <Row align="bottom" className="d-flex justify-content-between">
         <Col>
           <Card
             style={{ width: 419 }}
             bordered={true}
             className="shadow-sm classroom-overview-detail-custom-card"
           >
-            <Row className="d-flex align-items-center">
+            <Row className="d-flex align-items-center ">
               <Col span={12}>
                 <Row className="d-flex align-items-center">
                   <Col span={12}>
@@ -45,23 +41,31 @@ const Staff = () => {
             </Row>
           </Card>
         </Col>
+        <Col>
+          <div className="text-end">
+            <ButtonComponent
+              text="Add Staff"
+              buttonActionType="create"
+              gradient
+              onClick={() => setCreateStaffModalOpen(true)}
+            />
+          </div>
+        </Col>
       </Row>
 
       <StaffOverviewTable />
 
-      {isCreateStudentModalOpen && (
+      {isCreateStaffModalOpen && (
         <CommonModalComponent
-          open={isCreateStudentModalOpen}
-          setOpen={setCreateStudentModalOpen}
+          open={isCreateStaffModalOpen}
+          setOpen={setCreateStaffModalOpen}
           modalWidthSize={418}
-          modalHeightSize={498}
           isClosable={true}
         >
-          {/* <CreateStudent
-            CardTitle={"Add Student"}
-            classroomId={null}
-            closeModal={() => setCreateStudentModalOpen(false)}
-          /> */}
+          <CreateStaff
+            CardTitle={"Add Staff"}
+            closeModal={() => setCreateStaffModalOpen(false)}
+          />
         </CommonModalComponent>
       )}
     </>

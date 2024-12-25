@@ -21,11 +21,10 @@ function MainHeader({
       setCollapsed(!collapsed);
     }
   };
+
   const [searchValue, setSearchValue] = useState("");
-  const { setSessionData } = useSession();
-
+  const { setSessionData, academyId, academyLabel } = useSession();
   const { data: schools, isLoading, isError, error } = useGetAllSchools();
-
   const profileMenu = {
     items: [
       {
@@ -43,6 +42,7 @@ function MainHeader({
     ],
   };
 
+  // Academy dropdown menu configuration
   const academyMenu = {
     items: schools?.data?.map((school) => ({
       key: school.id.toString(), // Convert id to string as keys are typically strings
@@ -50,42 +50,33 @@ function MainHeader({
     })),
   };
 
-  const [selectedAcademy, setSelectedAcademy] = useState();
-  const [selectedLabel, setSelectedLabel] = useState();
+  const [selectedAcademyId, setSelectedAcademyId] = useState(academyId || "");
+  const [selectedLabel, setSelectedLabel] = useState(academyLabel || "");
 
   useEffect(() => {
-    // Check sessionStorage for previous selection
-    const savedAcademyKey = sessionStorage.getItem("selectedAcademy");
-    const savedAcademyLabel = sessionStorage.getItem("selectedAcademyLabel");
+    if (!academyId || !academyLabel) {
+      // Default to the first menu item if sessionStorage has no value
+      const defaultKey = academyMenu.items?.[0]?.key || "";
+      const defaultLabel = academyMenu.items?.[0]?.label || "";
 
-    if (savedAcademyKey && savedAcademyLabel) {
-      setSelectedAcademy(savedAcademyKey);
-      setSelectedLabel(savedAcademyLabel);
-    } else if (academyMenu.items?.length) {
-      // If no sessionStorage values exist, default to the first menu item
-      const defaultKey = academyMenu.items[0].key;
-      const defaultLabel = academyMenu.items[0].label;
-
-      setSelectedAcademy(defaultKey);
-      setSelectedLabel(defaultLabel);
-      setSessionData("selectedAcademyID", defaultKey);
-      setSessionData("selectedAcademyLabel", defaultLabel);
-      // sessionStorage.setItem("selectedAcademy", defaultKey);
-      // sessionStorage.setItem("selectedAcademyLabel", defaultLabel);
+      if (defaultKey && defaultLabel) {
+        setSelectedAcademyId(defaultKey);
+        setSelectedLabel(defaultLabel);
+        setSessionData("selectedAcademyID", defaultKey);
+        setSessionData("selectedAcademyLabel", defaultLabel);
+      }
     }
   }, [academyMenu.items]);
 
   const handleMenuClick = ({ key }) => {
     const selectedItem = academyMenu.items.find((item) => item.key === key);
     if (selectedItem) {
-      setSelectedAcademy(key);
+      setSelectedAcademyId(key);
       setSelectedLabel(selectedItem.label);
 
-      // Save to sessionStorage
+      // Save to session using the custom session management hook
       setSessionData("selectedAcademyID", key);
       setSessionData("selectedAcademyLabel", selectedItem.label);
-      // sessionStorage.setItem("selectedAcademy", key);
-      // sessionStorage.setItem("selectedAcademyLabel", selectedItem.label);
     }
   };
 
@@ -127,7 +118,8 @@ function MainHeader({
           <a onClick={(e) => e.preventDefault()} style={{ color: "inherit" }}>
             <Space size={14}>
               <span style={{ fontSize: "16px", fontWeight: 500 }}>
-                {selectedLabel} {/* Display the currently selected label */}
+                {selectedLabel || "Select Academy"}{" "}
+                {/* Display current selection */}
               </span>
               <CaretDownOutlined />
             </Space>

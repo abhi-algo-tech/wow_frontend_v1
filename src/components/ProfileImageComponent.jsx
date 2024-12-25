@@ -55,8 +55,10 @@ const ProfileImageComponent = ({
     const isValidSize = file.size / 1024 / 1024 < 0.5; // 512 KB = 0.5 MB
     if (!isValidSize) {
       CustomMessage.error("File must be smaller than 512KB");
+      return false;
     }
-    return isValidSize;
+    // return isValidSize;
+    return false;
   };
 
   return (
