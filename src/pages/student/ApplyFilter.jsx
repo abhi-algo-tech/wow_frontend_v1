@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Select, Button } from "antd";
+import React from "react";
+import { Select, Form } from "antd";
 import { CustomMessage } from "../../utils/CustomMessage";
-import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 import ButtonComponent from "../../components/ButtonComponent";
+import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 
 const { Option } = Select;
 
@@ -17,43 +17,33 @@ function ApplyFilter({
   const { data: status } = useMasterLookupsByType("status");
   const { data: tags } = useMasterLookupsByType("tags");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const appliedFilters = Object.fromEntries(
-      Object.entries(formValues).filter(([, value]) => value)
-    );
-    if (Object.keys(appliedFilters).length > 0) {
-      onApplyFilter(appliedFilters);
-      closeModal();
-    } else {
-      CustomMessage.info("No filter applied! Select filter Or Close modal");
-      return searchFiltered;
-    }
-  };
-
-  // const handleClearAll = () => {
-  //   setFormValues({
-  //     classroom: null,
-  //     status: null,
-  //     tag: null,
-  //   });
-  //   onApplyFilter({});
-  //   CustomMessage.success("Filters cleared successfully!");
-  // };
-  function getUniqueNameAndId(classrooms) {
+  // Generate unique classroom names
+  const getUniqueNameAndId = (classrooms) => {
     const seen = new Set();
-    const uniqueItems = [];
-
-    classrooms.forEach((item) => {
+    return classrooms.filter((item) => {
       if (!seen.has(item.name)) {
         seen.add(item.name);
-        uniqueItems.push({ name: item.name, id: item.id });
+        return true;
       }
+      return false;
     });
+  };
 
-    return uniqueItems;
-  }
-  // console.log("getUniqueNames", getUniqueNames(classrooms));
+  // Handle form submission
+  const handleFormSubmit = (values) => {
+    const appliedFilters = Object.fromEntries(
+      Object.entries(values).filter(([, value]) => value)
+    );
+
+    if (Object.keys(appliedFilters).length > 0) {
+      onApplyFilter(appliedFilters); // Pass selected filters
+      closeModal(); // Close modal after applying filters
+    } else {
+      CustomMessage.info(
+        "No filter applied! Select filter or close the modal."
+      );
+    }
+  };
 
   return (
     <div className="card">
@@ -69,26 +59,26 @@ function ApplyFilter({
       </div>
 
       <div className="student-create">
-        <form onSubmit={handleSubmit}>
+        <Form onFinish={handleFormSubmit} initialValues={formValues}>
           <div className="row">
             {/* Classroom Select */}
             <div className="col-sm-4">
               <label className="gap-1 student-label select-student-add-from-drp-lable">
                 Classroom
               </label>
-              <Select
-                className="w-100 select-student-add-from"
-                placeholder="Select Classroom"
-                value={formValues.classroom}
-                onChange={(value) => handleSelectChange("classroom", value)}
-              >
-                <Option value={null}>Select</Option>
-                {getUniqueNameAndId(classrooms)?.map((item, i) => (
-                  <Option key={i} value={item.name}>
-                    {item.name}
-                  </Option>
-                ))}
-              </Select>
+              <Form.Item name="classroom">
+                <Select
+                  className="w-100 select-student-add-from"
+                  placeholder="Select Classroom"
+                >
+                  <Option value={null}>Select</Option>
+                  {getUniqueNameAndId(classrooms)?.map((item) => (
+                    <Option key={item.id} value={item.name}>
+                      {item.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
             </div>
 
             {/* Status Select */}
@@ -96,19 +86,19 @@ function ApplyFilter({
               <label className="gap-1 student-label select-student-add-from-drp-lable">
                 Status
               </label>
-              <Select
-                className="w-100 select-student-add-from"
-                placeholder="Select Status"
-                value={formValues.status}
-                onChange={(value) => handleSelectChange("status", value)}
-              >
-                <Option value={null}>Select</Option>
-                {status?.data?.map((item, i) => (
-                  <Option key={i} value={item.name}>
-                    {item.name}
-                  </Option>
-                ))}
-              </Select>
+              <Form.Item name="status">
+                <Select
+                  className="w-100 select-student-add-from"
+                  placeholder="Select Status"
+                >
+                  <Option value={null}>Select</Option>
+                  {status?.data?.map((item) => (
+                    <Option key={item.name} value={item.name}>
+                      {item.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
             </div>
 
             {/* Tag Select */}
@@ -116,19 +106,19 @@ function ApplyFilter({
               <label className="gap-1 student-label select-student-add-from-drp-lable">
                 Tag
               </label>
-              <Select
-                className="w-100 select-student-add-from"
-                placeholder="Select Tag"
-                value={formValues.tag}
-                onChange={(value) => handleSelectChange("tag", value)}
-              >
-                <Option value={null}>Select</Option>
-                {tags?.data?.map((item, i) => (
-                  <Option key={i} value={item.name}>
-                    {item.name}
-                  </Option>
-                ))}
-              </Select>
+              <Form.Item name="tag">
+                <Select
+                  className="w-100 select-student-add-from"
+                  placeholder="Select Tag"
+                >
+                  <Option value={null}>Select</Option>
+                  {tags?.data?.map((item) => (
+                    <Option key={item.name} value={item.name}>
+                      {item.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
             </div>
           </div>
 
@@ -140,10 +130,8 @@ function ApplyFilter({
               htmlType="submit"
               style={{ marginRight: 8 }}
             />
-
-            {/* <Button onClick={handleClearAll}>Clear All</Button> */}
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   );

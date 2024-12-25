@@ -71,7 +71,7 @@ const StudentAbout = ({ studentId }) => {
     ];
     return colors[Math.floor(Math.random() * colors.length)];
   };
-  console.log("student", student);
+  // console.log("student", student);
 
   return (
     <>

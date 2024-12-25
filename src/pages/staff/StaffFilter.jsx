@@ -1,50 +1,42 @@
-import React, { useState } from "react";
-import { Select, Button, message } from "antd";
+import React from "react";
+import { Select, Form } from "antd";
 import ButtonComponent from "../../components/ButtonComponent";
 import { CustomMessage } from "../../utils/CustomMessage";
 import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 
 const { Option } = Select;
 
-function StaffFilter({ CardTitle, closeModal, onApplyFilter, classrooms }) {
-  // Fetch status and tags using custom hooks
+function StaffFilter({
+  CardTitle,
+  closeModal,
+  onApplyFilter,
+  classrooms,
+  formValues,
+}) {
+  // Fetch status and designation using custom hooks
   const { data: status } = useMasterLookupsByType("status");
   const { data: designation } = useMasterLookupsByType("designation");
-  const [formValues, setFormValues] = useState({
-    classroom: null,
-    status: null,
-    designation: null,
-  });
-  console.log("classrooms", classrooms);
 
-  const handleSelectChange = (field, value) => {
-    setFormValues((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Send only selected filters
+  // Handle form submission
+  const handleFormSubmit = (values) => {
+    // Filter out undefined values
     const appliedFilters = Object.fromEntries(
-      Object.entries(formValues).filter(([, value]) => value)
+      Object.entries(values).filter(([, value]) => value !== undefined)
     );
-    onApplyFilter(appliedFilters);
-    closeModal();
-    CustomMessage.success("Filters applied successfully!");
-  };
 
-  const handleClearAll = () => {
-    // Reset all fields locally
-    setFormValues({
-      classroom: null,
-      status: null,
-      designation: null,
-    });
-    onApplyFilter({}); // Notify parent to clear all filters
-    CustomMessage.success("Filters cleared successfully!");
+    if (Object.keys(appliedFilters).length > 0) {
+      onApplyFilter(appliedFilters); // Pass selected filters
+      closeModal(); // Close modal after applying filters
+    } else {
+      CustomMessage.info(
+        "No filter applied! Select filter or close the modal."
+      );
+    }
   };
 
   return (
     <div className="card">
+      {/* Card Title */}
       <div
         style={{
           backgroundColor: "#eef1fe",
@@ -56,27 +48,31 @@ function StaffFilter({ CardTitle, closeModal, onApplyFilter, classrooms }) {
         {CardTitle}
       </div>
 
+      {/* Form Section */}
       <div className="student-create">
-        <form onSubmit={handleSubmit}>
+        <Form
+          onFinish={handleFormSubmit}
+          initialValues={formValues} // Default form values
+        >
           <div className="row">
             {/* Classroom Select */}
             <div className="col-sm-4">
               <label className="gap-1 student-label select-student-add-from-drp-lable">
                 Classroom
               </label>
-              <Select
-                className="w-100 select-student-add-from"
-                placeholder="Select Classroom"
-                value={formValues.classroom}
-                onChange={(value) => handleSelectChange("classroom", value)}
-              >
-                <Option value={null}>Select</Option>
-                {classrooms?.map((item, i) => (
-                  <Option key={i} value={item.name}>
-                    {item.name}
-                  </Option>
-                ))}
-              </Select>
+              <Form.Item name="classroom">
+                <Select
+                  className="w-100 select-student-add-from"
+                  placeholder="Select Classroom"
+                >
+                  <Option value={undefined}>Select</Option>
+                  {classrooms?.map((item, i) => (
+                    <Option key={i} value={item.name}>
+                      {item.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
             </div>
 
             {/* Designation Select */}
@@ -84,19 +80,19 @@ function StaffFilter({ CardTitle, closeModal, onApplyFilter, classrooms }) {
               <label className="gap-1 student-label select-student-add-from-drp-lable">
                 Designation
               </label>
-              <Select
-                className="w-100 select-student-add-from"
-                placeholder="Select Designation"
-                value={formValues.designation}
-                onChange={(value) => handleSelectChange("designation", value)}
-              >
-                <Option value={null}>Select</Option>
-                {designation?.data?.map((item, i) => (
-                  <Option key={i} value={item.name}>
-                    {item.name}
-                  </Option>
-                ))}
-              </Select>
+              <Form.Item name="designation">
+                <Select
+                  className="w-100 select-student-add-from"
+                  placeholder="Select Designation"
+                >
+                  <Option value={undefined}>Select</Option>
+                  {designation?.data?.map((item, i) => (
+                    <Option key={i} value={item.name}>
+                      {item.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
             </div>
 
             {/* Status Select */}
@@ -104,40 +100,32 @@ function StaffFilter({ CardTitle, closeModal, onApplyFilter, classrooms }) {
               <label className="gap-1 student-label select-student-add-from-drp-lable">
                 Status
               </label>
-              <Select
-                className="w-100 select-student-add-from"
-                placeholder="Select Status"
-                value={formValues.status}
-                onChange={(value) => handleSelectChange("status", value)}
-              >
-                <Option value={null}>Select</Option>
-                {status?.data?.map((item, i) => (
-                  <Option key={i} value={item.name}>
-                    {item.name}
-                  </Option>
-                ))}
-              </Select>
+              <Form.Item name="status">
+                <Select
+                  className="w-100 select-student-add-from"
+                  placeholder="Select Status"
+                >
+                  <Option value={undefined}>Select</Option>
+                  {status?.data?.map((item, i) => (
+                    <Option key={i} value={item.name}>
+                      {item.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
             </div>
           </div>
 
           {/* Buttons */}
           <div className="text-center mt-4">
-            {/* <Button type="primary" htmlType="submit" style={{ marginRight: 8 }}>
-              Apply Filter
-            </Button> */}
             <ButtonComponent
-              text={"Apply"}
-              padding="16.1px 60px"
-              type="submit"
+              text="Apply Filter"
+              type="primary"
+              htmlType="submit"
+              style={{ marginRight: 8 }}
             />
-            {/* <ButtonComponent
-              text={"Clear All"}
-              padding="16.1px 60px"
-              onClick={handleClearAll}
-            /> */}
-            {/* <Button onClick={handleClearAll}>Clear All</Button> */}
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   );
