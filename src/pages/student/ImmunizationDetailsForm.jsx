@@ -2,12 +2,10 @@ import { Form, Input, message, Select, Switch } from "antd";
 import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../components/ButtonComponent";
 import CustomDatePicker from "../../components/CustomDatePicker";
-import {
-  useCreatePhysicalTracker,
-  useUpdatePhysicalTracker,
-} from "../../hooks/usePhysicalTracker";
+
 import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 import { CustomMessage } from "../../utils/CustomMessage";
+import { useUpdateImmunization } from "../../hooks/useImmunizations";
 
 const { Option } = Select;
 
@@ -19,8 +17,7 @@ function ImmunizationDetailsForm({
 }) {
   const [form] = Form.useForm();
   const [isButton, setIsButton] = useState(false);
-  const createPhysicalTrackerMutation = useCreatePhysicalTracker();
-  const updatePhysicalTrackerMutation = useUpdatePhysicalTracker();
+  const updateImmunizationMutation = useUpdateImmunization();
 
   const { data: statusData } = useMasterLookupsByType("physical_status");
 
@@ -28,6 +25,7 @@ function ImmunizationDetailsForm({
 
   useEffect(() => {
     if (doseData) {
+      console.log("doseData:", doseData);
       const date = new Date(doseData?.data?.date);
       const formattedDate =
         date.getFullYear() +
@@ -52,16 +50,15 @@ function ImmunizationDetailsForm({
     }
 
     const payload = {
-      statusId: status,
-      physicalDate: physicalCheckupDate,
-      studentId,
+      [`dose${doseData?.doseId}StatusId`]: status,
+      [`dose${doseData?.doseId}PhysicalDate`]: physicalCheckupDate,
     };
 
     if (isEdit) {
-      updatePhysicalTrackerMutation.mutate(
+      updateImmunizationMutation.mutate(
         {
-          trackerId: doseData?.id,
-          doseData: payload,
+          immunizationId: doseData?.id,
+          immunizationData: payload,
         },
         {
           onSuccess: () => {
@@ -75,18 +72,6 @@ function ImmunizationDetailsForm({
           },
         }
       );
-    } else {
-      createPhysicalTrackerMutation.mutate(payload, {
-        onSuccess: () => {
-          CustomMessage.success(`Immunization created successfully!`);
-          closeModal();
-        },
-        onError: (error) => {
-          CustomMessage.error(
-            `Failed to create Immunization: ${error.message}`
-          );
-        },
-      });
     }
   };
 
@@ -141,7 +126,7 @@ function ImmunizationDetailsForm({
             <div className="text-center ">
               <Form.Item>
                 <ButtonComponent
-                  text={"Add"}
+                  text={"Save"}
                   padding="19.1px 115px"
                   type="submit"
                   isLoading={isButton}
