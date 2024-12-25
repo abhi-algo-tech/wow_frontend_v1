@@ -43,8 +43,13 @@ const ProfileImageComponent = ({
   };
 
   const handleChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-    if (onChange) onChange(newFileList);
+    // Filter out files larger than 512 KB
+    const validFiles = newFileList.filter(
+      (file) => file.size / 1024 / 1024 < 0.5
+    );
+    setFileList(validFiles);
+
+    if (onChange) onChange(validFiles);
   };
 
   const handleRemove = (file) => {
@@ -55,10 +60,8 @@ const ProfileImageComponent = ({
     const isValidSize = file.size / 1024 / 1024 < 0.5; // 512 KB = 0.5 MB
     if (!isValidSize) {
       CustomMessage.error("File must be smaller than 512KB");
-      return false;
     }
-    // return isValidSize;
-    return false;
+    return isValidSize;
   };
 
   return (

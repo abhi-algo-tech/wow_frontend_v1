@@ -72,22 +72,22 @@ function ParentForm({
         },
         {
           onSuccess: () => {
-            CustomMessage.success("Student updated successfully!");
+            CustomMessage.success("Parent updated successfully!");
             closeModal();
           },
           onError: (error) => {
-            CustomMessage.error(`Failed to update student: ${error.message}`);
+            CustomMessage.error(`Failed to update Parent: ${error.message}`);
           },
         }
       );
     } else {
       createGaurdianMutation.mutate(formData, {
         onSuccess: () => {
-          // CustomMessage.success("Student created successfully!");
+          CustomMessage.success("Parent created successfully!");
           closeModal();
         },
         onError: (error) => {
-          CustomMessage.error(`Failed to create student: ${error.message}`);
+          CustomMessage.error(`Failed to create Parent: ${error.message}`);
         },
       });
     }
