@@ -226,14 +226,23 @@ select {
   /* justify-content: center; */
   height: 65px;
   padding: 8px 0;
-  color: white !important;
   background-color: transparent;
   border-radius: 8px;
   transition: background-color 0.3s;
 }
 
+.custom-menu .ant-menu-item-selected {
+  background-color: transparent !important; /* Remove white background */
+}
 .custom-menu .ant-menu-item:hover {
   background-color: rgba(255, 255, 255, 0.15);
+}
+.custom-menu .ant-menu-item-active {
+  background-color: transparent !important; /* Remove hover background */
+}
+
+.custom-menu .ant-menu-submenu-item-active {
+  background-color: transparent !important; /* Remove hover background */
 }
 
 .custom-menu .ant-menu-item .anticon {
@@ -349,6 +358,16 @@ a {
   > .ant-menu
   .ant-menu-item-selected {
   background: #465cb3 !important;
+}
+
+:where(.css-dev-only-do-not-override-qnu6hi).ant-menu-light:not(
+    .ant-menu-horizontal
+  )
+  .ant-menu-item:not(.ant-menu-item-selected):active,
+:where(.css-dev-only-do-not-override-qnu6hi).ant-menu-light
+  > .ant-menu:not(.ant-menu-horizontal)
+  .ant-menu-item:not(.ant-menu-item-selected):active {
+  background-color: #465cb3;
 }
 /*********************** Side Menu End *************/
 

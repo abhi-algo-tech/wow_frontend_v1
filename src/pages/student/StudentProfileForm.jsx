@@ -64,7 +64,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
       label: `${sibling.firstName} ${sibling.lastName} (${sibling.classroomName})`, // Use the name property for the label
     })),
   };
-  console.log("siblingsOptions:", siblingsOptions);
+  // console.log("siblingsOptions:", siblingsOptions);
   const custodyOptions = {
     items: custodyData?.data?.map((custody) => ({
       key: custody.id, // Convert id to string as keys are typically strings
@@ -158,7 +158,7 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
       formData.append("dateOfBirth", birthDate);
     }
     formData.append("isStateSubsidy", selectedOption === "yes");
-    formData.append("note", notes);
+    formData.append("note", notes ? notes : "");
     if (childCustody) formData.append("childCustodyId", childCustody);
     formData.append("addressLine", address);
     formData.append("cityId", city);

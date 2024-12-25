@@ -144,7 +144,7 @@ const StudentOverviewTable = () => {
   useEffect(() => {
     setFilteredData(finalFilteredData);
     // Extract classroom name and key and push into state
-    const classroomData = finalFilteredData.map((item) => ({
+    const classroomData = data.map((item) => ({
       name: item.classroom.name,
       id: item.key,
     }));
@@ -308,7 +308,7 @@ const StudentOverviewTable = () => {
       dataIndex: "tags",
       key: "tags",
       className: "student-table-body-label",
-      width: 185,
+      width: 195,
       responsive: ["md", "lg"],
       render: (tags, record) => {
         const visibleTags = tags.slice(0, 2); // Show first 2 tags
@@ -383,7 +383,7 @@ const StudentOverviewTable = () => {
       title: <span className="student-table-header-label">Schedule</span>,
       dataIndex: "schedule",
       key: "schedule",
-      width: 250,
+      width: 240,
       responsive: ["lg"],
       render: (schedule) => (
         <div className="d-flex align-items-center gap-1 flex-wrap">
@@ -644,6 +644,7 @@ const StudentOverviewTable = () => {
             onApplyFilter={handleApplyFilters}
             classrooms={classrooms}
             formValues={selectedFilters}
+            // setFormValues={setSelectedFilters}
           />
         </CommonModalComponent>
       )}

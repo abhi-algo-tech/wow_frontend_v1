@@ -71,7 +71,6 @@ const StaffOverviewTable = () => {
       console.error("Error fetching staff details:", error);
     }
   }, [staff, isError, error]);
-  console.log("selectedFilters", selectedFilters);
 
   // Helper functions for filtering data
   const getFilteredDataByStatus = (data, status) =>
@@ -89,7 +88,7 @@ const StaffOverviewTable = () => {
     () => getFilteredData(data || [], showActive),
     [showActive, data]
   );
-  console.log("baseFilteredStaffs", baseFilteredStaffs);
+  // console.log("baseFilteredStaffs", baseFilteredStaffs);
 
   // Combine search and funnel filtering
   const finalFilteredData = useMemo(() => {
@@ -127,11 +126,12 @@ const StaffOverviewTable = () => {
         ? staff.status?.toLowerCase() === selectedFilters.status?.toLowerCase()
         : true;
 
-      const hasTagMatch = selectedFilters?.tag
-        ? staff.tags?.some((tag) => tag.tagName === selectedFilters.tag)
+      const hasDesignationMatch = selectedFilters?.designation
+        ? staff.designation?.toLowerCase() ===
+          selectedFilters.designation?.toLowerCase()
         : true;
 
-      return hasClassroomMatch && hasStatusMatch && hasTagMatch;
+      return hasClassroomMatch && hasStatusMatch && hasDesignationMatch;
     });
   }, [baseFilteredStaffs, searchQuery, selectedFilters, showActive]);
 
@@ -165,7 +165,7 @@ const StaffOverviewTable = () => {
     // Set the state with the unique classroom data
     setClassrooms(uniqueClassroomData);
   }, [finalFilteredData]);
-  console.log("classrooms", classrooms);
+  // console.log("classrooms", classrooms);
 
   // Handle search input changes
   const handleSearchChange = (e) => {
@@ -185,6 +185,10 @@ const StaffOverviewTable = () => {
   const handleDeleteModal = (id, name) => {
     setSelectedRecord({ id, name });
     setDeleteModalOpen(true);
+  };
+
+  const handleApplyFilters = (filter) => {
+    setSelectedFilters(filter);
   };
 
   const handleDelete = async (id) => {
@@ -624,13 +628,16 @@ const StaffOverviewTable = () => {
           <CommonModalComponent
             open={isFilterModalOpen}
             setOpen={setFilterModalOpen}
+            modalWidthSize={600}
+            modalHeightSize={253}
             isClosable={true}
           >
             <StaffFilter
               CardTitle={"Staff Filter"}
-              onApplyFilter={setSelectedFilters}
               closeModal={() => setFilterModalOpen(false)}
+              onApplyFilter={handleApplyFilters}
               classrooms={classrooms}
+              formValues={selectedFilters}
             />
           </CommonModalComponent>
         )}
