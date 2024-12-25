@@ -134,7 +134,7 @@ export const generateClassroomDemoData = (count) => {
 };
 
 export const generateClassroomData = (apiData) => {
-  return apiData.map((item) => ({
+  return apiData?.map((item) => ({
     key: item.id.toString(),
     name: item.name,
     shortName: getInitialsTitle(item.name),
