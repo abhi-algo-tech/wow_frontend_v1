@@ -71,8 +71,8 @@ function StaffFilter({ CardTitle, closeModal, onApplyFilter, classrooms }) {
                 onChange={(value) => handleSelectChange("classroom", value)}
               >
                 <Option value={null}>Select</Option>
-                {classrooms?.map((item) => (
-                  <Option key={item.id} value={item.name}>
+                {classrooms?.map((item, i) => (
+                  <Option key={i} value={item.name}>
                     {item.name}
                   </Option>
                 ))}
@@ -91,8 +91,8 @@ function StaffFilter({ CardTitle, closeModal, onApplyFilter, classrooms }) {
                 onChange={(value) => handleSelectChange("designation", value)}
               >
                 <Option value={null}>Select</Option>
-                {designation?.data?.map((item) => (
-                  <Option key={item.id} value={item.name}>
+                {designation?.data?.map((item, i) => (
+                  <Option key={i} value={item.name}>
                     {item.name}
                   </Option>
                 ))}
@@ -111,8 +111,8 @@ function StaffFilter({ CardTitle, closeModal, onApplyFilter, classrooms }) {
                 onChange={(value) => handleSelectChange("status", value)}
               >
                 <Option value={null}>Select</Option>
-                {status?.data?.map((item) => (
-                  <Option key={item.id} value={item.name}>
+                {status?.data?.map((item, i) => (
+                  <Option key={i} value={item.name}>
                     {item.name}
                   </Option>
                 ))}

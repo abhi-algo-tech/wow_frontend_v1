@@ -71,7 +71,7 @@ const StudentOverviewTable = () => {
   useEffect(() => {
     if (students) {
       const formattedStudentData = generateStudentData(students.data);
-      console.log("formattedStudentData:", formattedStudentData);
+      // console.log("formattedStudentData:", formattedStudentData);
       setData(formattedStudentData);
       setFilteredData(formattedStudentData);
     }
@@ -221,7 +221,7 @@ const StudentOverviewTable = () => {
       dataIndex: "name",
       key: "name",
       align: "start",
-      width: 240,
+      width: 180,
       className: "student-table-body-label",
       responsive: ["xs", "sm", "md", "lg"],
       render: (_, record) => (
@@ -255,6 +255,7 @@ const StudentOverviewTable = () => {
               name: record.name,
             }}
             className="d-flex justify-content-between align-items-center w-100 text-truncate"
+            onClick={(e) => e.stopPropagation()} // Prevent row selection
           >
             <span className="label-14-500">{record.name}</span>
             {record.upcoming === "Upcoming" && (
@@ -273,11 +274,13 @@ const StudentOverviewTable = () => {
       ),
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
+
     {
       title: <span className="student-table-header-label">Classroom</span>,
       dataIndex: "classroom",
       key: "classroom",
       className: "student-table-body-label",
+      width: 145,
       responsive: ["sm", "md", "lg"],
       render: (classroom) => (
         <div className="d-flex align-items-center">
@@ -305,7 +308,7 @@ const StudentOverviewTable = () => {
       dataIndex: "tags",
       key: "tags",
       className: "student-table-body-label",
-      width: 195,
+      width: 185,
       responsive: ["md", "lg"],
       render: (tags, record) => {
         const visibleTags = tags.slice(0, 2); // Show first 2 tags
@@ -408,16 +411,30 @@ const StudentOverviewTable = () => {
       title: <span className="student-table-header-label">Birthdate</span>,
       dataIndex: "birthdate",
       key: "birthdate",
+      width: 100,
       responsive: ["xs", "md", "lg"],
       sorter: (a, b) => new Date(a.birthdate) - new Date(b.birthdate),
       render: (birthdate) =>
         birthdate && <span>{dayjs(birthdate).format("MMM DD, YYYY")}</span>,
     },
     {
+      title: <span className="student-table-header-label">Movement Date</span>,
+      dataIndex: "movementDate",
+      key: "movementDate",
+      width: 100,
+      responsive: ["xs", "md", "lg"],
+      sorter: (a, b) => new Date(a.movementDate) - new Date(b.movementDate),
+      render: (movementDate) =>
+        movementDate && (
+          <span>{dayjs(movementDate).format("MMM DD, YYYY")}</span>
+        ),
+    },
+    {
       title: <span className="student-table-header-label">Action</span>,
       key: "action",
       className: "student-table-body-label",
       align: "center",
+      width: 70,
       responsive: ["xs", "md", "lg"],
       render: (_, record) => (
         <Dropdown

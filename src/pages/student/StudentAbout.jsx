@@ -71,6 +71,7 @@ const StudentAbout = ({ studentId }) => {
     ];
     return colors[Math.floor(Math.random() * colors.length)];
   };
+  console.log("student", student);
 
   return (
     <>
@@ -289,11 +290,11 @@ const StudentAbout = ({ studentId }) => {
                       const startTimeDisplay =
                         schedule?.startTime !== "00:00:00"
                           ? formatTime(schedule?.startTime)
-                          : "-";
+                          : "";
                       const endTimeDisplay =
                         schedule?.startTime !== "00:00:00"
                           ? formatTime(schedule?.endTime)
-                          : "-";
+                          : "";
 
                       return (
                         <>
@@ -310,6 +311,11 @@ const StudentAbout = ({ studentId }) => {
                     }
                     return null;
                   })}
+                  {student?.weekSchedules?.length === 0 && (
+                    <Tag className="w-100 text-center bg-white" key={index}>
+                      <div style={{ fontSize: "8.5px" }}>-</div>
+                    </Tag>
+                  )}
                 </Col>
               ))}
             </Row>

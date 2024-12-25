@@ -82,13 +82,13 @@ const ProfileCardv1 = ({ Id, role }) => {
       imgSrc: studentData?.data?.profileUrl,
       title: `${
         studentData?.data?.firstName
-          ? studentData.data.firstName.charAt(0).toUpperCase() +
-            studentData.data.firstName.slice(1)
+          ? studentData?.data?.firstName.charAt(0).toUpperCase() +
+            studentData?.data?.firstName.slice(1)
           : ""
       } ${
         studentData?.data?.lastName
-          ? studentData.data.lastName.charAt(0).toUpperCase() +
-            studentData.data.lastName.slice(1)
+          ? studentData?.data?.lastName.charAt(0).toUpperCase() +
+            studentData?.data?.lastName.slice(1)
           : ""
       }`.trim(),
       classInfo: studentData?.data?.classroomName,
@@ -100,13 +100,13 @@ const ProfileCardv1 = ({ Id, role }) => {
       imgSrc: staffData?.data?.profileUrl,
       title: `${
         staffData?.data?.firstName
-          ? staffData.data.firstName.charAt(0).toUpperCase() +
-            staffData.data.firstName.slice(1)
+          ? staffData?.data?.firstName.charAt(0).toUpperCase() +
+            staffData?.data?.firstName.slice(1)
           : ""
       } ${
         staffData?.data?.lastName
-          ? staffData.data.lastName.charAt(0).toUpperCase() +
-            staffData.data.lastName.slice(1)
+          ? staffData?.data?.lastName.charAt(0).toUpperCase() +
+            staffData?.data?.lastName.slice(1)
           : ""
       }`.trim(),
       classInfo: room?.name,

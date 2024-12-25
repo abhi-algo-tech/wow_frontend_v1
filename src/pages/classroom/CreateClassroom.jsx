@@ -459,6 +459,7 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
               type="submit"
               isLoading={isButton}
               disabled={isButtonDisable}
+              padding={"0px 60px"}
             />
           </div>
         </Form>
