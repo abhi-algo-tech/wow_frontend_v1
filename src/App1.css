@@ -1898,3 +1898,45 @@
 .ant-pagination-item-container > .ant-pagination-item-ellipsis {
   display: flex !important;
 }
+
+.custom-ant-table .ant-table-wrapper .ant-table-thead > tr > th {
+  background: #f0f0f0 !important;
+}
+
+.classroom-students-overview-r-overflow {
+  position: absolute;
+  right: -4vh;
+  top: 21.5vh;
+  z-index: 9;
+  border-radius: 8px;
+  background: var(--2, linear-gradient(90deg, #6f8cff 0%, #9c84ff 100%));
+  width: 68px;
+  gap: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.classroom-students-overview-l-overflow {
+  position: absolute;
+  width: 69px;
+  height: auto;
+  top: 0vh;
+  right: 13vh;
+  z-index: 9;
+  border-radius: 8px;
+  border: 1px solid #5978f7 !important;
+  background-image: linear-gradient(
+      to bottom,
+      var(--variable-collection-color-white),
+      var(--variable-collection-color-white)
+    ),
+    linear-gradient(to right, #5978f7, #9c84ff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 6px;
+  background-color: #ffffff;
+}

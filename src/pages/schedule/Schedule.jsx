@@ -9,6 +9,7 @@ import WeekDatePicker from "../../components/datepicker/WeekDatePicker";
 import PublishShift from "./PublishShift";
 import { useGetClassroomsBySchool } from "../../hooks/useClassroom";
 import { useSession } from "../../hooks/useSession";
+import ButtonComponent from "../../components/ButtonComponent";
 
 const { Text } = Typography;
 const Schedule = () => {
@@ -94,20 +95,10 @@ const Schedule = () => {
               Add Shift
             </span>
           </Button>
-          <Dropdown
-            menu={{ items: publishItems }}
-            placement="bottomRight"
-            className="schedule-publish-drp"
-            trigger={["click"]}
-          >
-            <Button className="schedule-publish-drp-btn">
-              <span className="schedule-publish-drp-btn-text">Publish </span>
-              <img
-                src={"/wow_icons/png/stat_minus_1.png"}
-                style={{ width: 12, height: 7 }}
-              />
-            </Button>
-          </Dropdown>
+          <ButtonComponent
+            onClick={() => setPublishedShiftModalOpen(true)}
+            text={"Publish"}
+          />
         </div>
       </div>
       <ScheduleTable startDate={startDate} classRoomList={classRoomList} />

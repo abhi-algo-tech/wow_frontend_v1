@@ -112,6 +112,7 @@ export const generateStaffData = (staffData) => {
       email: staff.email,
       phone: staff.phoneNumber,
       isOnline: staff.isActive,
+      status: staff?.status,
     };
   });
 };

@@ -26,6 +26,13 @@ import { generateStudentData } from "./StudentCommon";
 import CreateStudent from "./CreateStudent";
 import { CustomMessage } from "../../utils/CustomMessage";
 import dayjs from "dayjs";
+import {
+  leftRenderAttendanceData,
+  leftRenderDefaultData,
+  rightRenderData,
+} from "../classroom/StudentCardDetails";
+import ActivityIconSubMenu from "../classroom/ActivityIconSubMenu";
+import CreateMessage from "../../components/message/CreateMessage";
 const { Text } = Typography;
 
 const StudentOverviewTable = () => {
@@ -36,13 +43,28 @@ const StudentOverviewTable = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
-  const [selectedFilters, setSelectedFilters] = useState({});
+  const [isActivityIconSubMenuModalOpen, setActivityIconSubMenuModalOpen] =
+    useState(false);
+  const [isCreateMessageModalOpen, setCreateMessageModalOpen] = useState(false);
+  const [isAssignConfirmModalOpen, setAssignConfirmModalOpen] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState({
+    classroom: null,
+    status: null,
+    tag: null,
+  });
+
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   // const [showInactive, setShowInactive] = useState(false);
+
   const [showActive, setShowActive] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [classrooms, setClassrooms] = useState([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [isLeftRenderUi, setLeftRenderUi] = useState("");
+  const [isSignOutModalOpen, setSignOutModalOpen] = useState(false);
+  const [leftRenderData, setLeftRenderData] = useState([]);
+  const [isSignInModalOpen, setSignInModalOpen] = useState(false);
   const { data: students, isLoading, isError, error } = useGetAllStudents();
   const updateStudentMutation = useUpdateStudent();
 
@@ -60,63 +82,81 @@ const StudentOverviewTable = () => {
       );
     }
   }, [students, isError, error]);
-  console.log("data", data);
 
-  // Function to get active data
-  const getActiveData = (data) => {
-    return (
-      data?.filter(
-        (student) =>
-          student.status?.toLowerCase() === "active" ||
-          student.status?.toLowerCase() === "upcoming"
-      ) || []
-    );
-  };
+  // Helper functions for filtering data
+  const getFilteredDataByStatus = (data, status) =>
+    data?.filter((student) => student.status?.toLowerCase() === status) || [];
 
-  // Function to get inactive data
-  const getInactiveData = (data) => {
-    return (
-      data?.filter((student) => student.status?.toLowerCase() === "inactive") ||
-      []
-    );
-  };
+  const getFilteredData = (data, showActive) =>
+    showActive
+      ? getFilteredDataByStatus(data, "active").concat(
+          getFilteredDataByStatus(data, "upcoming")
+        )
+      : getFilteredDataByStatus(data, "inactive");
 
-  const filteredStudents = useMemo(() => {
-    return showActive ? getActiveData(data || []) : getInactiveData(data || []);
-  }, [showActive, data]);
-  // Update filtered data based on showActive
+  // Memoized filtered data based on showActive
+  const baseFilteredStudents = useMemo(
+    () => getFilteredData(data || [], showActive),
+    [showActive, data]
+  );
+
+  // Combine search and funnel filtering
+  const finalFilteredData = useMemo(() => {
+    // Filter by search query
+    const searchFiltered = searchQuery
+      ? baseFilteredStudents.filter((student) =>
+          student.name?.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : baseFilteredStudents;
+
+    // Apply funnel filters if present
+    if (Object.keys(selectedFilters).length === 0) {
+      return searchFiltered;
+    }
+
+    if (
+      (showActive && selectedFilters?.status?.toLowerCase() === "inactive") ||
+      (!showActive &&
+        ["active", "upcoming"].includes(selectedFilters?.status?.toLowerCase()))
+    ) {
+      return [];
+    }
+
+    return searchFiltered.filter((student) => {
+      const hasClassroomMatch = selectedFilters?.classroom
+        ? student.classroom?.name === selectedFilters.classroom
+        : true;
+
+      const hasStatusMatch = selectedFilters?.status
+        ? student.status?.toLowerCase() ===
+          selectedFilters.status?.toLowerCase()
+        : true;
+
+      const hasTagMatch = selectedFilters?.tag
+        ? student.tags?.some((tag) => tag.tagName === selectedFilters.tag)
+        : true;
+
+      return hasClassroomMatch && hasStatusMatch && hasTagMatch;
+    });
+  }, [baseFilteredStudents, searchQuery, selectedFilters, showActive]);
+
+  // Update the filtered data state whenever the final filtered data changes
   useEffect(() => {
+    setFilteredData(finalFilteredData);
     // Extract classroom name and key and push into state
-    const classroomData = filteredStudents.map((item) => ({
+    const classroomData = finalFilteredData.map((item) => ({
       name: item.classroom.name,
       id: item.key,
     }));
 
     // Set the state with the classroom data
     setClassrooms(classroomData);
-    setFilteredData(filteredStudents || []);
-  }, [showActive, data]);
+  }, [finalFilteredData]);
 
-  const filterFunnelData = useMemo(() => {
-    return data?.filter((student) => {
-      const hasClassroomMatch =
-        student.classroom?.name === selectedFilters.classroom;
-      const hasStatusMatch = student.status === selectedFilters.status;
-      const hasTagMatch = student.tags?.some(
-        (tag) => tag.tagName === selectedFilters.tag
-      );
-
-      return hasClassroomMatch && hasStatusMatch && hasTagMatch;
-    });
-  }, [data, selectedFilters]); // Include both data and selectedFilters in dependencies
-
-  console.log("filterFunnelData", filterFunnelData);
-
-  // Handle filter application
-  const handleApplyFilters = (filters) => {
-    console.log("filters", filters);
-    // Function to filter
-    setSelectedFilters(filters);
+  // Handle search input changes
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
   };
 
   // Clear all filters
@@ -129,6 +169,10 @@ const StudentOverviewTable = () => {
     const updatedFilters = { ...selectedFilters };
     delete updatedFilters[key];
     setSelectedFilters(updatedFilters);
+  };
+
+  const handleApplyFilters = (filter) => {
+    setSelectedFilters(filter);
   };
 
   const handleDeleteModal = (id, name) => {
@@ -158,27 +202,22 @@ const StudentOverviewTable = () => {
   };
 
   // Filter the data based on the search query
-  const handleSearchChange = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
+  // const handleSearchChange = (e) => {
+  //   const query = e.target.value;
+  //   setSearchQuery(query);
 
-    // Filter the data based on the query
-    const filtered = data.filter((student) =>
-      student.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+  //   // Filter the data based on the query
+  //   const filtered = data.filter((student) =>
+  //     student.name.toLowerCase().includes(searchQuery.toLowerCase())
+  //   );
 
-    // Update the filtered data
-    setFilteredData(filtered);
-  };
+  //   // Update the filtered data
+  //   setFilteredData(filtered);
+  // };
 
   const columns = [
     {
-      title: (
-        <span className="student-table-header-label">
-          <Checkbox className="mr10" />
-          Student Name
-        </span>
-      ),
+      title: <span className="student-table-header-label">Student Name</span>,
       dataIndex: "name",
       key: "name",
       align: "start",
@@ -187,7 +226,6 @@ const StudentOverviewTable = () => {
       responsive: ["xs", "sm", "md", "lg"],
       render: (_, record) => (
         <div className="d-flex align-items-center gap-2">
-          <Checkbox />
           <div className="position-relative d-inline-block">
             <Avatar
               src={record.avatar}
@@ -403,18 +441,97 @@ const StudentOverviewTable = () => {
       ),
     },
   ];
+  const setShowRightActionCard = (action) => {
+    let selectedAction;
+    switch (action.toLowerCase()) {
+      case "attendance":
+        selectedAction = leftRenderAttendanceData;
+        setLeftRenderUi("attendance");
+        break;
+      case "activity":
+        setLeftRenderUi("");
+        setActivityIconSubMenuModalOpen(true);
+        selectedAction = "";
+        break;
+      case "message":
+        setLeftRenderUi("");
+        setCreateMessageModalOpen(true);
+        selectedAction = "";
+        break;
+      default:
+        break;
+    }
+
+    setLeftRenderData(selectedAction); // return the data if needed
+  };
+  const handleModalOpen = (action) => {
+    switch (action.toLowerCase()) {
+      case "signin":
+        setSignInModalOpen(true);
+        break;
+      case "signout":
+        setSignOutModalOpen(true);
+        break;
+      case "transfer":
+        setTransferModalOpen(true);
+        break;
+      case "absent":
+        setMarkAbsentModalOpen(true);
+        break;
+      default:
+        "";
+        break;
+    }
+  };
+  const renderLFloatingRightCard = () => (
+    <div className="classroom-students-overview-l-overflow text-center">
+      {leftRenderData.map((data, i) => (
+        <div
+          key={i}
+          className=" d-flex flex-column align-items-center pointer"
+          onClick={() => handleModalOpen(data?.modal)}
+        >
+          <img
+            className="classroom-students-r-icon"
+            src={data?.icon}
+            alt={data?.label}
+          />
+          <div className="label-11-500 mt16 ">{data?.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderRFloatingRightCard = () => (
+    <>
+      <div className="classroom-students-overview-r-overflow">
+        {isLeftRenderUi === "attendance" ? renderLFloatingRightCard() : <></>}
+        {rightRenderData.map((data, i) => (
+          <div
+            key={i}
+            className=" d-flex flex-column align-items-center pointer"
+            onClick={() => setShowRightActionCard(data?.label)}
+          >
+            <img
+              className="classroom-students-r-icon"
+              src={data?.icon}
+              alt={data?.label}
+            />
+            <div className="label-11-500 text-white mt16">{data?.label}</div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+  useEffect(() => {
+    selectedRowKeys.length === 0 ? setLeftRenderUi("") : "";
+  }, [selectedRowKeys.length]);
 
   return (
     <>
       <div className="mt20">
         <Card styles={{ body: { padding: 16 } }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "16px",
-            }}
-          >
+          <div className="d-flex justify-content-between mb16">
             <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
               <Input
                 placeholder="Search by Students/Parent"
@@ -429,17 +546,26 @@ const StudentOverviewTable = () => {
                   className="pointer"
                 />
                 {/* Display selected filters */}
-                {Object.entries(selectedFilters).map(([key, value]) => (
-                  <Tag
-                    key={key}
-                    color="blue"
-                    closable
-                    onClose={() => handleClearSingleFilter(key)}
-                  >
-                    {`${key}: ${value}`}
-                  </Tag>
-                ))}
-                {Object.keys(selectedFilters).length > 0 && (
+                {Object.entries(selectedFilters)
+                  .filter(
+                    ([key, value]) => value !== null && value !== undefined
+                  ) // Filter out null or undefined values
+                  .map(([key, value]) => (
+                    <Tag
+                      key={key}
+                      color="blue"
+                      closable
+                      onClose={() => handleClearSingleFilter(key)}
+                    >
+                      {`${key}: ${value}`}
+                    </Tag>
+                  ))}
+
+                {Object.keys(selectedFilters).some(
+                  (key) =>
+                    selectedFilters[key] !== null &&
+                    selectedFilters[key] !== undefined
+                ) && (
                   <Tag
                     color="blue"
                     className="pointer"
@@ -469,6 +595,7 @@ const StudentOverviewTable = () => {
             </div>
           </div>
 
+          {selectedRowKeys.length > 0 ? renderRFloatingRightCard() : <></>}
           <TableComponent
             columns={columns}
             dataSource={filteredData}
@@ -478,6 +605,11 @@ const StudentOverviewTable = () => {
             rowKey="key"
             sizeChanger={false}
             showTotalProp={true}
+            rowSelection={{
+              selectedRowKeys,
+              onChange: (selectedRowKeys) =>
+                setSelectedRowKeys(selectedRowKeys),
+            }}
           />
         </Card>
       </div>
@@ -494,6 +626,7 @@ const StudentOverviewTable = () => {
             closeModal={() => setStudentTableFilterModalOpen(false)}
             onApplyFilter={handleApplyFilters}
             classrooms={classrooms}
+            formValues={selectedFilters}
           />
         </CommonModalComponent>
       )}
@@ -526,6 +659,29 @@ const StudentOverviewTable = () => {
             CardTitle={"Edit Student"}
             studentId={selectedStudentId}
             closeModal={() => setEditModalOpen(false)}
+          />
+        </CommonModalComponent>
+      )}
+      {isActivityIconSubMenuModalOpen && (
+        <CommonModalComponent
+          open={isActivityIconSubMenuModalOpen}
+          setOpen={setActivityIconSubMenuModalOpen}
+          modalWidthSize={804}
+          isClosable={true}
+        >
+          <ActivityIconSubMenu />
+          {/* <ActivitySubMenu setCancel={setMarkAbsentModalOpen} /> */}
+        </CommonModalComponent>
+      )}
+      {isCreateMessageModalOpen && (
+        <CommonModalComponent
+          open={isCreateMessageModalOpen}
+          setOpen={setCreateMessageModalOpen}
+          modalWidthSize={549}
+        >
+          <CreateMessage
+            setCancel={setCreateMessageModalOpen}
+            setAssignConfirm={setAssignConfirmModalOpen}
           />
         </CommonModalComponent>
       )}

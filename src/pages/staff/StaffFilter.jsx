@@ -2,15 +2,20 @@ import React, { useState } from "react";
 import { Select, Button, message } from "antd";
 import ButtonComponent from "../../components/ButtonComponent";
 import { CustomMessage } from "../../utils/CustomMessage";
+import { useMasterLookupsByType } from "../../hooks/useMasterLookup";
 
 const { Option } = Select;
 
-function StaffFilter({ CardTitle, closeModal, onApplyFilter }) {
+function StaffFilter({ CardTitle, closeModal, onApplyFilter, classrooms }) {
+  // Fetch status and tags using custom hooks
+  const { data: status } = useMasterLookupsByType("status");
+  const { data: designation } = useMasterLookupsByType("designation");
   const [formValues, setFormValues] = useState({
     classroom: null,
     status: null,
     designation: null,
   });
+  console.log("classrooms", classrooms);
 
   const handleSelectChange = (field, value) => {
     setFormValues((prev) => ({ ...prev, [field]: value }));
@@ -66,8 +71,11 @@ function StaffFilter({ CardTitle, closeModal, onApplyFilter }) {
                 onChange={(value) => handleSelectChange("classroom", value)}
               >
                 <Option value={null}>Select</Option>
-                <Option value="1-Blue-D">1-Blue-D</Option>
-                <Option value="6-Yellow-R">6-Yellow-R</Option>
+                {classrooms?.map((item) => (
+                  <Option key={item.id} value={item.name}>
+                    {item.name}
+                  </Option>
+                ))}
               </Select>
             </div>
 
@@ -83,9 +91,11 @@ function StaffFilter({ CardTitle, closeModal, onApplyFilter }) {
                 onChange={(value) => handleSelectChange("designation", value)}
               >
                 <Option value={null}>Select</Option>
-                <Option value="Admin">Admin</Option>
-                <Option value="Staff">Staff</Option>
-                <Option value="Lead Teacher">Lead Teacher</Option>
+                {designation?.data?.map((item) => (
+                  <Option key={item.id} value={item.name}>
+                    {item.name}
+                  </Option>
+                ))}
               </Select>
             </div>
 
@@ -101,8 +111,11 @@ function StaffFilter({ CardTitle, closeModal, onApplyFilter }) {
                 onChange={(value) => handleSelectChange("status", value)}
               >
                 <Option value={null}>Select</Option>
-                <Option value="Active">Active</Option>
-                <Option value="In-Active">In-Active</Option>
+                {status?.data?.map((item) => (
+                  <Option key={item.id} value={item.name}>
+                    {item.name}
+                  </Option>
+                ))}
               </Select>
             </div>
           </div>

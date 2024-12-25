@@ -17,6 +17,7 @@ const TableComponent = ({
   scrollX = false,
   headerAlign = "left", // Added prop for header alignment
   emptyText = "No Data Available", // Added prop for custom empty state
+  rowSelection, // New prop for row selection
 }) => {
   const [pagination, setPagination] = useState({
     current: 1,
@@ -50,7 +51,7 @@ const TableComponent = ({
   }));
 
   return (
-    <div className={` bg-white border-radius rounded-lg ${className}`}>
+    <div className={`bg-white border-radius rounded-lg ${className}`}>
       <Table
         columns={adjustedColumns}
         dataSource={dataSource}
@@ -60,7 +61,7 @@ const TableComponent = ({
           y: scrollY || "50vh", // Default to 60% viewport height
           x: scrollX || "100%", // Default to 100% width
         }}
-        className="ant-table-sticky responsive-table"
+        className="ant-table-sticky responsive-table custom-ant-table"
         size={tableSize}
         locale={{
           emptyText: <Empty description={emptyText} />, // Custom empty state
@@ -105,6 +106,10 @@ const TableComponent = ({
               pageSize: pageSize,
             }));
           },
+        }}
+        rowSelection={rowSelection} // Conditionally apply rowSelection if passed
+        showSorterTooltip={{
+          target: "sorter-icon",
         }}
       />
       <style jsx>{`

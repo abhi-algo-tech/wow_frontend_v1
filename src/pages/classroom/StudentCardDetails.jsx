@@ -21,7 +21,7 @@ const { Option } = Select;
 
 // Sample student data
 
-const leftRenderAttendanceData = [
+export const leftRenderAttendanceData = [
   {
     icon: "/classroom_icons/png/Sign in.png",
     label: "Sign In",
@@ -43,12 +43,12 @@ const leftRenderAttendanceData = [
     modal: "Absent",
   },
 ];
-const leftRenderDefaultData = [
+export const leftRenderDefaultData = [
   { icon: "/wow_icons/png/Nap.png", label: "Nap", modal: "Nap" },
   { icon: "/wow_icons/png/Bathroom.png", label: "Bathroom", modal: "Bathroom" },
   { icon: "/wow_icons/png/Bottle.png", label: "Bottle", modal: "Bottle" },
 ];
-const rightRenderData = [
+export const rightRenderData = [
   {
     icon: "/wow_icons/png/Attendance.png",
     label: "Attendance",

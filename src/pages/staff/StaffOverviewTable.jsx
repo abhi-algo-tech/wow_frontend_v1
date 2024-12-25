@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Input,
   Checkbox,
@@ -9,6 +9,9 @@ import {
   Typography,
   Popover,
   Tooltip,
+  Space,
+  Form,
+  Switch,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import TableComponent from "../../components/TableComponent";
@@ -33,7 +36,11 @@ const StaffOverviewTable = () => {
   const [isFilterModalOpen, setFilterModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const [selectedFilters, setSelectedFilters] = useState({});
+  const [selectedFilters, setSelectedFilters] = useState({
+    classroom: null,
+    designation: null,
+    status: null,
+  });
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [showAttendanceCard, setShowAttendanceCard] = useState(false);
   const [isSignOutModalOpen, setSignOutModalOpen] = useState(false);
@@ -44,16 +51,17 @@ const StaffOverviewTable = () => {
   const [selectedStaffId, setSelectedStaffId] = useState(null);
   const [hoveredRow, setHoveredRow] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showActive, setShowActive] = useState(true);
+  const [classrooms, setClassrooms] = useState([]);
 
   const { data: staff, isLoading, isError, error } = useGetAllStaff();
   const updateStaffMutation = useUpdateStaff();
 
   useEffect(() => {
     if (staff) {
-      const formattedStudentData = generateStaffData(staff.data);
-      console.log("formattedStudentData:", formattedStudentData);
-      setData(formattedStudentData);
-      setFilteredData(formattedStudentData);
+      const formattedStaffData = generateStaffData(staff.data);
+      setData(formattedStaffData);
+      setFilteredData(formattedStaffData);
     }
 
     if (isError) {
@@ -63,19 +71,117 @@ const StaffOverviewTable = () => {
       console.error("Error fetching staff details:", error);
     }
   }, [staff, isError, error]);
+  console.log("selectedFilters", selectedFilters);
 
-  const handleSelectAll = (checked) => {
-    setSelectedRowKeys(checked ? filteredData.map((item) => item.key) : []);
+  // Helper functions for filtering data
+  const getFilteredDataByStatus = (data, status) =>
+    data?.filter((staff) => staff.status?.toLowerCase() === status) || [];
+
+  const getFilteredData = (data, showActive) =>
+    showActive
+      ? getFilteredDataByStatus(data, "active").concat(
+          getFilteredDataByStatus(data, "upcoming")
+        )
+      : getFilteredDataByStatus(data, "inactive");
+
+  // Memoized filtered data based on showActive
+  const baseFilteredStaffs = useMemo(
+    () => getFilteredData(data || [], showActive),
+    [showActive, data]
+  );
+  console.log("baseFilteredStaffs", baseFilteredStaffs);
+
+  // Combine search and funnel filtering
+  const finalFilteredData = useMemo(() => {
+    // Filter by search query
+    const searchFiltered = searchQuery
+      ? baseFilteredStaffs.filter((staff) =>
+          staff.name?.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : baseFilteredStaffs;
+
+    // Apply funnel filters if present
+    if (
+      Object.values(selectedFilters).every(
+        (value) => value === null || value === ""
+      )
+    ) {
+      return searchFiltered;
+    }
+
+    if (
+      (showActive && selectedFilters?.status?.toLowerCase() === "inactive") ||
+      (!showActive &&
+        ["active", "upcoming"].includes(selectedFilters?.status?.toLowerCase()))
+    ) {
+      return [];
+    }
+
+    return searchFiltered.filter((staff) => {
+      const hasClassroomMatch = selectedFilters?.classroom
+        ? staff.primaryClass === selectedFilters.classroom ||
+          staff.subClass.some((sub) => sub.name === selectedFilters.classroom)
+        : true;
+
+      const hasStatusMatch = selectedFilters?.status
+        ? staff.status?.toLowerCase() === selectedFilters.status?.toLowerCase()
+        : true;
+
+      const hasTagMatch = selectedFilters?.tag
+        ? staff.tags?.some((tag) => tag.tagName === selectedFilters.tag)
+        : true;
+
+      return hasClassroomMatch && hasStatusMatch && hasTagMatch;
+    });
+  }, [baseFilteredStaffs, searchQuery, selectedFilters, showActive]);
+
+  // Extract classroom name and key and push into state
+  const classroomData = data.flatMap((item) => {
+    // Include the primary class
+    const primaryClass = {
+      name: item.primaryClass,
+      id: item.key,
+    };
+
+    // Map subClass array
+    const subClasses = item.subClass.map((sub) => ({
+      name: sub.name,
+      id: sub.id,
+    }));
+
+    // Combine primary class and subclasses
+    return [primaryClass, ...subClasses];
+  });
+
+  // Remove duplicates based on the `name` property
+  const uniqueClassroomData = Array.from(
+    new Map(classroomData.map((item) => [item.name, item])).values()
+  );
+
+  // Update the filtered data state whenever the final filtered data changes
+  useEffect(() => {
+    setFilteredData(finalFilteredData);
+
+    // Set the state with the unique classroom data
+    setClassrooms(uniqueClassroomData);
+  }, [finalFilteredData]);
+  console.log("classrooms", classrooms);
+
+  // Handle search input changes
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
   };
-
-  const handleRowSelection = (key, checked) => {
-    setSelectedRowKeys((prev) =>
-      checked
-        ? [...prev, key]
-        : prev.filter((selectedKey) => selectedKey !== key)
-    );
+  // Clear all filters
+  const handleClearAllFilters = () => {
+    setSelectedFilters({});
   };
-
+  // Clear a specific filter
+  const handleClearSingleFilter = (key) => {
+    const updatedFilters = { ...selectedFilters };
+    delete updatedFilters[key];
+    setSelectedFilters(updatedFilters);
+  };
   const handleDeleteModal = (id, name) => {
     setSelectedRecord({ id, name });
     setDeleteModalOpen(true);
@@ -135,20 +241,13 @@ const StaffOverviewTable = () => {
     {
       title: (
         <div style={{ display: "flex", alignItems: "center" }}>
-          <Checkbox
-            indeterminate={
-              selectedRowKeys.length > 0 &&
-              selectedRowKeys.length < filteredData.length
-            }
-            checked={selectedRowKeys.length === filteredData.length}
-            onChange={(e) => handleSelectAll(e.target.checked)}
-          />
           <span style={{ marginLeft: 8 }}>Staff Name</span>
         </div>
       ),
       dataIndex: "name",
       key: "name",
-      width: 250,
+      width: 230,
+      defaultSortOrder: "ascend",
       className: "label-14-600",
       sorter: (a, b) => a.name.localeCompare(b.name), // Sorting by staff name alphabetically
       render: (text, record) => (
@@ -156,10 +255,6 @@ const StaffOverviewTable = () => {
           style={{ display: "flex", alignItems: "center" }}
           className="label-14-500"
         >
-          <Checkbox
-            checked={selectedRowKeys.includes(record.key)}
-            onChange={(e) => handleRowSelection(record.key, e.target.checked)}
-          />
           <div style={{ position: "relative", marginLeft: 8 }}>
             <Avatar
               size={24}
@@ -364,19 +459,6 @@ const StaffOverviewTable = () => {
       ),
     },
   ];
-  // Filter the data based on the search query
-  const handleSearchChange = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-
-    // Filter the data based on the query
-    const filtered = data.filter((student) =>
-      student.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    // Update the filtered data
-    setFilteredData(filtered);
-  };
   const renderAttendanceFloatingRightCard = () => (
     <Card
       className="staff-attendance-overflowborder"
@@ -458,51 +540,66 @@ const StaffOverviewTable = () => {
     <>
       <div className="mt20">
         <div style={{ position: "relative" }}>
-          {selectedRowKeys.length > 0 ? renderFloatingRightCard() : <></>}
-
           <Card>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: 16,
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div className="d-flex justify-content-between mb16">
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "16px" }}
+              >
                 <Input
-                  placeholder="Search by Staff"
-                  prefix={<SearchOutlined />}
-                  style={{ width: 240, height: 40 }}
+                  placeholder="Search Staff"
+                  prefix={<SearchOutlined style={{ color: "#a0aec0" }} />}
+                  style={{ minWidth: "240px", height: 40 }}
                   onChange={handleSearchChange}
                 />
-                <Avatar
-                  src="/wow_icons/png/mdi_filter.png"
-                  onClick={() => setFilterModalOpen(true)}
-                  className="pointer"
-                />
-                {Object.entries(selectedFilters).map(([key, value]) => (
-                  <Tag
-                    key={key}
-                    closable
-                    onClose={() =>
-                      setSelectedFilters((prev) => {
-                        const updated = { ...prev };
-                        delete updated[key];
-                        return updated;
-                      })
-                    }
-                  >
-                    {`${key}: ${value}`}
-                  </Tag>
-                ))}
+                <Space>
+                  <Avatar
+                    onClick={() => setFilterModalOpen(true)}
+                    src={"/wow_icons/png/mdi_filter.png"}
+                    className="pointer"
+                  />
+                  {/* Display selected filters */}
+                  {Object.entries(selectedFilters)
+                    .filter(
+                      ([key, value]) => value !== null && value !== undefined
+                    ) // Filter out null or undefined values
+                    .map(([key, value]) => (
+                      <Tag
+                        key={key}
+                        color="blue"
+                        closable
+                        onClose={() => handleClearSingleFilter(key)}
+                      >
+                        {`${key}: ${value}`}
+                      </Tag>
+                    ))}
+
+                  {Object.keys(selectedFilters).some(
+                    (key) =>
+                      selectedFilters[key] !== null &&
+                      selectedFilters[key] !== undefined
+                  ) && (
+                    <Tag
+                      color="blue"
+                      className="pointer"
+                      onClick={handleClearAllFilters}
+                    >
+                      Clear All
+                    </Tag>
+                  )}
+                </Space>
               </div>
-              <div className="text-end">
-                <ButtonComponent
-                  text="Add Staff"
-                  buttonActionType="create"
-                  gradient
-                  onClick={() => setCreateStaffModalOpen(true)}
-                />
+              <div className="d-flex align-items-center gap8">
+                <Form.Item
+                  name="active"
+                  valuePropName="checked"
+                  className="mb-0 me-2 classroom-show-inactive-toggle-btn"
+                >
+                  <Switch
+                    checked={!showActive}
+                    onChange={(checked) => setShowActive(!checked)}
+                  />
+                </Form.Item>
+                <span className="classroom-inactive-label">Show Inactive</span>
               </div>
             </div>
             <TableComponent
@@ -520,19 +617,6 @@ const StaffOverviewTable = () => {
           </Card>
         </div>
 
-        {isCreateStaffModalOpen && (
-          <CommonModalComponent
-            open={isCreateStaffModalOpen}
-            setOpen={setCreateStaffModalOpen}
-            modalWidthSize={418}
-            isClosable={true}
-          >
-            <CreateStaff
-              CardTitle={"Add Staff"}
-              closeModal={() => setCreateStaffModalOpen(false)}
-            />
-          </CommonModalComponent>
-        )}
         {isFilterModalOpen && (
           <CommonModalComponent
             open={isFilterModalOpen}
@@ -543,6 +627,7 @@ const StaffOverviewTable = () => {
               CardTitle={"Staff Filter"}
               onApplyFilter={setSelectedFilters}
               closeModal={() => setFilterModalOpen(false)}
+              classrooms={classrooms}
             />
           </CommonModalComponent>
         )}
