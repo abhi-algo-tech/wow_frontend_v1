@@ -157,7 +157,7 @@ export default function StudentScheduleForm({
         {schedule.map((item) => (
           <Row
             key={item.day}
-            align="middle"
+            align="top"
             justify="center"
             style={{ marginBottom: "24px" }}
           >

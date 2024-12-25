@@ -314,7 +314,7 @@ export default function StaffScheduleForm({
         {schedule.map((item) => (
           <Row
             key={item.day}
-            align="middle"
+            align="top"
             justify="space-between"
             style={{ marginBottom: "24px" }}
           >
