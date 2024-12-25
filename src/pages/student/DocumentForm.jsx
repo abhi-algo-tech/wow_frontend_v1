@@ -65,7 +65,7 @@ function DocumentForm({ CardTitle, studentData, closeModal, studentId }) {
     const formData = new FormData();
     formData.append("name", values.documentName);
     formData.append("docTypeId", values.documentType);
-    formData.append("expiryDate", values.expiryDate);
+    if (values.expiryDate) formData.append("expiryDate", values.expiryDate);
     formData.append("contentType", "student");
     if (isUploaded) {
       const fileBlob = form.getFieldValue("uploadDocument");
