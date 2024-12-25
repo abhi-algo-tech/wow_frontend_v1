@@ -255,12 +255,29 @@ export default function AssignStaff({ setCancel, classroomData }) {
                 alignItems: "center",
               }}
             >
-              <Checkbox
+              {/* <Checkbox
                 onChange={(e) => handleSelectAll(e.target.checked)}
                 checked={selectedStudents.length === filteredStaffs.length}
                 indeterminate={
                   selectedStudents.length > 0 &&
                   selectedStudents.length < filteredStaffs.length
+                }
+              >
+                Select All
+              </Checkbox> */}
+              <Checkbox
+                onChange={(e) => handleSelectAll(e.target.checked)}
+                checked={
+                  filteredStaffs.length > 0 &&
+                  selectedStudents.length === filteredStaffs.length
+                }
+                indeterminate={
+                  filteredStaffs.length > 0 &&
+                  selectedStudents.length > 0 &&
+                  selectedStudents.length < filteredStaffs.length
+                }
+                disabled={
+                  filteredStaffs.length === 0 || filteredStaffs.length === null
                 }
               >
                 Select All

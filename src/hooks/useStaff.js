@@ -139,7 +139,7 @@ export const useValidateStaff = () => {
         lastName: lastName,
         id: id,
       });
-      setValidationMessage(result.message); // Success message from backend
+      setValidationMessage(result); // Success message from backend
     } catch (err) {
       setError(err.message); // Error message from backend
     } finally {

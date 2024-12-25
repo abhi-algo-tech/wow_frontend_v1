@@ -105,9 +105,10 @@ export const generateStaffData = (staffData) => {
           )
         : [],
       designation: staff.designation,
-      schedule: staff.schedule
-        ? formatSchedule(staff.schedule)
-        : staticSchedule, // If no schedule, use static data
+      // schedule: staff.weekSchedules
+      //   ? formatSchedule(staff.weekSchedules)
+      //   : staticSchedule, // If no schedule, use static data
+      schedule: generateSchedule(staff?.weekSchedules),
       email: staff.email,
       phone: staff.phoneNumber,
       isOnline: staff.isActive,
@@ -115,3 +116,30 @@ export const generateStaffData = (staffData) => {
     };
   });
 };
+
+export function generateSchedule(daysData) {
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+
+  // Return all days as inactive if daysData is null or empty
+  if (!daysData || daysData.length === 0) {
+    return {
+      days: days,
+      active: [],
+    };
+  }
+
+  // Map dayOfWeek from daysData to active/inactive state
+  const activeDays = daysData
+    .filter((data) => data.startTime !== "00:00:00")
+    .map((data) => {
+      return days.find((day) =>
+        data.dayOfWeek.toUpperCase().startsWith(day.toUpperCase())
+      );
+    })
+    .filter((day) => day); // Remove undefined values in case of mismatch
+
+  return {
+    days: days,
+    active: activeDays,
+  };
+}

@@ -231,23 +231,25 @@ export default function AssignStudent({ setCancel, classroomData }) {
             placeholder="Search Student"
             prefix={<SearchOutlined />}
             style={{ width: 240, height: 40 }}
-            onChange={(e) =>
+            onChange={(e) => {
               setFilteredStudents(
                 students.filter((data) =>
                   `${data.firstName} ${data.lastName}`
                     .toLowerCase()
                     .includes(e.target.value.toLowerCase())
                 )
-              )
-            }
+              ),
+                setSelectedStudents([]);
+            }}
           />
 
           <Select
             className="select-student-add-from"
             placeholder="Select Classroom"
             style={{ width: 150 }}
-            value={selectedClassroom}
-            onChange={(value) => setSelectedClassroom(value)}
+            onChange={(value) => {
+              setSelectedClassroom(value), setSelectedStudents([]);
+            }}
           >
             {classroomOptions?.items?.map((option) => (
               <Option key={option.key} value={option.key}>
@@ -260,8 +262,9 @@ export default function AssignStudent({ setCancel, classroomData }) {
             className="select-student-add-from"
             placeholder="Select Tag"
             style={{ width: 150 }}
-            value={selectedTag}
-            onChange={(value) => setSelectedTag(value)}
+            onChange={(value) => {
+              setSelectedTag(value), setSelectedStudents([]);
+            }}
           >
             {tagsOptions?.items?.map((option) => (
               <Option key={option.key} value={option.key}>
@@ -274,8 +277,9 @@ export default function AssignStudent({ setCancel, classroomData }) {
             className="select-student-add-from"
             placeholder="Select Status"
             style={{ width: 150 }}
-            value={selectedStatus}
-            onChange={(value) => setSelectedStatus(value)}
+            onChange={(value) => {
+              setSelectedStatus(value), setSelectedStudents([]);
+            }}
           >
             {statusOptions?.items?.map((option) => (
               <Option key={option.key} value={option.key}>
@@ -297,14 +301,23 @@ export default function AssignStudent({ setCancel, classroomData }) {
             >
               <Checkbox
                 onChange={(e) => handleSelectAll(e.target.checked)}
-                checked={selectedStudents.length === filteredStudents.length}
+                checked={
+                  filteredStudents.length > 0 &&
+                  selectedStudents.length === filteredStudents.length
+                }
                 indeterminate={
+                  filteredStudents.length > 0 &&
                   selectedStudents.length > 0 &&
                   selectedStudents.length < filteredStudents.length
+                }
+                disabled={
+                  filteredStudents.length === 0 ||
+                  filteredStudents.length === null
                 }
               >
                 Select All
               </Checkbox>
+
               {/* <div className="assign-label">Assign Students to 1-Blue-D</div> */}
             </div>
             <ClassroomList>

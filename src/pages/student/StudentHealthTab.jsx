@@ -36,7 +36,7 @@ function StudentHealthTab({ isstudentData, studentId }) {
           <PhysicianExamination studentId={studentId} />
         </TabPane>
         <TabPane tab={<span>Immunization</span>} key="4">
-          <ImmunizationRecord />
+          <ImmunizationRecord studentId={studentId} />
         </TabPane>
       </Tabs>
 

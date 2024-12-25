@@ -1,52 +1,11 @@
-import React, { useState } from "react";
-import { Table, Switch, Button, Tag, Space, Typography, Form } from "antd";
-import { PlusOutlined, FileTextOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import { Table, Switch, Form, Space, Tag } from "antd";
 import ButtonComponent from "../../components/ButtonComponent";
 import CommonModalComponent from "../../components/CommonModalComponent";
-import ImmunizationStatusForm from "./ImmunizationStatusForm";
 import ReminderForm from "./ReminderForm";
-const { Text } = Typography;
-const columns = [
-  {
-    title: "Vaccine",
-    dataIndex: "vaccine",
-    key: "vaccine",
-    align: "start",
-    width: 60,
-    // fixed: "left",
-    render: (vaccine) => <strong>{vaccine}</strong>, // Highlight vaccine name
-  },
-  ...Array.from({ length: 6 }, (_, i) => ({
-    title: `Dose ${i + 1}`,
-    dataIndex: `dose${i + 1}`,
-    key: `dose${i + 1}`,
-    align: "start",
-    width: 70,
-    render: (dose) => {
-      if (!dose) return ""; // Handle missing dose data
-      return (
-        <Space direction="vertical">
-          <Tag color={dose.status === "Completed" ? "green" : "yellow"}>
-            {dose.status || "N/A"}
-          </Tag>
-          <span>{dose.date || "No Date"}</span>
-        </Space>
-      );
-    },
-  })),
-  // {
-  //   title: "Notes",
-  //   key: "notes",
-  //   align: "start",
-  //   fixed: "right",
-  //   render: () => (
-  //     <Space>
-  //       <Button type="text" icon={<PlusOutlined />} />
-  //       <Button type="text" icon={<FileTextOutlined />} />
-  //     </Space>
-  //   ),
-  // },
-];
+import ImmunizationDetailsForm from "./ImmunizationDetailsForm";
+import { useGetAllImmunizationsByStudent } from "../../hooks/useImmunizations";
+import { transformImmunizationData } from "./StudentCommon";
 
 const data = [
   {
@@ -95,11 +54,69 @@ const data = [
   },
 ];
 
-const ImmunizationRecord = () => {
+const ImmunizationRecord = ({ studentId }) => {
   const [
     isCreateImmunizationRecordModalOpen,
     setCreateImmunizationRecordModalOpen,
   ] = useState(false);
+  const [isDoseModalOpen, setDoseModalOpen] = useState(false); // For dose modal
+  const [selectedDose, setSelectedDose] = useState(null); // Store selected dose data
+  const [formattedData, setFormattedData] = useState([]);
+
+  const {
+    data: immunizations,
+    isLoading,
+    isError,
+  } = useGetAllImmunizationsByStudent(studentId);
+
+  useEffect(() => {
+    if (immunizations) {
+      const transformed = transformImmunizationData(immunizations);
+      setFormattedData(transformed);
+    }
+  }, [immunizations]);
+
+  const columns = [
+    {
+      title: "Vaccine",
+      dataIndex: "vaccine",
+      key: "vaccine",
+      align: "start",
+      width: 60,
+      render: (vaccine) => <strong>{vaccine}</strong>, // Highlight vaccine name
+    },
+    ...Array.from({ length: 6 }, (_, i) => ({
+      title: `Dose ${i + 1}`,
+      dataIndex: `dose${i + 1}`,
+      key: `dose${i + 1}`,
+      align: "start",
+      width: 70,
+      render: (dose, record) => {
+        if (!dose) return ""; // Handle missing dose data
+        return (
+          <Space direction="vertical">
+            <Tag
+              color={dose.status === "Completed" ? "green" : "yellow"}
+              onClick={() =>
+                handleDoseClick(record.key, record.vaccine, i + 1, dose)
+              } // Click handler
+              style={{ cursor: "pointer" }} // Add pointer cursor for interaction
+            >
+              {dose.status || "N/A"}
+            </Tag>
+            <span>{dose.date || "No Date"}</span>
+          </Space>
+        );
+      },
+    })),
+  ];
+
+  // Handle dose click
+  const handleDoseClick = (id, vaccine, doseId, data) => {
+    setSelectedDose({ id, vaccine, doseId, data });
+    setDoseModalOpen(true); // Open dose modal
+  };
+
   return (
     <>
       <div style={{ padding: "16px" }}>
@@ -118,8 +135,6 @@ const ImmunizationRecord = () => {
             <span className="classroom-inactive-label">
               Exempt student from all immunizations
             </span>
-            {/* <Switch className="mr10" />
-            <Text>Exempt student from all immunizations</Text> */}
           </div>
           <div>
             <ButtonComponent
@@ -131,13 +146,13 @@ const ImmunizationRecord = () => {
         </div>
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={formattedData}
           pagination={false}
           size="small"
-          // scroll={{ x: 1200 }} // Ensure responsiveness
-          // tableLayout="fixed"
         />
       </div>
+
+      {/* Send Reminder Modal */}
       {isCreateImmunizationRecordModalOpen && (
         <CommonModalComponent
           open={isCreateImmunizationRecordModalOpen}
@@ -150,6 +165,23 @@ const ImmunizationRecord = () => {
             CardTitle={"Send Reminder"}
             classroomId={null}
             closeModal={() => setCreateImmunizationRecordModalOpen(false)}
+          />
+        </CommonModalComponent>
+      )}
+
+      {/* Dose Details Modal */}
+      {isDoseModalOpen && selectedDose && (
+        <CommonModalComponent
+          open={isDoseModalOpen}
+          setOpen={setDoseModalOpen}
+          modalWidthSize={418}
+          isClosable={true}
+        >
+          <ImmunizationDetailsForm
+            CardTitle={`${selectedDose.vaccine} - Dose ${selectedDose.doseId}`}
+            doseData={selectedDose}
+            studentId={studentId}
+            closeModal={() => setDoseModalOpen(false)}
           />
         </CommonModalComponent>
       )}

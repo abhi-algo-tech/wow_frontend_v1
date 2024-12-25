@@ -366,30 +366,58 @@ const StaffOverviewTable = () => {
         <span className="staff-table--body-label">{text}</span>
       ),
     },
+    // {
+    //   title: "Schedule",
+    //   dataIndex: "schedule",
+    //   key: "schedule",
+    //   align: "start",
+    //   className: "label-14-600",
+    //   width: 280,
+    //   render: (schedule) =>
+    //     ["Mon", "Tue", "Wed", "Thu", "Fri"].map((day) => (
+    //       <Tooltip
+    //         color="#F3F2FF"
+    //         key={day}
+    //         title={getTooltipContent(day, schedule[day])}
+    //         className="no-border-tag "
+    //       >
+    //         <Tag
+    //           color={schedule[day] ? "#B1AFE94D" : "default"}
+    //           style={{ color: "#1B237E" }}
+    //           className="label-12-400"
+    //         >
+    //           {day}
+    //         </Tag>
+    //       </Tooltip>
+    //     )),
+    // },
     {
-      title: "Schedule",
+      title: <span className="student-table-header-label">Schedule</span>,
       dataIndex: "schedule",
       key: "schedule",
-      align: "start",
-      className: "label-14-600",
-      width: 280,
-      render: (schedule) =>
-        ["Mon", "Tue", "Wed", "Thu", "Fri"].map((day) => (
-          <Tooltip
-            color="#F3F2FF"
-            key={day}
-            title={getTooltipContent(day, schedule[day])}
-            className="no-border-tag "
-          >
+      width: 250,
+      responsive: ["lg"],
+      render: (schedule) => (
+        <div className="d-flex align-items-center gap-1 flex-wrap">
+          {schedule.days.map((day) => (
             <Tag
-              color={schedule[day] ? "#B1AFE94D" : "default"}
-              style={{ color: "#1B237E" }}
-              className="label-12-400"
+              key={day}
+              style={{
+                minWidth: "36px",
+                textAlign: "center",
+                backgroundColor: schedule.active.includes(day)
+                  ? "#B1AFE94D"
+                  : "#F7FAFC",
+                color: schedule.active.includes(day) ? "#1B237E" : "#57335380",
+                border: "none",
+              }}
             >
               {day}
             </Tag>
-          </Tooltip>
-        )),
+          ))}
+        </div>
+      ),
+      // sorter: (a, b) => a.schedule.days.length - b.schedule.days.length,
     },
     {
       title: "Phone Number",

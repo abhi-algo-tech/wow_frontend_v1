@@ -108,12 +108,38 @@ function getRandomSubset(array, min, max) {
 }
 
 // Function to generate schedule
-export function generateSchedule() {
+// export function generateSchedule(daysData) {
+//   const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+//   const active = getRandomSubset(days, 3, 5); // Select between 3 and 5 active days
+//   return {
+//     days: days,
+//     active: active,
+//   };
+// }
+export function generateSchedule(daysData) {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-  const active = getRandomSubset(days, 3, 5); // Select between 3 and 5 active days
+
+  // Return all days as inactive if daysData is null or empty
+  if (!daysData || daysData.length === 0) {
+    return {
+      days: days,
+      active: [],
+    };
+  }
+
+  // Map dayOfWeek from daysData to active/inactive state
+  const activeDays = daysData
+    .filter((data) => data.startTime !== "00:00:00")
+    .map((data) => {
+      return days.find((day) =>
+        data.dayOfWeek.toUpperCase().startsWith(day.toUpperCase())
+      );
+    })
+    .filter((day) => day); // Remove undefined values in case of mismatch
+
   return {
     days: days,
-    active: active,
+    active: activeDays,
   };
 }
 function generateRandomStatus() {
@@ -143,7 +169,7 @@ export const generateStudentData = (apiData) => {
     },
     tags: item?.tags, // { days: 3, type: "Full Day", additional: "+3" },
     // tags: generateRandomTag(), // { days: 3, type: "Full Day", additional: "+3" },
-    schedule: generateSchedule(),
+    schedule: generateSchedule(item?.weekSchedules),
     // schedule: {
     //   days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
     //   active: ["Mon", "Wed", "Fri"],
@@ -156,4 +182,44 @@ export const generateStudentData = (apiData) => {
     status: item?.status,
     // status: generateRandomStatus(),
   }));
+};
+
+export const transformImmunizationData = (immunizations) => {
+  return immunizations?.data?.map((item) => {
+    const doses = Array.from({ length: 8 }, (_, i) => {
+      const doseIndex = i + 1;
+      const physicalDate = item[`dose${doseIndex}PhysicalDate`];
+      const endDate = item[`dose${doseIndex}EndDate`];
+      const statusId = item.statusId;
+
+      // Exclude doses where both physicalDate and endDate are null
+      if (!physicalDate && !endDate) {
+        return null;
+      }
+
+      return {
+        status: item.status,
+        date: physicalDate
+          ? new Date(physicalDate).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "2-digit",
+            })
+          : new Date(endDate).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "2-digit",
+            }),
+        statusId,
+      };
+    })
+      .filter(Boolean) // Remove null doses
+      .filter((dose) => dose.status !== "Not Started"); // Exclude doses with status "Not Started"
+
+    return {
+      key: item.id,
+      vaccine: item.vaccineName,
+      ...Object.fromEntries(doses.map((dose, i) => [`dose${i + 1}`, dose])),
+    };
+  });
 };

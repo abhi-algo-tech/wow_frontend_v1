@@ -28,6 +28,14 @@ import StudentScheduleForm from "./StudentScheduleForm";
 const { Text } = Typography;
 const { TabPane } = Tabs;
 
+const defaultWeekdays = [
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+];
+
 const LabelCol = ({ children }) => (
   <Col span={5}>
     <Text className="student-about-tab-label">{children}</Text>
@@ -263,28 +271,47 @@ const StudentAbout = ({ studentId }) => {
           <LabelCol>Schedule</LabelCol>
           <ContentCol>
             <Row gutter={[8, 8]}>
-              {student?.weekSchedules
-                ?.filter((schedule) => schedule?.startTime !== "00:00:00")
-                .map((schedule) => (
-                  <Col key={schedule.id}>
-                    <Tag
-                      color="purple"
-                      bordered={false}
-                      className="d-flex flex-column align-items-center p-1 px-2 m-0"
-                    >
-                      <div className="student-about-tab-schedule-value">
-                        {schedule.dayOfWeek.charAt(0) +
-                          schedule.dayOfWeek.slice(1).toLowerCase()}
-                      </div>
-                    </Tag>
-                    <Tag className="w-100 text-center bg-white">
-                      <div style={{ fontSize: "8.5px" }}>
-                        {formatTime(schedule.startTime)} -{" "}
-                        {formatTime(schedule.endTime)}
-                      </div>
-                    </Tag>
-                  </Col>
-                ))}
+              {defaultWeekdays.map((day, index) => (
+                <Col style={{ width: 110 }} key={index}>
+                  <Tag
+                    color="purple"
+                    bordered={false}
+                    className="d-flex flex-column align-items-center p-1 px-2 m-0"
+                  >
+                    <div className="student-about-tab-schedule-value">
+                      {day}
+                    </div>
+                  </Tag>
+                  {student?.weekSchedules?.map((schedule) => {
+                    // Match schedule with the correct day
+                    if (schedule?.dayOfWeek === day) {
+                      // Check if startTime is not "00:00:00"
+                      const startTimeDisplay =
+                        schedule?.startTime !== "00:00:00"
+                          ? formatTime(schedule?.startTime)
+                          : "-";
+                      const endTimeDisplay =
+                        schedule?.startTime !== "00:00:00"
+                          ? formatTime(schedule?.endTime)
+                          : "-";
+
+                      return (
+                        <>
+                          <Tag
+                            className="w-100 text-center bg-white"
+                            key={schedule?.id}
+                          >
+                            <div style={{ fontSize: "8.5px" }}>
+                              {startTimeDisplay} - {endTimeDisplay}
+                            </div>
+                          </Tag>
+                        </>
+                      );
+                    }
+                    return null;
+                  })}
+                </Col>
+              ))}
             </Row>
 
             <Row justify="end">

@@ -39,6 +39,14 @@ const StaffAbout = ({ staffId }) => {
     "lime",
   ];
 
+  const defaultWeekdays = [
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+  ];
+
   // Function to get a random color
   const getRandomColor = () =>
     tagColors[Math.floor(Math.random() * tagColors.length)];
@@ -224,33 +232,60 @@ const StaffAbout = ({ staffId }) => {
           </Col>
           <Col span={19}>
             <Row gutter={[10, 15]}>
-              {staff?.weekSchedules
-                ?.filter((schedule) => schedule?.startTime !== "00:00:00") // Filter out invalid schedules
-                .map((schedule) => (
-                  <Col style={{ width: 115 }} key={schedule?.id}>
-                    <Tag
-                      color="purple"
-                      bordered={false}
-                      className="d-flex flex-column align-items-center p-1 px-2 m-0"
-                    >
-                      <div className="student-about-tab-schedule-value">
-                        {schedule?.dayOfWeek}
-                      </div>
-                    </Tag>
-                    <Tag className="w-100 text-center bg-white">
-                      <div style={{ fontSize: "10px" }}>
-                        {formatTime(schedule?.startTime)} -{" "}
-                        {formatTime(schedule?.endTime)}
-                      </div>
-                    </Tag>
-                    <Tag className="w-100 text-center bg-white">
-                      <div style={{ fontSize: "10px" }}>
-                        {formatTime(schedule?.breakStartTime)} -{" "}
-                        {formatTime(schedule?.breakEndTime)}
-                      </div>
-                    </Tag>
-                  </Col>
-                ))}
+              {defaultWeekdays.map((day, index) => (
+                <Col style={{ width: 115 }} key={index}>
+                  <Tag
+                    color="purple"
+                    bordered={false}
+                    className="d-flex flex-column align-items-center p-1 px-2 m-0"
+                  >
+                    <div className="student-about-tab-schedule-value">
+                      {day}
+                    </div>
+                  </Tag>
+                  {staff?.weekSchedules?.map((schedule) => {
+                    // Match schedule with the correct day
+                    if (schedule?.dayOfWeek === day) {
+                      // Check if startTime is not "00:00:00"
+                      const startTimeDisplay =
+                        schedule?.startTime !== "00:00:00"
+                          ? formatTime(schedule?.startTime)
+                          : "-";
+                      const endTimeDisplay =
+                        schedule?.startTime !== "00:00:00"
+                          ? formatTime(schedule?.endTime)
+                          : "-";
+                      const breakStartTimeDisplay =
+                        schedule?.startTime !== "00:00:00"
+                          ? formatTime(schedule?.breakStartTime)
+                          : "-";
+                      const breakEndTimeDisplay =
+                        schedule?.startTime !== "00:00:00"
+                          ? formatTime(schedule?.breakEndTime)
+                          : "-";
+
+                      return (
+                        <>
+                          <Tag
+                            className="w-100 text-center bg-white"
+                            key={schedule?.id}
+                          >
+                            <div style={{ fontSize: "10px" }}>
+                              {startTimeDisplay} - {endTimeDisplay}
+                            </div>
+                          </Tag>
+                          <Tag className="w-100 text-center bg-white">
+                            <div style={{ fontSize: "10px" }}>
+                              {breakStartTimeDisplay} - {breakEndTimeDisplay}
+                            </div>
+                          </Tag>
+                        </>
+                      );
+                    }
+                    return null;
+                  })}
+                </Col>
+              ))}
             </Row>
           </Col>
         </Row>
