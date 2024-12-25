@@ -31,6 +31,8 @@ import {
   leftRenderDefaultData,
   rightRenderData,
 } from "../classroom/StudentCardDetails";
+import ActivityIconSubMenu from "../classroom/ActivityIconSubMenu";
+import CreateMessage from "../../components/message/CreateMessage";
 const { Text } = Typography;
 
 const StudentOverviewTable = () => {
@@ -41,6 +43,10 @@ const StudentOverviewTable = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
+  const [isActivityIconSubMenuModalOpen, setActivityIconSubMenuModalOpen] =
+    useState(false);
+  const [isCreateMessageModalOpen, setCreateMessageModalOpen] = useState(false);
+  const [isAssignConfirmModalOpen, setAssignConfirmModalOpen] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
     classroom: null,
     status: null,
@@ -55,8 +61,7 @@ const StudentOverviewTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [classrooms, setClassrooms] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [isFloatingCardVisible, setFloatingCardVisible] = useState();
-  const [currentAction, setCurrentAction] = useState("student");
+  const [isLeftRenderUi, setLeftRenderUi] = useState("");
   const [isSignOutModalOpen, setSignOutModalOpen] = useState(false);
   const [leftRenderData, setLeftRenderData] = useState([]);
   const [isSignInModalOpen, setSignInModalOpen] = useState(false);
@@ -437,31 +442,28 @@ const StudentOverviewTable = () => {
   ];
   const setShowRightActionCard = (action) => {
     let selectedAction;
-    setCurrentAction(action.toLowerCase());
     switch (action.toLowerCase()) {
       case "attendance":
         selectedAction = leftRenderAttendanceData;
+        setLeftRenderUi("attendance");
         break;
       case "activity":
+        setLeftRenderUi("");
         setActivityIconSubMenuModalOpen(true);
-        selectedAction = leftRenderDefaultData;
-        setCurrentAction("student");
+        selectedAction = "";
         break;
       case "message":
+        setLeftRenderUi("");
         setCreateMessageModalOpen(true);
-        selectedAction = leftRenderDefaultData;
-        setCurrentAction("student");
+        selectedAction = "";
         break;
       default:
-        selectedAction = leftRenderDefaultData;
-        setCurrentAction("student");
         break;
     }
 
     setLeftRenderData(selectedAction); // return the data if needed
   };
   const handleModalOpen = (action) => {
-    setCurrentAction(action.toLowerCase());
     switch (action.toLowerCase()) {
       case "signin":
         setSignInModalOpen(true);
@@ -481,12 +483,7 @@ const StudentOverviewTable = () => {
     }
   };
   const renderLFloatingRightCard = () => (
-    <div className="classroom-students-l-overflowborder text-center">
-      {currentAction === "student" ? (
-        <div className="label-12-400">Recents</div>
-      ) : (
-        <></>
-      )}
+    <div className="classroom-students-overview-l-overflow text-center">
       {leftRenderData.map((data, i) => (
         <div
           key={i}
@@ -498,7 +495,7 @@ const StudentOverviewTable = () => {
             src={data?.icon}
             alt={data?.label}
           />
-          <div className="label-14-500 mt16 ">{data?.label}</div>
+          <div className="label-11-500 mt16 ">{data?.label}</div>
         </div>
       ))}
     </div>
@@ -506,14 +503,8 @@ const StudentOverviewTable = () => {
 
   const renderRFloatingRightCard = () => (
     <>
-      {renderLFloatingRightCard()}
-      <div className="classroom-students-r-overflowborder">
-        <div
-          className="close-icon position-absolute "
-          onClick={() => setFloatingCardVisible(false)}
-        >
-          &#x2715; {/* Unicode for cross icon (✕) */}
-        </div>
+      <div className="classroom-students-overview-r-overflow">
+        {isLeftRenderUi === "attendance" ? renderLFloatingRightCard() : <></>}
         {rightRenderData.map((data, i) => (
           <div
             key={i}
@@ -525,18 +516,21 @@ const StudentOverviewTable = () => {
               src={data?.icon}
               alt={data?.label}
             />
-            <div className="label-14-400 text-white mt16">{data?.label}</div>
+            <div className="label-11-500 text-white mt16">{data?.label}</div>
           </div>
         ))}
       </div>
     </>
   );
+  useEffect(() => {
+    selectedRowKeys.length === 0 ? setLeftRenderUi("") : "";
+  }, [selectedRowKeys.length]);
+
   return (
     <>
       <div className="mt20">
         <Card styles={{ body: { padding: 16 } }}>
           <div className="d-flex justify-content-between mb16">
-            {selectedRowKeys.length > 0 ? renderRFloatingRightCard() : <></>}
             <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
               <Input
                 placeholder="Search by Students/Parent"
@@ -600,6 +594,7 @@ const StudentOverviewTable = () => {
             </div>
           </div>
 
+          {selectedRowKeys.length > 0 ? renderRFloatingRightCard() : <></>}
           <TableComponent
             columns={columns}
             dataSource={filteredData}
@@ -663,6 +658,29 @@ const StudentOverviewTable = () => {
             CardTitle={"Edit Student"}
             studentId={selectedStudentId}
             closeModal={() => setEditModalOpen(false)}
+          />
+        </CommonModalComponent>
+      )}
+      {isActivityIconSubMenuModalOpen && (
+        <CommonModalComponent
+          open={isActivityIconSubMenuModalOpen}
+          setOpen={setActivityIconSubMenuModalOpen}
+          modalWidthSize={804}
+          isClosable={true}
+        >
+          <ActivityIconSubMenu />
+          {/* <ActivitySubMenu setCancel={setMarkAbsentModalOpen} /> */}
+        </CommonModalComponent>
+      )}
+      {isCreateMessageModalOpen && (
+        <CommonModalComponent
+          open={isCreateMessageModalOpen}
+          setOpen={setCreateMessageModalOpen}
+          modalWidthSize={549}
+        >
+          <CreateMessage
+            setCancel={setCreateMessageModalOpen}
+            setAssignConfirm={setAssignConfirmModalOpen}
           />
         </CommonModalComponent>
       )}
