@@ -89,31 +89,20 @@ export const useDeleteClassroom = () => {
   });
 };
 export const useValidateClassroom = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [validationMessage, setValidationMessage] = useState(null);
-  const validate = async (name, id) => {
-    setIsLoading(true);
-    setError(null);
-    setValidationMessage(null);
 
+  const validate = async (name, id) => {
     try {
       const result = await ClassroomService.validateName({
         name: name,
         id: id,
       });
-      setValidationMessage(result); // Success message from backend
+      return result; // Success message from backend
     } catch (err) {
-      setError(err.message); // Error message from backend
-    } finally {
-      setIsLoading(false);
+      setError(err.message); // Capture and set error message
+      return null; // Return null or handle this case in your code
     }
   };
 
-  return {
-    isLoading,
-    error,
-    validationMessage, // Updated variable name
-    validate,
-  };
+  return { validate, error };
 };

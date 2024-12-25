@@ -72,6 +72,7 @@ const ImmunizationRecord = ({ studentId }) => {
   useEffect(() => {
     if (immunizations) {
       const transformed = transformImmunizationData(immunizations);
+      console.log("transformed:", transformed);
       setFormattedData(transformed);
     }
   }, [immunizations]);

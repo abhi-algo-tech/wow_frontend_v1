@@ -67,7 +67,12 @@ const ProfileImageComponent = ({
         onPreview={handlePreview}
         onChange={handleChange}
         onRemove={handleRemove}
-        beforeUpload={beforeUpload}
+        beforeUpload={(file) => {
+          if (!beforeUpload(file)) {
+            return Upload.LIST_IGNORE; // Prevent adding the file to the list
+          }
+          return false; // Allow manual upload handling
+        }}
         showUploadList={{
           showPreviewIcon: false, // Disable the preview icon
           showRemoveIcon: true,
