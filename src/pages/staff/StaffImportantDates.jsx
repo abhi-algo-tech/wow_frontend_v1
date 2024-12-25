@@ -192,21 +192,19 @@ function StaffImportantDates({ staffData }) {
             style={{ position: "relative" }} // Added relative positioning to the Col for proper placement of absolute children
           >
             Physical checkup
-            <div
-              style={{
-                position: "absolute",
-                top: "0px",
-                right: "100px",
-              }}
-            >
-              <Badge className="pointer about-floating-edit-div">
-                <Avatar
-                  shape="square"
-                  icon={<MdOutlineModeEditOutline />}
-                  onClick={() => setCreatePhysicianExaminationModalOpen(true)}
-                />
-              </Badge>
-            </div>
+            <Badge className="pointer about-floating-edit-div">
+              <div
+                style={{
+                  position: "absolute",
+                  top: -15,
+                  zIndex: 10,
+                }}
+                className="pointer"
+                onClick={() => setCreatePhysicianExaminationModalOpen(true)}
+              >
+                <Avatar size={20} src="/wow_icons/png/edit-grey.png" />
+              </div>
+            </Badge>
           </Col>
 
           <Col span={16}>
