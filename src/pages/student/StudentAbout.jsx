@@ -330,7 +330,7 @@ const StudentAbout = ({ studentId }) => {
                 className="pointer"
                 onClick={() => setAboutScheduleModalOpen(true)}
               >
-                <Avatar size={20} src="/wow_icons/png/edit-grey.png" />
+                <img className="size-20" src="/wow_icons/png/edit-grey.png" />
               </div>
             </Row>
           </ContentCol>
