@@ -152,7 +152,12 @@ function ClassroomProfile() {
                             <span style={{ fontSize: "20px", fontWeight: 500 }}>
                               {truncateText(selectedAcademy, MAX_TEXT_LENGTH)}
                             </span>
-                            <IoChevronDownOutline />
+                            <IoChevronDownOutline
+                              style={{
+                                color: "var(--text-color)",
+                                opacity: "0.9",
+                              }}
+                            />
                           </Space>
                         </a>
                       </Dropdown>
@@ -160,7 +165,7 @@ function ClassroomProfile() {
                   </div>
                   <div onClick={() => setEditClassroomModalOpen(true)}>
                     <img
-                      src="/wow_icons/png/edit/edit.png"
+                      src="/wow_icons/png/edit.png"
                       className="profile-edit-icon"
                     />
                   </div>
@@ -171,18 +176,18 @@ function ClassroomProfile() {
                     {formatRange(currentClassroomData?.data?.ageRange)}
                   </Text>
                 </div>
-                <div className="d-flex justify-content-between align-items-center">
-                  <Text className="font-12-details">
+                <div className="d-flex justify-content-between align-items-start">
+                  <Text className="font-12-details ">
                     Capacity: {currentClassroomData?.data?.maxCapacity}
                   </Text>
-                  <Text className="font-12-details">
-                    Required:
-                    {currentClassroomData?.data?.staffRatio}: 1{" "}
-                    <Avatar
-                      src="/classroom_icons/png/thumb_up.png"
-                      className="classroom-table-thumb"
-                    />
+                  <Text className="font-12-details ">
+                    Required: {currentClassroomData?.data?.staffRatio}:1
                   </Text>
+                  <img
+                    src="/wow_icons/png/thumb_up.png"
+                    className="classroom-table-thumb size-17"
+                    alt="Thumb Up"
+                  />
                 </div>
               </div>
             </div>

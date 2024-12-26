@@ -1955,3 +1955,12 @@
   color: var(--text-color) !important;
   opacity: 0.8;
 }
+.ant-select .ant-select-arrow {
+  color: var(--text-color) !important;
+  opacity: 0.8;
+}
+
+.pdf {
+  width: 16px;
+  height: 18px;
+}

@@ -108,9 +108,9 @@ const StaffDocument = ({ staffData }) => {
           style={{ cursor: "pointer" }}
         >
           {record.fileType === "image/jpeg" ? (
-            <Avatar src="/wow_icons/png/image.png" size={24} />
+            <img src="/wow_icons/png/image.png" className="size-20" />
           ) : (
-            <Avatar src="/wow_icons/png/pdf.png" size={24} />
+            <img src="/wow_icons/png/pdf.png" className="pdf" />
           )}
         </div>
       ),

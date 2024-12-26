@@ -320,13 +320,13 @@ function ClassroomOverviewTable() {
           className: "ratio-column label-14-600",
           render: (status) =>
             status === "warning" ? (
-              <Avatar
-                src="/classroom_icons/png/thumb_down.png"
+              <img
+                src="/wow_icons/png/thumb_down.png"
                 className="classroom-table-thumb"
               />
             ) : (
-              <Avatar
-                src="/classroom_icons/png/thumb_up.png"
+              <img
+                src="/wow_icons/png/thumb_up.png"
                 className="classroom-table-thumb"
               />
             ),
