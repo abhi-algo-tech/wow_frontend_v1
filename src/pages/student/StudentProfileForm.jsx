@@ -575,13 +575,14 @@ function StudentProfileForm({ CardTitle, studentId, studentData, closeModal }) {
                     !isLoading
                       ? Array.isArray(siblingsOptions?.items)
                         ? siblingsOptions.items
-                            .sort((a, b) => a.label.localeCompare(b.label))
+                            .filter((sibling) => sibling.key !== studentId) // Filter out the object where key === studentId
+                            .sort((a, b) => a.label.localeCompare(b.label)) // Sort alphabetically by label
                             .map((sibling) => ({
                               label: sibling.label,
-                              value: sibling.key,
+                              value: sibling.key, // Map to label and value structure
                             }))
-                        : []
-                      : []
+                        : [] // Default to an empty array if siblingsOptions.items is not an array
+                      : [] // Default to an empty array if loading
                   }
                   value={selectedSiblings}
                   onChange={setSelectedValues}
