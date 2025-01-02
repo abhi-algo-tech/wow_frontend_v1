@@ -85,7 +85,7 @@ export default function ShiftForm({
     setStaffs(filteredClassrooms || []);
   }, [staffData]);
 
-  // console.log("checkedDays", checkedDays);
+  console.log("classroomSelectedData", classroomSelectedData);
 
   const weekDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
   // Get the current day of the week
@@ -138,7 +138,7 @@ export default function ShiftForm({
     if (classroomSelectedData) {
       form.setFieldsValue({
         shiftdate: classroomSelectedData?.date,
-        shiftStart: dayjs(classroomSelectedData?.startTime, "HH:mm"),
+        shiftStart: dayjs(classroomSelectedData?.startTime, "HH:mm:ss"),
         shiftEnd: dayjs(classroomSelectedData?.endTime, "HH:mm"),
         breakStart: dayjs(classroomSelectedData?.breakStartTime, "HH:mm"),
         breakEnd: dayjs(classroomSelectedData?.breakEndTime, "HH:mm"),
@@ -272,7 +272,7 @@ export default function ShiftForm({
     setFirstModal(true);
   };
   const handleDelete = async () => {
-    console.log("selectedRecord", selectedRecord);
+    // console.log("selectedRecord", selectedRecord);
 
     const shiftData = {
       startShift: dayjs(selectedRecord?.shiftdate).format("HH:mm:ss"),
