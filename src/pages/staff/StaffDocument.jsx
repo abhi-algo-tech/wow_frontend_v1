@@ -7,6 +7,7 @@ import ButtonComponent from "../../components/ButtonComponent";
 import { useDeleteStaffDocument } from "../../hooks/useDocument";
 import DeletePopUp from "../../components/DeletePopUp";
 import { saveAs } from "file-saver";
+import { useStaffById } from "../../hooks/useStaff";
 const { Text } = Typography;
 
 const data = [
@@ -41,6 +42,13 @@ const StaffDocument = ({ staffData }) => {
   const [selectedStaffData, setEditSelectedStaffData] = useState(null);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
+
+  const {
+    data: staff,
+    isLoading,
+    error,
+    refetch,
+  } = useStaffById(staffData?.id);
 
   const handleDownload = async (e, record) => {
     e.preventDefault();
@@ -107,10 +115,16 @@ const StaffDocument = ({ staffData }) => {
           onClick={(e) => handleDownload(e, record)}
           style={{ cursor: "pointer" }}
         >
-          {record.fileType === "image/jpeg" ? (
-            <img src="/wow_icons/png/image.png" className="size-20" />
+          {record.fileType === "image/jpeg" ||
+          record.fileType === "image/png" ||
+          record.fileType === "image/jpg" ? (
+            <img
+              src="/wow_icons/png/image.png"
+              className="size-20"
+              alt="Image"
+            />
           ) : (
-            <img src="/wow_icons/png/pdf.png" className="pdf" />
+            <img src="/wow_icons/png/pdf.png" className="pdf" alt="PDF" />
           )}
         </div>
       ),
@@ -164,7 +178,7 @@ const StaffDocument = ({ staffData }) => {
         staffId: staffData?.id,
         documentId: id,
       });
-      await refetch(); // Re-fetch the data after deletion
+      refetch(); // Re-fetch the data after deletion
       setDeleteModalOpen(false);
     } catch (error) {
       console.error("Failed to delete document", error);
@@ -186,7 +200,7 @@ const StaffDocument = ({ staffData }) => {
       </div>
       <Table
         columns={columns}
-        dataSource={staffData?.document
+        dataSource={staff?.data?.document
           ?.slice()
           .sort((a, b) => a.name.localeCompare(b.name))} // Sorting logic
         pagination={false}
