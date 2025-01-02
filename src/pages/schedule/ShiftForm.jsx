@@ -22,7 +22,12 @@ import {
   useWeekScheduleByStaffId,
 } from "../../hooks/useWeekSchedule";
 import { CustomMessage } from "../../utils/CustomMessage";
-import { getDayNameByDate, validateTime } from "./scheduleData";
+import {
+  formateTime,
+  getDayNameByDate,
+  validateTime,
+  validateTimeRange,
+} from "./scheduleData";
 import { Logger } from "sass";
 import DeleteSchedulePopUp from "../../components/DeleteSchedulePopup";
 
@@ -67,8 +72,6 @@ export default function ShiftForm({
     form.setFieldsValue({ staff: value }); // Set the value in the form
   };
 
-  console.log("selectedDate", selectedDate);
-
   useEffect(() => {
     const filteredClassrooms = classroomData?.data?.filter(
       (classroom) => classroom.status.toLowerCase() === "active"
@@ -82,10 +85,11 @@ export default function ShiftForm({
     setStaffs(filteredClassrooms || []);
   }, [staffData]);
 
+  // console.log("checkedDays", checkedDays);
+
   const weekDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
   // Get the current day of the week
   const currentDay = dayjs().format("dddd").toUpperCase();
-  // debugger;
   // Determine the selected day
   const selectedDay =
     selectedDate !== undefined && selectedDate !== null
@@ -105,40 +109,39 @@ export default function ShiftForm({
   }, [selectedDay]);
 
   useEffect(() => {
-    if (currentSchedule) {
-      if (modalType === "add") {
+    if (modalType === "add") {
+      if (currentSchedule) {
         form.setFieldsValue({
           shiftStart: dayjs(currentSchedule?.startTime, "HH:mm"),
           shiftEnd: dayjs(currentSchedule?.endTime, "HH:mm"),
           breakStart: dayjs(currentSchedule?.breakStartTime, "HH:mm"),
           breakEnd: dayjs(currentSchedule?.breakEndTime, "HH:mm"),
         });
+        setTimes({
+          shiftStart: currentSchedule?.startTime,
+          shiftEnd: currentSchedule?.endTime,
+          breakStart: currentSchedule?.breakStartTime,
+          breakEnd: currentSchedule?.breakEndTime,
+        });
+      } else {
+        form.setFieldsValue({
+          shiftStart: null,
+          shiftEnd: null,
+          breakStart: null,
+          breakEnd: null,
+        });
       }
-      setTimes({
-        shiftStart: currentSchedule?.startTime,
-        shiftEnd: currentSchedule?.endTime,
-        breakStart: currentSchedule?.breakStartTime,
-        breakEnd: currentSchedule?.breakEndTime,
-      });
-    } else {
-      form.setFieldsValue({
-        shiftStart: null,
-        shiftEnd: null,
-        breakStart: null,
-        breakEnd: null,
-      });
     }
   }, [currentSchedule]);
-  console.log("currentSchedule", currentSchedule);
-  console.log("classroomSelectedData", classroomSelectedData);
+
   useEffect(() => {
     if (classroomSelectedData) {
       form.setFieldsValue({
         shiftdate: classroomSelectedData?.date,
-        shiftStart: dayjs(currentSchedule?.startTime, "HH:mm"),
-        shiftEnd: dayjs(currentSchedule?.endTime, "HH:mm"),
-        breakStart: dayjs(currentSchedule?.breakStartTime, "HH:mm"),
-        breakEnd: dayjs(currentSchedule?.breakEndTime, "HH:mm"),
+        shiftStart: dayjs(classroomSelectedData?.startTime, "HH:mm"),
+        shiftEnd: dayjs(classroomSelectedData?.endTime, "HH:mm"),
+        breakStart: dayjs(classroomSelectedData?.breakStartTime, "HH:mm"),
+        breakEnd: dayjs(classroomSelectedData?.breakEndTime, "HH:mm"),
         staffId: Number(classroomSelectedData?.teacherId),
         classroomId: Number(classroomSelectedData?.classRoomId),
         untilDate:
@@ -147,6 +150,12 @@ export default function ShiftForm({
             : dayjs(classroomSelectedData?.date)
                 .add(1, "month")
                 .format("YYYY-MM-DD"),
+      });
+      setTimes({
+        shiftStart: classroomSelectedData?.startTime,
+        shiftEnd: classroomSelectedData?.endTime,
+        breakStart: classroomSelectedData?.breakStartTime,
+        breakEnd: classroomSelectedData?.breakEndTime,
       });
     }
   }, [classroomSelectedData, form]);
@@ -201,8 +210,10 @@ export default function ShiftForm({
   const handleCancelClick = () => {
     setCloseModal(false);
   };
-  const handleDeleteBtnConfirmModal = (id, name) => {
-    setSelectedRecord({ id, name });
+  const handleDeleteBtnConfirmModal = () => {
+    const formValues = form.getFieldsValue();
+    // console.log("Form Values on Delete:", formValues);
+    setSelectedRecord(formValues);
     setDeleteModalOpen(true);
   };
   const handleSubmit = (values) => {
@@ -260,7 +271,47 @@ export default function ShiftForm({
     setNextModal(false);
     setFirstModal(true);
   };
-  const handleDelete = async (id) => {};
+  const handleDelete = async () => {
+    console.log("selectedRecord", selectedRecord);
+
+    const shiftData = {
+      startShift: dayjs(selectedRecord?.shiftdate).format("HH:mm:ss"),
+      endShift: dayjs(selectedRecord?.shiftEnd).format("HH:mm:ss"),
+      breakShift: dayjs(selectedRecord?.breakStart).format("HH:mm:ss"),
+      breakEndShift: dayjs(selectedRecord?.breakEnd).format("HH:mm:ss"),
+      schoolId,
+      classroomId: Number(selectedRecord?.classroomId),
+      staffId: Number(selectedRecord?.staffId),
+      note: selectedRecord?.note || "",
+      isDeleted: true,
+    };
+    createShiftMutation.mutate(
+      {
+        params: {
+          startDate: selectedRecord?.shiftdate
+            ? dayjs(selectedRecord?.shiftdate).format("YYYY-MM-DD")
+            : null,
+          untilDate: selectedRecord?.untilDate
+            ? dayjs(selectedRecord?.untilDate).format("YYYY-MM-DD")
+            : null,
+          repeatDays:
+            selectedRecord?.repeatDays.lenght > 0
+              ? selectedRecord?.repeatDays
+              : getDayNameByDate(selectedRecord?.shiftdate).toUpperCase(),
+        },
+        shiftData: shiftData,
+      },
+      {
+        onSuccess: () => {
+          CustomMessage.success("Published shift deleted successfully!");
+          setCloseModal(false);
+        },
+        onError: (error) => {
+          CustomMessage.error(`Failed to delete shift: ${error.message}`);
+        },
+      }
+    );
+  };
   return (
     <>
       <CommonModalComponent
@@ -289,11 +340,6 @@ export default function ShiftForm({
             onFinish={handleSubmit}
             initialValues={{
               shiftdate: dayjs(),
-              // shiftStart: dayjs("01:00:00", "HH:mm"),
-              // shiftEnd: dayjs("17:30", "HH:mm"),
-              // breakStart: dayjs("13:00", "HH:mm"),
-              // breakEnd: dayjs("13:30", "HH:mm"),
-              // untilDate: dayjs("2024-12-31"),
             }}
             style={{ padding: "26px 46px" }}
           >
@@ -483,9 +529,21 @@ export default function ShiftForm({
                     <div className="d-flex gap-3">
                       {staffWeekScheduleData?.data.map((day) => {
                         const isDisabled = day?.startTime === "00:00:00";
-                        const tooltipContent = isDisabled
-                          ? ""
-                          : `Start: ${day?.startTime}, End: ${day?.endTime}`;
+                        // debugger;
+
+                        const isTimeRangeValid = validateTimeRange(
+                          `"${day?.startTime}"`,
+                          `"${day?.endTime}"`,
+                          `"${times?.shiftStart}"`,
+                          `"${times?.shiftEnd}"`
+                        );
+
+                        const tooltipContent =
+                          isDisabled || isTimeRangeValid
+                            ? ""
+                            : `Start: ${formateTime(
+                                day?.startTime
+                              )}, End: ${formateTime(day?.endTime)}`;
 
                         return (
                           <Checkbox
@@ -495,7 +553,7 @@ export default function ShiftForm({
                                 ? "opacity1"
                                 : "opacity05"
                             }`}
-                            disabled={isDisabled}
+                            disabled={isDisabled || !isTimeRangeValid}
                           >
                             <Tooltip
                               key={day?.dayOfWeek}
@@ -530,18 +588,24 @@ export default function ShiftForm({
               <div className="row mb10 d-flex align-items-center">
                 <div className="col-md-4">
                   <div className=" label-12-400 mb12">
-                    Until Date<span className="text-danger">*</span>
+                    Until Date
+                    {checkedDays.length === 0 ? (
+                      ""
+                    ) : (
+                      <span className="text-danger">*</span>
+                    )}
                   </div>
+
                   <Form.Item
                     rules={[
                       {
-                        required: true,
+                        required: checkedDays.length === 0,
                         message: "Please select the Until Date",
                       },
                     ]}
                     name="untilDate"
                   >
-                    <CustomDatePicker />
+                    <CustomDatePicker disabled={checkedDays.length === 0} />
                   </Form.Item>
                 </div>
                 <div className="col-md-6">
@@ -559,7 +623,7 @@ export default function ShiftForm({
                 {modalType === "edit" && (
                   <div className="col-md-2 ">
                     <button
-                      onClick={() => handleDeleteBtnConfirmModal(1, "chandan")}
+                      onClick={handleDeleteBtnConfirmModal}
                       // onClick={() => handleDeleteConfirmModal(1, "chandan")}
                       className={`btn d-flex align-items-center justify-content-center rounded-circle p-0 `}
                       style={{
@@ -568,6 +632,7 @@ export default function ShiftForm({
                         backgroundColor: "#FF3B30",
                       }}
                       aria-label="Delete"
+                      type="button"
                     >
                       <img
                         src={"/wow_icons/png/delete.png"}
