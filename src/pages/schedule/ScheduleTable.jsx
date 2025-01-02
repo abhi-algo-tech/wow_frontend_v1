@@ -7,530 +7,510 @@ import ShiftForm from "./ShiftForm";
 import { Link } from "react-router-dom";
 import DeleteSchedulePopUp from "../../components/DeleteSchedulePopup";
 import DeleteShift from "./DeleteShift";
+import { getDateForDay, reStructureScheduleArray } from "./scheduleData";
 const images = [
   "/classroom_icons/png/Aadhira.png",
   "/classroom_icons/png/Aarav.png",
   "/classroom_icons/png/Aarjav.png",
 ];
-const data = [
-  {
-    key: 1,
-    name: "1-Blue-D",
+// const data = [
+//   {
+//     key: 1,
+//     name: "1-Blue-D",
 
-    teachers: [
-      {
-        id: "1",
-        name: "Ana Biwalkar",
-        avatar: "/classroom_icons/png/Aadhira.png",
-        duration: {
-          first: 45,
-          second: 55,
-        },
-        schedule: [
-          {
-            id: 1,
-            day: "mon",
-            time: "07:00 AM - 12:00 PM",
-            status: "published",
-          },
-          {
-            id: 2,
-            day: "tue",
-            time: "07:00 AM - 05:00 PM",
-            status: "unpublised",
-          },
-          { id: 3, day: "wed", time: "", status: "published" },
-          {
-            id: 4,
-            day: "thu",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 5,
-            day: "fri",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-        ],
-      },
-      {
-        id: "2",
-        name: "Lana Rhodes",
-        avatar: "/classroom_icons/png/Aarav.png",
-        duration: {
-          first: 55,
-          second: 45,
-        },
-        schedule: [
-          {
-            id: 1,
-            day: "mon",
-            time: "02:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 2,
-            day: "tue",
-            time: "07:00 AM - 05:00 PM",
-            status: "unpublised",
-          },
-          { id: 3, day: "wed", time: "", status: "published" },
-          {
-            id: 4,
-            day: "thu",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 5,
-            day: "fri",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-        ],
-      },
-    ],
-    schedule: {
-      mon: false,
-      tue: true,
-      wed: false,
-      thu: true,
-      fri: true,
-    },
-  },
-  {
-    key: 2,
-    name: "2-Yellow-C",
+//     teachers: [
+//       {
+//         id: "1",
+//         name: "Ana Biwalkar",
+//         avatar: "/classroom_icons/png/Aadhira.png",
+//         duration: {
+//           first: 45,
+//           second: 55,
+//         },
+//         schedule: [],
+//       },
+//       {
+//         id: "2",
+//         name: "Lana Rhodes",
+//         avatar: "/classroom_icons/png/Aarav.png",
+//         duration: {
+//           first: 55,
+//           second: 45,
+//         },
+//         schedule: [
+//           {
+//             id: 1,
+//             day: "mon",
+//             time: "02:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 2,
+//             day: "tue",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "unpublised",
+//           },
+//           { id: 3, day: "wed", time: "", status: "" },
+//           {
+//             id: 4,
+//             day: "thu",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 5,
+//             day: "fri",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//         ],
+//       },
+//     ],
+//     schedule: {
+//       mon: false,
+//       tue: true,
+//       wed: false,
+//       thu: true,
+//       fri: true,
+//     },
+//   },
+//   {
+//     key: 2,
+//     name: "2-Yellow-C",
 
-    teachers: [
-      {
-        id: "3",
-        name: "Chaitanya Desai",
-        avatar: "/classroom_icons/png/Aadhira.png",
-        duration: {
-          first: 45,
-          second: 55,
-        },
-        schedule: [
-          {
-            id: 1,
-            day: "mon",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 2,
-            day: "tue",
-            time: "07:00 AM - 05:00 PM",
-            status: "unpublised",
-          },
-          { id: 3, day: "wed", time: "", status: "published" },
-          {
-            id: 4,
-            day: "thu",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 5,
-            day: "fri",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-        ],
-      },
-      {
-        id: "4",
-        name: "Spandana Shah",
-        avatar: "/classroom_icons/png/Aadhira.png",
-        duration: {
-          first: 45,
-          second: 55,
-        },
-        schedule: [
-          {
-            id: 1,
-            day: "mon",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 2,
-            day: "tue",
-            time: "07:00 AM - 05:00 PM",
-            status: "unpublised",
-          },
-          { id: 3, day: "wed", time: "", status: "published" },
-          {
-            id: 4,
-            day: "thu",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 5,
-            day: "fri",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-        ],
-      },
-    ],
-    schedule: {
-      mon: true,
-      tue: false,
-      wed: true,
-      thu: true,
-      fri: false,
-    },
-  },
-  {
-    key: 3,
-    name: "2-Purple",
+//     teachers: [
+//       {
+//         id: "3",
+//         name: "Chaitanya Desai",
+//         avatar: "/classroom_icons/png/Aadhira.png",
+//         duration: {
+//           first: 45,
+//           second: 55,
+//         },
+//         schedule: [
+//           {
+//             id: 1,
+//             day: "mon",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 2,
+//             day: "tue",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "unpublised",
+//           },
+//           { id: 3, day: "wed", time: "", status: "published" },
+//           {
+//             id: 4,
+//             day: "thu",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 5,
+//             day: "fri",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//         ],
+//       },
+//       {
+//         id: "4",
+//         name: "Spandana Shah",
+//         avatar: "/classroom_icons/png/Aadhira.png",
+//         duration: {
+//           first: 45,
+//           second: 55,
+//         },
+//         schedule: [
+//           {
+//             id: 1,
+//             day: "mon",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 2,
+//             day: "tue",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "unpublised",
+//           },
+//           { id: 3, day: "wed", time: "", status: "published" },
+//           {
+//             id: 4,
+//             day: "thu",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 5,
+//             day: "fri",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//         ],
+//       },
+//     ],
+//     schedule: {
+//       mon: true,
+//       tue: false,
+//       wed: true,
+//       thu: true,
+//       fri: false,
+//     },
+//   },
+//   {
+//     key: 3,
+//     name: "2-Purple",
 
-    teachers: [
-      {
-        id: "3",
-        name: "Chaitanya Desai",
-        avatar: "/classroom_icons/png/Aadhira.png",
-        duration: {
-          first: 45,
-          second: 55,
-        },
-        schedule: [
-          {
-            id: 1,
-            day: "mon",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 2,
-            day: "tue",
-            time: "07:00 AM - 05:00 PM",
-            status: "unpublised",
-          },
-          { id: 3, day: "wed", time: "", status: "published" },
-          {
-            id: 4,
-            day: "thu",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 5,
-            day: "fri",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-        ],
-      },
-      {
-        id: "4",
-        name: "Spandana Shah",
-        avatar: "/classroom_icons/png/Aarav.png",
-        duration: {
-          first: 45,
-          second: 55,
-        },
-        schedule: [
-          {
-            id: 1,
-            day: "mon",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 2,
-            day: "tue",
-            time: "07:00 AM - 05:00 PM",
-            status: "unpublised",
-          },
-          { id: 3, day: "wed", time: "", status: "published" },
-          {
-            id: 4,
-            day: "thu",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 5,
-            day: "fri",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-        ],
-      },
-    ],
-    schedule: {
-      mon: true,
-      tue: false,
-      wed: true,
-      thu: true,
-      fri: false,
-    },
-  },
-  {
-    key: 4,
-    name: "R-Yellow",
+//     teachers: [
+//       {
+//         id: "3",
+//         name: "Chaitanya Desai",
+//         avatar: "/classroom_icons/png/Aadhira.png",
+//         duration: {
+//           first: 45,
+//           second: 55,
+//         },
+//         schedule: [
+//           {
+//             id: 1,
+//             day: "mon",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 2,
+//             day: "tue",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "unpublised",
+//           },
+//           { id: 3, day: "wed", time: "", status: "published" },
+//           {
+//             id: 4,
+//             day: "thu",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 5,
+//             day: "fri",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//         ],
+//       },
+//       {
+//         id: "4",
+//         name: "Spandana Shah",
+//         avatar: "/classroom_icons/png/Aarav.png",
+//         duration: {
+//           first: 45,
+//           second: 55,
+//         },
+//         schedule: [
+//           {
+//             id: 1,
+//             day: "mon",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 2,
+//             day: "tue",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "unpublised",
+//           },
+//           { id: 3, day: "wed", time: "", status: "published" },
+//           {
+//             id: 4,
+//             day: "thu",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 5,
+//             day: "fri",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//         ],
+//       },
+//     ],
+//     schedule: {
+//       mon: true,
+//       tue: false,
+//       wed: true,
+//       thu: true,
+//       fri: false,
+//     },
+//   },
+//   {
+//     key: 4,
+//     name: "R-Yellow",
 
-    teachers: [
-      {
-        id: "3",
-        name: "Chaitanya Desai",
-        avatar: "/classroom_icons/png/Aarav.png",
-        duration: {
-          first: 45,
-          second: 55,
-        },
-        schedule: [
-          {
-            id: 1,
-            day: "mon",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 2,
-            day: "tue",
-            time: "07:00 AM - 05:00 PM",
-            status: "unpublised",
-          },
-          { id: 3, day: "wed", time: "", status: "published" },
-          {
-            id: 4,
-            day: "thu",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 5,
-            day: "fri",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-        ],
-      },
-      {
-        id: "4",
-        name: "Spandana Shah",
-        avatar: "/classroom_icons/png/Aarav.png",
-        duration: {
-          first: 45,
-          second: 55,
-        },
-        schedule: [
-          {
-            id: 1,
-            day: "mon",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 2,
-            day: "tue",
-            time: "07:00 AM - 05:00 PM",
-            status: "unpublised",
-          },
-          { id: 3, day: "wed", time: "", status: "published" },
-          {
-            id: 4,
-            day: "thu",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 5,
-            day: "fri",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-        ],
-      },
-    ],
-    schedule: {
-      mon: true,
-      tue: false,
-      wed: true,
-      thu: true,
-      fri: false,
-    },
-  },
-  {
-    key: 5,
-    name: "6-Yellow-C",
+//     teachers: [
+//       {
+//         id: "3",
+//         name: "Chaitanya Desai",
+//         avatar: "/classroom_icons/png/Aarav.png",
+//         duration: {
+//           first: 45,
+//           second: 55,
+//         },
+//         schedule: [
+//           {
+//             id: 1,
+//             day: "mon",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 2,
+//             day: "tue",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "unpublised",
+//           },
+//           { id: 3, day: "wed", time: "", status: "published" },
+//           {
+//             id: 4,
+//             day: "thu",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 5,
+//             day: "fri",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//         ],
+//       },
+//       {
+//         id: "4",
+//         name: "Spandana Shah",
+//         avatar: "/classroom_icons/png/Aarav.png",
+//         duration: {
+//           first: 45,
+//           second: 55,
+//         },
+//         schedule: [
+//           {
+//             id: 1,
+//             day: "mon",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 2,
+//             day: "tue",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "unpublised",
+//           },
+//           { id: 3, day: "wed", time: "", status: "published" },
+//           {
+//             id: 4,
+//             day: "thu",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 5,
+//             day: "fri",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//         ],
+//       },
+//     ],
+//     schedule: {
+//       mon: true,
+//       tue: false,
+//       wed: true,
+//       thu: true,
+//       fri: false,
+//     },
+//   },
+//   {
+//     key: 5,
+//     name: "6-Yellow-C",
 
-    teachers: [
-      {
-        id: "3",
-        name: "Chaitanya Desai",
-        avatar: "/classroom_icons/png/Aarav.png",
-        duration: {
-          first: 45,
-          second: 55,
-        },
-        schedule: [
-          {
-            id: 1,
-            day: "mon",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 2,
-            day: "tue",
-            time: "07:00 AM - 05:00 PM",
-            status: "unpublised",
-          },
-          { id: 3, day: "wed", time: "", status: "published" },
-          {
-            id: 4,
-            day: "thu",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 5,
-            day: "fri",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-        ],
-      },
-      {
-        id: "4",
-        name: "Spandana Shah",
-        avatar: "/classroom_icons/png/Aarav.png",
-        duration: {
-          first: 45,
-          second: 55,
-        },
-        schedule: [
-          {
-            id: 1,
-            day: "mon",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 2,
-            day: "tue",
-            time: "07:00 AM - 05:00 PM",
-            status: "unpublised",
-          },
-          { id: 3, day: "wed", time: "", status: "published" },
-          {
-            id: 4,
-            day: "thu",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 5,
-            day: "fri",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-        ],
-      },
-    ],
-    schedule: {
-      mon: true,
-      tue: false,
-      wed: true,
-      thu: true,
-      fri: false,
-    },
-  },
-  {
-    key: 6,
-    name: "2-Red-C",
+//     teachers: [
+//       {
+//         id: "3",
+//         name: "Chaitanya Desai",
+//         avatar: "/classroom_icons/png/Aarav.png",
+//         duration: {
+//           first: 45,
+//           second: 55,
+//         },
+//         schedule: [
+//           {
+//             id: 1,
+//             day: "mon",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 2,
+//             day: "tue",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "unpublised",
+//           },
+//           { id: 3, day: "wed", time: "", status: "published" },
+//           {
+//             id: 4,
+//             day: "thu",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 5,
+//             day: "fri",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//         ],
+//       },
+//       {
+//         id: "4",
+//         name: "Spandana Shah",
+//         avatar: "/classroom_icons/png/Aarav.png",
+//         duration: {
+//           first: 45,
+//           second: 55,
+//         },
+//         schedule: [
+//           {
+//             id: 1,
+//             day: "mon",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 2,
+//             day: "tue",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "unpublised",
+//           },
+//           { id: 3, day: "wed", time: "", status: "published" },
+//           {
+//             id: 4,
+//             day: "thu",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 5,
+//             day: "fri",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//         ],
+//       },
+//     ],
+//     schedule: {
+//       mon: true,
+//       tue: false,
+//       wed: true,
+//       thu: true,
+//       fri: false,
+//     },
+//   },
+//   {
+//     key: 6,
+//     name: "2-Red-C",
 
-    teachers: [
-      {
-        id: "3",
-        name: "Chaitanya Desai",
-        avatar: "/classroom_icons/png/Aarav.png",
-        duration: {
-          first: 45,
-          second: 55,
-        },
-        schedule: [
-          {
-            id: 1,
-            day: "mon",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 2,
-            day: "tue",
-            time: "07:00 AM - 05:00 PM",
-            status: "unpublised",
-          },
-          { id: 3, day: "wed", time: "", status: "published" },
-          {
-            id: 4,
-            day: "thu",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 5,
-            day: "fri",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-        ],
-      },
-      {
-        id: "4",
-        name: "Spandana Shah",
-        avatar: "/classroom_icons/png/Aarav.png",
-        duration: {
-          first: 45,
-          second: 55,
-        },
-        schedule: [
-          {
-            id: 1,
-            day: "mon",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 2,
-            day: "tue",
-            time: "07:00 AM - 05:00 PM",
-            status: "unpublised",
-          },
-          { id: 3, day: "wed", time: "", status: "published" },
-          {
-            id: 4,
-            day: "thu",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-          {
-            id: 5,
-            day: "fri",
-            time: "07:00 AM - 05:00 PM",
-            status: "published",
-          },
-        ],
-      },
-    ],
-    schedule: {
-      mon: true,
-      tue: false,
-      wed: true,
-      thu: true,
-      fri: false,
-    },
-  },
-];
-export default function ScheduleTable({ startDate, classRoomList = [] }) {
+//     teachers: [
+//       {
+//         id: "3",
+//         name: "Chaitanya Desai",
+//         avatar: "/classroom_icons/png/Aarav.png",
+//         duration: {
+//           first: 45,
+//           second: 55,
+//         },
+//         schedule: [
+//           {
+//             id: 1,
+//             day: "mon",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 2,
+//             day: "tue",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "unpublised",
+//           },
+//           { id: 3, day: "wed", time: "", status: "published" },
+//           {
+//             id: 4,
+//             day: "thu",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 5,
+//             day: "fri",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//         ],
+//       },
+//       {
+//         id: "4",
+//         name: "Spandana Shah",
+//         avatar: "/classroom_icons/png/Aarav.png",
+//         duration: {
+//           first: 45,
+//           second: 55,
+//         },
+//         schedule: [
+//           {
+//             id: 1,
+//             day: "mon",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 2,
+//             day: "tue",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "unpublised",
+//           },
+//           { id: 3, day: "wed", time: "", status: "published" },
+//           {
+//             id: 4,
+//             day: "thu",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//           {
+//             id: 5,
+//             day: "fri",
+//             time: "07:00 AM - 05:00 PM",
+//             status: "published",
+//           },
+//         ],
+//       },
+//     ],
+//     schedule: {
+//       mon: true,
+//       tue: false,
+//       wed: true,
+//       thu: true,
+//       fri: false,
+//     },
+//   },
+// ];
+export default function ScheduleTable({
+  startDate,
+  classRoomList = [],
+  scheduleData = [],
+  dateRange = {},
+}) {
   const [expandedRows, setExpandedRows] = useState([]);
   const [isAddShiftModalOpen, setAddShiftModalOpen] = useState(false);
   const [isEditShiftModalOpen, setEditShiftModalOpen] = useState(false);
@@ -538,7 +518,9 @@ export default function ScheduleTable({ startDate, classRoomList = [] }) {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isConfirmDeleteShiftModalOpen, setConfirmDeleteShiftModalOpen] =
     useState(false);
-  const [selectedRecord, setSelectedRecord] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState({});
+  const data = reStructureScheduleArray(scheduleData);
+  // console.log("data", data);
 
   const handleDeleteConfirmModal = (id, name) => {
     setSelectedRecord({ id, name });
@@ -550,14 +532,22 @@ export default function ScheduleTable({ startDate, classRoomList = [] }) {
     setEditShiftModalOpen(false);
     setDeleteModalOpen(true);
   };
+  const handleCreateShiftModal = (selectedData) => {
+    setSelectedRecord(selectedData);
+    setAddShiftModalOpen(true);
+  };
+  const handleEditShiftModal = (selectedData) => {
+    setSelectedRecord(selectedData);
+    setEditShiftModalOpen(true);
+  };
 
   const handleDelete = async (id) => {};
   const TeacherSchedule = ({ record }) => (
     <div className="child-table">
       <table className="w-full table-auto border-collapse">
         <tbody>
-          {record.teachers.map((teacher) => (
-            <tr key={teacher.id} className="px-1 py-1">
+          {record.teachers.map((teacher, teacherIndex) => (
+            <tr key={`${record.name}-${teacherIndex}`} className="px-1 py-1">
               {/* Teacher Name */}
               <td className="border p-2" style={{ width: "20%" }}>
                 <div className="d-flex justify-content-between align-items-center gap12">
@@ -590,14 +580,21 @@ export default function ScheduleTable({ startDate, classRoomList = [] }) {
                 </div>
               </td>
               {/* Schedule for each day */}
-              {teacher.schedule.map((slot, index) => (
+              {teacher.schedule.map((slot, slotIndex) => (
                 <td
-                  key={index}
-                  className={`border p-2 text-xs text-center  ${
+                  key={`${record.name}-${teacherIndex}-${slotIndex}`} // Unique key using record.name, teacherIndex, and slotIndex
+                  className={`border p-2 text-xs text-center ${
                     slot.status ? "bg-blue-50" : "bg-gray-50"
                   }`}
                   style={{ width: "16%" }}
-                  onMouseEnter={() => !slot.time && setHoverIndex(teacher.id)}
+                  onMouseEnter={() =>
+                    !slot.time &&
+                    setHoverIndex({
+                      recordName: record.name,
+                      teacherIndex,
+                      slotIndex,
+                    })
+                  }
                   onMouseLeave={() => setHoverIndex(null)}
                 >
                   {slot.time && (
@@ -607,19 +604,44 @@ export default function ScheduleTable({ startDate, classRoomList = [] }) {
                           ? "teacher-schedule-time-card"
                           : "teacher-unpublished-time-card"
                       } pointer`}
-                      onClick={() => setEditShiftModalOpen(true)}
+                      onClick={() =>
+                        handleEditShiftModal({
+                          teacherId: teacher?.id,
+                          teacherName: teacher?.name,
+                          classRoomId: record?.key,
+                          classRoomName: record?.name,
+                          dayName: slot?.day,
+                          date: getDateForDay(dateRange, slot?.day),
+                          startTime: slot?.startTime,
+                          endTime: slot?.endTime,
+                          breakStartTime: slot?.breakStartTime,
+                          breakEndTime: slot?.breakEndTime,
+                        })
+                      }
                     >
                       <span className="label-12-500">{slot.time}</span>
                     </div>
                   )}
-                  {!slot.time && hoverIndex === teacher.id && (
-                    <div
-                      className="pointer"
-                      onClick={() => setAddShiftModalOpen(true)}
-                    >
-                      <Avatar src={"/wow_icons/png/add.png"} size={13} />
-                    </div>
-                  )}
+                  {!slot.time &&
+                    hoverIndex?.recordName === record.name &&
+                    hoverIndex?.teacherIndex === teacherIndex &&
+                    hoverIndex?.slotIndex === slotIndex && (
+                      <div
+                        className="pointer"
+                        onClick={() =>
+                          handleCreateShiftModal({
+                            teacherId: teacher?.id,
+                            teacherName: teacher?.name,
+                            classRoomId: record?.key,
+                            classRoomName: record?.name,
+                            dayName: slot?.day,
+                            date: getDateForDay(dateRange, slot?.day),
+                          })
+                        }
+                      >
+                        <Avatar src={"/wow_icons/png/add.png"} size={13} />
+                      </div>
+                    )}
                 </td>
               ))}
             </tr>
@@ -843,14 +865,14 @@ export default function ScheduleTable({ startDate, classRoomList = [] }) {
       {isAddShiftModalOpen && (
         <ShiftForm
           cardTitle={"Add Shift"}
-          classroomId={null}
+          classroomSelectedData={selectedRecord}
           setCloseModal={setAddShiftModalOpen}
         />
       )}
       {isEditShiftModalOpen && (
         <ShiftForm
           cardTitle={"Edit Shift"}
-          classroomId={null}
+          classroomSelectedData={selectedRecord}
           setCloseModal={setEditShiftModalOpen}
           handleDeleteConfirmModal={handleDeleteConfirmModal}
         />
@@ -886,7 +908,7 @@ export default function ScheduleTable({ startDate, classRoomList = [] }) {
             CardTitle="Delete Shift"
             handleDelete={handleDelete}
             module="Selected Shift"
-            handleBack={() => setEditShiftModalOpen(true)}
+            handleBack={() => handleEditShiftModal(selectedRecord)}
             handleDeleteBtnConfirmModal={handleDeleteBtnConfirmModal}
           />
         </CommonModalComponent>

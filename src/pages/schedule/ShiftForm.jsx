@@ -5,24 +5,34 @@ import {
   Input,
   Checkbox,
   Button,
-  Avatar,
+  Tooltip,
+  message,
 } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import CustomDatePicker from "../../components/CustomDatePicker";
-import { GoPlus } from "react-icons/go";
 import ButtonComponent from "../../components/ButtonComponent";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import YesNoRadio from "../../components/radio/YesNoRadio";
-import DeleteShift from "./DeleteShift";
+import { useGetAllStaff } from "../../hooks/useStaff";
+import { useSession } from "../../hooks/useSession";
+import { useGetClassroomsBySchool } from "../../hooks/useClassroom";
+import {
+  useCreateShift,
+  useWeekScheduleByStaffId,
+} from "../../hooks/useWeekSchedule";
+import { CustomMessage } from "../../utils/CustomMessage";
+import { getDayNameByDate, validateTime } from "./scheduleData";
+import { Logger } from "sass";
 import DeleteSchedulePopUp from "../../components/DeleteSchedulePopup";
 
 export default function ShiftForm({
   cardTitle,
-  shiftId,
+  classroomSelectedData,
   setCloseModal,
-  handleDeleteConfirmModal,
+  // handleDeleteConfirmModal,
 }) {
+  const { academyId } = useSession();
   const [form] = Form.useForm();
   const [allDaysSelected, setAllDaysSelected] = useState(false);
   const [checkedDays, setCheckedDays] = useState([]);
@@ -31,15 +41,157 @@ export default function ShiftForm({
   const [modalType, setModalType] = useState(
     cardTitle?.toLowerCase() === "add shift" ? "add" : "edit"
   );
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState({});
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedStaffId, setSelectedStaffId] = useState(
+    classroomSelectedData?.teacherId || null
+  );
+  const [classRooms, setClassRooms] = useState([]);
+  const [staffs, setStaffs] = useState([]);
+  const [currentSchedule, setCurrentSchedule] = useState(null);
+  const [times, setTimes] = useState({
+    shiftStart: null,
+    shiftEnd: null,
+    breakStart: null,
+    breakEnd: null,
+  });
+  const schoolId = academyId;
+  const { data: staffData } = useGetAllStaff();
+  const { data: classroomData } = useGetClassroomsBySchool(schoolId);
+  const { data: staffWeekScheduleData } =
+    useWeekScheduleByStaffId(selectedStaffId);
+  const createShiftMutation = useCreateShift();
+  const handleStaffChange = (value) => {
+    setSelectedStaffId(value); // Update state with the selected staff ID
+    form.setFieldsValue({ staff: value }); // Set the value in the form
+  };
 
-  const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  console.log("selectedDate", selectedDate);
+
+  useEffect(() => {
+    const filteredClassrooms = classroomData?.data?.filter(
+      (classroom) => classroom.status.toLowerCase() === "active"
+    );
+    setClassRooms(filteredClassrooms || []);
+  }, [classroomData]);
+  useEffect(() => {
+    const filteredClassrooms = staffData?.data?.filter(
+      (classroom) => classroom.status.toLowerCase() === "active"
+    );
+    setStaffs(filteredClassrooms || []);
+  }, [staffData]);
+
+  const weekDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
+  // Get the current day of the week
+  const currentDay = dayjs().format("dddd").toUpperCase();
+  // debugger;
+  // Determine the selected day
+  const selectedDay =
+    selectedDate !== undefined && selectedDate !== null
+      ? getDayNameByDate(selectedDate)
+      : classroomSelectedData?.date
+      ? getDayNameByDate(classroomSelectedData?.date)
+      : "false";
+
+  useEffect(() => {
+    // Find the matching object
+    const matchedSchedule = staffWeekScheduleData?.data?.find((schedule) => {
+      const dayToCompare = selectedDay || currentDay;
+      return schedule?.dayOfWeek.toLowerCase() === dayToCompare.toLowerCase();
+    });
+
+    setCurrentSchedule(matchedSchedule);
+  }, [selectedDay]);
+
+  useEffect(() => {
+    if (currentSchedule) {
+      if (modalType === "add") {
+        form.setFieldsValue({
+          shiftStart: dayjs(currentSchedule?.startTime, "HH:mm"),
+          shiftEnd: dayjs(currentSchedule?.endTime, "HH:mm"),
+          breakStart: dayjs(currentSchedule?.breakStartTime, "HH:mm"),
+          breakEnd: dayjs(currentSchedule?.breakEndTime, "HH:mm"),
+        });
+      }
+      setTimes({
+        shiftStart: currentSchedule?.startTime,
+        shiftEnd: currentSchedule?.endTime,
+        breakStart: currentSchedule?.breakStartTime,
+        breakEnd: currentSchedule?.breakEndTime,
+      });
+    } else {
+      form.setFieldsValue({
+        shiftStart: null,
+        shiftEnd: null,
+        breakStart: null,
+        breakEnd: null,
+      });
+    }
+  }, [currentSchedule]);
+  console.log("currentSchedule", currentSchedule);
+  console.log("classroomSelectedData", classroomSelectedData);
+  useEffect(() => {
+    if (classroomSelectedData) {
+      form.setFieldsValue({
+        shiftdate: classroomSelectedData?.date,
+        shiftStart: dayjs(currentSchedule?.startTime, "HH:mm"),
+        shiftEnd: dayjs(currentSchedule?.endTime, "HH:mm"),
+        breakStart: dayjs(currentSchedule?.breakStartTime, "HH:mm"),
+        breakEnd: dayjs(currentSchedule?.breakEndTime, "HH:mm"),
+        staffId: Number(classroomSelectedData?.teacherId),
+        classroomId: Number(classroomSelectedData?.classRoomId),
+        untilDate:
+          modalType === "edit"
+            ? classroomSelectedData?.date
+            : dayjs(classroomSelectedData?.date)
+                .add(1, "month")
+                .format("YYYY-MM-DD"),
+      });
+    }
+  }, [classroomSelectedData, form]);
+
   const handleSelectAll = () => {
     const newValue = !allDaysSelected;
     setAllDaysSelected(newValue);
 
     const selectedDays = newValue ? weekDays : [];
     setCheckedDays(selectedDays);
-    form.setFieldsValue({ repeatOn: selectedDays });
+    form.setFieldsValue({ repeatDays: selectedDays });
+  };
+
+  const handleTimeChange = (field, value) => {
+    const formattedTime = value ? value.format("HH:mm") : null;
+    setTimes((prevTimes) => ({
+      ...prevTimes,
+      [field]: formattedTime,
+    }));
+
+    if (field === "breakStart" || field === "breakEnd") {
+      const { shiftStart, shiftEnd } = {
+        ...times,
+        [field]: formattedTime, // Include the current change
+      };
+
+      if (shiftStart && shiftEnd) {
+        const breakTime = dayjs(value, "HH:mm");
+        const start = dayjs(shiftStart, "HH:mm");
+        const end = dayjs(shiftEnd, "HH:mm");
+
+        if (!breakTime.isBetween(start, end, null, "[]")) {
+          message.error(
+            `${
+              field === "breakStart" ? "Break Start" : "Break End"
+            } time must be within the Shift Start and Shift End times`
+          );
+          form.setFieldsValue({ [field]: null });
+          setTimes((prevTimes) => ({
+            ...prevTimes,
+            [field]: null,
+          }));
+        }
+      }
+    }
   };
 
   const onChange = (checkedValues) => {
@@ -49,15 +201,54 @@ export default function ShiftForm({
   const handleCancelClick = () => {
     setCloseModal(false);
   };
-  const onFinish = (values) => {
-    onConfirm({
-      ...values,
-      shiftStart: values.shiftStart.format("HH:mm A"),
-      shiftEnd: values.shiftEnd.format("HH:mm A"),
-      breakStart: values.breakStart.format("HH:mm A"),
-      breakEnd: values.breakEnd.format("HH:mm A"),
-    });
-    setCloseModal(false);
+  const handleDeleteBtnConfirmModal = (id, name) => {
+    setSelectedRecord({ id, name });
+    setDeleteModalOpen(true);
+  };
+  const handleSubmit = (values) => {
+    const {
+      shiftdate,
+      shiftStart,
+      shiftEnd,
+      breakStart,
+      breakEnd,
+      classroomId,
+      staffId,
+      note,
+      repeatDays,
+      untilDate,
+    } = values;
+
+    const shiftData = {
+      startShift: shiftStart.format("HH:mm:ss"),
+      endShift: shiftEnd.format("HH:mm:ss"),
+      breakShift: breakStart.format("HH:mm:ss"),
+      breakEndShift: breakEnd.format("HH:mm:ss"),
+      schoolId: Number(schoolId),
+      classroomId,
+      staffId,
+      note,
+    };
+
+    createShiftMutation.mutate(
+      {
+        params: {
+          startDate: shiftdate ? dayjs(shiftdate).format("YYYY-MM-DD") : null,
+          untilDate: untilDate ? dayjs(untilDate).format("YYYY-MM-DD") : null,
+          repeatDays: repeatDays,
+        },
+        shiftData: shiftData,
+      },
+      {
+        onSuccess: () => {
+          CustomMessage.success("Published shift successfully!");
+          setCloseModal(false);
+        },
+        onError: (error) => {
+          CustomMessage.error(`Failed to Publish shift: ${error.message}`);
+        },
+      }
+    );
   };
 
   const handleNext = () => {
@@ -69,6 +260,7 @@ export default function ShiftForm({
     setNextModal(false);
     setFirstModal(true);
   };
+  const handleDelete = async (id) => {};
   return (
     <>
       <CommonModalComponent
@@ -94,37 +286,38 @@ export default function ShiftForm({
             form={form}
             layout="vertical"
             className="addshift-form"
-            onFinish={onFinish}
+            onFinish={handleSubmit}
             initialValues={{
-              date: dayjs("2024-12-14"),
-              shiftStart: dayjs("07:00", "HH:mm"),
-              shiftEnd: dayjs("17:30", "HH:mm"),
-              breakStart: dayjs("13:00", "HH:mm"),
-              breakEnd: dayjs("13:30", "HH:mm"),
-              untilDate: dayjs("2024-12-31"),
+              shiftdate: dayjs(),
+              // shiftStart: dayjs("01:00:00", "HH:mm"),
+              // shiftEnd: dayjs("17:30", "HH:mm"),
+              // breakStart: dayjs("13:00", "HH:mm"),
+              // breakEnd: dayjs("13:30", "HH:mm"),
+              // untilDate: dayjs("2024-12-31"),
             }}
             style={{ padding: "26px 46px" }}
           >
             <div>
               <div className="row mb10">
                 <div className="col-md-4">
+                  <div className=" label-12-400 mb12">
+                    Date
+                    <span className="text-danger"> *</span>
+                  </div>
                   <Form.Item
-                    label={
-                      <span className="d-flex label-12-400">
-                        Date<span className="text-danger">*</span>
-                      </span>
-                    }
                     name="shiftdate"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select the Date",
+                      },
+                    ]}
                     className="mb0"
                   >
                     <CustomDatePicker
-                      name="shiftdate"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please select the Date",
-                        },
-                      ]}
+                      value={selectedDate}
+                      onChange={setSelectedDate}
+                      // autoSelectToday={true}
                     />
                   </Form.Item>
                 </div>
@@ -134,7 +327,7 @@ export default function ShiftForm({
                     <span className="text-danger"> *</span>
                   </div>
                   <Form.Item
-                    name="staff"
+                    name="staffId"
                     rules={[
                       {
                         required: true,
@@ -145,10 +338,13 @@ export default function ShiftForm({
                     <Select
                       className="select-student-add-from"
                       placeholder="Select Staff"
-                    >
-                      <Option value="1">Andrew</Option>
-                      <Option value="2">Jhon</Option>
-                    </Select>
+                      value={form?.staff}
+                      onChange={handleStaffChange}
+                      options={staffs?.map((classroom) => ({
+                        value: classroom?.id,
+                        label: `${classroom?.firstName} ${classroom?.lastName}`,
+                      }))}
+                    />
                   </Form.Item>
                 </div>
                 <div className="col-md-4">
@@ -157,7 +353,7 @@ export default function ShiftForm({
                     <span className="text-danger"> *</span>
                   </div>
                   <Form.Item
-                    name="room"
+                    name="classroomId"
                     rules={[
                       {
                         required: true,
@@ -168,20 +364,20 @@ export default function ShiftForm({
                     <Select
                       className="select-student-add-from"
                       placeholder="Select Room"
-                      options={[
-                        { value: "1-blue-d", label: "1-Blue D" },
-                        { value: "2-green-d", label: "2-Green D" },
-                      ]}
+                      options={classRooms?.map((classroom) => ({
+                        value: classroom?.id,
+                        label: classroom?.name,
+                      }))}
                     />
                   </Form.Item>
                 </div>
               </div>
 
               <div className="row mb10">
+                {/* Shift Start */}
                 <div className="col-md-3">
-                  <div className=" label-12-400 mb12">
-                    Shift Start
-                    <span className="text-danger"> *</span>
+                  <div className="label-12-400 mb12">
+                    Shift Start <span className="text-danger"> *</span>
                   </div>
                   <Form.Item
                     name="shiftStart"
@@ -195,19 +391,17 @@ export default function ShiftForm({
                     <TimePicker
                       format="hh:mm A"
                       className="form-control time-picker border-none"
-                      onKeyDown={(e) => {
-                        const regex = /^[0-9:APMapm\b]+$/; // Allow numbers, colon, A, P, M, a, p, and backspace
-                        if (!regex.test(e.key)) {
-                          e.preventDefault();
-                        }
-                      }}
+                      onChange={(value) =>
+                        handleTimeChange("shiftStart", value)
+                      }
                     />
                   </Form.Item>
                 </div>
+
+                {/* Shift End */}
                 <div className="col-md-3">
-                  <div className=" label-12-400 mb12">
-                    Shift End
-                    <span className="text-danger"> *</span>
+                  <div className="label-12-400 mb12">
+                    Shift End <span className="text-danger"> *</span>
                   </div>
                   <Form.Item
                     name="shiftEnd"
@@ -221,20 +415,15 @@ export default function ShiftForm({
                     <TimePicker
                       format="hh:mm A"
                       className="form-control time-picker border-none"
-                      onKeyDown={(e) => {
-                        const regex = /^[0-9:APMapm\b]+$/; // Allow numbers, colon, A, P, M, a, p, and backspace
-                        if (!regex.test(e.key)) {
-                          e.preventDefault();
-                        }
-                      }}
+                      onChange={(value) => handleTimeChange("shiftEnd", value)}
                     />
                   </Form.Item>
                 </div>
 
+                {/* Break Start */}
                 <div className="col-md-3">
-                  <div className=" label-12-400 mb12">
-                    Break Start
-                    <span className="text-danger"> *</span>
+                  <div className="label-12-400 mb12">
+                    Break Start <span className="text-danger"> *</span>
                   </div>
                   <Form.Item
                     name="breakStart"
@@ -248,20 +437,17 @@ export default function ShiftForm({
                     <TimePicker
                       format="hh:mm A"
                       className="form-control time-picker border-none"
-                      onKeyDown={(e) => {
-                        const regex = /^[0-9:APMapm\b]+$/; // Allow numbers, colon, A, P, M, a, p, and backspace
-                        if (!regex.test(e.key)) {
-                          e.preventDefault();
-                        }
-                      }}
+                      onChange={(value) =>
+                        handleTimeChange("breakStart", value)
+                      }
                     />
                   </Form.Item>
                 </div>
 
+                {/* Break End */}
                 <div className="col-md-3">
-                  <div className=" label-12-400 mb12">
-                    Break End
-                    <span className="text-danger"> *</span>
+                  <div className="label-12-400 mb12">
+                    Break End <span className="text-danger"> *</span>
                   </div>
                   <Form.Item
                     name="breakEnd"
@@ -275,12 +461,7 @@ export default function ShiftForm({
                     <TimePicker
                       format="hh:mm A"
                       className="form-control time-picker border-none"
-                      onKeyDown={(e) => {
-                        const regex = /^[0-9:APMapm\b]+$/; // Allow numbers, colon, A, P, M, a, p, and backspace
-                        if (!regex.test(e.key)) {
-                          e.preventDefault();
-                        }
-                      }}
+                      onChange={(value) => handleTimeChange("breakEnd", value)}
                     />
                   </Form.Item>
                 </div>
@@ -297,30 +478,50 @@ export default function ShiftForm({
                     {allDaysSelected ? "Deselect All" : "Select All"}
                   </Button>
                 </div>
-                <Form.Item name="repeatOn" initialValue={[]}>
+                <Form.Item name="repeatDays" initialValue={[]}>
                   <Checkbox.Group onChange={onChange}>
                     <div className="d-flex gap-3">
-                      {weekDays.map((day) => (
-                        <Checkbox
-                          key={day}
-                          value={day}
-                          className={`week-day-checkbox ${
-                            checkedDays.includes(day) ? "opacity1" : "opacity05"
-                          }`}
-                        >
-                          <div className=" rounded-full ml10 transition-colors">
-                            <span
-                              className={`shift-week-day ${
-                                checkedDays.includes(day)
-                                  ? "text-blue"
-                                  : "text-gray"
-                              }`}
+                      {staffWeekScheduleData?.data.map((day) => {
+                        const isDisabled = day?.startTime === "00:00:00";
+                        const tooltipContent = isDisabled
+                          ? ""
+                          : `Start: ${day?.startTime}, End: ${day?.endTime}`;
+
+                        return (
+                          <Checkbox
+                            value={day?.dayOfWeek}
+                            className={`week-day-checkbox ${
+                              checkedDays.includes(day?.dayOfWeek)
+                                ? "opacity1"
+                                : "opacity05"
+                            }`}
+                            disabled={isDisabled}
+                          >
+                            <Tooltip
+                              key={day?.dayOfWeek}
+                              title={tooltipContent}
+                              placement="top"
+                              overlayStyle={{
+                                whiteSpace: "nowrap",
+                                maxWidth: "none",
+                              }} // Ensure full content is visible
+                              mouseEnterDelay={0.3}
                             >
-                              {day}
-                            </span>
-                          </div>
-                        </Checkbox>
-                      ))}
+                              <div className="rounded-full ml10 transition-colors">
+                                <span
+                                  className={`shift-week-day ${
+                                    checkedDays.includes(day?.dayOfWeek)
+                                      ? "text-blue"
+                                      : "text-gray"
+                                  }`}
+                                >
+                                  {day?.dayOfWeek}
+                                </span>
+                              </div>
+                            </Tooltip>
+                          </Checkbox>
+                        );
+                      })}
                     </div>
                   </Checkbox.Group>
                 </Form.Item>
@@ -328,23 +529,19 @@ export default function ShiftForm({
 
               <div className="row mb10 d-flex align-items-center">
                 <div className="col-md-4">
+                  <div className=" label-12-400 mb12">
+                    Until Date<span className="text-danger">*</span>
+                  </div>
                   <Form.Item
-                    label={
-                      <span className="d-flex label-12-400">
-                        Until Date<span className="text-danger">*</span>
-                      </span>
-                    }
-                    name="untildate"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select the Until Date",
+                      },
+                    ]}
+                    name="untilDate"
                   >
-                    <CustomDatePicker
-                      name="untildate"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please select the Until Date",
-                        },
-                      ]}
-                    />
+                    <CustomDatePicker />
                   </Form.Item>
                 </div>
                 <div className="col-md-6">
@@ -362,7 +559,8 @@ export default function ShiftForm({
                 {modalType === "edit" && (
                   <div className="col-md-2 ">
                     <button
-                      onClick={() => handleDeleteConfirmModal(1, "chandan")}
+                      onClick={() => handleDeleteBtnConfirmModal(1, "chandan")}
+                      // onClick={() => handleDeleteConfirmModal(1, "chandan")}
                       className={`btn d-flex align-items-center justify-content-center rounded-circle p-0 `}
                       style={{
                         width: 50,
@@ -388,19 +586,20 @@ export default function ShiftForm({
                   margin="0 16px 0 0"
                   onClick={handleCancelClick}
                 />
-                {modalType === "add" ? (
-                  <ButtonComponent
-                    text={"Confirm"}
-                    padding="14px 45px"
-                    type="submit"
-                  />
-                ) : (
+                {/* {modalType === "add" ? ( */}
+                <ButtonComponent
+                  text={"Confirm"}
+                  padding="14px 45px"
+                  type="submit"
+                />
+                {/* ) : (
                   <ButtonComponent
                     text={"Next"}
                     padding="14px 45px"
                     onClick={handleNext}
+                    type="button"
                   />
-                )}
+                )} */}
               </div>
             </div>
           </Form>
@@ -429,7 +628,7 @@ export default function ShiftForm({
             form={form}
             layout="vertical"
             className="addshift-form"
-            onFinish={onFinish}
+            onFinish={handleSubmit}
             style={{ padding: "24px 40px" }}
           >
             <div className="">
@@ -438,7 +637,7 @@ export default function ShiftForm({
                 <div className="my-4">
                   <YesNoRadio
                     options={[
-                      { label: "This Shift", value: "This Shift" },
+                      { label: "This Shift", value: "classroom" },
                       {
                         label: "This Shift & All future shifts",
                         value: "This Shift & All future shifts",
@@ -473,6 +672,22 @@ export default function ShiftForm({
           </Form>
         </div>
       </CommonModalComponent>
+      {isDeleteModalOpen && (
+        <CommonModalComponent
+          open={isDeleteModalOpen}
+          setOpen={setDeleteModalOpen}
+          modalWidthSize={560}
+          isClosable={true}
+        >
+          <DeleteSchedulePopUp
+            setCancel={setDeleteModalOpen}
+            deleteData={selectedRecord}
+            // CardTitle="Delete Classroom"
+            handleDelete={handleDelete}
+            module="Selected Shift"
+          />
+        </CommonModalComponent>
+      )}
     </>
   );
 }

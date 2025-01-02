@@ -10,6 +10,7 @@ import PublishShift from "./PublishShift";
 import { useGetClassroomsBySchool } from "../../hooks/useClassroom";
 import { useSession } from "../../hooks/useSession";
 import ButtonComponent from "../../components/ButtonComponent";
+import { useGetAllSchedulesByDate } from "../../hooks/useWeekSchedule";
 
 const { Text } = Typography;
 const Schedule = () => {
@@ -19,6 +20,7 @@ const Schedule = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isDeleteShiftModalOpen, setDeleteShiftModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(false);
+  const [initialDate, setInitialDate] = useState({});
   const [isPublishedShiftModalOpen, setPublishedShiftModalOpen] =
     useState(false);
   const [classRoomList, setClassRoomList] = useState([]);
@@ -32,6 +34,9 @@ const Schedule = () => {
     isError,
     error,
   } = useGetClassroomsBySchool(schoolId);
+  const payload = { ...initialDate, schoolId };
+  const { data: scheduleData } = useGetAllSchedulesByDate(payload);
+  // console.log("scheduleData", scheduleData);
 
   useEffect(() => {
     setClassRoomList(
@@ -50,26 +55,14 @@ const Schedule = () => {
   };
   const handleDelete = async (id) => {};
 
-  // Define menu items with onClick handlers
-  const publishItems = [
-    {
-      key: "1",
-      label: (
-        <div onClick={() => setPublishedShiftModalOpen(true)}>Next Month</div>
-      ),
-    },
-    {
-      key: "2",
-      label: (
-        <div onClick={() => setPublishedShiftModalOpen(true)}>All Shifts</div>
-      ),
-    },
-  ];
-
   return (
     <>
       <div className="d-flex align-items-center justify-content-between mb-4">
-        <WeekDatePicker onRangeChange={handleRangeChange} gap={10} />
+        <WeekDatePicker
+          onRangeChange={handleRangeChange}
+          gap={10}
+          setInitialDate={setInitialDate}
+        />
         <div className="d-flex  align-items-center gap-3">
           <Button
             size="small"
@@ -101,7 +94,12 @@ const Schedule = () => {
           />
         </div>
       </div>
-      <ScheduleTable startDate={startDate} classRoomList={classRoomList} />
+      <ScheduleTable
+        startDate={startDate}
+        classRoomList={classRoomList}
+        scheduleData={scheduleData}
+        dateRange={initialDate}
+      />
 
       {isAddShiftModalOpen && (
         <ShiftForm

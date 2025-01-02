@@ -16,11 +16,27 @@ export const useGetAllActiveSchedules = () => {
       console.error("Error fetching active week schedules:", error),
   });
 };
+// Fetch all schedules by date
+export const useGetAllSchedulesByDate = (params) => {
+  return useQuery({
+    queryKey: [
+      scheduleKeys.activeSchedules,
+      params?.startDate,
+      params?.endDate,
+      params?.schoolId,
+    ],
+    queryFn: () => WeekScheduleService.getAllSchedulesByDate(params),
+    refetchOnWindowFocus: false,
+    retry: 3,
+    onError: (error) =>
+      console.error("Error fetching active week schedules:", error),
+  });
+};
 
 // Fetch a specific week schedule by ID
 export const useWeekScheduleById = (scheduleId) => {
   return useQuery({
-    queryKey: [scheduleKeys.weekSchedule, scheduleId],
+    queryKey: [scheduleKeys.schedule, scheduleId],
     queryFn: () => WeekScheduleService.getScheduleById(scheduleId),
     enabled: Boolean(scheduleId),
     onError: (error) =>
@@ -28,6 +44,33 @@ export const useWeekScheduleById = (scheduleId) => {
         `Error fetching week schedule with ID ${scheduleId}:`,
         error
       ),
+  });
+};
+// Fetch a specific week schedule by Staff ID
+export const useWeekScheduleByStaffId = (staffId) => {
+  return useQuery({
+    queryKey: [scheduleKeys.staffSchedule, staffId],
+    queryFn: () => WeekScheduleService.getScheduleByStaffId(staffId),
+    enabled: Boolean(staffId),
+    onError: (error) =>
+      console.error(`Error fetching week schedule with ID ${staffId}:`, error),
+  });
+};
+
+// Create multiple week schedules
+export const useCreateShift = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ params, shiftData }) =>
+      WeekScheduleService.createShift(params, shiftData),
+    onSuccess: () => {
+      queryClient.invalidateQueries(scheduleKeys.activeSchedules);
+      //   CustomMessage.success("Week schedules created successfully!");
+    },
+    onError: (error) => {
+      console.error("Error creating week schedules:", error);
+      //   CustomMessage.error("Error creating week schedules!");
+    },
   });
 };
 
