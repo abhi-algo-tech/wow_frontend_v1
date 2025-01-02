@@ -136,6 +136,7 @@ const Schedule = () => {
             deleteData={selectedRecord}
             CardTitle="Publish Shifts"
             handleDelete={handleDelete}
+            type="school"
           />
         </CommonModalComponent>
       )}

@@ -170,6 +170,7 @@ import {
   useCreateWeekSchedules,
   useUpdateWeekSchedules,
 } from "../../hooks/useWeekSchedule";
+import dayjs from "dayjs";
 
 export default function StaffScheduleForm({
   CardTitle = "Staff Schedule Form",
@@ -190,76 +191,156 @@ export default function StaffScheduleForm({
         id: item.id,
         day: item.dayOfWeek.charAt(0) + item.dayOfWeek.slice(1).toLowerCase(),
         scheduleTime: {
-          start: formatTime(item.startTime),
-          end: formatTime(item.endTime),
+          start:
+            item.startTime === "00:00:00" ? null : formatTime(item.startTime),
+          end: item.endTime === "00:00:00" ? null : formatTime(item.endTime),
         },
         breakTime: {
-          start: formatTime(item.breakStartTime || "00:00 AM"),
-          end: formatTime(item.breakEndTime || "00:00 PM"),
+          start:
+            item.breakStartTime === "00:00:00"
+              ? null
+              : formatTime(item.breakStartTime || "00:00 AM"),
+          end:
+            item.breakEndTime === "00:00:00"
+              ? null
+              : formatTime(item.breakEndTime || "00:00 PM"),
         },
       }));
       setSchedule(mappedSchedule);
     } else {
-      setSchedule([
-        {
-          day: "Monday",
-          scheduleTime: { start: "00:00 AM", end: "00:00 PM" },
-          breakTime: { start: "12:00 PM", end: "01:00 PM" },
-        },
-        {
-          day: "Tuesday",
-          scheduleTime: { start: "00:00 AM", end: "00:00 PM" },
-          breakTime: { start: "12:00 PM", end: "01:00 PM" },
-        },
-        {
-          day: "Wednesday",
-          scheduleTime: { start: "00:00 AM", end: "00:00 PM" },
-          breakTime: { start: "12:00 PM", end: "01:00 PM" },
-        },
-        {
-          day: "Thursday",
-          scheduleTime: { start: "00:00 AM", end: "00:00 PM" },
-          breakTime: { start: "12:00 PM", end: "01:00 PM" },
-        },
-        {
-          day: "Friday",
-          scheduleTime: { start: "00:00 AM", end: "00:00 PM" },
-          breakTime: { start: "12:00 PM", end: "01:00 PM" },
-        },
-      ]);
+      const defaultDays = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+      ];
+      setSchedule(
+        defaultDays.map((day) => ({
+          day,
+          scheduleTime: { start: null, end: null },
+          breakTime: { start: null, end: null },
+        }))
+      );
     }
   }, [data]);
 
   const handleTimeChange = (day, timeType, startEnd, time) => {
-    if (time) {
-      setSchedule((prevSchedule) =>
-        prevSchedule.map((item) =>
-          item.day === day
-            ? {
-                ...item,
-                [timeType]: {
-                  ...item[timeType],
-                  [startEnd]: time.format(format),
-                },
+    if (!time) return;
+
+    const newTime = dayjs(time, format); // Ensure it's a dayjs object with the correct format
+    const formattedNewTime = newTime.format(format); // Format the new time
+
+    setSchedule((prevSchedule) =>
+      prevSchedule.map((item) => {
+        if (item.day !== day) return item;
+
+        let updatedItem = { ...item };
+
+        if (timeType === "scheduleTime") {
+          if (startEnd === "start") {
+            // Validate schedule start time
+            if (updatedItem.scheduleTime.end) {
+              const formattedEndTime = dayjs(
+                updatedItem.scheduleTime.end,
+                format
+              ); // Format existing end time
+              if (newTime.isAfter(formattedEndTime)) {
+                CustomMessage.error(
+                  "Schedule start time must be earlier than the end time."
+                );
+                return item;
               }
-            : item
-        )
-      );
-    }
+            }
+            updatedItem.scheduleTime.start = formattedNewTime; // Ensure format consistency
+          }
+
+          if (startEnd === "end") {
+            // Validate schedule end time
+            if (updatedItem.scheduleTime.start) {
+              const formattedStartTime = dayjs(
+                updatedItem.scheduleTime.start,
+                format
+              ); // Format existing start time
+              if (newTime.isBefore(formattedStartTime)) {
+                CustomMessage.error(
+                  "Schedule end time must be later than the start time."
+                );
+                return item;
+              }
+            }
+            updatedItem.scheduleTime.end = formattedNewTime; // Ensure format consistency
+          }
+        }
+
+        if (timeType === "breakTime") {
+          if (startEnd === "start") {
+            // Validate break start time within schedule time
+            if (updatedItem.scheduleTime.start) {
+              const formattedScheduleStart = dayjs(
+                updatedItem.scheduleTime.start,
+                format
+              ); // Format existing schedule start time
+              const formattedScheduleEnd = dayjs(
+                updatedItem.scheduleTime.end,
+                format
+              );
+              if (
+                newTime.isBefore(formattedScheduleStart) ||
+                newTime.isAfter(formattedScheduleEnd)
+              ) {
+                CustomMessage.error(
+                  "Break start time must be within schedule time."
+                );
+                return item;
+              }
+            }
+            updatedItem.breakTime.start = formattedNewTime; // Ensure format consistency
+          }
+
+          if (startEnd === "end") {
+            // Validate break end time within schedule time
+            if (updatedItem.scheduleTime.end) {
+              const formattedScheduleEnd = dayjs(
+                updatedItem.scheduleTime.end,
+                format
+              ); // Format existing schedule end time
+              const formattedScheduleStart = dayjs(
+                updatedItem.scheduleTime.start,
+                format
+              );
+              if (
+                newTime.isAfter(formattedScheduleEnd) ||
+                newTime.isBefore(formattedScheduleStart)
+              ) {
+                CustomMessage.error(
+                  "Break end time must be within schedule time."
+                );
+                return item;
+              }
+            }
+            updatedItem.breakTime.end = formattedNewTime; // Ensure format consistency
+          }
+        }
+
+        return updatedItem;
+      })
+    );
   };
 
   const handleSave = async () => {
     const formattedSchedule = schedule.map((item) => {
       const idField = module === "staff" ? { staffId: Id } : { studentId: Id };
-
       return {
         ...(item.id ? { id: item.id } : {}),
         ...idField,
         dayOfWeek: item.day.toUpperCase(),
-        startTime: convertTo24HourFormat(item.scheduleTime.start),
-        endTime: convertTo24HourFormat(item.scheduleTime.end),
-        breakStartTime: convertTo24HourFormat(item.breakTime.start),
-        breakEndTime: convertTo24HourFormat(item.breakTime.end),
+        startTime: convertTo24HourFormat(item.scheduleTime.start || "00:00:00"),
+        endTime: convertTo24HourFormat(item.scheduleTime.end || "00:00:00"),
+        breakStartTime: convertTo24HourFormat(
+          item.breakTime.start || "00:00:00"
+        ),
+        breakEndTime: convertTo24HourFormat(item.breakTime.end || "00:00:00"),
       };
     });
 
@@ -278,20 +359,18 @@ export default function StaffScheduleForm({
   };
 
   const convertTo24HourFormat = (time) => {
-    const [hourMinSec, modifier] = time.split(" ");
-    let [hours, minutes, seconds] = hourMinSec.split(":");
+    if (!time) return null;
 
-    if (modifier === "PM" && hours !== "12") {
-      hours = parseInt(hours, 10) + 12;
-    }
-    if (modifier === "AM" && hours === "12") {
-      hours = "00";
-    }
+    const [hourMinSec, modifier] = time.split(" ");
+    let [hours, minutes] = hourMinSec.split(":");
+
+    if (modifier === "PM" && hours !== "12") hours = parseInt(hours, 10) + 12;
+    if (modifier === "AM" && hours === "12") hours = "00";
 
     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
       2,
       "0"
-    )}:${String(seconds || "00").padStart(2, "0")}`;
+    )}:00`;
   };
 
   return (
@@ -331,7 +410,6 @@ export default function StaffScheduleForm({
                 {item.day}
               </Tag>
             </Col>
-
             <Col span={10}>
               <Row gutter={[20, 5]} align="middle">
                 <Col>
@@ -382,7 +460,6 @@ export default function StaffScheduleForm({
             </Col>
           </Row>
         ))}
-
         <div className="text-center mt5">
           <ButtonComponent
             text={"Save"}
