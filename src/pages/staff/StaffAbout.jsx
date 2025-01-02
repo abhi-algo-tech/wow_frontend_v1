@@ -223,7 +223,7 @@ const StaffAbout = ({ staffId }) => {
             className="pointer"
             onClick={() => setAboutScheduleModalOpen(true)}
           >
-            <Avatar size={20} src="/wow_icons/png/edit-grey.png" />
+            <img className="size-20" src="/wow_icons/png/edit-grey.png" />
           </div>
           <Col span={5}>
             <div className="student-about-tab-label mb8">Availability</div>
