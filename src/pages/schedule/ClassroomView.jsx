@@ -132,6 +132,7 @@ const ClassroomView = () => {
             deleteData={selectedRecord}
             CardTitle="Publish Shifts"
             handlePublish={handlePublish}
+            type="school"
           />
         </CommonModalComponent>
       )}

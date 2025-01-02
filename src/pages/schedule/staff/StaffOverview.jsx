@@ -219,6 +219,7 @@ const StaffOverview = () => {
             deleteData={selectedRecord}
             CardTitle="Publish Shifts"
             handlePublish={handlePublish}
+            type="staff"
           />
         </CommonModalComponent>
       )}
