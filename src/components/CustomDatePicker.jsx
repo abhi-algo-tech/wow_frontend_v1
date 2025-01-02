@@ -13,6 +13,7 @@ const CustomDatePicker = ({
   onChange,
   placeholder = "Select a date",
   autoSelectToday = false,
+  disabled = false,
 }) => {
   // Parse the incoming value to a dayjs object or null if invalid
   const parsedValue = value
@@ -35,6 +36,7 @@ const CustomDatePicker = ({
       className="custom-date-picker"
       placeholder={placeholder}
       allowClear // Allow clearing the date
+      disabled={disabled}
     />
   );
 };
