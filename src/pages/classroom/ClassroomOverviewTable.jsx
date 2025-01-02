@@ -1,16 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Select,
-  Tag,
-  Dropdown,
-  Space,
-  message,
-  Avatar,
-  Popconfirm,
-  Form,
-  Switch,
-} from "antd";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import { Select, Dropdown, Space, Form, Switch } from "antd";
 import { IoIosMore } from "react-icons/io";
 import TableComponent from "../../components/TableComponent";
 import {

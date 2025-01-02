@@ -58,6 +58,12 @@ export const API_ENDPOINTS = {
   },
   WEEK_SCHEDULE: {
     BASE: "/v1/week-schedules",
+    SCHEDULE: "/v1/schedule",
+    GET_BY_STAFF: "/v1/week-schedules/staff",
+  },
+  SCHEDULE: {
+    BASE: "/v1/schedule",
+    PUBLISH: "/v1/schedule/publish",
   },
   IMMUNIZATION: {
     BASE: "/v1/immunizations",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { Button } from "antd";
@@ -9,6 +9,7 @@ const WeekDatePicker = ({
   bgBorder = false,
   fontSize = 16,
   gap = 0,
+  setInitialDate = () => {},
 }) => {
   const [startDate, setStartDate] = useState(
     dayjs().startOf("week").add(1, "day")
@@ -16,9 +17,19 @@ const WeekDatePicker = ({
   const [endDate, setEndDate] = useState(dayjs().startOf("week").add(5, "day")); // End on Friday
 
   // Format the date range
+  // setInitialDate({ startDate: startDate, endDate: endDate });
   const getFormattedRange = () => {
     return `${startDate.format("MMM DD")} - ${endDate.format("MMM DD")}`;
   };
+
+  useEffect(() => {
+    if (startDate && endDate) {
+      setInitialDate({
+        startDate: startDate ? dayjs(startDate).format("YYYY-MM-DD") : null,
+        endDate: endDate ? dayjs(endDate).format("YYYY-MM-DD") : null,
+      });
+    }
+  }, [startDate, endDate]); // Add endDate to dependencies if it's part of the update.
 
   // Update dates and trigger callback
   const updateDates = (direction) => {

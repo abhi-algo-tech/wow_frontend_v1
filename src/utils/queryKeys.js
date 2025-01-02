@@ -48,6 +48,7 @@ export const documentKey = {
 };
 export const scheduleKeys = {
   schedule: "schedule",
+  staffSchedule: "staffSchedule",
 };
 export const immunizationKeys = {
   immunizations: "immunizations",
