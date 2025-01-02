@@ -203,15 +203,22 @@ function ParentForm({
                 <Input
                   placeholder="E.g. (000) 000-0000"
                   className="w-100 student-form-input"
+                  maxLength={10}
+                  minLength={10}
                 />
               </Form.Item>
             </div>
             <div className="col-6">
               <div className=" items-center gap-1 student-label ">
                 Relation
-                {/* <span className="text-danger"> *</span> */}
+                <span className="text-danger"> *</span>
               </div>
-              <Form.Item name="relation">
+              <Form.Item
+                name="relation"
+                rules={[
+                  { required: true, message: "Please select relation!" }, // Required field rule
+                ]}
+              >
                 <Select
                   className="select-student-add-from"
                   placeholder="Select"
