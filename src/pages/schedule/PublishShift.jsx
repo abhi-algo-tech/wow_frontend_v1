@@ -24,9 +24,18 @@ function PublishShift({
   };
 
   const handlePublishClick = () => {
-    console.log(type);
     if (type === "school") {
-      publishShift({ schoolId: schoolId, untilDate }); // Call the mutation with untilDate
+      publishShift(
+        {
+          schoolId: schoolId,
+          untilDate,
+        },
+        {
+          onSuccess: () => {
+            CustomMessage.success("Shift published successfully!");
+          },
+        }
+      );
     }
     setCancel(false);
   };
