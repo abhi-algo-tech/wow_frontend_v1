@@ -1,3 +1,10 @@
+import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+// Extend dayjs with the plugin
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
+
 export const reStructureScheduleArray = (dataArray) => {
   const days = ["mon", "tue", "wed", "thu", "fri"];
 
@@ -60,8 +67,6 @@ export const reStructureScheduleArray = (dataArray) => {
   });
 };
 
-import dayjs from "dayjs";
-
 export const getDateForDay = (dateRange, dayName) => {
   const { startDate, endDate } = dateRange;
   const start = dayjs(startDate);
@@ -91,8 +96,6 @@ export const getDateForDay = (dateRange, dayName) => {
 };
 
 export const getDayNameByDate = (date) => {
-  console.log("date", date);
-
   const parsedDate = dayjs(date);
   if (!parsedDate.isValid()) {
     console.error("Invalid date:", date);
@@ -108,3 +111,42 @@ export const validateTime = (time) => {
   const formattedTime = dayjs(time, "HH:mm:ss");
   return formattedTime.isValid() ? formattedTime.format("HH:mm") : ""; // Format if valid, otherwise keep blank
 };
+
+export const formateTime = (time) => {
+  return dayjs(time, "HH:mm:ss").format("hh:mm A");
+};
+
+export const validateTimeRange = (
+  defaultStartTime,
+  defaultEndTime,
+  currentStartTime,
+  currentEndTime
+) => {
+  // Ensure all times are in the same format (12-hour AM/PM format)
+  const format = "hh:mm A"; // 12-hour format with AM/PM
+
+  // Convert all times to 12-hour AM/PM format
+  const start = dayjs(defaultStartTime, ["HH:mm:ss", "hh:mm"]).format(format);
+  const end = dayjs(defaultEndTime, ["HH:mm:ss", "hh:mm"]).format(format);
+  const shiftStart = dayjs(currentStartTime, ["HH:mm:ss", "hh:mm"]).format(
+    format
+  );
+  const shiftEnd = dayjs(currentEndTime, ["HH:mm:ss", "hh:mm"]).format(format);
+
+  // Check if shiftStart is greater than or equal to defaultStartTime, and shiftEnd is less than or equal to defaultEndTime
+  const isValidStartTime = dayjs(shiftStart, format).isSameOrAfter(
+    dayjs(start, format)
+  );
+  const isValidEndTime = dayjs(shiftEnd, format).isSameOrBefore(
+    dayjs(end, format)
+  );
+
+  // Both conditions must be true to be valid
+  if (isValidStartTime && isValidEndTime) {
+    return true; // Valid if within the range
+  }
+
+  return false; // Invalid if outside the allowed range
+};
+
+// validateTimeRange("09:00:00", "17:00:00" ,"07:00", "19:00")
