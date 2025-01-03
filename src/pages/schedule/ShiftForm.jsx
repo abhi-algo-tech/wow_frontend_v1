@@ -28,7 +28,6 @@ import {
   validateTime,
   validateTimeRange,
 } from "./scheduleData";
-import { Logger } from "sass";
 import DeleteSchedulePopUp from "../../components/DeleteSchedulePopup";
 
 export default function ShiftForm({
@@ -73,19 +72,22 @@ export default function ShiftForm({
   };
 
   useEffect(() => {
-    const filteredClassrooms = classroomData?.data?.filter(
-      (classroom) => classroom.status.toLowerCase() === "active"
-    );
-    setClassRooms(filteredClassrooms || []);
+    if (classroomData) {
+      const activeClassrooms = classroomData?.data?.filter(
+        (classroom) => classroom.status.toLowerCase() === "active"
+      );
+      setClassRooms(activeClassrooms || []);
+    }
   }, [classroomData]);
-  useEffect(() => {
-    const filteredClassrooms = staffData?.data?.filter(
-      (classroom) => classroom.status.toLowerCase() === "active"
-    );
-    setStaffs(filteredClassrooms || []);
-  }, [staffData]);
 
-  console.log("classroomSelectedData", classroomSelectedData);
+  useEffect(() => {
+    if (staffData) {
+      const activeStaffs = staffData?.data?.filter(
+        (staff) => staff.status.toLowerCase() === "active"
+      );
+      setStaffs(activeStaffs || []);
+    }
+  }, [staffData]);
 
   const weekDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
   // Get the current day of the week
@@ -106,7 +108,7 @@ export default function ShiftForm({
     });
 
     setCurrentSchedule(matchedSchedule);
-  }, [selectedDay]);
+  }, [selectedDay, staffWeekScheduleData?.data]);
 
   useEffect(() => {
     if (modalType === "add") {
@@ -116,6 +118,10 @@ export default function ShiftForm({
           shiftEnd: dayjs(currentSchedule?.endTime, "HH:mm"),
           breakStart: dayjs(currentSchedule?.breakStartTime, "HH:mm"),
           breakEnd: dayjs(currentSchedule?.breakEndTime, "HH:mm"),
+          untilDate:
+            checkedDays.length > 0
+              ? dayjs().add(1, "month").format("YYYY-MM-DD")
+              : null,
         });
         setTimes({
           shiftStart: currentSchedule?.startTime,
@@ -132,7 +138,7 @@ export default function ShiftForm({
         });
       }
     }
-  }, [currentSchedule]);
+  }, [currentSchedule, checkedDays, form]);
 
   useEffect(() => {
     if (classroomSelectedData) {
@@ -245,8 +251,13 @@ export default function ShiftForm({
       {
         params: {
           startDate: shiftdate ? dayjs(shiftdate).format("YYYY-MM-DD") : null,
-          untilDate: untilDate ? dayjs(untilDate).format("YYYY-MM-DD") : null,
-          repeatDays: repeatDays,
+          untilDate: untilDate
+            ? dayjs(untilDate).format("YYYY-MM-DD")
+            : dayjs(shiftdate).format("YYYY-MM-DD"),
+          repeatDays:
+            repeatDays.length > 0
+              ? repeatDays
+              : getDayNameByDate(shiftdate).toUpperCase(),
         },
         shiftData: shiftData,
       },
@@ -363,6 +374,7 @@ export default function ShiftForm({
                     <CustomDatePicker
                       value={selectedDate}
                       onChange={setSelectedDate}
+                      isDisabledBackDate={true}
                       // autoSelectToday={true}
                     />
                   </Form.Item>
@@ -538,12 +550,11 @@ export default function ShiftForm({
                           `"${times?.shiftEnd}"`
                         );
 
-                        const tooltipContent =
-                          isDisabled || isTimeRangeValid
-                            ? ""
-                            : `Start: ${formateTime(
-                                day?.startTime
-                              )}, End: ${formateTime(day?.endTime)}`;
+                        const tooltipContent = isDisabled
+                          ? "No Schedule "
+                          : `Start: ${formateTime(
+                              day?.startTime
+                            )}, End: ${formateTime(day?.endTime)}`;
 
                         return (
                           <Checkbox
@@ -599,13 +610,16 @@ export default function ShiftForm({
                   <Form.Item
                     rules={[
                       {
-                        required: checkedDays.length === 0,
+                        required: checkedDays.length > 0,
                         message: "Please select the Until Date",
                       },
                     ]}
                     name="untilDate"
                   >
-                    <CustomDatePicker disabled={checkedDays.length === 0} />
+                    <CustomDatePicker
+                      disabled={checkedDays.length === 0}
+                      isDisabledBackDate={true}
+                    />
                   </Form.Item>
                 </div>
                 <div className="col-md-6">

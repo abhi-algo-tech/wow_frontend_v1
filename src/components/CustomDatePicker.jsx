@@ -14,6 +14,7 @@ const CustomDatePicker = ({
   placeholder = "Select a date",
   autoSelectToday = false,
   disabled = false,
+  isDisabledBackDate = false,
 }) => {
   // Parse the incoming value to a dayjs object or null if invalid
   const parsedValue = value
@@ -27,7 +28,11 @@ const CustomDatePicker = ({
       onChange(date ? date.format("YYYY-MM-DD") : null); // Emit ISO format
     }
   };
-
+  // Disable dates before today
+  const disabledDateCal = (current) => {
+    return current && current.isBefore(dayjs(), "day");
+  };
+  const disabledDate = isDisabledBackDate ? disabledDateCal : false;
   return (
     <DatePicker
       value={parsedValue} // Pass the dayjs object to DatePicker
@@ -37,6 +42,7 @@ const CustomDatePicker = ({
       placeholder={placeholder}
       allowClear // Allow clearing the date
       disabled={disabled}
+      disabledDate={disabledDate} // Disable backdates
     />
   );
 };

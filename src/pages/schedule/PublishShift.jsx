@@ -4,6 +4,7 @@ import CustomDatePicker from "../../components/CustomDatePicker";
 import ButtonComponent from "../../components/ButtonComponent";
 import { usePublishShift } from "../../hooks/useSchedule";
 import { useSession } from "../../hooks/useSession";
+import { CustomMessage } from "../../utils/CustomMessage";
 
 function PublishShift({
   setCancel,
@@ -25,17 +26,10 @@ function PublishShift({
 
   const handlePublishClick = () => {
     if (type === "school") {
-      publishShift(
-        {
-          schoolId: schoolId,
-          untilDate,
-        },
-        {
-          onSuccess: () => {
-            CustomMessage.success("Shift published successfully!");
-          },
-        }
-      );
+      publishShift({
+        schoolId: schoolId,
+        untilDate,
+      });
     }
     setCancel(false);
   };
