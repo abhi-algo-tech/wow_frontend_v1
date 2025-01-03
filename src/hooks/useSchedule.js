@@ -11,11 +11,35 @@ export const usePublishShift = () => {
       ScheduleService.publishShift(schoolId, untilDate),
     onSuccess: () => {
       queryClient.invalidateQueries(scheduleKeys.schedule);
-      //   CustomMessage.success("Week schedules created successfully!");
+      CustomMessage.success("Shift published successfully!");
     },
     onError: (error) => {
       console.error("Error publishing schedules:", error);
       //   CustomMessage.error("Error creating week schedules!");
+    },
+  });
+};
+
+export const useCopyByClassroom = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ classroomIds, startWeekDate, endWeekDate, untilDate }) =>
+      ScheduleService.copyByClassroom(
+        classroomIds,
+        startWeekDate,
+        endWeekDate,
+        untilDate
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries(scheduleKeys.schedule);
+      CustomMessage.success("Schedules copied successfully for classrooms!");
+    },
+    onError: (error) => {
+      console.error("Error copying schedules:", error);
+      CustomMessage.error(
+        "Failed to copy schedules for classrooms. Please try again."
+      );
     },
   });
 };
