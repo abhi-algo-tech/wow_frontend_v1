@@ -211,7 +211,7 @@ export default function CopyShiftForm({ cardTitle, shiftId, closeModal }) {
 
     const newStartDate = dayjs(startDate).format("YYYY-MM-DD");
     const endDate = startDate.add(5, "days");
-    const newEndDate = dayjs(startDate).format("YYYY-MM-DD");
+    const newEndDate = dayjs(endDate).format("YYYY-MM-DD");
     // Call the mutation function
     copyByClassroom(
       {
