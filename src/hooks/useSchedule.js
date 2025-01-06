@@ -43,3 +43,20 @@ export const useCopyByClassroom = () => {
     },
   });
 };
+
+// Fetch all schedules by staff
+export const useGetAllSchedulesByStaff = (params) => {
+  return useQuery({
+    queryKey: [
+      scheduleKeys.schedule,
+      params?.startDate,
+      params?.endDate,
+      params?.staffId,
+    ],
+    queryFn: () => ScheduleService.getAllSchedulesByStaff(params),
+    refetchOnWindowFocus: false,
+    retry: 3,
+    onError: (error) =>
+      console.error("Error fetching schedules by staff:", error),
+  });
+};

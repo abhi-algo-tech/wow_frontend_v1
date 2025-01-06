@@ -39,6 +39,18 @@ const ScheduleService = {
       throw error;
     }
   },
+
+  getAllSchedulesByStaff: async (params) => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.SCHEDULE.GET_SCHEDULE_STAFF}?startDate=${params?.startDate}&endDate=${params?.endDate}&staffId=${params?.staffId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching schedules by staff:", error);
+      throw error;
+    }
+  },
 };
 
 export default ScheduleService;
