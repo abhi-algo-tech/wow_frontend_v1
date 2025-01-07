@@ -64,6 +64,7 @@ export const API_ENDPOINTS = {
   SCHEDULE: {
     BASE: "/v1/schedule",
     PUBLISH: "/v1/schedule/publish",
+    PUBLISH_STAFF: "/v1/schedule/publish-staff",
     COPY_BY_CLASSROOM: "/v1/schedule/copy/classrooms",
     GET_SCHEDULE_STAFF: "/v1/schedule/by-staff-filters",
   },
