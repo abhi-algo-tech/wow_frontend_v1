@@ -76,3 +76,17 @@ export const useGetAllSchedulesByStaff = (params) => {
       console.error("Error fetching schedules by staff:", error),
   });
 };
+
+export const useGetAllSchedulesByClassroom = (classroomId, date) => {
+  return useQuery({
+    queryKey: [scheduleKeys.schedule, classroomId, date], // Unique key for caching
+    queryFn: () =>
+      ScheduleService.getAllSchedulesByClassroom(classroomId, date), // Fetch function
+    enabled: !!classroomId && !!date, // Run the query only if classroomId and date are valid
+    refetchOnWindowFocus: false, // Prevent refetching on window focus
+    retry: 3, // Retry up to 3 times on failure
+    onError: (error) => {
+      console.error("Error fetching schedules by classroom:", error);
+    },
+  });
+};

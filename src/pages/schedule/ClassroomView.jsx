@@ -20,9 +20,12 @@ const ClassroomView = () => {
   const [isPublishedShiftModalOpen, setPublishedShiftModalOpen] =
     useState(false);
   const [classRoomList, setClassRoomList] = useState([]);
+  const [selectedClassroomId, setSelectedClassroomId] = useState(null);
   const [startDate, setStartDate] = useState(
     dayjs().startOf("week").add(1, "day")
   ); // Start from Monday
+  const [date, setDate] = useState(null);
+  const [initialDate, setInitialDate] = useState({});
 
   const schoolId = academyId;
   const {
@@ -40,8 +43,14 @@ const ClassroomView = () => {
     );
   }, [classroomData]);
 
-  const handleRangeChange = (start, end) => {
-    setStartDate(start);
+  const handleClassroomChange = (value) => {
+    setSelectedClassroomId(value); // Update selected classroom ID
+  };
+
+  const handleRangeChange = (newDate) => {
+    const formattedStartDate = dayjs(newDate).format("YYYY-MM-DD");
+
+    setDate(formattedStartDate);
   };
 
   const handleDeleteModal = (id, name) => {
@@ -75,10 +84,16 @@ const ClassroomView = () => {
     <>
       <div className="d-flex align-items-center justify-content-between mb-4">
         <div className="d-flex gap-3">
-          <SingleDatePicker onRangeChange={handleRangeChange} gap={10} />
+          <SingleDatePicker
+            onDateChange={handleRangeChange}
+            gap={10}
+            setInitialDate={setInitialDate}
+          />
           <Select
             className="select-student-add-from"
             placeholder="Select Classroom"
+            onChange={handleClassroomChange} // Handle classroom change
+            value={selectedClassroomId} // Bind selected value
             style={{ width: 185 }}
           >
             {classRoomList?.map((classroom) => (
@@ -109,7 +124,7 @@ const ClassroomView = () => {
         </div>
       </div>
       {/* <OverviewTable /> */}
-      <ScheduleView />
+      <ScheduleView classroomId={selectedClassroomId} date={date} />
 
       {isAddShiftModalOpen && (
         <ShiftForm

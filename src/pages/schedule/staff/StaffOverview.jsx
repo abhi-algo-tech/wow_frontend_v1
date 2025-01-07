@@ -10,6 +10,8 @@ import ButtonComponent from "../../../components/ButtonComponent";
 import { useGetAllStaff } from "../../../hooks/useStaff";
 import { useGetAllSchedulesByStaff } from "../../../hooks/useSchedule";
 import StaffAttandanceTable from "./StaffAttandanceTable";
+import CopyShiftForm from "../CopyShiftForm";
+import CopyShiftShiftForm from "../CopyStaffShiftForm";
 
 const { Text } = Typography;
 const convertToHHMM = (hours) => {
@@ -22,6 +24,7 @@ const StaffOverview = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [schedule, setSchedule] = useState([]);
   const [initialDate, setInitialDate] = useState({});
+  const [isCopyShiftModalOpen, setCopyShiftModalOpen] = useState(false);
   const [scheduleParams, setScheduleParams] = useState(null); // Start with null
   const [isAddShiftModalOpen, setAddShiftModalOpen] = useState(false);
   const [isPublishedShiftModalOpen, setPublishedShiftModalOpen] =
@@ -91,6 +94,17 @@ const StaffOverview = () => {
         </div>
 
         <div className="d-flex align-items-center gap-3">
+          <Button
+            size="small"
+            className="schedule-copy-btn border-none"
+            onClick={() => setCopyShiftModalOpen(true)}
+          >
+            <img
+              style={{ width: 17, height: 20 }}
+              src="/wow_icons/png/content_copy.png"
+            />{" "}
+            <span className="label-12-400"> Copy shifts </span>
+          </Button>
           <Button
             onClick={() => setAddShiftModalOpen(true)}
             className="schedule-add-shift-btn d-flex align-items-center justify-content-center"
@@ -233,6 +247,19 @@ const StaffOverview = () => {
             CardTitle="Publish Shifts"
             handlePublish={handlePublish}
             type="staff"
+          />
+        </CommonModalComponent>
+      )}
+      {isCopyShiftModalOpen && (
+        <CommonModalComponent
+          open={isCopyShiftModalOpen}
+          setOpen={setCopyShiftModalOpen}
+          modalWidthSize={500}
+          isClosable={true}
+        >
+          <CopyShiftShiftForm
+            cardTitle={"Copy Staff Shifts"}
+            closeModal={() => setCopyShiftModalOpen(false)}
           />
         </CommonModalComponent>
       )}

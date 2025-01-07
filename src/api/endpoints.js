@@ -67,6 +67,7 @@ export const API_ENDPOINTS = {
     PUBLISH_STAFF: "/v1/schedule/publish-staff",
     COPY_BY_CLASSROOM: "/v1/schedule/copy/classrooms",
     GET_SCHEDULE_STAFF: "/v1/schedule/by-staff-filters",
+    GET_BY_CLASSROOM: "/v1/schedule/by-classroom-filters",
   },
   IMMUNIZATION: {
     BASE: "/v1/immunizations",
