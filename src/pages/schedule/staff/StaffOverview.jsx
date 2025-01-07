@@ -10,6 +10,8 @@ import ButtonComponent from "../../../components/ButtonComponent";
 import { useGetAllStaff } from "../../../hooks/useStaff";
 import { useGetAllSchedulesByStaff } from "../../../hooks/useSchedule";
 import OverviewTable1 from "../OverviewTable1";
+import NewOverviewTable from "./NewOverviewTable";
+import AldabilTable from "./AldabilTable";
 
 const { Text } = Typography;
 const convertToHHMM = (hours) => {
@@ -21,6 +23,7 @@ const convertToHHMM = (hours) => {
 const StaffOverview = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [schedule, setSchedule] = useState([]);
+  const [initialDate, setInitialDate] = useState({});
   const [scheduleParams, setScheduleParams] = useState(null); // Start with null
   const [isAddShiftModalOpen, setAddShiftModalOpen] = useState(false);
   const [isPublishedShiftModalOpen, setPublishedShiftModalOpen] =
@@ -30,6 +33,7 @@ const StaffOverview = () => {
   ); // Start from Monday
 
   const { data: staffData } = useGetAllStaff();
+  // const payload = { ...initialDate, staffId };
   const { data: scheduleData } = useGetAllSchedulesByStaff(scheduleParams, {
     enabled: !!scheduleParams, // Only run when scheduleParams is not null
   });
@@ -37,6 +41,7 @@ const StaffOverview = () => {
   const handleRangeChange = (start) => {
     setStartDate(start);
   };
+  console.log("scheduleData", scheduleData);
 
   const staffList = staffData?.data?.map((staff) => ({
     key: String(staff.id),
@@ -61,7 +66,10 @@ const StaffOverview = () => {
     <>
       <div className="d-flex align-items-center justify-content-between mb-4">
         <div className="d-flex gap-3">
-          <WeekDatePicker onRangeChange={handleRangeChange} />
+          <WeekDatePicker
+            onRangeChange={handleRangeChange}
+            setInitialDate={setInitialDate}
+          />
 
           <Select
             className="select-student-add-from"
@@ -189,9 +197,10 @@ const StaffOverview = () => {
         </div>
       </div>
 
-      <OverviewTable />
+      {/* <OverviewTable /> */}
       {/* <OverviewTable1 /> */}
-
+      {/* <NewOverviewTable /> */}
+      <AldabilTable schedules={scheduleData?.data?.[0]?.schedules} />
       {isAddShiftModalOpen && (
         <ShiftForm
           cardTitle="Add Shift"
