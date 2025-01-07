@@ -56,8 +56,8 @@ function StaffAttendanceTable({ schedules = [], startDate = null }) {
           id: scheduleId + index * 3 + 1,
           title: (
             <span className="text-center label-14-800">{`${
-              (classroomName, scheduleDate || "N/A")
-            } (Morning Session)`}</span>
+              classroomName || "N/A"
+            } `}</span>
           ),
           start: createDateTime(scheduleDate, startShift),
           end: createDateTime(scheduleDate, breakShift),
@@ -79,7 +79,7 @@ function StaffAttendanceTable({ schedules = [], startDate = null }) {
           title: (
             <span className="text-center label-14-800">{`${
               classroomName || "N/A"
-            } (Afternoon Session)`}</span>
+            } `}</span>
           ),
           start: createDateTime(scheduleDate, breakEndShift),
           end: createDateTime(scheduleDate, endShift),
