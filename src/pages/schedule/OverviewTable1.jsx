@@ -1,5 +1,6 @@
 import React from "react";
 import TimeBlock from "./TimeBlock";
+
 export const scheduleData = {
   weekDays: [
     {
@@ -119,6 +120,7 @@ export const scheduleData = {
     },
   ],
   timeSlots: [
+    "05:00 AM",
     "06:00 AM",
     "07:00 AM",
     "08:00 AM",
@@ -212,45 +214,42 @@ function OverviewTable1() {
                 </div>
               </div>
 
-              {/* Time Slots */}
-              {timeSlots.map((timeSlot, rowIndex) => {
-                const scheduleForRow = day.schedule.find((item) => {
-                  const [start, end] = item.timeRange
-                    .split(" - ")
-                    .map((t) => t.trim());
-                  const startIndex = timeSlots.indexOf(start);
-                  const endIndex = timeSlots.indexOf(end);
-                  return rowIndex >= startIndex && rowIndex < endIndex;
-                });
+              {/* Schedule Below Date */}
+              <div
+                style={{
+                  padding: "8px 10px",
+                  background: "#f0f8ff",
+                  borderBottom: "1px solid #e9ecef",
+                }}
+              >
+                {day.schedule.map((scheduleForRow, index) => (
+                  <TimeBlock
+                    key={index}
+                    name={scheduleForRow.name}
+                    timeRange={scheduleForRow.timeRange}
+                    backgroundColor={scheduleForRow.backgroundColor}
+                  />
+                ))}
+              </div>
 
-                return (
-                  <div
-                    key={rowIndex}
-                    style={{
-                      height: 26,
-                      padding: "0 10px",
-                      borderLeft: "1px #F7F7F7 solid",
-                      borderRight: "1px #F7F7F7 solid",
-                      borderBottom: "1px #F7F7F7 solid",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {scheduleForRow &&
-                      rowIndex ===
-                        timeSlots.indexOf(
-                          scheduleForRow.timeRange.split(" - ")[0]
-                        ) && (
-                        <TimeBlock
-                          name={scheduleForRow.name}
-                          timeRange={scheduleForRow.timeRange}
-                          backgroundColor={scheduleForRow.backgroundColor}
-                        />
-                      )}
-                  </div>
-                );
-              })}
+              {/* Time Slots */}
+              {timeSlots.map((timeSlot, rowIndex) => (
+                <div
+                  key={rowIndex}
+                  style={{
+                    height: 26,
+                    padding: "0 10px",
+                    borderLeft: "1px #F7F7F7 solid",
+                    borderRight: "1px #F7F7F7 solid",
+                    borderBottom: "1px #F7F7F7 solid",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {/* Render empty div for time slots */}
+                </div>
+              ))}
             </div>
           ))}
         </div>

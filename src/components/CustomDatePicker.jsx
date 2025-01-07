@@ -15,24 +15,50 @@ const CustomDatePicker = ({
   autoSelectToday = false,
   disabled = false,
   isDisabledBackDate = false,
+  disableWeekends = false,
 }) => {
   // Parse the incoming value to a dayjs object or null if invalid
-  const parsedValue = value
+  let parsedValue = value
     ? dayjs(value, "YYYY-MM-DD", true)
     : autoSelectToday
     ? dayjs() // Use today's date if autoSelectToday is true
     : null;
+
+  // If disableWeekends is true and the selected date is a weekend, set it to the following Monday
+  if (
+    disableWeekends &&
+    parsedValue &&
+    (parsedValue.day() === 6 || parsedValue.day() === 0)
+  ) {
+    parsedValue = parsedValue.day(8); // Set to Monday of the next week
+    if (onChange) {
+      onChange(parsedValue.format("YYYY-MM-DD")); // Emit the adjusted date
+    }
+  }
+
   // Handle date changes and ensure the format
   const handleChange = (date) => {
     if (onChange) {
       onChange(date ? date.format("YYYY-MM-DD") : null); // Emit ISO format
     }
   };
-  // Disable dates before today
+
+  // Disable dates logic
   const disabledDateCal = (current) => {
-    return current && current.isBefore(dayjs(), "day");
+    // Disable backdates
+    const isBeforeToday = current && current.isBefore(dayjs(), "day");
+
+    // Disable weekends (Saturday = 6, Sunday = 0)
+    const isWeekend =
+      disableWeekends && (current.day() === 6 || current.day() === 0);
+
+    // Combine conditions
+    return isBeforeToday || isWeekend;
   };
-  const disabledDate = isDisabledBackDate ? disabledDateCal : false;
+
+  const disabledDate =
+    isDisabledBackDate || disableWeekends ? disabledDateCal : false;
+
   return (
     <DatePicker
       value={parsedValue} // Pass the dayjs object to DatePicker
@@ -42,7 +68,7 @@ const CustomDatePicker = ({
       placeholder={placeholder}
       allowClear // Allow clearing the date
       disabled={disabled}
-      disabledDate={disabledDate} // Disable backdates
+      disabledDate={disabledDate} // Disable backdates and weekends
     />
   );
 };

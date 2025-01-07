@@ -1202,6 +1202,13 @@
   font-weight: 600;
   line-height: normal;
 }
+.label-14-800 {
+  color: #465cb3;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
+}
 
 .label-16-500 {
   color: #573353;
@@ -1964,3 +1971,9 @@
   width: 16px;
   height: 18px;
 }
+
+/* .react-simple-scheduler .body .schedule thead tr th {
+  display: flex;
+  align-items: center;
+  text-align: center;
+} */

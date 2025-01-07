@@ -8,7 +8,7 @@ const WeekDatePicker = ({
   showButtons = true,
   bgBorder = false,
   fontSize = 16,
-  gap = 0,
+  gap = 10,
   setInitialDate = () => {},
 }) => {
   const [startDate, setStartDate] = useState(

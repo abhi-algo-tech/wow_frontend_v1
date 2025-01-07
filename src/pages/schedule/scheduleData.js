@@ -8,7 +8,7 @@ dayjs.extend(isSameOrBefore);
 export const reStructureScheduleArray = (dataArray) => {
   const days = ["mon", "tue", "wed", "thu", "fri"];
 
-  return dataArray.map((data) => {
+  return dataArray?.data?.map((data) => {
     const schedule = {};
 
     // Initialize schedule with false
@@ -16,47 +16,49 @@ export const reStructureScheduleArray = (dataArray) => {
       schedule[day] = false;
     });
 
-    const teachers = data.staffs.map((staff) => {
-      // Map schedules and mark available days
-      const mappedSchedules = staff.schedules.map((sch) => {
-        const day = sch.scheduleDays.toLowerCase().slice(0, 3);
-        schedule[day] = true; // Update schedule for the day
+    const teachers = data.staffs
+      .filter((staff) => staff.schedules && staff.schedules.length > 0)
+      .map((staff) => {
+        // Map schedules and mark available days
+        const mappedSchedules = staff.schedules.map((sch) => {
+          const day = sch.scheduleDays.toLowerCase().slice(0, 3);
+          schedule[day] = true; // Update schedule for the day
+          return {
+            id: sch.scheduleId,
+            day: day,
+            time: `${sch.startShift.slice(0, 5)} - ${sch.endShift.slice(0, 5)}`,
+            status: sch.isPublished ? "published" : "unpublished",
+            startTime: sch?.startShift.slice(0, 8),
+            endTime: sch?.endShift.slice(0, 8),
+            breakStartTime: sch?.breakShift.slice(0, 8),
+            breakEndTime: sch?.breakEndShift.slice(0, 8),
+          };
+        });
+
+        // Ensure all days are represented in the schedule
+        const completeSchedule = days.map((day) => {
+          const existing = mappedSchedules.find((sch) => sch.day === day);
+          return (
+            existing || {
+              id: day,
+              day: day,
+              time: "",
+              status: "",
+            }
+          );
+        });
+
         return {
-          id: sch.scheduleId,
-          day: day,
-          time: `${sch.startShift.slice(0, 5)} - ${sch.endShift.slice(0, 5)}`,
-          status: sch.isPublished ? "published" : "unpublished",
-          startTime: sch?.startShift.slice(0, 8),
-          endTime: sch?.endShift.slice(0, 8),
-          breakStartTime: sch?.breakShift.slice(0, 8),
-          breakEndTime: sch?.breakEndShift.slice(0, 8),
+          id: staff.staffId.toString(),
+          name: staff.staffName,
+          avatar: `/classroom_icons/png/Avatar_${staff.staffId}.png`, // Dummy avatar URL
+          duration: {
+            first: Math.floor(staff.availableHours), // availableHours is first
+            second: Math.floor(staff.scheduledHours), // scheduledHours is second
+          },
+          schedule: completeSchedule, // Include all days
         };
       });
-
-      // Ensure all days are represented in the schedule
-      const completeSchedule = days.map((day) => {
-        const existing = mappedSchedules.find((sch) => sch.day === day);
-        return (
-          existing || {
-            id: day,
-            day: day,
-            time: "",
-            status: "",
-          }
-        );
-      });
-
-      return {
-        id: staff.staffId.toString(),
-        name: staff.staffName,
-        avatar: `/classroom_icons/png/Avatar_${staff.staffId}.png`, // Dummy avatar URL
-        duration: {
-          first: Math.floor(staff.availableHours), // availableHours is first
-          second: Math.floor(staff.scheduledHours), // scheduledHours is second
-        },
-        schedule: completeSchedule, // Include all days
-      };
-    });
 
     return {
       key: data.classroomId,

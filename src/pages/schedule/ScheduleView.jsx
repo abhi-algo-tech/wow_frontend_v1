@@ -5,107 +5,168 @@ import { Collapse, Progress, Space, Avatar, Card } from "antd";
 import { UserOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import { getInitialsTitleWithColor } from "../../services/common";
 import CardGrid from "../../components/card/CardGrid";
+import { useGetAllSchedulesByClassroom } from "../../hooks/useSchedule";
 
-export default function ScheduleView() {
+function transformScheduleData(scheduleData) {
+  // Helper function to format time from "HH:MM:SS" to "h:mm A"
+  function formatTime(time) {
+    const [hour, minute] = time.split(":").map(Number);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const formattedHour = hour % 12 || 12;
+    return `${formattedHour}:${minute.toString().padStart(2, "0")} ${ampm}`;
+  }
+
+  // Transform schedule data
+  return scheduleData?.data?.map((classroom) => ({
+    id: classroom.classroomId.toString(),
+    name: classroom.classroomName,
+    expectedStudents: classroom.assignedClassroomStudentCount,
+    requiredStaff: classroom.staffRatio,
+    scheduledStaff: classroom.staffs.length,
+    type: "class",
+    scheduling: classroom.ratioStatus.scheduleMismatches.map((mismatch) => ({
+      timeRange: `${formatTime(
+        mismatch.timeRange.split(" - ")[0]
+      )} - ${formatTime(mismatch.timeRange.split(" - ")[1])}`,
+      typeOf: mismatch.message.toLowerCase().includes("mismatch")
+        ? "underRatio"
+        : "inRatio",
+    })),
+    staff: classroom.staffs.map((staff) => ({
+      id: staff.staffId.toString(),
+      name: staff.staffName,
+      duration: {
+        scheduled: staff.scheduledHours,
+        available: staff.availableHours,
+      },
+      type: "staff",
+      avatar: `/classroom_icons/png/${staff.staffName.replace(" ", "_")}.png`,
+      scheduling: staff.schedules.flatMap((schedule) => [
+        {
+          timeRange: `${formatTime(schedule.startShift)} - ${formatTime(
+            schedule.endShift
+          )}`,
+          typeOf: "inRatio",
+        },
+        {
+          timeRange: `${formatTime(schedule.breakShift)} - ${formatTime(
+            schedule.breakEndShift
+          )}`,
+          typeOf: "underRatio",
+        },
+      ]),
+    })),
+  }));
+}
+
+export default function ScheduleView({ classroomId, date }) {
   const images = [
     "/classroom_icons/png/Aadhira.png",
     "/classroom_icons/png/Aarav.png",
     "/classroom_icons/png/Aarjav.png",
   ];
-  const schedulingData = [
-    {
-      id: "1",
-      name: "1-Blue-D",
-      expectedStudents: 12,
-      requiredStaff: 3,
-      scheduledStaff: 2,
-      type: "class",
-      scheduling: [
-        { timeRange: "8:00 AM - 1:00 PM", typeOf: "inRatio" },
-        { timeRange: "1:00 PM - 3:00 PM", typeOf: "underRatio" },
-        { timeRange: "3:00 PM - 5:00 PM", typeOf: "inRatio" },
-        { timeRange: "5:00 PM - 5:30 PM", typeOf: "overRatio" },
-      ],
-      staff: [
-        {
-          id: 1,
-          name: "Jessica Rhodes",
-          duration: { scheduled: 55, available: 43 },
-          type: "staff",
-          avatar: "/classroom_icons/png/Aadhira.png",
-          scheduling: [
-            { timeRange: "9:00 AM - 1:00 PM", typeOf: "inRatio" },
-            { timeRange: "1:00 PM - 1:30 PM", typeOf: "underRatio" },
-            { timeRange: "1:30 PM - 2:00 PM", typeOf: "inRatio" },
-          ],
-        },
-        {
-          id: 2,
-          name: "Ana Biwalkar",
-          duration: { scheduled: 55, available: 43 },
-          type: "staff",
-          avatar: "/classroom_icons/png/Aarav.png",
-          scheduling: [
-            { timeRange: "11:00 AM - 1:00 PM", typeOf: "inRatio" },
-            { timeRange: "1:00 PM - 2:30 PM", typeOf: "underRatio" },
-            { timeRange: "2:30 PM - 5:00 PM", typeOf: "inRatio" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "2",
-      name: "1-Pink-D",
-      expectedStudents: 12,
-      requiredStaff: 3,
-      scheduledStaff: 2,
-      type: "class",
-      scheduling: [
-        { timeRange: "8:00 AM - 1:00 PM", typeOf: "inRatio" },
-        { timeRange: "1:00 PM - 3:00 PM", typeOf: "underRatio" },
-        { timeRange: "3:00 PM - 5:00 PM", typeOf: "inRatio" },
-        { timeRange: "5:00 PM - 5:30 PM", typeOf: "overRatio" },
-      ],
-      staff: [
-        {
-          id: 1,
-          name: "Jessica Rhodes",
-          duration: { scheduled: 55, available: 43 },
-          type: "staff",
-          avatar: "/classroom_icons/png/Aadhira.png",
-          scheduling: [
-            { timeRange: "8:00 AM - 1:00 PM", typeOf: "inRatio" },
-            { timeRange: "1:00 PM - 3:00 PM", typeOf: "underRatio" },
-            { timeRange: "3:00 PM - 5:00 PM", typeOf: "inRatio" },
-          ],
-        },
-        {
-          id: 2,
-          name: "Ana Biwalkar",
-          duration: { scheduled: 55, available: 43 },
-          type: "staff",
-          avatar: "/classroom_icons/png/Aarav.png",
-          scheduling: [
-            { timeRange: "8:00 AM - 1:00 PM", typeOf: "inRatio" },
-            { timeRange: "1:00 PM - 3:00 PM", typeOf: "underRatio" },
-            { timeRange: "3:00 PM - 5:00 PM", typeOf: "inRatio" },
-          ],
-        },
-        {
-          id: 3,
-          name: "Lana Rhodes",
-          duration: { scheduled: 55, available: 43 },
-          type: "staff",
-          avatar: "/classroom_icons/png/Aadhira.png",
-          scheduling: [
-            { timeRange: "8:00 AM - 1:00 PM", typeOf: "inRatio" },
-            { timeRange: "1:00 PM - 2:00 PM", typeOf: "underRatio" },
-            { timeRange: "2:00 PM - 4:10 PM", typeOf: "inRatio" },
-          ],
-        },
-      ],
-    },
-  ];
+  console.log("classroomId:", classroomId, date);
+  const { data: scheduleData } = useGetAllSchedulesByClassroom(
+    classroomId,
+    date
+  );
+
+  const schedulingData = transformScheduleData(scheduleData);
+  console.log(schedulingData);
+  // const schedulingData = [
+  //   {
+  //     id: "1",
+  //     name: "1-Blue-D",
+  //     expectedStudents: 12,
+  //     requiredStaff: 3,
+  //     scheduledStaff: 2,
+  //     type: "class",
+  //     scheduling: [
+  //       { timeRange: "8:00 AM - 1:00 PM", typeOf: "inRatio" },
+  //       { timeRange: "1:00 PM - 3:00 PM", typeOf: "underRatio" },
+  //       { timeRange: "3:00 PM - 5:00 PM", typeOf: "inRatio" },
+  //       { timeRange: "5:00 PM - 5:30 PM", typeOf: "overRatio" },
+  //     ],
+  //     staff: [
+  //       {
+  //         id: 1,
+  //         name: "Jessica Rhodes",
+  //         duration: { scheduled: 55, available: 43 },
+  //         type: "staff",
+  //         avatar: "/classroom_icons/png/Aadhira.png",
+  //         scheduling: [
+  //           { timeRange: "9:00 AM - 1:00 PM", typeOf: "inRatio" },
+  //           { timeRange: "1:00 PM - 1:30 PM", typeOf: "underRatio" },
+  //           { timeRange: "1:30 PM - 2:00 PM", typeOf: "inRatio" },
+  //         ],
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Ana Biwalkar",
+  //         duration: { scheduled: 55, available: 43 },
+  //         type: "staff",
+  //         avatar: "/classroom_icons/png/Aarav.png",
+  //         scheduling: [
+  //           { timeRange: "11:00 AM - 1:00 PM", typeOf: "inRatio" },
+  //           { timeRange: "1:00 PM - 2:30 PM", typeOf: "underRatio" },
+  //           { timeRange: "2:30 PM - 5:00 PM", typeOf: "inRatio" },
+  //         ],
+  //       },
+  //     ],
+  //   },
+  //   // {
+  //   //   id: "2",
+  //   //   name: "1-Pink-D",
+  //   //   expectedStudents: 12,
+  //   //   requiredStaff: 3,
+  //   //   scheduledStaff: 2,
+  //   //   type: "class",
+  //   //   scheduling: [
+  //   //     { timeRange: "8:00 AM - 1:00 PM", typeOf: "inRatio" },
+  //   //     { timeRange: "1:00 PM - 3:00 PM", typeOf: "underRatio" },
+  //   //     { timeRange: "3:00 PM - 5:00 PM", typeOf: "inRatio" },
+  //   //     { timeRange: "5:00 PM - 5:30 PM", typeOf: "overRatio" },
+  //   //   ],
+  //   //   staff: [
+  //   //     {
+  //   //       id: 1,
+  //   //       name: "Jessica Rhodes",
+  //   //       duration: { scheduled: 55, available: 43 },
+  //   //       type: "staff",
+  //   //       avatar: "/classroom_icons/png/Aadhira.png",
+  //   //       scheduling: [
+  //   //         { timeRange: "8:00 AM - 1:00 PM", typeOf: "inRatio" },
+  //   //         { timeRange: "1:00 PM - 3:00 PM", typeOf: "underRatio" },
+  //   //         { timeRange: "3:00 PM - 5:00 PM", typeOf: "inRatio" },
+  //   //       ],
+  //   //     },
+  //   //     {
+  //   //       id: 2,
+  //   //       name: "Ana Biwalkar",
+  //   //       duration: { scheduled: 55, available: 43 },
+  //   //       type: "staff",
+  //   //       avatar: "/classroom_icons/png/Aarav.png",
+  //   //       scheduling: [
+  //   //         { timeRange: "8:00 AM - 1:00 PM", typeOf: "inRatio" },
+  //   //         { timeRange: "1:00 PM - 3:00 PM", typeOf: "underRatio" },
+  //   //         { timeRange: "3:00 PM - 5:00 PM", typeOf: "inRatio" },
+  //   //       ],
+  //   //     },
+  //   //     {
+  //   //       id: 3,
+  //   //       name: "Lana Rhodes",
+  //   //       duration: { scheduled: 55, available: 43 },
+  //   //       type: "staff",
+  //   //       avatar: "/classroom_icons/png/Aadhira.png",
+  //   //       scheduling: [
+  //   //         { timeRange: "8:00 AM - 1:00 PM", typeOf: "inRatio" },
+  //   //         { timeRange: "1:00 PM - 2:00 PM", typeOf: "underRatio" },
+  //   //         { timeRange: "2:00 PM - 4:10 PM", typeOf: "inRatio" },
+  //   //       ],
+  //   //     },
+  //   //   ],
+  //   // },
+  // ];
   const ClassHeader = ({ data }) => {
     const { name } = data;
     const { initials, backgroundColor } = getInitialsTitleWithColor(name);
