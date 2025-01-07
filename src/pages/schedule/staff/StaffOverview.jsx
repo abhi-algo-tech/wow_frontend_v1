@@ -1,5 +1,5 @@
 import { Avatar, Button, Select, Typography } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import WeekDatePicker from "../../../components/datepicker/WeekDatePicker";
 import OverviewTable from "../OverviewTable";
@@ -9,9 +9,7 @@ import ShiftForm from "../ShiftForm";
 import ButtonComponent from "../../../components/ButtonComponent";
 import { useGetAllStaff } from "../../../hooks/useStaff";
 import { useGetAllSchedulesByStaff } from "../../../hooks/useSchedule";
-import OverviewTable1 from "../OverviewTable1";
-import NewOverviewTable from "./NewOverviewTable";
-import AldabilTable from "./AldabilTable";
+import StaffAttandanceTable from "./StaffAttandanceTable";
 
 const { Text } = Typography;
 const convertToHHMM = (hours) => {
@@ -41,19 +39,26 @@ const StaffOverview = () => {
   const handleRangeChange = (start) => {
     setStartDate(start);
   };
-  console.log("scheduleData", scheduleData);
 
   const staffList = staffData?.data?.map((staff) => ({
     key: String(staff.id),
     label: `${staff.firstName} ${staff.lastName}`,
   }));
 
+  useEffect(() => {
+    if (selectedRecord) {
+      setScheduleParams({
+        staffId: selectedRecord,
+        startDate: initialDate?.startDate,
+        endDate: initialDate?.endDate,
+      });
+    }
+  }, [initialDate]);
+
   const handleStaffChange = (id) => {
     setSelectedRecord(id);
-
     const newStartDate = dayjs(startDate).format("YYYY-MM-DD");
     const endDate = dayjs(startDate).add(5, "days").format("YYYY-MM-DD");
-
     // Update scheduleParams to trigger the hook
     setScheduleParams({ staffId: id, startDate: newStartDate, endDate });
   };
@@ -182,7 +187,7 @@ const StaffOverview = () => {
                     }}
                   >
                     <div className="me-3">
-                      <Avatar src={icons[index]} size={36} />
+                      <img src={icons[index]} className="size-36" />
                     </div>
 
                     <div>
@@ -199,8 +204,13 @@ const StaffOverview = () => {
 
       {/* <OverviewTable /> */}
       {/* <OverviewTable1 /> */}
-      {/* <NewOverviewTable /> */}
-      <AldabilTable schedules={scheduleData?.data?.[0]?.schedules} />
+      {initialDate?.startDate &&
+        scheduleData?.data?.[0]?.schedules.length > 0 && (
+          <StaffAttandanceTable
+            schedules={scheduleData?.data?.[0]?.schedules}
+            startDate={initialDate?.startDate}
+          />
+        )}
       {isAddShiftModalOpen && (
         <ShiftForm
           cardTitle="Add Shift"
