@@ -20,6 +20,22 @@ export const usePublishShift = () => {
   });
 };
 
+export const usepublishStaffShift = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ staffId, untilDate }) =>
+      ScheduleService.publishStaffShift(staffId, untilDate),
+    onSuccess: () => {
+      queryClient.invalidateQueries(scheduleKeys.schedule);
+      CustomMessage.success("Shift published staff successfully!");
+    },
+    onError: (error) => {
+      console.error("Error publishing staff schedules:", error);
+      //   CustomMessage.error("Error creating week schedules!");
+    },
+  });
+};
+
 export const useCopyByClassroom = () => {
   const queryClient = useQueryClient();
 

@@ -14,6 +14,18 @@ const ScheduleService = {
     }
   },
 
+  publishStaffShift: async (staffId, untilDate) => {
+    try {
+      const response = await axiosInstance.post(
+        `${API_ENDPOINTS.SCHEDULE.PUBLISH_STAFF}?staffId=${staffId}&untilDate=${untilDate}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error publishing Staff shift:", error);
+      throw error;
+    }
+  },
+
   copyByClassroom: async (
     classroomIds,
     startWeekDate,
