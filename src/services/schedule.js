@@ -63,6 +63,18 @@ const ScheduleService = {
       throw error;
     }
   },
+
+  getAllSchedulesByClassroom: async (classroomId, date) => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.SCHEDULE.GET_BY_CLASSROOM}?classroomId=${classroomId}&date=${date}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching schedules by classroom:", error);
+      throw error;
+    }
+  },
 };
 
 export default ScheduleService;
