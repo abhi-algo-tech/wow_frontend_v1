@@ -1,7 +1,22 @@
 import { Tooltip } from "antd";
 import React from "react";
 
-const CardGrid = ({ scheduleType = "teacherSchedule", scheduling = [] }) => {
+const formatDate = (date) => {
+  const formattedDate = new Date(date);
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "short", // Mon, Tue, etc.
+    day: "2-digit", // 25
+    month: "short", // Jan, Feb, etc.
+  }).format(formattedDate);
+};
+
+const CardGrid = ({
+  scheduleType = "teacherSchedule",
+  scheduling = [],
+  schedule = [],
+  date = [],
+}) => {
+  const formattedDate = formatDate(date);
   const startTime = 7 * 60; // Start time: 6:00 AM (in minutes)
   const endTime = 18 * 60; // End time: 6:00 PM (in minutes)
 
@@ -44,9 +59,9 @@ const CardGrid = ({ scheduleType = "teacherSchedule", scheduling = [] }) => {
           className="gap6"
         >
           <div className="d-flex justify-content-between mb6 align-items-center gap-2">
-            <div className="label-12-500">{day}</div>
+            <div className="label-12-500">{formattedDate}</div>
             <div className="">
-              <span className="label-14-600">{schoolName}</span>
+              <span className="label-14-600">{schedule?.name}</span>
             </div>
           </div>
           <div className="d-flex justify-content-between mb6 align-items-center gap-2">
@@ -61,19 +76,19 @@ const CardGrid = ({ scheduleType = "teacherSchedule", scheduling = [] }) => {
                 color: "#9BE8FF",
                 label: "Expected Students",
                 backgroundColor: "rgba(154, 232, 255, 0.30)",
-                value: 12,
+                value: schedule?.expectedStudents,
               },
               {
                 color: "#FDCD16",
                 label: "Required Staff",
                 backgroundColor: "rgba(253, 205, 22, 0.3)",
-                value: 3,
+                value: schedule?.requiredStaff,
               },
               {
                 color: "#9C84FF",
                 label: "Scheduled Staff",
                 backgroundColor: "rgba(156, 132, 255, 0.30)",
-                value: 2,
+                value: schedule?.scheduledStaff,
               },
             ].map((item, index) => (
               <div

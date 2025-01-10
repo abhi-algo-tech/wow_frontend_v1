@@ -60,6 +60,30 @@ export const useCopyByClassroom = () => {
   });
 };
 
+export const useCopyByStaff = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ staffIds, startWeekDate, endWeekDate, untilDate }) =>
+      ScheduleService.copyByStaff(
+        staffIds,
+        startWeekDate,
+        endWeekDate,
+        untilDate
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries(scheduleKeys.schedule);
+      CustomMessage.success("Schedules copied successfully for staff!");
+    },
+    onError: (error) => {
+      console.error("Error copying schedules:", error);
+      CustomMessage.error(
+        "Failed to copy schedules for staff. Please try again."
+      );
+    },
+  });
+};
+
 // Fetch all schedules by staff
 export const useGetAllSchedulesByStaff = (params) => {
   return useQuery({

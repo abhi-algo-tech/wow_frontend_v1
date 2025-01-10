@@ -1,18 +1,31 @@
 import { Avatar, Card, Select, Table, Tooltip } from "antd";
 import { CheckCircleFilled, WarningFilled } from "@ant-design/icons";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MdOutlineExpandMore, MdOutlineExpandLess } from "react-icons/md";
 import CommonModalComponent from "../../components/CommonModalComponent";
 import ShiftForm from "./ShiftForm";
 import { Link } from "react-router-dom";
 import DeleteSchedulePopUp from "../../components/DeleteSchedulePopup";
 import DeleteShift from "./DeleteShift";
-import { getDateForDay, reStructureScheduleArray } from "./scheduleData";
+import {
+  analyzeClassroomsByDay,
+  getDateForDay,
+  reStructureScheduleArray,
+  updateScheduleWithRatioData,
+} from "./scheduleData";
 const images = [
   "/classroom_icons/png/Aadhira.png",
   "/classroom_icons/png/Aarav.png",
   "/classroom_icons/png/Aarjav.png",
 ];
+
+const formatTimeTo12Hour = (time) => {
+  const [hours, minutes] = time.split(":").map(Number); // Split and convert to numbers
+  const period = hours >= 12 ? "PM" : "AM";
+  const formattedHours = hours % 12 || 12; // Convert to 12-hour format, handle 0 as 12
+  return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
+};
+
 // const data = [
 //   {
 //     key: 1,
@@ -519,8 +532,39 @@ export default function ScheduleTable({
   const [isConfirmDeleteShiftModalOpen, setConfirmDeleteShiftModalOpen] =
     useState(false);
   const [selectedRecord, setSelectedRecord] = useState({});
-  const data = reStructureScheduleArray(scheduleData);
-  // console.log("data", data);
+  const reStructureData = reStructureScheduleArray(scheduleData);
+  const ratioData = analyzeClassroomsByDay(scheduleData);
+  const [filterCriteria, setFilterCriteria] = useState(null);
+
+  // Compute the data list
+  const dataList = useMemo(
+    () => updateScheduleWithRatioData(reStructureData, ratioData),
+    [reStructureData, ratioData]
+  );
+
+  const dropdownData = dataList;
+
+  // Compute the filtered data dynamically
+  const data = useMemo(() => {
+    if (!filterCriteria) return dataList;
+    return dataList.filter((item) => item.key === filterCriteria);
+  }, [dataList, filterCriteria]);
+
+  // Handle filter logic
+  const handleFilterByClassroom = (classroomId) => {
+    setFilterCriteria(classroomId || null); // Reset filter if no classroomId is provided
+  };
+
+  // console.log("updatedScheduleData:", updatedScheduleData);
+
+  const convertDayToFullName = (day) => {
+    const date = new Date(
+      `${day.split(" ")[1]}-${day.split(" ")[2]}-${new Date().getFullYear()}`
+    ); // Create a Date object
+    const options = { weekday: "long" }; // Options to display full weekday name
+    const fullDayName = new Intl.DateTimeFormat("en-US", options).format(date); // Convert to full weekday name
+    return fullDayName.toUpperCase(); // Convert to uppercase
+  };
 
   const handleDeleteConfirmModal = (id, name) => {
     setSelectedRecord({ id, name });
@@ -552,7 +596,11 @@ export default function ScheduleTable({
               <td className="border p-2" style={{ width: "20%" }}>
                 <div className="d-flex justify-content-between align-items-center gap12">
                   <div>
-                    <Avatar src={teacher.avatar} alt={teacher.name} size={24} />
+                    <Avatar
+                      src={teacher?.teachers?.avatar}
+                      alt={teacher?.teachers?.name}
+                      size={24}
+                    />
                   </div>
                   <div className="teacher-name-container">
                     <div className="font-medium">{teacher.name}</div>
@@ -650,45 +698,101 @@ export default function ScheduleTable({
       </table>
     </div>
   );
-  const getTooltipContent = (day, schoolName) => {
+  const getTooltipContent = (day, schoolName, classRoomId) => {
+    const fullDay = convertDayToFullName(day); // Get the full day name in uppercase
+
+    // Filter ratioData to get only the relevant classroom for the given schoolName and day
+    const dayData = ratioData.filter(
+      (classroom) =>
+        classroom.classroomName === schoolName &&
+        Object.keys(classroom.dailyAnalysis).some(
+          (key) => key.toUpperCase().includes(fullDay.toUpperCase()) // Case-insensitive match
+        )
+    );
+
+    // Extract data for the specific day
+    const filteredData = dayData.map((classroom) => {
+      const dayKey = Object.keys(classroom.dailyAnalysis).find((key) =>
+        key.toUpperCase().includes(fullDay.toUpperCase())
+      );
+
+      // Format the date to 'yyyy-mm-dd'
+      const date = new Date(dayKey.split(" (")[1].split(")")[0]);
+      const formattedDate = date.toISOString().split("T")[0]; // Convert to yyyy-mm-dd format
+
+      return {
+        date: formattedDate,
+        classroomName: classroom.classroomName,
+        analysis: classroom.dailyAnalysis[dayKey],
+      };
+    });
+
     return (
       <>
-        <div
-          style={{
-            padding: "6px",
-          }}
-          className="gap6"
-        >
-          <div className="d-flex justify-content-between mb6 align-items-center gap-2">
-            <div className="label-14-600">{day}</div>
-            <div className="">
-              <span className="label-14-600">{schoolName}</span>
+        {/* Iterate over filteredData for the relevant day */}
+        {filteredData.map((classroom) => (
+          <div
+            key={classroom.classroomName} // Ensure each class has a unique key for React
+            style={{
+              padding: "6px",
+            }}
+            className="gap6"
+          >
+            <div className="d-flex justify-content-between mb6 align-items-center gap-2">
+              <div className="label-14-600">{day}</div>
+              <div>
+                <span className="label-14-600">{schoolName}</span>
+              </div>
+            </div>
+
+            <div>
+              {/* Display uncovered time ranges or status */}
+              {classroom.analysis.uncoveredTimeRanges?.length > 0 ? (
+                classroom.analysis.uncoveredTimeRanges.map((range, index) => (
+                  <div
+                    key={index}
+                    className="d-flex justify-content-between mb6 align-items-center gap-2"
+                  >
+                    <div className="label-10-400">
+                      {`${formatTimeTo12Hour(
+                        range.uncoveredStart
+                      )} - ${formatTimeTo12Hour(range.uncoveredEnd)}`}
+                    </div>
+                    <div className="scheduling-tag-status">
+                      <span className="label-10-400 text-white">
+                        Under ratio
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                // Display status if no uncovered time ranges
+                <div className="d-flex justify-content-between mb6 align-items-center gap-2">
+                  <div className="label-10-400">
+                    {classroom.analysis.status}
+                  </div>
+                  <div className="scheduling-tag-status">
+                    <span className="label-10-400 text-white">
+                      {classroom.analysis.status}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="text-end">
+              <Link
+                to="/schedule/classroomview"
+                state={{
+                  classroomId: classRoomId, // Using classroomId from filteredData
+                  day: classroom.date, // Using classroom.date from filteredData
+                }}
+              >
+                <span className="label-10-500 pointer">Show More</span>
+              </Link>
             </div>
           </div>
-          <div className="d-flex justify-content-between mb6 align-items-center gap-2">
-            <div className="label-10-400">12:30 AM-01:00 PM </div>
-            <div className="scheduling-tag-status">
-              <span className="label-10-400 text-white">Under ratio</span>
-            </div>
-          </div>
-          <div className="d-flex justify-content-between mb6 align-items-center gap-2">
-            <div className="label-10-400">02:30 AM-03:00 PM </div>
-            <div className="scheduling-tag-status">
-              <span className="label-10-400 text-white">Under ratio</span>
-            </div>
-          </div>
-          <div className="d-flex justify-content-between mb6 align-items-center gap-2">
-            <div className="label-10-400">05:00 AM-05:30 AM </div>
-            <div className="scheduling-tag-status">
-              <span className="label-10-400 text-white">Under ratio</span>
-            </div>
-          </div>
-        </div>
-        <div className="text-end">
-          <Link to={"/schedule/classroomview"}>
-            <span className="label-10-500 pointer">Show More</span>
-          </Link>
-        </div>
+        ))}
       </>
     );
   };
@@ -753,7 +857,7 @@ export default function ScheduleTable({
                 gap: 6,
                 alignItems: "flex-start",
               }}
-              title={getTooltipContent(day, data.name)}
+              title={getTooltipContent(day, data.name, data.key)}
               className="no-border-tag pointer"
             >
               <img
@@ -775,13 +879,28 @@ export default function ScheduleTable({
               className="select-student-add-from"
               placeholder="Select Classroom"
               style={{ width: 185 }}
+              onChange={(selectedClassroomId) => {
+                if (selectedClassroomId === "all") {
+                  // Handle logic for selecting all classrooms
+                  handleFilterByClassroom(null); // Pass null or similar to indicate no filter
+                } else {
+                  handleFilterByClassroom(selectedClassroomId);
+                }
+              }}
             >
-              {classRoomList?.map((classroom) => (
-                <Select.Option key={classroom.id} value={classroom.id}>
+              {/* "All" option to select all classrooms */}
+              <Select.Option key="all" value="all">
+                All Classrooms
+              </Select.Option>
+
+              {/* Map over the classroom list */}
+              {dropdownData?.map((classroom) => (
+                <Select.Option key={classroom.key} value={classroom.key}>
                   {classroom.name}
                 </Select.Option>
               ))}
             </Select>
+
             {/* <Select
               placeholder="Select Classroom"
               style={{

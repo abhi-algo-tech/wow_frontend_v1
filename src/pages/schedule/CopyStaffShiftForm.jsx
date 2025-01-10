@@ -8,35 +8,47 @@ import MultiSelectWithTags from "../../components/select/MultiSelectWithTags";
 import WeekDatePicker from "../../components/datepicker/WeekDatePicker";
 import { useSession } from "../../hooks/useSession";
 import { useGetClassroomsBySchool } from "../../hooks/useClassroom";
-import { useCopyByClassroom } from "../../hooks/useSchedule";
+import { useCopyByClassroom, useCopyByStaff } from "../../hooks/useSchedule";
+import { useGetAllStaff } from "../../hooks/useStaff";
 
 export default function CopyShiftShiftForm({ cardTitle, closeModal }) {
   const { academyId } = useSession();
   const [form] = Form.useForm();
   const [selectedStaff, setSelectedStaff] = useState([]);
   const [classRoomList, setClassRoomList] = useState([]);
+  const [staffs, setStaffs] = useState([]);
   const [startDate, setStartDate] = useState(
     dayjs().startOf("week").add(1, "day")
   ); // Start from Monday
 
   const schoolId = academyId;
-  const {
-    data: classroomData,
-    isLoading,
-    isError,
-    error,
-  } = useGetClassroomsBySchool(schoolId);
+  // const {
+  //   data: classroomData,
+  //   isLoading,
+  //   isError,
+  //   error,
+  // } = useGetClassroomsBySchool(schoolId);
 
-  const { mutate: copyByClassroom, isLoading: isCopying } =
-    useCopyByClassroom();
+  const { data: staffData } = useGetAllStaff();
+
+  const { mutate: copyByStaff, isLoading: isCopying } = useCopyByStaff();
 
   useEffect(() => {
-    setClassRoomList(
-      classroomData?.data?.filter(
-        (classroom) => classroom.status.toLowerCase() === "active"
-      )
-    );
-  }, [classroomData]);
+    if (staffData) {
+      const activeStaffs = staffData?.data?.filter(
+        (staff) => staff.status.toLowerCase() === "active"
+      );
+      setStaffs(activeStaffs || []);
+    }
+  }, [staffData]);
+
+  // useEffect(() => {
+  //   setClassRoomList(
+  //     classroomData?.data?.filter(
+  //       (classroom) => classroom.status.toLowerCase() === "active"
+  //     )
+  //   );
+  // }, [classroomData]);
 
   const handleRangeChange = (start, end) => {
     setStartDate(start);
@@ -47,15 +59,15 @@ export default function CopyShiftShiftForm({ cardTitle, closeModal }) {
   };
 
   const onFinish = (values) => {
-    const { allowedClassroom, fromWeek, untildate } = values;
+    const { staff, fromWeek, untildate } = values;
 
     const newStartDate = dayjs(startDate).format("YYYY-MM-DD");
     const endDate = startDate.add(5, "days");
     const newEndDate = dayjs(endDate).format("YYYY-MM-DD");
     // Call the mutation function
-    copyByClassroom(
+    copyByStaff(
       {
-        classroomIds: allowedClassroom,
+        staffIds: staff,
         startWeekDate: newStartDate,
         endWeekDate: newEndDate, // Assuming week ends 5 days after start
         untilDate: dayjs(untildate).format("YYYY-MM-DD"),
@@ -107,16 +119,14 @@ export default function CopyShiftShiftForm({ cardTitle, closeModal }) {
             ]}
           >
             <MultiSelectWithTags
-              name="tags"
+              name="staff"
               value={selectedStaff}
               onChange={handleClassroomChange}
-              options={classRoomList
-                ?.sort((a, b) => a.name.localeCompare(b.name)) // Sort classrooms by name in ascending order
-                .map((classroom) => ({
-                  label: classroom.name,
-                  value: classroom.id,
-                }))}
-              placeholder="Select Classroom"
+              options={staffs?.map((classroom) => ({
+                value: classroom?.id,
+                label: `${classroom?.firstName} ${classroom?.lastName}`,
+              }))}
+              placeholder="Select Staff"
             />
           </Form.Item>
         </div>

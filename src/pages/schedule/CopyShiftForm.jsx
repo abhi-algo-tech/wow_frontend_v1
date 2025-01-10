@@ -207,7 +207,7 @@ export default function CopyShiftForm({ cardTitle, shiftId, closeModal }) {
   };
 
   const onFinish = (values) => {
-    const { copyShiftBy, allowedClassroom, fromWeek, untildate } = values;
+    const { allowedClassroom, fromWeek, untildate } = values;
 
     const newStartDate = dayjs(startDate).format("YYYY-MM-DD");
     const endDate = startDate.add(5, "days");
@@ -250,7 +250,7 @@ export default function CopyShiftForm({ cardTitle, shiftId, closeModal }) {
         onFinish={onFinish}
         style={{ padding: "20px 40px" }}
       >
-        <div className="row ">
+        {/* <div className="row ">
           <div className="col-md-4">
             <Form.Item
               label={
@@ -271,7 +271,7 @@ export default function CopyShiftForm({ cardTitle, shiftId, closeModal }) {
               />
             </Form.Item>
           </div>
-        </div>
+        </div> */}
         <div className="col-12">
           <div className=" items-center gap-1 student-label ">
             Classrooms<span className="text-danger"> *</span>

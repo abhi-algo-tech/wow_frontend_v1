@@ -152,3 +152,146 @@ export const validateTimeRange = (
 };
 
 // validateTimeRange("09:00:00", "17:00:00" ,"07:00", "19:00")
+
+export function analyzeClassroomsByDay(classroomDataArray) {
+  return classroomDataArray?.data?.map((classroomData) => {
+    const {
+      assignedClassroomStudentCount,
+      ratio,
+      staffs,
+      ratioStartTime,
+      ratioEndTime,
+    } = classroomData;
+
+    // Calculate required staff
+    const requiredStaff = Math.ceil(assignedClassroomStudentCount / ratio);
+
+    const ratioStart = parseTime(ratioStartTime);
+    const ratioEnd = parseTime(ratioEndTime);
+
+    const dailyAnalysis = {};
+
+    staffs.forEach((staff) => {
+      const { schedules, staffName } = staff;
+
+      schedules.forEach((schedule) => {
+        const { scheduleDate, scheduleDays, startShift, endShift } = schedule;
+        const dayKey = `${scheduleDays} (${scheduleDate})`;
+
+        const startShiftTime = parseTime(startShift);
+        const endShiftTime = parseTime(endShift);
+
+        // Initialize the dayKey in the dailyAnalysis
+        if (!dailyAnalysis[dayKey]) {
+          dailyAnalysis[dayKey] = {
+            staffSchedules: [],
+            coveredStaffCount: 0,
+            uncoveredTimeRanges: [],
+          };
+        }
+
+        // Add staff's schedule to the day
+        dailyAnalysis[dayKey].staffSchedules.push({
+          staffName,
+          startShift,
+          endShift,
+        });
+
+        // Check if this staff covers the required time range
+        if (startShiftTime <= ratioStart && endShiftTime >= ratioEnd) {
+          dailyAnalysis[dayKey].coveredStaffCount += 1;
+        } else {
+          // Add uncovered time ranges
+          if (startShiftTime > ratioStart) {
+            dailyAnalysis[dayKey].uncoveredTimeRanges.push({
+              uncoveredStart: ratioStartTime,
+              uncoveredEnd: startShift,
+            });
+          }
+          if (endShiftTime < ratioEnd) {
+            dailyAnalysis[dayKey].uncoveredTimeRanges.push({
+              uncoveredStart: endShift,
+              uncoveredEnd: ratioEndTime,
+            });
+          }
+        }
+      });
+    });
+
+    // Determine if the classroom is in overRatio or underRatio for each day
+    for (const dayKey in dailyAnalysis) {
+      const { coveredStaffCount } = dailyAnalysis[dayKey];
+
+      if (coveredStaffCount < requiredStaff) {
+        dailyAnalysis[dayKey].status = "underRatio";
+      } else if (coveredStaffCount > requiredStaff) {
+        dailyAnalysis[dayKey].status = "overRatio";
+      } else {
+        dailyAnalysis[dayKey].status = "inRatio";
+      }
+    }
+
+    return {
+      classroomId: classroomData.classroomId,
+      classroomName: classroomData.classroomName,
+      requiredStaff,
+      dailyAnalysis,
+    };
+  });
+
+  // Helper functions
+  function parseTime(timeStr) {
+    const [hours, minutes, seconds] = timeStr.split(":").map(Number);
+    return hours * 3600 + minutes * 60 + (seconds || 0);
+  }
+
+  function formatTime(seconds) {
+    const hours = String(Math.floor(seconds / 3600)).padStart(2, "0");
+    const minutes = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+    return `${hours}:${minutes}:00`;
+  }
+}
+
+export function updateScheduleWithRatioData(scheduleData, ratioData) {
+  return scheduleData?.map((classroom) => {
+    // Find the matching classroom in ratioData by id
+    const matchedRatio = ratioData?.find(
+      (ratio) => ratio.classroomId === classroom.key
+    );
+
+    if (matchedRatio) {
+      const updatedSchedule = { ...classroom.schedule };
+
+      // Update schedule based on dailyAnalysis
+      Object.keys(updatedSchedule).forEach((day) => {
+        const dayName = day.toUpperCase();
+        const dayAnalysis = Object.entries(
+          matchedRatio.dailyAnalysis || {}
+        ).find(([key]) => key.includes(dayName));
+
+        if (dayAnalysis) {
+          const [, analysis] = dayAnalysis;
+
+          updatedSchedule[day] =
+            analysis.status === "overRatio"
+              ? true
+              : analysis.status === "inRatio"
+              ? analysis.uncoveredTimeRanges.length === 0
+                ? true
+                : false
+              : false;
+        } else {
+          updatedSchedule[day] = false; // Default to false if no analysis
+        }
+      });
+
+      return {
+        ...classroom,
+        schedule: updatedSchedule,
+      };
+    }
+
+    // Return the classroom unchanged if not in ratioData
+    return classroom;
+  });
+}
