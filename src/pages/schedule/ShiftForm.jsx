@@ -186,7 +186,21 @@ export default function ShiftForm({
     const newValue = !allDaysSelected;
     setAllDaysSelected(newValue);
 
-    const selectedDays = newValue ? weekDays : [];
+    // Filter out disabled days
+    const enabledDays = staffWeekScheduleData?.data
+      .filter(
+        (day) =>
+          day?.startTime !== "00:00:00" &&
+          validateTimeRange(
+            `"${day?.startTime}"`,
+            `"${day?.endTime}"`,
+            `"${times?.shiftStart}"`,
+            `"${times?.shiftEnd}"`
+          )
+      )
+      .map((day) => day?.dayOfWeek);
+
+    const selectedDays = newValue ? enabledDays : [];
     setCheckedDays(selectedDays);
     form.setFieldsValue({ repeatDays: selectedDays });
   };
@@ -595,7 +609,7 @@ export default function ShiftForm({
                               }} // Ensure full content is visible
                               mouseEnterDelay={0.3}
                             >
-                              <div className="rounded-full ml10 transition-colors">
+                              <div className="rounded-full ml8 transition-colors">
                                 <span
                                   className={`shift-week-day ${
                                     checkedDays.includes(day?.dayOfWeek)
@@ -603,7 +617,10 @@ export default function ShiftForm({
                                       : "text-gray"
                                   }`}
                                 >
-                                  {day?.dayOfWeek}
+                                  {day?.dayOfWeek
+                                    ? day.dayOfWeek.charAt(0).toUpperCase() +
+                                      day.dayOfWeek.slice(1).toLowerCase()
+                                    : ""}
                                 </span>
                               </div>
                             </Tooltip>

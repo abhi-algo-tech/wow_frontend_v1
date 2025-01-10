@@ -12,6 +12,7 @@ import { useGetAllSchedulesByStaff } from "../../../hooks/useSchedule";
 import StaffAttandanceTable from "./StaffAttandanceTable";
 import CopyShiftForm from "../CopyShiftForm";
 import CopyShiftShiftForm from "../CopyStaffShiftForm";
+import { getInitialsTitleWithColor } from "../../../services/common";
 
 const { Text } = Typography;
 const convertToHHMM = (hours) => {
@@ -133,19 +134,36 @@ const StaffOverview = () => {
         <div className="d-flex justify-content-between align-items-start">
           <div className="d-flex align-items-center gap-3">
             <div className="position-relative">
-              <Avatar size={88} src="/wow_images/staff.png" />
-              <div
+              {/* <Avatar size={88} src="/wow_images/staff.png" /> */}
+              <Avatar
+                src={scheduleData?.data?.[0].profileUrl || null} // Use avatar if available
+                size={88}
                 style={{
-                  position: "absolute",
-                  top: 0,
-                  right: 14,
-                  width: "18px",
-                  height: "18px",
-                  backgroundColor: "#52c41a",
-                  borderRadius: "50%",
-                  border: "4px solid white",
+                  backgroundColor: !scheduleData?.data?.[0].profileUrl
+                    ? getInitialsTitleWithColor(
+                        scheduleData?.data?.[0].staffName
+                      ).backgroundColor
+                    : "transparent", // Set background color if no avatar
                 }}
-              />
+              >
+                {!scheduleData?.data?.[0].profileUrl &&
+                  getInitialsTitleWithColor(scheduleData?.data?.[0].staffName)
+                    .initials}
+              </Avatar>
+              {scheduleData?.data?.[0]?.status?.toLowerCase() === "active" && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 14,
+                    width: "18px",
+                    height: "18px",
+                    backgroundColor: "#52c41a",
+                    borderRadius: "50%",
+                    border: "4px solid white",
+                  }}
+                />
+              )}
             </div>
 
             <div className="d-flex flex-column gap-2">

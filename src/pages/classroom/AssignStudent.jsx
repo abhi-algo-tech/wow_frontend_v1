@@ -100,8 +100,7 @@ export default function AssignStudent({ setCancel, classroomData }) {
     classroomData?.data?.id
   );
 
-  const { mutate: batchUpdateStudents } = useBatchUpdateStudent();
-
+  const { mutateAsync: batchUpdateStudents } = useBatchUpdateStudent();
   useEffect(() => {
     if (assignedStudentData && studentsList) {
       const findUnassignedStudents = (assignedStudentData, studentsList) => {
@@ -191,18 +190,22 @@ export default function AssignStudent({ setCancel, classroomData }) {
         : [...prev, studentId]
     );
   };
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Prepare the data for batch update with selected students and classroomId
     const studentData = selectedStudents.map((studentId) => ({
       id: studentId, // Student ID
       classroomId: classroomData?.data?.id, // Selected classroom ID for each student
     }));
 
-    // Call the batch update mutation with the prepared data
-    batchUpdateStudents({ studentData });
+    try {
+      // Use mutateAsync to ensure proper async handling
+      await batchUpdateStudents({ studentData });
 
-    // Optionally close the modal after submission
-    setCancel(false);
+      // Optionally close the modal after submission
+      setCancel(false);
+    } catch (error) {
+      console.error("Error during batch update:", error);
+    }
   };
 
   // Filter the data based on the search query

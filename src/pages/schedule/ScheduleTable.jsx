@@ -518,6 +518,19 @@ const formatTimeTo12Hour = (time) => {
 //     },
 //   },
 // ];
+const formatTimeRange = (timeRange) => {
+  const formatTime = (time) => {
+    const [hour, minute] = time.split(":").map(Number);
+    const ampm = hour >= 12 ? "pm" : "am";
+    const formattedHour = hour % 12 || 12; // Convert 0 or 13-23 to 12-hour format
+    return `${formattedHour.toString().padStart(2, "0")}:${minute
+      .toString()
+      .padStart(2, "0")} ${ampm}`;
+  };
+
+  const [startTime, endTime] = timeRange.split(" - ");
+  return `${formatTime(startTime)} - ${formatTime(endTime)}`;
+};
 export default function ScheduleTable({
   startDate,
   classRoomList = [],
@@ -667,7 +680,9 @@ export default function ScheduleTable({
                         })
                       }
                     >
-                      <span className="label-12-500">{slot.time}</span>
+                      <span className="label-12-500">
+                        {formatTimeRange(slot.time)}
+                      </span>
                     </div>
                   )}
                   {!slot.time &&
@@ -806,11 +821,27 @@ export default function ScheduleTable({
 
     return [
       {
-        title: expandedRows.length > 0 ? "Collapse All" : "Expand All",
+        title: (
+          <div
+            className="pointer"
+            onClick={() => {
+              if (expandedRows.length > 0) {
+                // Collapse all rows
+                setExpandedRows([]);
+              } else {
+                // Expand all rows
+                const allKeys = data.map((record) => record.key); // Assuming 'data' contains the table rows
+                setExpandedRows(allKeys);
+              }
+            }}
+          >
+            {expandedRows.length > 0 ? "Collapse All" : "Expand All"}
+          </div>
+        ),
         dataIndex: "name",
         key: "name",
         width: "20%",
-        align: "start",
+        align: "center",
         className: "label-14-600 pointer",
         render: (text, record) => {
           const isExpanded = expandedRows.includes(record.key);
@@ -818,11 +849,16 @@ export default function ScheduleTable({
             <div
               className="d-flex align-items-center gap12 pointer"
               onClick={() =>
-                setExpandedRows((prevExpanded) =>
-                  prevExpanded.includes(record.key)
-                    ? prevExpanded.filter((key) => key !== record.key)
-                    : [...prevExpanded, record.key]
-                )
+                setExpandedRows((prevExpanded) => {
+                  const isExpanded = prevExpanded.includes(record.key);
+                  if (isExpanded) {
+                    // Remove the key if it's already expanded
+                    return prevExpanded.filter((key) => key !== record.key);
+                  } else {
+                    // Add the key if it's not expanded
+                    return [...prevExpanded, record.key];
+                  }
+                })
               }
             >
               <span>{text}</span>
@@ -935,7 +971,8 @@ export default function ScheduleTable({
             </div>
 
             <div className="d-flex align-items-center gap10">
-              <div className="not-published-line" />
+              {/* <div className="not-published-line" /> */}
+              <img className="width15" src={"wow_icons/png/not_publish.png"} />
               <span className="label-12-500">Not Published</span>
             </div>
 

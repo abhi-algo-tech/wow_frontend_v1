@@ -100,7 +100,7 @@ export default function AssignStaff({ setCancel, classroomData }) {
     error,
   } = useGetClassroomsBySchool(academyId);
 
-  const { mutate: batchUpdateStaff } = useBatchUpdateStaff();
+  const { mutateAsync: batchUpdateStaff } = useBatchUpdateStaff();
 
   useEffect(() => {
     if (assignedStaffData && staffList) {
@@ -161,18 +161,23 @@ export default function AssignStaff({ setCancel, classroomData }) {
     );
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Prepare the payload
     const payload = {
       staffIds: selectedStudents,
       classroomId: classroomData?.data?.id,
     };
 
-    // Call the mutation
-    batchUpdateStaff(payload);
+    try {
+      // Call the mutation and wait for its completion
+      await batchUpdateStaff(payload);
 
-    // Optionally close the modal after submission
-    setCancel(false);
+      // Optionally close the modal after successful submission
+      setCancel(false);
+    } catch (error) {
+      // Handle any errors that occur during the mutation
+      console.error("Error updating staff:", error);
+    }
   };
 
   const classroomOptions = {
