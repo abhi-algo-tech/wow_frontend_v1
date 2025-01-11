@@ -7,6 +7,58 @@ import { getInitialsTitleWithColor } from "../../services/common";
 import CardGrid from "../../components/card/CardGrid";
 import { useGetAllSchedulesByClassroom } from "../../hooks/useSchedule";
 
+// function transformScheduleData(scheduleData) {
+//   // Helper function to format time from "HH:MM:SS" to "h:mm A"
+//   function formatTime(time) {
+//     const [hour, minute] = time.split(":").map(Number);
+//     const ampm = hour >= 12 ? "PM" : "AM";
+//     const formattedHour = hour % 12 || 12;
+//     return `${formattedHour}:${minute.toString().padStart(2, "0")} ${ampm}`;
+//   }
+
+//   // Transform schedule data
+//   return scheduleData?.data?.map((classroom) => ({
+//     id: classroom.classroomId.toString(),
+//     name: classroom.classroomName,
+//     expectedStudents: classroom.assignedClassroomStudentCount,
+//     requiredStaff: classroom.staffRatio,
+//     scheduledStaff: classroom.staffs.length,
+//     type: "class",
+//     scheduling: classroom.ratioStatus.scheduleMismatches.map((mismatch) => ({
+//       timeRange: `${formatTime(
+//         mismatch.timeRange.split(" - ")[0]
+//       )} - ${formatTime(mismatch.timeRange.split(" - ")[1])}`,
+//       typeOf: mismatch.message.toLowerCase().includes("mismatch")
+//         ? "underRatio"
+//         : "inRatio",
+//     })),
+//     staff: classroom.staffs.map((staff) => ({
+//       id: staff.staffId.toString(),
+//       name: staff.staffName,
+//       duration: {
+//         scheduled: staff.scheduledHours,
+//         available: staff.availableHours,
+//       },
+//       type: "staff",
+//       avatar: `/classroom_icons/png/${staff.staffName.replace(" ", "_")}.png`,
+//       scheduling: staff.schedules.flatMap((schedule) => [
+//         {
+//           timeRange: `${formatTime(schedule.startShift)} - ${formatTime(
+//             schedule.endShift
+//           )}`,
+//           typeOf: "inRatio",
+//         },
+//         {
+//           timeRange: `${formatTime(schedule.breakShift)} - ${formatTime(
+//             schedule.breakEndShift
+//           )}`,
+//           typeOf: "underRatio",
+//         },
+//       ]),
+//     })),
+//   }));
+// }
+
 function transformScheduleData(scheduleData) {
   // Helper function to format time from "HH:MM:SS" to "h:mm A"
   function formatTime(time) {
@@ -16,22 +68,99 @@ function transformScheduleData(scheduleData) {
     return `${formattedHour}:${minute.toString().padStart(2, "0")} ${ampm}`;
   }
 
+  // Helper function to check if a time is within a range
+  function isTimeWithinRange(time, rangeStart, rangeEnd) {
+    return time >= rangeStart && time <= rangeEnd;
+  }
+
+  // Function to calculate scheduling status
+  function calculateScheduling(classroom) {
+    const {
+      ratioStartTime,
+      ratioEndTime,
+      staffRatio,
+      assignedClassroomStudentCount,
+      staffs,
+    } = classroom;
+
+    // Calculate required staff based on the ratio
+    const requiredStaff = Math.ceil(assignedClassroomStudentCount / staffRatio);
+
+    // Helper to parse time (HH:MM:SS) into minutes from midnight
+    function parseTimeToMinutes(time) {
+      const [hour, minute] = time.split(":").map(Number);
+      return hour * 60 + minute;
+    }
+
+    // Helper to format time back to HH:MM AM/PM
+    function formatTime(minutes) {
+      const hour = Math.floor(minutes / 60);
+      const minute = minutes % 60;
+      const ampm = hour >= 12 ? "PM" : "AM";
+      const formattedHour = hour % 12 || 12;
+      return `${formattedHour}:${minute.toString().padStart(2, "0")} ${ampm}`;
+    }
+
+    // Helper to check if a time range overlaps
+    function isTimeWithinRange(time, start, end) {
+      const timeMinutes = parseTimeToMinutes(time);
+      const startMinutes = parseTimeToMinutes(start);
+      const endMinutes = parseTimeToMinutes(end);
+      return timeMinutes >= startMinutes && timeMinutes < endMinutes;
+    }
+
+    const ratioStartMinutes = parseTimeToMinutes(ratioStartTime);
+    const ratioEndMinutes = parseTimeToMinutes(ratioEndTime);
+
+    const timeSlots = [];
+    let currentMinutes = ratioStartMinutes;
+
+    // Loop through time slots in 30-minute intervals
+    while (currentMinutes < ratioEndMinutes) {
+      const nextMinutes = currentMinutes + 30;
+
+      // Calculate the number of staff covering this time slot
+      const staffCount = staffs.filter((staff) =>
+        staff.schedules.some((schedule) =>
+          isTimeWithinRange(
+            formatTime(currentMinutes),
+            schedule.startShift,
+            schedule.endShift
+          )
+        )
+      ).length;
+
+      // Determine the type of the time range
+      const typeOf =
+        staffCount >= requiredStaff
+          ? "inRatio"
+          : staffCount === 0
+          ? "underRatio"
+          : "overRatio";
+
+      // Add the time slot to the list
+      timeSlots.push({
+        timeRange: `${formatTime(currentMinutes)} - ${formatTime(nextMinutes)}`,
+        typeOf,
+      });
+
+      currentMinutes = nextMinutes;
+    }
+
+    return timeSlots;
+  }
+
   // Transform schedule data
   return scheduleData?.data?.map((classroom) => ({
     id: classroom.classroomId.toString(),
     name: classroom.classroomName,
     expectedStudents: classroom.assignedClassroomStudentCount,
-    requiredStaff: classroom.staffRatio,
+    requiredStaff: Math.ceil(
+      classroom.assignedClassroomStudentCount / classroom.staffRatio
+    ),
     scheduledStaff: classroom.staffs.length,
     type: "class",
-    scheduling: classroom.ratioStatus.scheduleMismatches.map((mismatch) => ({
-      timeRange: `${formatTime(
-        mismatch.timeRange.split(" - ")[0]
-      )} - ${formatTime(mismatch.timeRange.split(" - ")[1])}`,
-      typeOf: mismatch.message.toLowerCase().includes("mismatch")
-        ? "underRatio"
-        : "inRatio",
-    })),
+    scheduling: calculateScheduling(classroom),
     staff: classroom.staffs.map((staff) => ({
       id: staff.staffId.toString(),
       name: staff.staffName,
@@ -65,14 +194,13 @@ export default function ScheduleView({ classroomId, date }) {
     "/classroom_icons/png/Aarav.png",
     "/classroom_icons/png/Aarjav.png",
   ];
-  console.log("classroomId:", classroomId, date);
   const { data: scheduleData } = useGetAllSchedulesByClassroom(
     classroomId,
     date
   );
 
   const schedulingData = transformScheduleData(scheduleData);
-  console.log(schedulingData);
+  console.log("schedulingData:", schedulingData);
   // const schedulingData = [
   //   {
   //     id: "1",
@@ -279,6 +407,8 @@ export default function ScheduleView({ classroomId, date }) {
             <CardGrid
               scheduleType="classScheduling"
               scheduling={classScheduling}
+              schedule={data}
+              date={date}
             />
           </div>
           <div
@@ -334,6 +464,8 @@ export default function ScheduleView({ classroomId, date }) {
               <CardGrid
                 scheduleType="staffSchedule"
                 scheduling={staffdata?.scheduling}
+                schedule={data}
+                date={date}
               />
             </div>
             <div

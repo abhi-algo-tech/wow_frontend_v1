@@ -9,10 +9,15 @@ import SingleDatePicker from "../../components/datepicker/SingleDatePicker";
 import { useGetClassroomsBySchool } from "../../hooks/useClassroom";
 import { useSession } from "../../hooks/useSession";
 import ButtonComponent from "../../components/ButtonComponent";
+import { useLocation } from "react-router-dom";
 
 const { Text } = Typography;
 const ClassroomView = () => {
   const { academyId } = useSession();
+  const location = useLocation();
+  const classroomId = location.state?.classroomId;
+  const day = location.state?.day;
+  const formatedDate = dayjs(day).format("YYYY-MM-DD");
   const [isAddShiftModalOpen, setAddShiftModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(false);
@@ -20,12 +25,12 @@ const ClassroomView = () => {
   const [isPublishedShiftModalOpen, setPublishedShiftModalOpen] =
     useState(false);
   const [classRoomList, setClassRoomList] = useState([]);
-  const [selectedClassroomId, setSelectedClassroomId] = useState(null);
+  const [selectedClassroomId, setSelectedClassroomId] = useState(classroomId);
   const [startDate, setStartDate] = useState(
     dayjs().startOf("week").add(1, "day")
   ); // Start from Monday
-  const [date, setDate] = useState(null);
-  const [initialDate, setInitialDate] = useState({});
+  const [date, setDate] = useState(formatedDate);
+  const [initialDate, setInitialDate] = useState(formatedDate);
 
   const schoolId = academyId;
   const {
@@ -49,6 +54,7 @@ const ClassroomView = () => {
 
   const handleRangeChange = (newDate) => {
     const formattedStartDate = dayjs(newDate).format("YYYY-MM-DD");
+    setInitialDate(formattedStartDate);
 
     setDate(formattedStartDate);
   };
@@ -87,7 +93,7 @@ const ClassroomView = () => {
           <SingleDatePicker
             onDateChange={handleRangeChange}
             gap={10}
-            setInitialDate={setInitialDate}
+            initialDate={initialDate}
           />
           <Select
             className="select-student-add-from"

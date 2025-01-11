@@ -115,7 +115,6 @@ function StaffProfileForm({ CardTitle, staffData, closeModal }) {
   }, [staffData, form]);
 
   const handleTagChange = (value) => {
-    setIsButton(true);
     setSelectedAllowedClassrooms(value);
     setSelectedTags(value);
     const shouldResetPrimaryClassroom = !value.some((classroomId) => {
@@ -128,6 +127,7 @@ function StaffProfileForm({ CardTitle, staffData, closeModal }) {
   //   console.log("selectedClassrooms", selectedClassrooms);
 
   const handleSubmit = (values) => {
+    setIsButton(true);
     const {
       firstName,
       lastName,

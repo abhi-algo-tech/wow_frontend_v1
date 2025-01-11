@@ -51,8 +51,9 @@ export default function ShiftForm({
   const [selectedStaffId, setSelectedStaffId] = useState(
     classroomSelectedData?.teacherId || null
   );
-  const [classRooms, setClassRooms] = useState([]);
+  // const [classRooms, setClassRooms] = useState([]);
   const [staffs, setStaffs] = useState([]);
+  const [classRooms, setClassRooms] = useState([]);
   const [currentSchedule, setCurrentSchedule] = useState(null);
   const [times, setTimes] = useState({
     shiftStart: null,
@@ -67,17 +68,19 @@ export default function ShiftForm({
     useWeekScheduleByStaffId(selectedStaffId);
   const createShiftMutation = useCreateShift();
   const handleStaffChange = (value) => {
+    const selectedStaff = staffData?.data?.find((staff) => staff.id === value);
+    // Extract the classroom information if the selected staff is found
+    const classroomInfo = selectedStaff ? selectedStaff.classrooms : null;
+    setClassRooms(classroomInfo);
     setSelectedStaffId(value); // Update state with the selected staff ID
-    form.setFieldsValue({ staff: value }); // Set the value in the form
+    form.setFieldsValue({
+      staff: value,
+      classroomId: null, // Reset the classroom field
+    });
   };
 
   useEffect(() => {
-    if (classroomData) {
-      const activeClassrooms = classroomData?.data?.filter(
-        (classroom) => classroom.status.toLowerCase() === "active"
-      );
-      setClassRooms(activeClassrooms || []);
-    }
+    setClassRooms(classroomData?.data || []);
   }, [classroomData]);
 
   useEffect(() => {
@@ -183,7 +186,21 @@ export default function ShiftForm({
     const newValue = !allDaysSelected;
     setAllDaysSelected(newValue);
 
-    const selectedDays = newValue ? weekDays : [];
+    // Filter out disabled days
+    const enabledDays = staffWeekScheduleData?.data
+      .filter(
+        (day) =>
+          day?.startTime !== "00:00:00" &&
+          validateTimeRange(
+            `"${day?.startTime}"`,
+            `"${day?.endTime}"`,
+            `"${times?.shiftStart}"`,
+            `"${times?.shiftEnd}"`
+          )
+      )
+      .map((day) => day?.dayOfWeek);
+
+    const selectedDays = newValue ? enabledDays : [];
     setCheckedDays(selectedDays);
     form.setFieldsValue({ repeatDays: selectedDays });
   };
@@ -436,6 +453,8 @@ export default function ShiftForm({
                     <Select
                       className="select-student-add-from"
                       placeholder="Select Room"
+                      value={form?.classroomId}
+                      disabled={!form.getFieldValue("staff")}
                       options={classRooms?.map((classroom) => ({
                         value: classroom?.id,
                         label: classroom?.name,
@@ -590,7 +609,7 @@ export default function ShiftForm({
                               }} // Ensure full content is visible
                               mouseEnterDelay={0.3}
                             >
-                              <div className="rounded-full ml10 transition-colors">
+                              <div className="rounded-full ml8 transition-colors">
                                 <span
                                   className={`shift-week-day ${
                                     checkedDays.includes(day?.dayOfWeek)
@@ -598,7 +617,10 @@ export default function ShiftForm({
                                       : "text-gray"
                                   }`}
                                 >
-                                  {day?.dayOfWeek}
+                                  {day?.dayOfWeek
+                                    ? day.dayOfWeek.charAt(0).toUpperCase() +
+                                      day.dayOfWeek.slice(1).toLowerCase()
+                                    : ""}
                                 </span>
                               </div>
                             </Tooltip>
