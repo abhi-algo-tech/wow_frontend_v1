@@ -1,15 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Form,
-  Input,
-  InputNumber,
-  Switch,
-  Button,
-  Upload,
-  message,
-} from "antd";
+import { Form, Input, InputNumber, Switch } from "antd";
 import { debounce } from "lodash";
-import { UploadOutlined } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent";
 import {
   useClassroomById,
@@ -285,19 +276,21 @@ function CreateClassroom({ CardTitle, classroomId, closeModal }) {
                 name="ratio"
                 className="classroom-label"
                 label="Student : Teacher Ratio"
-                rules={[
-                  // { required: true, message: "Please input the ratio!" },
-                  {
-                    validator: (_, value) => {
-                      if (value < 1 || value > 5) {
-                        return Promise.reject(
-                          new Error("ratio must be between 1 and 5!")
-                        );
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
+                rules={
+                  [
+                    // { required: true, message: "Please input the ratio!" },
+                    // {
+                    //   validator: (_, value) => {
+                    //     if (value < 1 || value > 5) {
+                    //       return Promise.reject(
+                    //         new Error("ratio must be between 1 and 5!")
+                    //       );
+                    //     }
+                    //     return Promise.resolve();
+                    //   },
+                    // },
+                  ]
+                }
               >
                 <InputNumber placeholder="4" className="w-100" />
               </Form.Item>

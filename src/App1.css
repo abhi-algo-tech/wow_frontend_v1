@@ -1519,7 +1519,7 @@
 }
 
 .actorbig-card-text-ellipsis {
-  width: 80px; /* Set a fixed width */
+  /* width: 80px; */
   white-space: nowrap; /* Prevent wrapping */
   overflow: hidden; /* Hide the overflowing text */
   text-overflow: ellipsis; /* Add the ellipsis */
