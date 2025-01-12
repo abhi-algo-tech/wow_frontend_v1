@@ -13,6 +13,7 @@ import {
   reStructureScheduleArray,
   updateScheduleWithRatioData,
 } from "./scheduleData";
+import { getInitialsTitleWithColor } from "../../services/common";
 const images = [
   "/classroom_icons/png/Aadhira.png",
   "/classroom_icons/png/Aarav.png",
@@ -609,11 +610,24 @@ export default function ScheduleTable({
               <td className="border p-2" style={{ width: "20%" }}>
                 <div className="d-flex justify-content-between align-items-center gap12">
                   <div>
-                    <Avatar
-                      src={teacher?.teachers?.avatar}
-                      alt={teacher?.teachers?.name}
+                    {/* <Avatar
+                      src={teacher?.avatar}
+                      // alt={teacher?.teachers?.name}
                       size={24}
-                    />
+                    /> */}
+                    <Avatar
+                      src={teacher?.avatar || null} // Use avatar if available
+                      size={34}
+                      style={{
+                        backgroundColor: !teacher?.avatar
+                          ? getInitialsTitleWithColor(teacher.name)
+                              .backgroundColor
+                          : "transparent", // Set background color if no avatar
+                      }}
+                    >
+                      {!teacher?.avatar &&
+                        getInitialsTitleWithColor(teacher.name).initials}
+                    </Avatar>
                   </div>
                   <div className="teacher-name-container">
                     <div className="font-medium">{teacher.name}</div>

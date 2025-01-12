@@ -276,6 +276,55 @@ export default function ShiftForm({
       staffId,
       note,
     };
+    if (repeatDays.length >= 0) {
+      const dayName = getDayNameByDate(shiftdate).toUpperCase(); // e.g., MONDAY
+      console.log("staffWeekScheduleData:", staffWeekScheduleData);
+      const daySchedule = staffWeekScheduleData?.data?.find(
+        (day) => day.dayOfWeek === dayName
+      );
+      console.log("daySchedule:", daySchedule);
+      // Check if staff is unavailable
+      if (
+        !daySchedule ||
+        daySchedule.startTime === "00:00:00" ||
+        daySchedule.startTime === null
+      ) {
+        CustomMessage.error(`Staff is not available on ${dayName}`);
+        return; // Prevent further execution
+      }
+
+      // Check shift and break times against day schedule
+      if (
+        shiftData.startShift < daySchedule.startTime ||
+        shiftData.endShift > daySchedule.endTime
+      ) {
+        CustomMessage.error(
+          `Shift must be within available hours: ${daySchedule.startTime} - ${daySchedule.endTime}`
+        );
+        return;
+      }
+
+      if (
+        shiftData.breakShift < daySchedule.startTime ||
+        shiftData.breakEndShift > daySchedule.endTime
+      ) {
+        CustomMessage.error(
+          `Break must be within available hours: ${daySchedule.startTime} - ${daySchedule.endTime}`
+        );
+        return;
+      }
+
+      // Ensure shift and break times are logically correct
+      if (shiftData.startShift >= shiftData.endShift) {
+        CustomMessage.error("Shift start time must be before shift end time.");
+        return;
+      }
+
+      if (shiftData.breakShift >= shiftData.breakEndShift) {
+        CustomMessage.error("Break start time must be before break end time.");
+        return;
+      }
+    }
 
     createShiftMutation.mutate(
       {

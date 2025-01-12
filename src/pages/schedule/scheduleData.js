@@ -51,7 +51,7 @@ export const reStructureScheduleArray = (dataArray) => {
         return {
           id: staff.staffId.toString(),
           name: staff.staffName,
-          avatar: `/classroom_icons/png/Avatar_${staff.staffId}.png`, // Dummy avatar URL
+          avatar: staff.profileUrl, // Dummy avatar URL
           duration: {
             first: Math.floor(staff.availableHours), // availableHours is first
             second: Math.floor(staff.scheduledHours), // scheduledHours is second
