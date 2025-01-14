@@ -44,10 +44,12 @@ const StaffOverview = () => {
     setStartDate(start);
   };
 
-  const staffList = staffData?.data?.map((staff) => ({
-    key: String(staff.id),
-    label: `${staff.firstName} ${staff.lastName}`,
-  }));
+  const staffList = staffData?.data
+    ?.filter((staff) => staff.statusId === 4) // Filter staff with statusId 4
+    .map((staff) => ({
+      key: String(staff.id),
+      label: `${staff.firstName} ${staff.lastName}`,
+    }));
 
   useEffect(() => {
     if (selectedRecord) {
