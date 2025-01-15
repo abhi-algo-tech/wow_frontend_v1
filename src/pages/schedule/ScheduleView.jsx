@@ -163,13 +163,13 @@ function transformScheduleData(scheduleData) {
     scheduling: calculateScheduling(classroom),
     staff: classroom.staffs.map((staff) => ({
       id: staff.staffId.toString(),
+      avatar: classroom.profileUrl,
       name: staff.staffName,
       duration: {
         scheduled: staff.scheduledHours,
         available: staff.availableHours,
       },
       type: "staff",
-      avatar: `/classroom_icons/png/${staff.staffName.replace(" ", "_")}.png`,
       scheduling: staff.schedules.flatMap((schedule) => [
         {
           timeRange: `${formatTime(schedule.startShift)} - ${formatTime(
@@ -424,11 +424,24 @@ export default function ScheduleView({ classroomId, date }) {
             <div className="d-flex  ">
               <div className="d-flex  ">
                 <div className="d-flex align-items-center gap16">
-                  <Avatar
+                  {/* <Avatar
                     src={staffdata.avatar}
                     alt={staffdata.name}
                     size={24}
-                  />
+                  /> */}
+                  <Avatar
+                    src={staffdata?.avatar || null} // Use avatar if available
+                    size={24}
+                    style={{
+                      backgroundColor: !staffdata?.avatar
+                        ? getInitialsTitleWithColor(staffdata.name)
+                            .backgroundColor
+                        : "transparent", // Set background color if no avatar
+                    }}
+                  >
+                    {!staffdata?.avatar &&
+                      getInitialsTitleWithColor(staffdata.name).initials}
+                  </Avatar>
                   <div className="teacher-name-container">
                     <div className="label-14-500">{staffdata.name}</div>
                     <div className="teacher-time-container">
@@ -495,7 +508,7 @@ export default function ScheduleView({ classroomId, date }) {
               key={data?.id}
               className="schedule-actor-card"
               collapsible="header"
-              defaultActiveKey={["1"]}
+              defaultActiveKey={[data?.id]}
               items={[
                 {
                   key: data?.id,
