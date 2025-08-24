@@ -63,8 +63,8 @@ const MultiSelectWithTags = ({ value, onChange, name, options, ...props }) => {
           }}
         >
           <Checkbox
-            checked={value.length === options.length}
-            indeterminate={value.length > 0 && value.length < options.length}
+            checked={value.length === options?.length}
+            indeterminate={value.length > 0 && value.length < options?.length}
             onChange={(e) => handleSelectAll(e.target.checked)}
           >
             Select All

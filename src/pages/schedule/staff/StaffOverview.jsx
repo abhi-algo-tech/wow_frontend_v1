@@ -1,5 +1,5 @@
-import { Avatar, Button, Dropdown, Select, Typography } from "antd";
-import React, { useState } from "react";
+import { Avatar, Button, Select, Typography } from "antd";
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import WeekDatePicker from "../../../components/datepicker/WeekDatePicker";
 import OverviewTable from "../OverviewTable";
@@ -7,80 +7,120 @@ import CommonModalComponent from "../../../components/CommonModalComponent";
 import PublishShift from "../PublishShift";
 import ShiftForm from "../ShiftForm";
 import ButtonComponent from "../../../components/ButtonComponent";
+import { useGetAllStaff } from "../../../hooks/useStaff";
+import { useGetAllSchedulesByStaff } from "../../../hooks/useSchedule";
+import StaffAttandanceTable from "./StaffAttandanceTable";
+import CopyShiftForm from "../CopyShiftForm";
+import CopyShiftShiftForm from "../CopyStaffShiftForm";
 
 const { Text } = Typography;
+const convertToHHMM = (hours) => {
+  const h = Math.floor(hours); // Get whole hours
+  const m = Math.round((hours - h) * 60); // Convert the fractional part to minutes
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`; // Format as hh:mm
+};
+
 const StaffOverview = () => {
-  const [selectedRecord, setSelectedRecord] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [schedule, setSchedule] = useState([]);
+  const [initialDate, setInitialDate] = useState({});
+  const [isCopyShiftModalOpen, setCopyShiftModalOpen] = useState(false);
+  const [scheduleParams, setScheduleParams] = useState(null); // Start with null
   const [isAddShiftModalOpen, setAddShiftModalOpen] = useState(false);
   const [isPublishedShiftModalOpen, setPublishedShiftModalOpen] =
     useState(false);
-
   const [startDate, setStartDate] = useState(
     dayjs().startOf("week").add(1, "day")
   ); // Start from Monday
-  const handleRangeChange = (start, end) => {
+
+  const { data: staffData } = useGetAllStaff();
+  // const payload = { ...initialDate, staffId };
+  const { data: scheduleData } = useGetAllSchedulesByStaff(scheduleParams, {
+    enabled: !!scheduleParams, // Only run when scheduleParams is not null
+  });
+
+  const handleRangeChange = (start) => {
     setStartDate(start);
   };
-  const handlePublish = async (id) => {};
-  // Define menu items with onClick handlers
-  const publishItems = [
-    {
-      key: "1",
-      label: (
-        <div onClick={() => setPublishedShiftModalOpen(true)}>Next Month</div>
-      ),
-    },
-    {
-      key: "2",
-      label: (
-        <div onClick={() => setPublishedShiftModalOpen(true)}>All Shifts</div>
-      ),
-    },
-  ];
-  const staffList = [
-    { id: 1, name: "Jessica Rhodes" },
-    { id: 2, name: "John Doe" },
-    { id: 3, name: "Emily Smith" },
-  ];
+
+  const staffList = staffData?.data?.map((staff) => ({
+    key: String(staff.id),
+    label: `${staff.firstName} ${staff.lastName}`,
+  }));
+
+  useEffect(() => {
+    if (selectedRecord) {
+      setScheduleParams({
+        staffId: selectedRecord,
+        startDate: initialDate?.startDate,
+        endDate: initialDate?.endDate,
+      });
+    }
+  }, [initialDate]);
+
+  const handleStaffChange = (id) => {
+    setSelectedRecord(id);
+    const newStartDate = dayjs(startDate).format("YYYY-MM-DD");
+    const endDate = dayjs(startDate).add(5, "days").format("YYYY-MM-DD");
+    // Update scheduleParams to trigger the hook
+    setScheduleParams({ staffId: id, startDate: newStartDate, endDate });
+  };
+
+  const handlePublish = async (id) => {
+    // Placeholder for publish logic
+  };
 
   return (
     <>
       <div className="d-flex align-items-center justify-content-between mb-4">
         <div className="d-flex gap-3">
-          <WeekDatePicker onRangeChange={handleRangeChange} gap={10} />
+          <WeekDatePicker
+            onRangeChange={handleRangeChange}
+            setInitialDate={setInitialDate}
+          />
 
           <Select
             className="select-student-add-from"
             placeholder="Select Staff"
             style={{ width: 185 }}
+            onChange={handleStaffChange}
           >
             {staffList?.map((staff) => (
-              <Select.Option key={staff.id} value={staff.id}>
-                {staff.name}
+              <Select.Option key={staff.key} value={staff.key}>
+                {staff.label}
               </Select.Option>
             ))}
           </Select>
         </div>
+
         <div className="d-flex align-items-center gap-3">
+          <Button
+            size="small"
+            className="schedule-copy-btn border-none"
+            onClick={() => setCopyShiftModalOpen(true)}
+          >
+            <img
+              style={{ width: 17, height: 20 }}
+              src="/wow_icons/png/content_copy.png"
+            />{" "}
+            <span className="label-12-400"> Copy shifts </span>
+          </Button>
           <Button
             onClick={() => setAddShiftModalOpen(true)}
             className="schedule-add-shift-btn d-flex align-items-center justify-content-center"
           >
             <span className="gradient-text d-flex align-items-center">
-              <Avatar
-                size={14}
-                src={"/wow_icons/png/add.png"}
-                className="mr8"
-              />
+              <Avatar size={14} src="/wow_icons/png/add.png" className="mr8" />
               Add Shift
             </span>
           </Button>
           <ButtonComponent
             onClick={() => setPublishedShiftModalOpen(true)}
-            text={"Publish"}
+            text="Publish"
           />
         </div>
       </div>
+
       <div
         className="staff-scheduling-overview container p-3 mb20"
         style={{
@@ -90,10 +130,8 @@ const StaffOverview = () => {
           borderRadius: "12px",
         }}
       >
-        <div className="d-flex justify-content-between align-items-start ">
-          {/* Profile Section */}
+        <div className="d-flex justify-content-between align-items-start">
           <div className="d-flex align-items-center gap-3">
-            {/* Avatar Section */}
             <div className="position-relative">
               <Avatar size={88} src="/wow_images/staff.png" />
               <div
@@ -110,97 +148,86 @@ const StaffOverview = () => {
               />
             </div>
 
-            {/* Text Section */}
             <div className="d-flex flex-column gap-2">
-              <div className="label-20-500">Jessica Rhodes</div>
-              <div className="label-12-400">Lead Teacher</div>
-              <div className="label-12-400">1-Blue-D</div>
+              <div className="label-20-500">
+                {scheduleData?.data?.[0].staffName}
+              </div>
+              <div className="label-12-400">
+                {scheduleData?.data?.[0].designation}
+              </div>
+              <div className="label-12-400">
+                {scheduleData?.data?.[0].primaryClassroom}
+              </div>
             </div>
           </div>
 
-          {/* Metrics Section */}
           <div className="d-flex gap-3">
-            <div
-              className="d-flex"
-              style={{
-                width: "256px",
-                height: "88px",
-                background: "#FFFAEA",
-                border: "1px solid rgba(22, 40, 49, 0.1)",
-                borderRadius: "12px",
-                padding: "12px 19px",
-              }}
-            >
-              {/* Avatar Section */}
-              <div className="me-3">
-                <Avatar
-                  src={"/wow_icons/png/history_toggle_off.png"}
-                  size={36}
-                />
-              </div>
+            {["Available Hours", "Scheduled Hours", "Unscheduled Hours"].map(
+              (label, index) => {
+                const backgrounds = ["#FFFAEA", "#EAFFFA", "#FFFFFF"];
+                const availableHours =
+                  scheduleData?.data?.[0]?.availableHours || 0;
+                const scheduledHours =
+                  scheduleData?.data?.[0]?.scheduledHours || 0;
 
-              {/* Text Section */}
-              <div>
-                <p className="label-16-500 mb1">Available Hours</p>
-                <p className="label-32-600 mb-0">36:00</p>
-              </div>
-            </div>
-            <div
-              className="d-flex"
-              style={{
-                width: "256px",
-                height: "88px",
-                background: "#EAFFFA",
-                border: "1px solid rgba(22, 40, 49, 0.1)",
-                borderRadius: "12px",
-                padding: "12px 19px",
-              }}
-            >
-              {/* Avatar Section */}
-              <div className="me-3 ">
-                <img
-                  src={"/wow_icons/png/more_time.png"}
-                  className="width36 height34"
-                />
-              </div>
+                const availableHoursFormatted = convertToHHMM(availableHours);
+                const scheduledHoursFormatted = convertToHHMM(scheduledHours);
+                const unscheduledHoursFormatted = convertToHHMM(
+                  availableHours - scheduledHours
+                );
 
-              {/* Text Section */}
-              <div>
-                <p className="label-16-500 mb1">Scheduled Hours</p>
-                <p className="label-32-600 mb-0">36:00</p>
-              </div>
-            </div>
-            <div
-              className="d-flex"
-              style={{
-                width: "256px",
-                height: "88px",
-                background: "#FFFFFF",
-                border: "1px solid rgba(22, 40, 49, 0.1)",
-                borderRadius: "12px",
-                padding: "12px 19px",
-              }}
-            >
-              {/* Avatar Section */}
-              <div className="me-3">
-                <Avatar src={"/wow_icons/png/unschedule.png"} size={36} />
-              </div>
+                const values = [
+                  availableHoursFormatted,
+                  scheduledHoursFormatted,
+                  unscheduledHoursFormatted,
+                ];
+                const icons = [
+                  "/wow_icons/png/history_toggle_off.png",
+                  "/wow_icons/png/more_time.png",
+                  "/wow_icons/png/unschedule.png",
+                ];
 
-              {/* Text Section */}
-              <div>
-                <p className="label-16-500 mb1">Unscheduled Hours</p>
-                <p className="label-32-600 mb-0">00:00</p>
-              </div>
-            </div>
+                return (
+                  <div
+                    key={index}
+                    className="d-flex"
+                    style={{
+                      width: "256px",
+                      height: "88px",
+                      background: backgrounds[index],
+                      border: "1px solid rgba(22, 40, 49, 0.1)",
+                      borderRadius: "12px",
+                      padding: "12px 19px",
+                    }}
+                  >
+                    <div className="me-3">
+                      <img src={icons[index]} className="size-36" />
+                    </div>
+
+                    <div>
+                      <p className="label-16-500 mb1">{label}</p>
+                      <p className="label-32-600 mb-0">{values[index]}</p>
+                    </div>
+                  </div>
+                );
+              }
+            )}
           </div>
         </div>
       </div>
 
-      <OverviewTable />
-
+      {/* <OverviewTable /> */}
+      {/* <OverviewTable1 /> */}
+      {initialDate?.startDate &&
+        scheduleData?.data?.[0]?.schedules.length > 0 && (
+          <StaffAttandanceTable
+            schedules={scheduleData?.data?.[0]?.schedules}
+            startDate={initialDate?.startDate}
+          />
+        )}
       {isAddShiftModalOpen && (
         <ShiftForm
-          cardTitle={"Add Shift"}
+          cardTitle="Add Shift"
           classroomId={null}
           setCloseModal={setAddShiftModalOpen}
         />
@@ -212,7 +239,7 @@ const StaffOverview = () => {
           setOpen={setPublishedShiftModalOpen}
           modalWidthSize={418}
           modalHeightSize={300}
-          isClosable={true}
+          isClosable
         >
           <PublishShift
             setCancel={setPublishedShiftModalOpen}
@@ -220,6 +247,19 @@ const StaffOverview = () => {
             CardTitle="Publish Shifts"
             handlePublish={handlePublish}
             type="staff"
+          />
+        </CommonModalComponent>
+      )}
+      {isCopyShiftModalOpen && (
+        <CommonModalComponent
+          open={isCopyShiftModalOpen}
+          setOpen={setCopyShiftModalOpen}
+          modalWidthSize={500}
+          isClosable={true}
+        >
+          <CopyShiftShiftForm
+            cardTitle={"Copy Staff Shifts"}
+            closeModal={() => setCopyShiftModalOpen(false)}
           />
         </CommonModalComponent>
       )}

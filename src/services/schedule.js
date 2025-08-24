@@ -14,6 +14,18 @@ const ScheduleService = {
     }
   },
 
+  publishStaffShift: async (staffId, untilDate) => {
+    try {
+      const response = await axiosInstance.post(
+        `${API_ENDPOINTS.SCHEDULE.PUBLISH_STAFF}?staffId=${staffId}&untilDate=${untilDate}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error publishing Staff shift:", error);
+      throw error;
+    }
+  },
+
   copyByClassroom: async (
     classroomIds,
     startWeekDate,
@@ -36,6 +48,39 @@ const ScheduleService = {
       return response.data;
     } catch (error) {
       console.error("Error copying shift:", error);
+      throw error;
+    }
+  },
+
+  getAllSchedulesByStaff: async (params) => {
+    // Ensure the required parameters exist before making the API call
+    if (params?.startDate && params?.endDate && params?.staffId) {
+      try {
+        // Construct the API endpoint with query parameters
+        const response = await axiosInstance.get(
+          `${API_ENDPOINTS.SCHEDULE.GET_SCHEDULE_STAFF}?startDate=${params.startDate}&endDate=${params.endDate}&staffId=${params.staffId}`
+        );
+        return response.data; // Return the fetched data
+      } catch (error) {
+        console.error("Error fetching schedules by staff:", error); // Log the error
+        throw error; // Re-throw the error for further handling
+      }
+    } else {
+      // console.warn(
+      //   "Missing required parameters: startDate, endDate, or staffId."
+      // );
+      return null; // Return null or handle the absence of parameters as needed
+    }
+  },
+
+  getAllSchedulesByClassroom: async (classroomId, date) => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.SCHEDULE.GET_BY_CLASSROOM}?classroomId=${classroomId}&date=${date}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching schedules by classroom:", error);
       throw error;
     }
   },

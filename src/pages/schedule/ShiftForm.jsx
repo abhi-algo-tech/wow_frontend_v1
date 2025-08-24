@@ -138,7 +138,20 @@ export default function ShiftForm({
         });
       }
     }
-  }, [currentSchedule, checkedDays, form]);
+  }, [currentSchedule, form]);
+
+  useEffect(() => {
+    if (modalType === "add") {
+      if (currentSchedule) {
+        form.setFieldsValue({
+          untilDate:
+            checkedDays.length > 0
+              ? dayjs().add(1, "month").format("YYYY-MM-DD")
+              : null,
+        });
+      }
+    }
+  }, [checkedDays]);
 
   useEffect(() => {
     if (classroomSelectedData) {
@@ -375,6 +388,7 @@ export default function ShiftForm({
                       value={selectedDate}
                       onChange={setSelectedDate}
                       isDisabledBackDate={true}
+                      disableWeekends={true}
                       // autoSelectToday={true}
                     />
                   </Form.Item>

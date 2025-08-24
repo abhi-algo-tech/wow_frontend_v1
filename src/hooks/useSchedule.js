@@ -20,6 +20,22 @@ export const usePublishShift = () => {
   });
 };
 
+export const usepublishStaffShift = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ staffId, untilDate }) =>
+      ScheduleService.publishStaffShift(staffId, untilDate),
+    onSuccess: () => {
+      queryClient.invalidateQueries(scheduleKeys.schedule);
+      CustomMessage.success("Shift published staff successfully!");
+    },
+    onError: (error) => {
+      console.error("Error publishing staff schedules:", error);
+      //   CustomMessage.error("Error creating week schedules!");
+    },
+  });
+};
+
 export const useCopyByClassroom = () => {
   const queryClient = useQueryClient();
 
@@ -40,6 +56,37 @@ export const useCopyByClassroom = () => {
       CustomMessage.error(
         "Failed to copy schedules for classrooms. Please try again."
       );
+    },
+  });
+};
+
+// Fetch all schedules by staff
+export const useGetAllSchedulesByStaff = (params) => {
+  return useQuery({
+    queryKey: [
+      scheduleKeys.schedule,
+      params?.startDate,
+      params?.endDate,
+      params?.staffId,
+    ],
+    queryFn: () => ScheduleService.getAllSchedulesByStaff(params),
+    refetchOnWindowFocus: false,
+    retry: 3,
+    onError: (error) =>
+      console.error("Error fetching schedules by staff:", error),
+  });
+};
+
+export const useGetAllSchedulesByClassroom = (classroomId, date) => {
+  return useQuery({
+    queryKey: [scheduleKeys.schedule, classroomId, date], // Unique key for caching
+    queryFn: () =>
+      ScheduleService.getAllSchedulesByClassroom(classroomId, date), // Fetch function
+    enabled: !!classroomId && !!date, // Run the query only if classroomId and date are valid
+    refetchOnWindowFocus: false, // Prevent refetching on window focus
+    retry: 3, // Retry up to 3 times on failure
+    onError: (error) => {
+      console.error("Error fetching schedules by classroom:", error);
     },
   });
 };

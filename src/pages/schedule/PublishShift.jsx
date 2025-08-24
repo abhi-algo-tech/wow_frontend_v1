@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Form, Radio } from "antd";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import ButtonComponent from "../../components/ButtonComponent";
-import { usePublishShift } from "../../hooks/useSchedule";
+import { usePublishShift, usepublishStaffShift } from "../../hooks/useSchedule";
 import { useSession } from "../../hooks/useSession";
 import { CustomMessage } from "../../utils/CustomMessage";
 
@@ -15,6 +15,7 @@ function PublishShift({
 }) {
   const { academyId } = useSession();
   const { mutate: publishShift } = usePublishShift(); // Get the mutation function
+  const { mutate: publishStaffShift } = usepublishStaffShift();
   const schoolId = academyId;
 
   const [publishType, setPublishType] = useState("until-date"); // State for managing the radio button selection
@@ -28,6 +29,11 @@ function PublishShift({
     if (type === "school") {
       publishShift({
         schoolId: schoolId,
+        untilDate,
+      });
+    } else if (type === "staff") {
+      publishStaffShift({
+        staffId: deleteData.id,
         untilDate,
       });
     }

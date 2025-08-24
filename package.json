@@ -12,6 +12,10 @@
     "zeplin-connect-dev-mode": "zeplin connect --dev"
   },
   "dependencies": {
+    "@aldabil/react-scheduler": "^2.9.5",
+    "@cubedoodl/react-simple-scheduler": "^1.3.3",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@hookform/resolvers": "^3.9.1",
     "@react-hook/window-size": "^3.1.1",
     "@tanstack/react-query": "^5.56.2",
