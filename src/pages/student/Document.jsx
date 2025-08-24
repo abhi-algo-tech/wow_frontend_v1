@@ -39,6 +39,8 @@ const Document = ({ studentId }) => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [studentData, setStudentData] = useState();
+  const [filterStudentDocument, setFilterStudentDocument] = useState([]);
+  const [showActive, setShowActive] = useState(true);
 
   const {
     data: student,
@@ -50,6 +52,22 @@ const Document = ({ studentId }) => {
   useEffect(() => {
     setStudentData(student?.data || {});
   }, [student]);
+
+  useEffect(() => {
+    const today = new Date();
+    const filteredDocuments = studentData?.document
+      ?.filter((doc) => {
+        const expiryDate = new Date(doc.expiryDate);
+        return showActive ? expiryDate >= today : expiryDate < today;
+      })
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    setFilterStudentDocument(filteredDocuments || []);
+  }, [showActive]);
+
+  console.log("showActive", showActive);
+  console.log("studentData", filterStudentDocument);
 
   const handleDownload = async (e, record) => {
     e.preventDefault();
@@ -194,7 +212,10 @@ const Document = ({ studentId }) => {
               valuePropName="checked"
               className="mb-0 me-2 classroom-show-inactive-toggle-btn"
             >
-              <Switch />
+              <Switch
+                checked={!showActive}
+                onChange={(checked) => setShowActive(!checked)}
+              />
             </Form.Item>
             <span className="classroom-inactive-label">
               Show Expired Documents
@@ -211,9 +232,7 @@ const Document = ({ studentId }) => {
         </div>
         <Table
           columns={columns}
-          dataSource={studentData?.document
-            ?.slice()
-            .sort((a, b) => a.name.localeCompare(b.name))} // Sorting logic
+          dataSource={filterStudentDocument}
           pagination={false}
           size="small"
         />
